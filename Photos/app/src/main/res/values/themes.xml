@@ -12,5 +12,29 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
+
+    <style name="Theme.Photos.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="TextAppearance.SearchBar"
+        parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
+        <item name="android:textSize">@dimen/search_bar_text_size</item>
+    </style>
+
+    <style name="SearchBarStyle">
+        <item name="android:layout_margin">@dimen/search_bar_margin</item>
+        <item name="cardCornerRadius">2dp</item>
+        <item name="enforceMaterialTheme">true</item>
+        <item name="cardElevation">3dp</item>
+        <item name="shapeAppearance">@null</item>
+    </style>
+
+    <color name="search_bar_background">@color/white</color>
+    <dimen name="search_bar_text_size">16dp</dimen>
+    <dimen name="search_bar_margin">16dp</dimen>
 </resources>

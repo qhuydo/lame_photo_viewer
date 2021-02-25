@@ -19,7 +19,7 @@ class PhotosApplication: Application() {
         delayInit()
     }
 
-    fun delayInit() {
+    private fun delayInit() {
 
         // Init Timber instance
         applicationScope.launch {
