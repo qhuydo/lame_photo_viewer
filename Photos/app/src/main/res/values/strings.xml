@@ -1,9 +1,14 @@
 <resources>
-    <string name="app_name">Photos</string>
+    <string name="app_name">Lame Photo viewer</string>
     <string name="about">About</string>
-    <string name="photo_title">Photo</string>
+    <string name="photo_title">Photos</string>
     <string name="people_title">People</string>
     <string name="album_title">Album</string>
     <string name="empty_album_label">Your album will appear here</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="settings_title">Settings</string>
+    <string name="secret_photos_title">Secret Photos</string>
+    <string name="favorites_title">Favorites</string>
+    <string name="file_explorer_title">File explorer</string>
+    <string name="trash">Trash</string>
 </resources>
