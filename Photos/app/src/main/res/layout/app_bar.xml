@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:fitsSystemWindows="true"
-        android:paddingTop="24dp"
         android:showDividers="none"
         app:elevation="0dp">
 
