@@ -1,9 +1,7 @@
 # Photos
 A simple photo viewer application for Android mobile devices.
----
 
 ## Installation
----
 
 Clone this repository and import into Android Studio
 ```
@@ -11,14 +9,12 @@ git clone git@github.com:qhuydo/18clc_10_doan.git
 ```
 
 ## Developers
----
 
 This project is maintained by:
 - [HaTheHien](https://github.com/HaTheHien)
 - [qhuydo](https://github.com/qhuydo)
 	
 ## Project info
----
 
 ### Group 10
 | # | ID       | Name            |

@@ -3,18 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/page_photo"
+        android:contentDescription="@string/photo_title"
         android:enabled="true"
         android:icon="@drawable/selector_photo"
         android:title="@string/photo_title" />
 
     <item
-        android:enabled="true"
         android:id="@+id/page_people"
+        android:contentDescription="@string/people_title"
+        android:enabled="true"
         android:icon="@drawable/selector_face"
         android:title="@string/people_title" />
     <item
-        android:enabled="true"
         android:id="@+id/page_album"
+        android:contentDescription="@string/album_title"
+        android:enabled="true"
         android:icon="@drawable/selector_photo_album"
         android:title="@string/album_title" />
+    <item
+        android:id="@+id/placeholder"
+        android:title="" />
 </menu>

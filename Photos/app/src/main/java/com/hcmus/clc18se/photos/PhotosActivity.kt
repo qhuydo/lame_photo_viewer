@@ -11,7 +11,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.snackbar.Snackbar
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
 
 
@@ -37,6 +39,9 @@ class PhotosActivity : AppCompatActivity() {
 
         setUpActionBar()
         setUpNavigation()
+        binding.fab.setOnClickListener {
+            Snackbar.make(it, "Hello", Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     private fun setUpActionBar() {
@@ -69,9 +74,13 @@ class PhotosActivity : AppCompatActivity() {
             ) {
                 supportActionBar?.show()
                 binding.bottomNav.visibility = View.VISIBLE
+                binding.bottomAppBar.performShow()
+                binding.fab.show()
             } else {
                 supportActionBar?.hide()
                 binding.bottomNav.visibility = View.GONE
+                binding.bottomAppBar.performHide()
+                binding.fab.hide()
 
             }
         }
@@ -86,6 +95,12 @@ class PhotosActivity : AppCompatActivity() {
 
         binding.navView.setupWithNavController(navController)
         binding.bottomNav.setupWithNavController(navController)
+        //binding.bottomAppBar.setupWithNavController(navController)
+//
+//        binding.bottomAppBar.setOnMenuItemClickListener {  menuItem ->
+//            menuItem.onNavDestinationSelected(navController)
+//        }
+
 
     }
 
