@@ -3,11 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/photosFragment">
+    app:startDestination="@id/page_photo">
 
     <fragment
-        android:id="@+id/photosFragment"
+        android:id="@+id/page_album"
+        android:name="com.hcmus.clc18se.photos.AlbumFragment"
+        android:label="Albums" />
+    <fragment
+        android:id="@+id/page_people"
+        android:name="com.hcmus.clc18se.photos.PeopleFragment"
+        android:label="People" />
+    <fragment
+        android:id="@+id/page_photo"
         android:name="com.hcmus.clc18se.photos.PhotosFragment"
-        android:label="PhotosFragment"
-        tools:layout="@layout/fragment_photos" />
+        android:label="Photos" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.hcmus.clc18se.photos.AboutFragment"
+        android:label="AboutFragment" />
 </navigation>

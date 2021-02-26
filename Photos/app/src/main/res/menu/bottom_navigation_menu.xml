@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/page_photo"
+        android:enabled="true"
+        android:icon="@drawable/selector_photo"
+        android:title="@string/photo_title" />
+
+    <item
+        android:enabled="true"
+        android:id="@+id/page_people"
+        android:icon="@drawable/selector_face"
+        android:title="@string/people_title" />
+    <item
+        android:enabled="true"
+        android:id="@+id/page_album"
+        android:icon="@drawable/selector_photo_album"
+        android:title="@string/album_title" />
+</menu>

@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Photos</string>
     <string name="about">About</string>
+    <string name="photo_title">Photo</string>
+    <string name="people_title">People</string>
+    <string name="album_title">Album</string>
+    <string name="empty_album_label">Your album will appear here</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,38 +1,49 @@
 package com.hcmus.clc18se.photos
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
+import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
+
 
 class PhotosActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
 
+    private lateinit var binding: ActivityPhotosBinding
+
+    private lateinit var navHostFragment: NavHostFragment
+
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityPhotosBinding = DataBindingUtil.setContentView(
-                this,
-                R.layout.activity_photos
-        )
+        binding = ActivityPhotosBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        drawerLayout = binding.drawerLayout
+        navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
+        navController = navHostFragment.navController
+
+        setUpActionBar()
+        setUpNavigation()
+    }
+
+    private fun setUpActionBar() {
         val searchActionBar = binding.topAppBar.searchActionBar
         searchActionBar.setOnClickListener {
             Toast.makeText(this, "Hello world", Toast.LENGTH_SHORT).show()
         }
-
-        drawerLayout = binding.drawerLayout
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
-        val navController = navHostFragment.navController
-
-        //NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
-        NavigationUI.setupWithNavController(binding.navView, navController)
         setSupportActionBar(searchActionBar)
 
         searchActionBar.apply {
@@ -42,8 +53,44 @@ class PhotosActivity : AppCompatActivity() {
             setNavigationOnClickListener {
                 onSupportNavigateUp()
             }
-
         }
+    }
+
+    private fun setUpNavigation() {
+        val searchActionBar = binding.topAppBar.searchActionBar
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val bottomBar = binding.bottomNav
+            if (destination.id in arrayOf(
+                            R.id.page_photo,
+                            R.id.page_people,
+                            R.id.page_album
+                    )
+            ) {
+                supportActionBar?.show()
+                binding.bottomNav.visibility = View.VISIBLE
+            } else {
+                supportActionBar?.hide()
+                binding.bottomNav.visibility = View.GONE
+
+            }
+        }
+
+        val appBarConfiguration = AppBarConfiguration(setOf(
+                R.id.page_photo,
+                R.id.page_album,
+                R.id.page_people), drawerLayout)
+
+        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
+        NavigationUI.setupWithNavController(searchActionBar, navController, appBarConfiguration)
+
+        binding.navView.setupWithNavController(navController)
+        binding.bottomNav.setupWithNavController(navController)
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
     }
 
     override fun onSupportNavigateUp(): Boolean {

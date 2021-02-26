@@ -18,7 +18,6 @@ class PhotosFragment : Fragment() {
         val binding: FragmentPhotosBinding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_photos, container, false
         )
-
         return binding.root
     }
 }

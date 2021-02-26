@@ -9,11 +9,13 @@
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <!--        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>-->
+<!--        <item name="android:windowTranslucentStatus">true</item>-->
+        <!--        <item name="android:windowTranslucentNavigation">true</item>-->
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
@@ -22,8 +24,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="TextAppearance.SearchBar"
-        parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
+    <style name="TextAppearance.SearchBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
         <item name="android:textSize">@dimen/search_bar_text_size</item>
     </style>
 
