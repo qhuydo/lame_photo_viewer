@@ -40,6 +40,11 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
+    <style name="Theme.Photos.OutlineButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">?colorPrimary</item>
+        <item name="cornerRadius">4dp</item>
+    </style>
+
 
     <color name="search_bar_background">@color/white</color>
     <dimen name="search_bar_text_size">16dp</dimen>
