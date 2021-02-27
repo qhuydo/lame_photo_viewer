@@ -1,26 +1,19 @@
 package com.hcmus.clc18se.photos
 
-import android.app.UiModeManager
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
+import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
 
 
@@ -37,10 +30,12 @@ class PhotosActivity : AppCompatActivity() {
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
     val appBarConfiguration by lazy {
-        AppBarConfiguration(setOf(
+        AppBarConfiguration(
+            setOf(
                 R.id.page_photo,
                 R.id.page_album,
-                R.id.page_people), drawerLayout
+                R.id.page_people
+            ), drawerLayout
         )
     }
 
@@ -67,9 +62,9 @@ class PhotosActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomAppBarVisibility = destination.id in arrayOf(
-                    R.id.page_photo,
-                    R.id.page_people,
-                    R.id.page_album
+                R.id.page_photo,
+                R.id.page_people,
+                R.id.page_album
             )
             setAppbarVisibility(bottomAppBarVisibility)
         }
@@ -88,7 +83,9 @@ class PhotosActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
+        return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(
+            item
+        )
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -157,5 +154,13 @@ class PhotosActivity : AppCompatActivity() {
 
     private fun regsiterOnChangedPreferenceListener() {
         preferences.registerOnSharedPreferenceChangeListener(preferencesListener)
+    }
+
+    fun onLicenseButtonClick(view: View) {
+        val fragment = LicensesDialogFragment.Builder(this)
+            .setNotices(R.raw.licenses)
+            .build()
+
+        fragment.show(supportFragmentManager, null)
     }
 }

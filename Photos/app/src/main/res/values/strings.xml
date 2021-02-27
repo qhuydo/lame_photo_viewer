@@ -24,5 +24,6 @@
 
     <!-- Navigation Preferences -->
     <string name="bottom_bar_preference_title">Show/Hide bottom bar</string>
+    <string name="licenses">Licenses</string>
 
 </resources>
