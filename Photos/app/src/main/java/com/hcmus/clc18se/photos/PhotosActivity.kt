@@ -4,6 +4,7 @@ import android.app.UiModeManager
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -43,6 +44,9 @@ class PhotosActivity : AppCompatActivity() {
         )
     }
 
+    private var bottomAppBarVisibility: Boolean = true
+    private val bottomAppBarVisibilityKey: String = "bottomAppBarVisibilityKey"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,6 +54,11 @@ class PhotosActivity : AppCompatActivity() {
         configTheme(null)
         setUpBottomAppbar()
         setContentView(binding.root)
+
+        savedInstanceState?.let {
+            bottomAppBarVisibility = it.getBoolean(bottomAppBarVisibilityKey)
+            setAppbarVisibility(bottomAppBarVisibility)
+        }
     }
 
     private fun setUpBottomAppbar() {
@@ -57,18 +66,24 @@ class PhotosActivity : AppCompatActivity() {
         binding.bottomNav.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id in arrayOf(
-                            R.id.page_photo,
-                            R.id.page_people,
-                            R.id.page_album
-                    )
-            ) {
-                binding.bottomAppBar.performShow()
-                binding.fab.show()
-            } else {
-                binding.bottomAppBar.performHide()
-                binding.fab.hide()
-            }
+            bottomAppBarVisibility = destination.id in arrayOf(
+                    R.id.page_photo,
+                    R.id.page_people,
+                    R.id.page_album
+            )
+            setAppbarVisibility(bottomAppBarVisibility)
+        }
+    }
+
+    private fun setAppbarVisibility(visibility: Boolean) {
+        if (visibility) {
+            binding.bottomAppBar.visibility = View.VISIBLE
+            binding.bottomAppBar.performShow()
+            binding.fab.show()
+        } else {
+            //binding.bottomAppBar.performHide()
+            binding.bottomAppBar.visibility = View.GONE
+            binding.fab.hide()
         }
     }
 
@@ -83,6 +98,11 @@ class PhotosActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         configTheme(newConfig.uiMode)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(bottomAppBarVisibilityKey, bottomAppBarVisibility)
     }
 
     /**
@@ -130,15 +150,12 @@ class PhotosActivity : AppCompatActivity() {
         when (key) {
             "app_theme" -> {
                 configTheme(null)
-                finish()
-                startActivity(intent)
+                recreate()
             }
         }
-
     }
 
     private fun regsiterOnChangedPreferenceListener() {
-
         preferences.registerOnSharedPreferenceChangeListener(preferencesListener)
     }
 }
