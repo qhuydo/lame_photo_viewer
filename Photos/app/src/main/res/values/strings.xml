@@ -13,4 +13,16 @@
     <string name="trash">Trash</string>
     <string name="create">Create</string>
     <string name="custom_album_title">Your albums</string>
+
+    <!-- Preference Titles -->
+    <string name="appearance_header">Appearance</string>
+    <string name="navigation_header">Navigation</string>
+
+    <!-- Appearance Preferences -->
+    <string name="theme_title">Theme</string>
+    <string name="color_title">Color</string>
+
+    <!-- Navigation Preferences -->
+    <string name="bottom_bar_preference_title">Show/Hide bottom bar</string>
+
 </resources>

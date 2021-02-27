@@ -29,12 +29,8 @@ class PeopleFragment : Fragment() {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_people, container, false
         )
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         setUpToolBar()
+        return binding.root
     }
 
     private fun setUpToolBar() {

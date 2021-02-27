@@ -21,4 +21,8 @@
         android:id="@+id/aboutFragment"
         android:name="com.hcmus.clc18se.photos.AboutFragment"
         android:label="AboutFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.hcmus.clc18se.photos.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

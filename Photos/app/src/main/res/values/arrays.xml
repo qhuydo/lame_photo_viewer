@@ -1,0 +1,41 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="theme_entries">
+        <item>Use system default</item>
+        <item>White</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="theme_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="bottom_bar_preference_entries">
+        <item>Default</item>
+        <item>Show the bottom bar</item>
+        <item>Hide the bottom bar</item>
+    </string-array>
+
+    <string-array name="bottom_bar_preference_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="color_choices">
+        <item>@color/red_500</item>
+        <item>@color/deep_orange_500</item>
+        <item>@color/amber_500</item>
+        <item>@color/green_500</item>
+        <item>@color/blue_500</item>
+        <item>@color/indigo_500</item>
+        <item>@color/dark_purple_500</item>
+        <item>@color/pink_500</item>
+        <item>@color/brown_500</item>
+        <item>@color/grey_500</item>
+
+    </string-array>
+
+</resources>

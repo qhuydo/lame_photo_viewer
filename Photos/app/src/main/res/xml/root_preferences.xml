@@ -1,0 +1,40 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/appearance_header">
+
+        <ListPreference
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            app:defaultValue="0"
+            app:entries="@array/theme_entries"
+            app:entryValues="@array/theme_values"
+            app:key="app_theme"
+            app:title="@string/theme_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+            android:defaultValue="@color/indigo_500"
+            android:key="app_color"
+            android:title="@string/color_title"
+            app:colorShape="circle"
+            app:colorChoices="@array/color_choices"
+            app:viewSize="large"
+            app:numColumns="5"
+            app:showDialog="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/navigation_header">
+        <ListPreference
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            app:defaultValue="0"
+            app:entries="@array/bottom_bar_preference_entries"
+            app:entryValues="@array/bottom_bar_preference_values"
+            app:key="app_bottom_bar_navigation"
+            app:title="@string/bottom_bar_preference_title"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

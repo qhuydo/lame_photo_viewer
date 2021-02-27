@@ -10,7 +10,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Photos">
-        <activity android:name=".PhotosActivity"
+        <activity
+            android:name=".PhotosActivity"
+            android:configChanges="uiMode"
             android:theme="@style/Theme.Photos.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

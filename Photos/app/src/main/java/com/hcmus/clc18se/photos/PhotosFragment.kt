@@ -29,13 +29,10 @@ class PhotosFragment : Fragment() {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_photos, container, false
         )
+        setUpToolBar()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setUpToolBar()
-    }
 
     private fun setUpToolBar() {
         val photosActivity = activity as PhotosActivity
