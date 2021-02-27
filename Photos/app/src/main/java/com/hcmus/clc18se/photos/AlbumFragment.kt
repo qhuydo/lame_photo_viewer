@@ -48,7 +48,5 @@ class AlbumFragment: Fragment() {
         NavigationUI.setupActionBarWithNavController(photosActivity, navController, appBarConfiguration)
         NavigationUI.setupWithNavController(navigationView, navController)
 
-        binding.bottomNav.setupWithNavController(navController)
-
     }
 }

@@ -39,6 +39,27 @@ class PhotosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(binding.root)
+        setUpBottomAppbar()
+    }
+
+    private fun setUpBottomAppbar() {
+        binding.navView.setupWithNavController(navController)
+        binding.bottomNav.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id in arrayOf(
+                            R.id.page_photo,
+                            R.id.page_people,
+                            R.id.page_album
+                    )
+            ) {
+                binding.bottomAppBar.performShow()
+                binding.fab.show()
+            } else {
+                binding.bottomAppBar.performHide()
+                binding.fab.hide()
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
