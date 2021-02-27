@@ -18,90 +18,27 @@ import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
 
 
 class PhotosActivity : AppCompatActivity() {
-    private lateinit var drawerLayout: DrawerLayout
 
-    private lateinit var binding: ActivityPhotosBinding
+    private val binding by lazy { ActivityPhotosBinding.inflate(layoutInflater) }
 
-    private lateinit var navHostFragment: NavHostFragment
+    private val navHostFragment by lazy { supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment }
 
-    private lateinit var navController: NavController
+    private val navController by lazy { navHostFragment.navController }
+
+    private val drawerLayout by lazy { binding.drawerLayout }
+
+    val appBarConfiguration by lazy {
+        AppBarConfiguration(setOf(
+                R.id.page_photo,
+                R.id.page_album,
+                R.id.page_people), drawerLayout
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityPhotosBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        drawerLayout = binding.drawerLayout
-        navHostFragment =
-                supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
-        navController = navHostFragment.navController
-
-        setUpActionBar()
-        setUpNavigation()
-        binding.fab.setOnClickListener {
-            Snackbar.make(it, "Hello", Snackbar.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun setUpActionBar() {
-        val searchActionBar = binding.topAppBar.searchActionBar
-        searchActionBar.setOnClickListener {
-            Toast.makeText(this, "Hello world", Toast.LENGTH_SHORT).show()
-        }
-        setSupportActionBar(searchActionBar)
-
-        searchActionBar.apply {
-            navigationContentDescription = ""
-
-            setNavigationIcon(R.drawable.ic_outline_menu_24)
-            setNavigationOnClickListener {
-                onSupportNavigateUp()
-            }
-        }
-    }
-
-    private fun setUpNavigation() {
-        val searchActionBar = binding.topAppBar.searchActionBar
-
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            val bottomBar = binding.bottomNav
-            if (destination.id in arrayOf(
-                            R.id.page_photo,
-                            R.id.page_people,
-                            R.id.page_album
-                    )
-            ) {
-                supportActionBar?.show()
-                binding.bottomNav.visibility = View.VISIBLE
-                binding.bottomAppBar.performShow()
-                binding.fab.show()
-            } else {
-                supportActionBar?.hide()
-                binding.bottomNav.visibility = View.GONE
-                binding.bottomAppBar.performHide()
-                binding.fab.hide()
-
-            }
-        }
-
-        val appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.page_photo,
-                R.id.page_album,
-                R.id.page_people), drawerLayout)
-
-        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
-        NavigationUI.setupWithNavController(searchActionBar, navController, appBarConfiguration)
-
-        binding.navView.setupWithNavController(navController)
-        binding.bottomNav.setupWithNavController(navController)
-        //binding.bottomAppBar.setupWithNavController(navController)
-//
-//        binding.bottomAppBar.setOnMenuItemClickListener {  menuItem ->
-//            menuItem.onNavDestinationSelected(navController)
-//        }
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -109,7 +46,6 @@ class PhotosActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = Navigation.findNavController(this, R.id.navHostFragment)
         return NavigationUI.navigateUp(navController, drawerLayout)
     }
 }

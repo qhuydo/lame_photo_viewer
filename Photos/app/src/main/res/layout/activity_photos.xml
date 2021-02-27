@@ -12,64 +12,14 @@
         android:background="?colorSurface"
         android:theme="@style/Theme.Photos">
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/navHostFragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <include
-                android:id="@+id/top_app_bar"
-                layout="@layout/search_bar" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="true"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/navHostFragment"
-                    android:name="androidx.navigation.fragment.NavHostFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:defaultNavHost="true"
-                    app:navGraph="@navigation/navigation"
-                    tools:layout="@layout/fragment_album" />
-
-            </FrameLayout>
-
-            <com.google.android.material.bottomappbar.BottomAppBar
-                android:id="@+id/bottom_app_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:backgroundTint="?colorSurface"
-                app:fabAlignmentMode="end">
-
-                <com.google.android.material.bottomnavigation.BottomNavigationView
-                    android:id="@+id/bottom_nav"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:backgroundTint="@android:color/transparent"
-                    app:elevation="0dp"
-                    app:labelVisibilityMode="labeled"
-                    app:menu="@menu/bottom_navigation_menu" />
-
-            </com.google.android.material.bottomappbar.BottomAppBar>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:contentDescription="@string/create"
-                android:src="@drawable/ic_baseline_add_24"
-                app:layout_anchor="@id/bottom_app_bar"
-                app:layout_anchorGravity="bottom|end"
-                app:useCompatPadding="true" />
-
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/navigation"
+            tools:layout="@layout/fragment_album" />
 
         <!-- This should be the last element in this layout-->
         <com.google.android.material.navigation.NavigationView
