@@ -24,7 +24,20 @@
         <item>2</item>
     </string-array>
 
-    <string-array name="color_choices">
+    <string-array name="color_entries">
+        <item>Red</item>
+        <item>Orange</item>
+        <item>Yellow</item>
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Indigo</item>
+        <item>Purple</item>
+        <item>Pink</item>
+        <item>Brown</item>
+        <item>Grey</item>
+    </string-array>
+
+    <array name="color_choices">
         <item>@color/red_500</item>
         <item>@color/deep_orange_500</item>
         <item>@color/amber_500</item>
@@ -36,6 +49,6 @@
         <item>@color/brown_500</item>
         <item>@color/grey_500</item>
 
-    </string-array>
+    </array>
 
 </resources>

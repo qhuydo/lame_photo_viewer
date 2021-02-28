@@ -16,9 +16,138 @@
             android:theme="@style/Theme.Photos.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
             </intent-filter>
         </activity>
+
+
+        <activity-alias
+            android:name="RED"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_red"
+            android:roundIcon="@mipmap/ic_launcher_red_round"
+            android:targetActivity=".PhotosActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="BLUE"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_blue"
+            android:roundIcon="@mipmap/ic_launcher_blue_round"
+            android:targetActivity=".PhotosActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="ORANGE"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_orange"
+            android:roundIcon="@mipmap/ic_launcher_orange_round"
+            android:targetActivity=".PhotosActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="YELLOW"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_yellow"
+            
+            android:roundIcon="@mipmap/ic_launcher_yellow_round"
+            android:targetActivity=".PhotosActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="GREEN"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_green"
+            
+            android:roundIcon="@mipmap/ic_launcher_green_round"
+            android:targetActivity=".PhotosActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="INDIGO"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_indigo"
+            
+            android:roundIcon="@mipmap/ic_launcher_indigo_round"
+            android:targetActivity=".PhotosActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="PURPLE"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_purple"
+            
+            android:roundIcon="@mipmap/ic_launcher_purple_round"
+            android:targetActivity=".PhotosActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="PINK"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_pink"
+
+            android:roundIcon="@mipmap/ic_launcher_pink_round"
+            android:targetActivity=".PhotosActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="BROWN"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_brown"
+            
+            android:roundIcon="@mipmap/ic_launcher_brown_round"
+            android:targetActivity=".PhotosActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="GREY"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_grey"
+            
+            android:roundIcon="@mipmap/ic_launcher_grey_round"
+            android:targetActivity=".PhotosActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package com.hcmus.clc18se.photos
 
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -31,11 +32,11 @@ class PhotosActivity : AppCompatActivity() {
 
     val appBarConfiguration by lazy {
         AppBarConfiguration(
-            setOf(
-                R.id.page_photo,
-                R.id.page_album,
-                R.id.page_people
-            ), drawerLayout
+                setOf(
+                        R.id.page_photo,
+                        R.id.page_album,
+                        R.id.page_people
+                ), drawerLayout
         )
     }
 
@@ -62,9 +63,9 @@ class PhotosActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomAppBarVisibility = destination.id in arrayOf(
-                R.id.page_photo,
-                R.id.page_people,
-                R.id.page_album
+                    R.id.page_photo,
+                    R.id.page_people,
+                    R.id.page_album
             )
             setAppbarVisibility(bottomAppBarVisibility)
         }
@@ -84,7 +85,7 @@ class PhotosActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(
-            item
+                item
         )
     }
 
@@ -149,6 +150,28 @@ class PhotosActivity : AppCompatActivity() {
                 configTheme(null)
                 recreate()
             }
+            "app_color" -> {
+
+                val COLORS_RESOURCES = listOf(
+                        R.color.red_500 to ICON_COLOR.RED,
+                        R.color.orange_500 to ICON_COLOR.ORANGE,
+                        R.color.amber_500 to ICON_COLOR.YELLOW,
+                        R.color.green_500 to ICON_COLOR.GREEN,
+                        R.color.blue_500 to ICON_COLOR.BLUE,
+                        R.color.indigo_500 to ICON_COLOR.INDIGO,
+                        R.color.purple_500 to ICON_COLOR.PURPLE,
+                        R.color.pink_500 to ICON_COLOR.PINK,
+                        R.color.brown_500 to ICON_COLOR.BROWN,
+                        R.color.grey_500 to ICON_COLOR.GREY,
+                ).map { resources.getInteger(it.first) to it.second }
+
+                val RESOURCE_MAPPER = COLORS_RESOURCES.toMap()
+
+                Timber.d("Color config change")
+                val newColor = preferences.getInt("app_color", R.color.indigo_500)
+                Timber.d("Color RESOURCE_MAPPER[newColor]?: ICON_COLOR.INDIGO")
+                setIcon(packageManager, RESOURCE_MAPPER[newColor]?: ICON_COLOR.INDIGO)
+            }
         }
     }
 
@@ -158,8 +181,8 @@ class PhotosActivity : AppCompatActivity() {
 
     fun onLicenseButtonClick(view: View) {
         val fragment = LicensesDialogFragment.Builder(this)
-            .setNotices(R.raw.licenses)
-            .build()
+                .setNotices(R.raw.licenses)
+                .build()
 
         fragment.show(supportFragmentManager, null)
     }
