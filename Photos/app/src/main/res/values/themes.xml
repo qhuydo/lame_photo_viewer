@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Photos" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Photos.Indigo" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/indigo_500</item>
         <item name="colorPrimaryVariant">@color/indigo_700</item>
         <item name="colorOnPrimary">@color/white</item>
@@ -14,9 +14,72 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
-    <style name="Theme.Photos.NoActionBar" parent="Theme.Photos">
+    <style name="Theme.Photos.Indigo.NoActionBar" parent="Theme.Photos.Indigo">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Photos.Red.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/red_500</item>
+        <item name="colorPrimaryVariant">@color/red_700</item>
+        <item name="colorSecondary">@color/red_500</item>
+        <item name="colorSecondaryVariant">@color/red_700</item>
+    </style>
+
+    <style name="Theme.Photos.Orange.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/orange_500</item>
+        <item name="colorPrimaryVariant">@color/orange_700</item>
+        <item name="colorSecondary">@color/orange_500</item>
+        <item name="colorSecondaryVariant">@color/orange_700</item>
+    </style>
+
+    <style name="Theme.Photos.Yellow.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/amber_500</item>
+        <item name="colorPrimaryVariant">@color/amber_700</item>
+        <item name="colorSecondary">@color/amber_500</item>
+        <item name="colorSecondaryVariant">@color/amber_700</item>
+    </style>
+
+    <style name="Theme.Photos.Green.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/green_500</item>
+        <item name="colorPrimaryVariant">@color/green_700</item>
+        <item name="colorSecondary">@color/green_500</item>
+        <item name="colorSecondaryVariant">@color/green_700</item>
+    </style>
+
+    <style name="Theme.Photos.Blue.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/blue_500</item>
+        <item name="colorPrimaryVariant">@color/blue_700</item>
+        <item name="colorSecondary">@color/blue_500</item>
+        <item name="colorSecondaryVariant">@color/blue_700</item>
+    </style>
+
+    <style name="Theme.Photos.Purple.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/dark_purple_500</item>
+        <item name="colorPrimaryVariant">@color/dark_purple_700</item>
+        <item name="colorSecondary">@color/dark_purple_500</item>
+        <item name="colorSecondaryVariant">@color/dark_purple_700</item>
+    </style>
+
+    <style name="Theme.Photos.Pink.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/pink_500</item>
+        <item name="colorPrimaryVariant">@color/pink_700</item>
+        <item name="colorSecondary">@color/pink_500</item>
+        <item name="colorSecondaryVariant">@color/pink_700</item>
+    </style>
+
+    <style name="Theme.Photos.Brown.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/brown_500</item>
+        <item name="colorPrimaryVariant">@color/brown_700</item>
+        <item name="colorSecondary">@color/brown_500</item>
+        <item name="colorSecondaryVariant">@color/brown_700</item>
+    </style>
+
+    <style name="Theme.Photos.Grey.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/grey_500</item>
+        <item name="colorPrimaryVariant">@color/grey_700</item>
+        <item name="colorSecondary">@color/grey_500</item>
+        <item name="colorSecondaryVariant">@color/grey_700</item>
     </style>
 
     <style name="TextAppearance.SearchBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">

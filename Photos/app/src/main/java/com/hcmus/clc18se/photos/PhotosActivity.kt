@@ -2,7 +2,6 @@ package com.hcmus.clc18se.photos
 
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -40,6 +39,21 @@ class PhotosActivity : AppCompatActivity() {
         )
     }
 
+    val colorThemeMapper by lazy {
+        listOf(
+                R.color.red_500 to R.style.Theme_Photos_Red_NoActionBar,
+                R.color.orange_500 to R.style.Theme_Photos_Orange_NoActionBar,
+                R.color.amber_500 to R.style.Theme_Photos_Yellow_NoActionBar,
+                R.color.green_500 to R.style.Theme_Photos_Green_NoActionBar,
+                R.color.blue_500 to R.style.Theme_Photos_Blue_NoActionBar,
+                R.color.indigo_500 to R.style.Theme_Photos_Indigo_NoActionBar,
+                R.color.purple_500 to R.style.Theme_Photos_Purple_NoActionBar,
+                R.color.pink_500 to R.style.Theme_Photos_Pink_NoActionBar,
+                R.color.brown_500 to R.style.Theme_Photos_Brown_NoActionBar,
+                R.color.grey_500 to R.style.Theme_Photos_Grey_NoActionBar
+        ).map { resources.getInteger(it.first) to it.second }.toMap()
+    }
+
     private var bottomAppBarVisibility: Boolean = true
     private val bottomAppBarVisibilityKey: String = "bottomAppBarVisibilityKey"
 
@@ -47,7 +61,8 @@ class PhotosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         regsiterOnChangedPreferenceListener()
-        configTheme(null)
+        configTheme()
+        configColor()
         setUpBottomAppbar()
         setContentView(binding.root)
 
@@ -103,11 +118,19 @@ class PhotosActivity : AppCompatActivity() {
         outState.putBoolean(bottomAppBarVisibilityKey, bottomAppBarVisibility)
     }
 
+    private fun configColor() {
+        Timber.d("Config color")
+        val currentColor = preferences.getInt("app_color", R.color.indigo_500)
+        val theme = colorThemeMapper[currentColor] ?: R.style.Theme_Photos_Indigo_NoActionBar
+        Timber.d("Color $theme")
+        setTheme(theme)
+    }
+
     /**
      * Config the system theme
      * @param uiMode: new configuration mode, use null when no the fun did not called in onConfigurationChanged
      */
-    private fun configTheme(uiMode: Int?) {
+    private fun configTheme(uiMode: Int? = null) {
         val USE_DEFAULT = 0
         val WHITE = 1
         val DARK = 2
@@ -163,14 +186,14 @@ class PhotosActivity : AppCompatActivity() {
                         R.color.pink_500 to ICON_COLOR.PINK,
                         R.color.brown_500 to ICON_COLOR.BROWN,
                         R.color.grey_500 to ICON_COLOR.GREY,
-                ).map { resources.getInteger(it.first) to it.second }
+                ).map { resources.getInteger(it.first) to it.second }.toMap()
 
                 val RESOURCE_MAPPER = COLORS_RESOURCES.toMap()
 
                 Timber.d("Color config change")
                 val newColor = preferences.getInt("app_color", R.color.indigo_500)
-                Timber.d("Color RESOURCE_MAPPER[newColor]?: ICON_COLOR.INDIGO")
-                setIcon(packageManager, RESOURCE_MAPPER[newColor]?: ICON_COLOR.INDIGO)
+                Timber.d("Color ${RESOURCE_MAPPER[newColor] ?: ICON_COLOR.INDIGO}")
+                setIcon(packageManager, RESOURCE_MAPPER[newColor] ?: ICON_COLOR.INDIGO)
             }
         }
     }

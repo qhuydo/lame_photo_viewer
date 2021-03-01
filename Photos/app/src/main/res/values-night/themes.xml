@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Photos" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Photos.Indigo" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="backgroundColor">@color/dark_grey</item>
         <item name="colorSurface">@color/dark_grey</item>
         <item name="colorOnBackground">@color/white</item>
@@ -10,8 +10,8 @@
         <item name="colorPrimaryVariant">@color/indigo_A700</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorSecondary">@color/indigo_A200</item>
+        <item name="colorSecondaryVariant">@color/indigo_A200</item>
         <item name="colorOnSecondary">@color/black</item>
 
         <item name="android:windowBackground">@drawable/splash_background</item>
@@ -23,4 +23,59 @@
     </style>
 
     <color name="search_bar_background">@color/cardview_dark_background</color>
+
+
+    <style name="Theme.Photos.Red.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/red_A200</item>
+        <item name="colorPrimaryVariant">@color/red_A700</item>
+        <item name="colorSecondary">@color/red_A200</item>
+        <item name="colorSecondaryVariant">@color/red_A200</item>
+    </style>
+
+    <style name="Theme.Photos.Orange.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/orange_A200</item>
+        <item name="colorPrimaryVariant">@color/orange_A700</item>
+        <item name="colorSecondary">@color/orange_A200</item>
+        <item name="colorSecondaryVariant">@color/orange_A200</item>
+    </style>
+
+    <style name="Theme.Photos.Yellow.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/amber_A200</item>
+        <item name="colorPrimaryVariant">@color/amber_A700</item>
+        <item name="colorSecondary">@color/amber_A200</item>
+        <item name="colorSecondaryVariant">@color/amber_A200</item>
+    </style>
+
+    <style name="Theme.Photos.Green.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/green_A200</item>
+        <item name="colorPrimaryVariant">@color/green_A700</item>
+        <item name="colorSecondary">@color/green_A200</item>
+        <item name="colorSecondaryVariant">@color/green_A200</item>
+    </style>
+
+    <style name="Theme.Photos.Blue.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/blue_A200</item>
+        <item name="colorPrimaryVariant">@color/blue_A700</item>
+        <item name="colorSecondary">@color/blue_A200</item>
+        <item name="colorSecondaryVariant">@color/blue_A200</item>
+    </style>
+
+    <style name="Theme.Photos.Purple.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/dark_purple_A200</item>
+        <item name="colorPrimaryVariant">@color/dark_purple_A700</item>
+        <item name="colorSecondary">@color/dark_purple_A200</item>
+        <item name="colorSecondaryVariant">@color/dark_purple_A200</item>
+    </style>
+
+    <style name="Theme.Photos.Pink.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
+        <item name="colorPrimary">@color/pink_A200</item>
+        <item name="colorPrimaryVariant">@color/pink_A700</item>
+        <item name="colorSecondary">@color/pink_A200</item>
+        <item name="colorSecondaryVariant">@color/pink_A200</item>
+    </style>
+
+    <style name="Theme.Photos.Brown.NoActionBar." parent="Theme.Photos.Indigo.NoActionBar"/>
+
+    <style name="Theme.Photos.Grey.NoActionBar." parent="Theme.Photos.Indigo.NoActionBar"/>
+
 </resources>

@@ -1,6 +1,7 @@
 package com.hcmus.clc18se.photos
 
 import android.app.Application
+import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,7 +11,7 @@ import timber.log.Timber
  * Override application to setup Timber log instance
  */
 @Suppress("unused")
-class PhotosApplication: Application() {
+class PhotosApplication : Application() {
 
     private val applicationScope = CoroutineScope(Dispatchers.Default)
 
