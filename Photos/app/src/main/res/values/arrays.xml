@@ -12,6 +12,18 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="language_entries">
+        <item>Default</item>
+        <item>English</item>
+        <item>Vietnam</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="bottom_bar_preference_entries">
         <item>Default</item>
         <item>Show the bottom bar</item>

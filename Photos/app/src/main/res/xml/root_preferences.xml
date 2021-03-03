@@ -12,6 +12,15 @@
             app:key="app_theme"
             app:title="@string/theme_title"
             app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            app:defaultValue="0"
+            app:entries="@array/language_entries"
+            app:entryValues="@array/language_values"
+            app:key="app_language"
+            app:title="@string/language_title"
+            app:useSimpleSummaryProvider="true" />
 
         <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
             android:defaultValue="@color/indigo_500"
