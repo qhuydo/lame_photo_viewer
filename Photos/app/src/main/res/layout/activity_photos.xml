@@ -18,12 +18,13 @@
             android:layout_height="match_parent"
             app:defaultNavHost="true"
             app:navGraph="@navigation/navigation"
-            tools:layout="@layout/fragment_album" />
-
+            tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"
+            tools:layout="@layout/fragment_photos" />
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent">
 
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottom_app_bar"
@@ -38,7 +39,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
-                    android:backgroundTint="@android:color/transparent"
                     app:elevation="0dp"
                     app:labelVisibilityMode="labeled"
                     app:menu="@menu/bottom_navigation_menu" />
@@ -55,6 +55,51 @@
                 app:layout_anchor="@id/bottom_app_bar"
                 app:layout_anchorGravity="bottom|end"
                 app:useCompatPadding="true" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_add_picture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_baseline_add_a_photo_24"
+                app:fabSize="mini"
+                android:onClick="fab_add_picture"
+                app:layout_anchor="@id/fab"
+                app:layout_anchorGravity="top|center"
+                app:rippleColor="@color/white"
+                app:useCompatPadding="true"
+                tools:ignore="ContentDescription"
+                tools:translationY="-20dp" />
+
+            <!--            <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+            <!--                android:id="@+id/fab_add_video"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_centerInParent="true"-->
+            <!--                android:src="@drawable/ic_outline_video_call_24"-->
+            <!--                app:fabSize="mini"-->
+            <!--                app:layout_anchor="@id/fab_add_picture"-->
+            <!--                app:layout_anchorGravity="top|center"-->
+            <!--                app:rippleColor="@color/white"-->
+            <!--                app:useCompatPadding="true"-->
+            <!--                tools:ignore="ContentDescription"-->
+            <!--                tools:translationY="-20dp" />-->
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_add_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_outline_video_call_24"
+                app:fabSize="mini"
+                app:layout_anchor="@id/fab_add_picture"
+                app:layout_anchorGravity="top|center"
+                app:rippleColor="@color/white"
+                android:onClick="fab_add_video"
+                app:useCompatPadding="true"
+                tools:ignore="ContentDescription"
+                tools:translationY="-20dp" />
+
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <!-- This should be the last element in this layout-->

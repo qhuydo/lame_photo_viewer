@@ -1,7 +1,8 @@
-package com.hcmus.clc18se.photos
+package com.hcmus.clc18se.photos.fragments
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
+import com.hcmus.clc18se.photos.R
 
 class SettingsFragment : PreferenceFragmentCompat() {
 

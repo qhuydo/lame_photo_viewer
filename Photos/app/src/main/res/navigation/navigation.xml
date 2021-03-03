@@ -7,22 +7,22 @@
 
     <fragment
         android:id="@+id/page_album"
-        android:name="com.hcmus.clc18se.photos.AlbumFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.AlbumFragment"
         android:label="Albums" />
     <fragment
         android:id="@+id/page_people"
-        android:name="com.hcmus.clc18se.photos.PeopleFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.PeopleFragment"
         android:label="People" />
     <fragment
         android:id="@+id/page_photo"
-        android:name="com.hcmus.clc18se.photos.PhotosFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.PhotosFragment"
         android:label="Photos" />
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="com.hcmus.clc18se.photos.AboutFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.AboutFragment"
         android:label="AboutFragment" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.hcmus.clc18se.photos.SettingsFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.SettingsFragment"
         android:label="SettingsFragment" />
 </navigation>

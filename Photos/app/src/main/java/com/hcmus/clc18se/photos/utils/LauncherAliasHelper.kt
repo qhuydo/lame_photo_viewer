@@ -1,10 +1,11 @@
 @file:Suppress("unused")
 
-package com.hcmus.clc18se.photos
+package com.hcmus.clc18se.photos.utils
 
 import android.content.ComponentName
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
+import com.hcmus.clc18se.photos.BuildConfig
 
 enum class ICON_COLOR {
     RED,

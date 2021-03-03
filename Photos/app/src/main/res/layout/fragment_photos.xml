@@ -42,6 +42,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
+<!--                <androidx.recyclerview.widget.RecyclerView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_margin="16dp"-->
+<!--                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintHorizontal_bias="0.906"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:spanCount="2"-->
+<!--                    tools:itemCount="10"-->
+<!--                    tools:layout_editor_absoluteY="-38dp"-->
+<!--                    tools:listitem="@layout/list_image_item" />-->
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </FrameLayout>

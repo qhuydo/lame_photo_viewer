@@ -1,7 +1,7 @@
 package com.hcmus.clc18se.photos
 
 import android.app.Application
-import android.content.Context
+import android.content.res.Resources
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +21,6 @@ class PhotosApplication : Application() {
     }
 
     private fun delayInit() {
-
         // Init Timber instance
         applicationScope.launch {
             Timber.plant(Timber.DebugTree())

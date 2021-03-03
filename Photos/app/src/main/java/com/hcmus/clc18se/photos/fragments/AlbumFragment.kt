@@ -1,4 +1,4 @@
-package com.hcmus.clc18se.photos
+package com.hcmus.clc18se.photos.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -11,11 +11,13 @@ import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.navigation.NavigationView
-import com.hcmus.clc18se.photos.databinding.FragmentAboutBinding
+import com.hcmus.clc18se.photos.PhotosActivity
+import com.hcmus.clc18se.photos.R
+import com.hcmus.clc18se.photos.databinding.FragmentAlbumBinding
 
-class AboutFragment: Fragment() {
+class AlbumFragment: Fragment() {
     private lateinit var fragmentActivity: FragmentActivity
-    private lateinit var binding: FragmentAboutBinding
+    private lateinit var binding: FragmentAlbumBinding
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -24,17 +26,18 @@ class AboutFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_about, container, false
+                inflater, R.layout.fragment_album, container, false
         )
         setUpToolBar()
         return binding.root
     }
 
+
     private fun setUpToolBar() {
         val photosActivity = activity as PhotosActivity
         val navigationView: NavigationView = photosActivity.findViewById(R.id.navView)
 
-        val toolbar = binding.toolBar
+        val toolbar = binding.topAppBar.searchActionBar
         photosActivity.setSupportActionBar(toolbar)
 
         val navController = NavHostFragment.findNavController(this)

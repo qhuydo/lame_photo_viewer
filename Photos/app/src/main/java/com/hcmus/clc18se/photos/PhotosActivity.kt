@@ -1,8 +1,10 @@
 package com.hcmus.clc18se.photos
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +15,9 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
+import com.hcmus.clc18se.photos.utils.ICON_COLOR
+import com.hcmus.clc18se.photos.utils.ViewAnimation
+import com.hcmus.clc18se.photos.utils.setIcon
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
 
@@ -29,13 +34,15 @@ class PhotosActivity : AppCompatActivity() {
 
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
+    private var isFabRotate = false
+
     val appBarConfiguration by lazy {
         AppBarConfiguration(
-                setOf(
-                        R.id.page_photo,
-                        R.id.page_album,
-                        R.id.page_people
-                ), drawerLayout
+            setOf(
+                R.id.page_photo,
+                R.id.page_album,
+                R.id.page_people
+            ), drawerLayout
         )
     }
 
@@ -54,6 +61,14 @@ class PhotosActivity : AppCompatActivity() {
         ).map { resources.getInteger(it.first) to it.second }.toMap()
     }
 
+    private fun configColor() {
+        Timber.d("Config color")
+        val currentColor = preferences.getInt("app_color", R.color.indigo_500)
+        val theme = colorThemeMapper[currentColor] ?: R.style.Theme_Photos_Indigo_NoActionBar
+        Timber.d("Color $theme")
+        setTheme(theme)
+    }
+
     private var bottomAppBarVisibility: Boolean = true
     private val bottomAppBarVisibilityKey: String = "bottomAppBarVisibilityKey"
 
@@ -61,8 +76,8 @@ class PhotosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         regsiterOnChangedPreferenceListener()
-        configTheme()
         configColor()
+        configTheme()
         setUpBottomAppbar()
         setContentView(binding.root)
 
@@ -78,11 +93,26 @@ class PhotosActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomAppBarVisibility = destination.id in arrayOf(
-                    R.id.page_photo,
-                    R.id.page_people,
-                    R.id.page_album
+                R.id.page_photo,
+                R.id.page_people,
+                R.id.page_album
             )
             setAppbarVisibility(bottomAppBarVisibility)
+        }
+
+        ViewAnimation.init(binding.fabAddPicture)
+        ViewAnimation.init(binding.fabAddVideo)
+
+
+        binding.fab.setOnClickListener {
+            isFabRotate = ViewAnimation.rotateFab(it, !isFabRotate)
+            if (isFabRotate) {
+                ViewAnimation.showIn(binding.fabAddPicture)
+                ViewAnimation.showIn(binding.fabAddVideo)
+            } else {
+                ViewAnimation.showOut(binding.fabAddPicture)
+                ViewAnimation.showOut(binding.fabAddVideo)
+            }
         }
     }
 
@@ -90,17 +120,24 @@ class PhotosActivity : AppCompatActivity() {
         if (visibility) {
             binding.bottomAppBar.visibility = View.VISIBLE
             binding.bottomAppBar.performShow()
-            binding.fab.show()
+            binding.fab.visibility = View.VISIBLE
+            binding.fabAddPicture.visibility = View.VISIBLE
+            binding.fabAddVideo.visibility = View.VISIBLE
         } else {
             //binding.bottomAppBar.performHide()
             binding.bottomAppBar.visibility = View.GONE
-            binding.fab.hide()
+            binding.fab.visibility = View.GONE
+            binding.fabAddPicture.visibility = View.GONE
+            binding.fabAddVideo.visibility = View.GONE
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(
-                item
+        return NavigationUI.onNavDestinationSelected(
+            item,
+            navController
+        ) || super.onOptionsItemSelected(
+            item
         )
     }
 
@@ -118,13 +155,6 @@ class PhotosActivity : AppCompatActivity() {
         outState.putBoolean(bottomAppBarVisibilityKey, bottomAppBarVisibility)
     }
 
-    private fun configColor() {
-        Timber.d("Config color")
-        val currentColor = preferences.getInt("app_color", R.color.indigo_500)
-        val theme = colorThemeMapper[currentColor] ?: R.style.Theme_Photos_Indigo_NoActionBar
-        Timber.d("Color $theme")
-        setTheme(theme)
-    }
 
     /**
      * Config the system theme
@@ -167,7 +197,7 @@ class PhotosActivity : AppCompatActivity() {
     }
 
 
-    val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+    private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             "app_theme" -> {
                 configTheme(null)
@@ -176,16 +206,16 @@ class PhotosActivity : AppCompatActivity() {
             "app_color" -> {
 
                 val COLORS_RESOURCES = listOf(
-                        R.color.red_500 to ICON_COLOR.RED,
-                        R.color.orange_500 to ICON_COLOR.ORANGE,
-                        R.color.amber_500 to ICON_COLOR.YELLOW,
-                        R.color.green_500 to ICON_COLOR.GREEN,
-                        R.color.blue_500 to ICON_COLOR.BLUE,
-                        R.color.indigo_500 to ICON_COLOR.INDIGO,
-                        R.color.purple_500 to ICON_COLOR.PURPLE,
-                        R.color.pink_500 to ICON_COLOR.PINK,
-                        R.color.brown_500 to ICON_COLOR.BROWN,
-                        R.color.grey_500 to ICON_COLOR.GREY,
+                    R.color.red_500 to ICON_COLOR.RED,
+                    R.color.orange_500 to ICON_COLOR.ORANGE,
+                    R.color.amber_500 to ICON_COLOR.YELLOW,
+                    R.color.green_500 to ICON_COLOR.GREEN,
+                    R.color.blue_500 to ICON_COLOR.BLUE,
+                    R.color.indigo_500 to ICON_COLOR.INDIGO,
+                    R.color.purple_500 to ICON_COLOR.PURPLE,
+                    R.color.pink_500 to ICON_COLOR.PINK,
+                    R.color.brown_500 to ICON_COLOR.BROWN,
+                    R.color.grey_500 to ICON_COLOR.GREY,
                 ).map { resources.getInteger(it.first) to it.second }.toMap()
 
                 val RESOURCE_MAPPER = COLORS_RESOURCES.toMap()
@@ -204,9 +234,27 @@ class PhotosActivity : AppCompatActivity() {
 
     fun onLicenseButtonClick(view: View) {
         val fragment = LicensesDialogFragment.Builder(this)
-                .setNotices(R.raw.licenses)
-                .build()
+            .setNotices(R.raw.licenses)
+            .build()
 
         fragment.show(supportFragmentManager, null)
+    }
+
+    val REQUEST_IMAGE_CAPTURE = 1
+    val REQUEST_VIDEO_CAPTURE = 1
+
+    fun fab_add_video(view: View) {
+        Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->
+            takeVideoIntent.resolveActivity(packageManager)?.also {
+                startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
+            }
+        }
+    }
+
+    fun fab_add_picture(view: View) {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        }
     }
 }

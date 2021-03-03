@@ -7,14 +7,23 @@
         <item name="colorSecondary">@color/indigo_500</item>
         <item name="colorSecondaryVariant">@color/indigo_700</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="android:statusBarColor">@color/white</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="o_mr1">true</item>
-        <item name="android:navigationBarColor">@color/white</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
+
+        <item name="customSurfaceColor">@color/indigo_100</item>
+        <item name="customIcon">@drawable/ic_launcher_indigo_foreground</item>
     </style>
 
     <style name="Theme.Photos.Indigo.NoActionBar" parent="Theme.Photos.Indigo">
+        <item name="android:windowLightStatusBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -24,6 +33,8 @@
         <item name="colorPrimaryVariant">@color/red_700</item>
         <item name="colorSecondary">@color/red_500</item>
         <item name="colorSecondaryVariant">@color/red_700</item>
+        <item name="customSurfaceColor">@color/red_100</item>
+        <item name="customIcon">@drawable/ic_launcher_red_foreground</item>
     </style>
 
     <style name="Theme.Photos.Orange.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
@@ -31,6 +42,8 @@
         <item name="colorPrimaryVariant">@color/orange_700</item>
         <item name="colorSecondary">@color/orange_500</item>
         <item name="colorSecondaryVariant">@color/orange_700</item>
+        <item name="customSurfaceColor">@color/orange_100</item>
+        <item name="customIcon">@drawable/ic_launcher_orange_foreground</item>
     </style>
 
     <style name="Theme.Photos.Yellow.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
@@ -38,6 +51,8 @@
         <item name="colorPrimaryVariant">@color/amber_700</item>
         <item name="colorSecondary">@color/amber_500</item>
         <item name="colorSecondaryVariant">@color/amber_700</item>
+        <item name="customSurfaceColor">@color/amber_100</item>
+        <item name="customIcon">@drawable/ic_launcher_yellow_foreground</item>
     </style>
 
     <style name="Theme.Photos.Green.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
@@ -45,6 +60,8 @@
         <item name="colorPrimaryVariant">@color/green_700</item>
         <item name="colorSecondary">@color/green_500</item>
         <item name="colorSecondaryVariant">@color/green_700</item>
+        <item name="customSurfaceColor">@color/green_100</item>
+        <item name="customIcon">@drawable/ic_launcher_green_foreground</item>
     </style>
 
     <style name="Theme.Photos.Blue.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
@@ -52,6 +69,8 @@
         <item name="colorPrimaryVariant">@color/blue_700</item>
         <item name="colorSecondary">@color/blue_500</item>
         <item name="colorSecondaryVariant">@color/blue_700</item>
+        <item name="customSurfaceColor">@color/blue_100</item>
+        <item name="customIcon">@drawable/ic_launcher_blue_foreground</item>
     </style>
 
     <style name="Theme.Photos.Purple.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
@@ -59,6 +78,8 @@
         <item name="colorPrimaryVariant">@color/dark_purple_700</item>
         <item name="colorSecondary">@color/dark_purple_500</item>
         <item name="colorSecondaryVariant">@color/dark_purple_700</item>
+        <item name="customSurfaceColor">@color/dark_purple_100</item>
+        <item name="customIcon">@drawable/ic_launcher_purple_foreground</item>
     </style>
 
     <style name="Theme.Photos.Pink.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
@@ -66,6 +87,8 @@
         <item name="colorPrimaryVariant">@color/pink_700</item>
         <item name="colorSecondary">@color/pink_500</item>
         <item name="colorSecondaryVariant">@color/pink_700</item>
+        <item name="customSurfaceColor">@color/pink_100</item>
+        <item name="customIcon">@drawable/ic_launcher_pink_foreground</item>
     </style>
 
     <style name="Theme.Photos.Brown.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
@@ -73,6 +96,8 @@
         <item name="colorPrimaryVariant">@color/brown_700</item>
         <item name="colorSecondary">@color/brown_500</item>
         <item name="colorSecondaryVariant">@color/brown_700</item>
+        <item name="customSurfaceColor">@color/brown_100</item>
+        <item name="customIcon">@drawable/ic_launcher_brown_foreground</item>
     </style>
 
     <style name="Theme.Photos.Grey.NoActionBar" parent="Theme.Photos.Indigo.NoActionBar">
@@ -80,6 +105,8 @@
         <item name="colorPrimaryVariant">@color/grey_700</item>
         <item name="colorSecondary">@color/grey_500</item>
         <item name="colorSecondaryVariant">@color/grey_700</item>
+        <item name="customSurfaceColor">@color/grey_100</item>
+        <item name="customIcon">@drawable/ic_launcher_grey_foreground</item>
     </style>
 
     <style name="TextAppearance.SearchBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
