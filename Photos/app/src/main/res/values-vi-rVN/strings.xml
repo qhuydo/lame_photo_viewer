@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about">Thông tin</string>
+    <string name="photo_title">Ảnh</string>
+    <string name="people_title">Mọi người</string>
+    <string name="album_title">Album</string>
+    <string name="empty_album_label">Album của bạn sẽ xuất hiện ở đây</string>
+    <string name="settings_title">Cài đặt</string>
+    <string name="secret_photos_title">Ảnh riêng tư</string>
+    <string name="favorites_title">Yêu thích</string>
+    <string name="hello_blank_fragment">Trang trống</string>
+    <string name="file_explorer_title">Lưu trữ</string>
+    <string name="trash">Thùng rác</string>
+    <string name="create">Tạo</string>
+    <string name="custom_album_title">Album của bạn</string>
+    <string name="color_title">Màu sắc</string>
+    <string name="bottom_bar_preference_title">Hiện/ẩn thanh phía dưới</string>
+    <string name="licenses">Bản quyền</string>
+    <string name="theme_title">Chủ đề</string>
+    <string name="navigation_header">Thanh đường dẫn</string>
+    <string name="appearance_header">Hiện</string>
+    <string name="app_name">Xem ảnh chưa hoàn thiện</string>
+</resources>
