@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos
 
+import  java.util.Locale
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
@@ -148,6 +149,29 @@ class PhotosActivity : AppCompatActivity() {
             options[DARK] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             else -> Timber.w("No theme has been set")
         }
+
+    }
+
+    private fun configLanguage(uiMode: Int? = null) {
+        val DEFAULT = 0
+        val ENGLISH = 1
+        val VIETNAM = 2
+        val languageOptions = preferences.getString("app_language", "")
+        val options = resources.getStringArray(R.array.language_values)
+
+        when (languageOptions) {
+            options[DEFAULT] -> {
+
+            }
+            options[ENGLISH] -> {
+                
+            }
+            options[VIETNAM] -> {
+
+            }
+            else -> Timber.w("No language has been set")
+        }
+        recreate()
 
     }
 
