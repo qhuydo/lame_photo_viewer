@@ -22,5 +22,6 @@
         android:title="@string/album_title" />
     <item
         android:id="@+id/placeholder"
+        android:enabled="false"
         android:title="" />
 </menu>

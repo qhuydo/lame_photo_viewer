@@ -1,7 +1,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/appearance_header">
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/appearance_header">
 
         <ListPreference
             android:negativeButtonText="@null"
@@ -9,15 +11,18 @@
             app:defaultValue="0"
             app:entries="@array/theme_entries"
             app:entryValues="@array/theme_values"
+            app:iconSpaceReserved="false"
             app:key="app_theme"
             app:title="@string/theme_title"
             app:useSimpleSummaryProvider="true" />
+
         <ListPreference
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             app:defaultValue="0"
             app:entries="@array/language_entries"
             app:entryValues="@array/language_values"
+            app:iconSpaceReserved="false"
             app:key="app_language"
             app:title="@string/language_title"
             app:useSimpleSummaryProvider="true" />
@@ -26,21 +31,25 @@
             android:defaultValue="@color/indigo_500"
             android:key="app_color"
             android:title="@string/color_title"
-            app:colorShape="circle"
             app:colorChoices="@array/color_choices"
-            app:viewSize="large"
+            app:colorShape="circle"
+            app:iconSpaceReserved="false"
             app:numColumns="5"
-            app:showDialog="true" />
+            app:showDialog="true"
+            app:viewSize="large" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/navigation_header">
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/navigation_header">
         <ListPreference
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             app:defaultValue="0"
             app:entries="@array/bottom_bar_preference_entries"
             app:entryValues="@array/bottom_bar_preference_values"
+            app:iconSpaceReserved="false"
             app:key="app_bottom_bar_navigation"
             app:title="@string/bottom_bar_preference_title"
             app:useSimpleSummaryProvider="true" />

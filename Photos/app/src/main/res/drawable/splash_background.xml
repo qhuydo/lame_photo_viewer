@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android"
-    android:opacity="opaque"
-    >
-    <item android:drawable="?customSurfaceColor"
-        android:id="@+id/splash_color" />
-    <item android:drawable="?customIcon"
+    android:opacity="opaque">
+    <item
+        android:id="@+id/splash_color"
+        android:drawable="?colorSurface" />
+    <item
         android:id="@+id/splash_icon"
-            android:gravity="center"/>
+        android:drawable="?customIcon"
+        android:gravity="center" />
 
 </layer-list>

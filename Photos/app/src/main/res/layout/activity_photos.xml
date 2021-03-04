@@ -14,20 +14,22 @@
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
             android:background="?colorSurface">
 
             <include
-                android:id="@+id/top_app_bar"
-                android:visibility="visible"
-                layout="@layout/search_bar" />
+                android:id="@+id/top_app_bar2"
+                layout="@layout/top_app_bar"
+                android:visibility="gone"
+                tools:visibility="gone" />
 
             <include
-                android:id="@+id/top_app_bar2"
-                android:visibility="gone"
-                layout="@layout/top_app_bar" />
+                android:id="@+id/top_app_bar"
+                layout="@layout/search_bar"
+                android:visibility="visible"
+                tools:visibility="visible" />
 
             <FrameLayout
+                android:id="@+id/nav_host_outer_frame"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="true"
@@ -58,6 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
+                    android:translationX="-16dp"
                     app:elevation="0dp"
                     app:labelVisibilityMode="labeled"
                     app:menu="@menu/bottom_navigation_menu" />

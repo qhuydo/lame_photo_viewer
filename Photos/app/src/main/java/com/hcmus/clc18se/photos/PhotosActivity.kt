@@ -3,6 +3,7 @@ package com.hcmus.clc18se.photos
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MenuItem
@@ -38,17 +39,9 @@ class PhotosActivity : AppCompatActivity() {
 
     private var isFabRotate = false
 
-    val appBarConfiguration by lazy {
-        AppBarConfiguration(
-                setOf(
-                        R.id.page_photo,
-                        R.id.page_album,
-                        R.id.page_people
-                ), drawerLayout
-        )
-    }
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
-    val colorThemeMapper by lazy {
+    private val colorThemeMapper by lazy {
         listOf(
                 R.color.red_500 to R.style.Theme_Photos_Red_NoActionBar,
                 R.color.orange_500 to R.style.Theme_Photos_Orange_NoActionBar,
@@ -67,8 +60,8 @@ class PhotosActivity : AppCompatActivity() {
         Timber.d("Config color")
         val currentColor = preferences.getInt("app_color", R.color.indigo_500)
         val theme = colorThemeMapper[currentColor] ?: R.style.Theme_Photos_Indigo_NoActionBar
-        Timber.d("Color $theme")
-        setTheme(theme)
+        Timber.d("Theme ${resources?.getResourceEntryName(theme)}")
+        applicationContext.setTheme(theme)
     }
 
     private var bottomAppBarVisibility: Boolean = true
@@ -77,19 +70,34 @@ class PhotosActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        regsiterOnChangedPreferenceListener()
+        appBarConfiguration = AppBarConfiguration(
+                setOf(R.id.page_photo, R.id.page_album, R.id.page_people), drawerLayout
+        )
+        Timber.d("On Create called")
+        Timber.d("----------------")
+
         configColor()
         configTheme()
-        setUpNavigationBar()
-        setContentView(binding.root)
+        regsiterOnChangedPreferenceListener()
 
+        setContentView(binding.root)
         savedInstanceState?.let {
             bottomAppBarVisibility = it.getBoolean(bottomAppBarVisibilityKey)
-            setAppbarVisibility(bottomAppBarVisibility)
+            //setAppbarVisibility(bottomAppBarVisibility)
         }
+        setUpNavigationBar()
     }
 
     private fun setUpNavigationBar() {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            bottomAppBarVisibility = destination.id in arrayOf(
+                    R.id.page_photo,
+                    R.id.page_people,
+                    R.id.page_album
+            )
+            setAppbarVisibility(bottomAppBarVisibility)
+        }
+
         val toolbar = binding.topAppBar.searchActionBar
         setSupportActionBar(toolbar)
         toolbar.setupWithNavController(navController, appBarConfiguration)
@@ -103,18 +111,8 @@ class PhotosActivity : AppCompatActivity() {
         binding.navView.setupWithNavController(navController)
         binding.bottomNav.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            bottomAppBarVisibility = destination.id in arrayOf(
-                    R.id.page_photo,
-                    R.id.page_people,
-                    R.id.page_album
-            )
-            setAppbarVisibility(bottomAppBarVisibility)
-        }
-
         ViewAnimation.init(binding.fabAddPicture)
         ViewAnimation.init(binding.fabAddVideo)
-
 
         binding.fab.setOnClickListener {
             isFabRotate = ViewAnimation.rotateFab(it, !isFabRotate)
@@ -126,26 +124,36 @@ class PhotosActivity : AppCompatActivity() {
                 ViewAnimation.showOut(binding.fabAddVideo)
             }
         }
+        configColor()
+
     }
 
     private fun setAppbarVisibility(visibility: Boolean) {
+        Timber.d("setAppbarVisibility(visibility: $visibility)")
+
         if (visibility) {
             binding.apply {
-                topAppBar.appBarLayout.visibility = View.VISIBLE
                 topAppBar2.fragmentAppBarLayout.visibility = View.GONE
+
+                topAppBar.appBarLayout.visibility = View.VISIBLE
+                topAppBar.searchActionBar.visibility = View.VISIBLE
+                topAppBar.appBarLayout.bringToFront()
+
                 bottomAppBar.visibility = View.VISIBLE
 
-                bottomAppBar.performShow()
+                //bottomAppBar.performShow()
                 fab.visibility = View.VISIBLE
-                fabAddPicture.visibility = View.VISIBLE
-                fabAddVideo.visibility = View.VISIBLE
             }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         } else {
             binding.apply {
+
                 topAppBar.appBarLayout.visibility = View.GONE
+
                 topAppBar2.fragmentAppBarLayout.visibility = View.VISIBLE
+                topAppBar2.fragmentAppBarLayout.bringToFront()
+
                 bottomAppBar.visibility = View.GONE
 
                 fab.visibility = View.GONE
@@ -180,7 +188,6 @@ class PhotosActivity : AppCompatActivity() {
         outState.putBoolean(bottomAppBarVisibilityKey, bottomAppBarVisibility)
     }
 
-
     /**
      * Config the system theme
      * @param uiMode: new configuration mode, use null when no the fun did not called in onConfigurationChanged
@@ -193,11 +200,12 @@ class PhotosActivity : AppCompatActivity() {
         val themeOptions = preferences.getString("app_theme", "")
         val options = resources.getStringArray(R.array.theme_values)
 
+        Timber.d("configTheme(uiMode: $uiMode)")
+        Timber.d("themeOptions $themeOptions")
         when (themeOptions) {
             options[USE_DEFAULT] -> {
                 Timber.d("Config default theme: ${uiMode ?: resources.configuration.uiMode}")
                 configDefaultTheme(uiMode ?: resources.configuration.uiMode)
-                uiMode?.let { recreate() }
             }
             options[WHITE] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             options[DARK] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -264,7 +272,7 @@ class PhotosActivity : AppCompatActivity() {
                         R.color.pink_500 to ICON_COLOR.PINK,
                         R.color.brown_500 to ICON_COLOR.BROWN,
                         R.color.grey_500 to ICON_COLOR.GREY,
-                ).map { resources.getInteger(it.first) to it.second }.toMap()
+                ).map { resources.getInteger(it.first) to it.second }
 
                 val RESOURCE_MAPPER = COLORS_RESOURCES.toMap()
 
