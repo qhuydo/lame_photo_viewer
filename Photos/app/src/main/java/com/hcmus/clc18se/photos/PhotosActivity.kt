@@ -1,7 +1,6 @@
 package com.hcmus.clc18se.photos
 
 import android.content.Intent
-import  java.util.Locale
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
@@ -14,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
@@ -40,11 +40,11 @@ class PhotosActivity : AppCompatActivity() {
 
     val appBarConfiguration by lazy {
         AppBarConfiguration(
-            setOf(
-                R.id.page_photo,
-                R.id.page_album,
-                R.id.page_people
-            ), drawerLayout
+                setOf(
+                        R.id.page_photo,
+                        R.id.page_album,
+                        R.id.page_people
+                ), drawerLayout
         )
     }
 
@@ -80,7 +80,7 @@ class PhotosActivity : AppCompatActivity() {
         regsiterOnChangedPreferenceListener()
         configColor()
         configTheme()
-        setUpBottomAppbar()
+        setUpNavigationBar()
         setContentView(binding.root)
 
         savedInstanceState?.let {
@@ -89,15 +89,25 @@ class PhotosActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUpBottomAppbar() {
+    private fun setUpNavigationBar() {
+        val toolbar = binding.topAppBar.searchActionBar
+        setSupportActionBar(toolbar)
+        toolbar.setupWithNavController(navController, appBarConfiguration)
+
+        val toolbar2 = binding.topAppBar2.fragmentToolBar
+        setSupportActionBar(toolbar2)
+        toolbar2.setupWithNavController(navController, appBarConfiguration)
+
+        setupActionBarWithNavController(navController, appBarConfiguration)
+
         binding.navView.setupWithNavController(navController)
         binding.bottomNav.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomAppBarVisibility = destination.id in arrayOf(
-                R.id.page_photo,
-                R.id.page_people,
-                R.id.page_album
+                    R.id.page_photo,
+                    R.id.page_people,
+                    R.id.page_album
             )
             setAppbarVisibility(bottomAppBarVisibility)
         }
@@ -120,19 +130,28 @@ class PhotosActivity : AppCompatActivity() {
 
     private fun setAppbarVisibility(visibility: Boolean) {
         if (visibility) {
-            binding.bottomAppBar.visibility = View.VISIBLE
-            binding.bottomAppBar.performShow()
-            binding.fab.visibility = View.VISIBLE
-            binding.fabAddPicture.visibility = View.VISIBLE
-            binding.fabAddVideo.visibility = View.VISIBLE
+            binding.apply {
+                topAppBar.appBarLayout.visibility = View.VISIBLE
+                topAppBar2.fragmentAppBarLayout.visibility = View.GONE
+                bottomAppBar.visibility = View.VISIBLE
+
+                bottomAppBar.performShow()
+                fab.visibility = View.VISIBLE
+                fabAddPicture.visibility = View.VISIBLE
+                fabAddVideo.visibility = View.VISIBLE
+            }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         } else {
-            //binding.bottomAppBar.performHide()
-            binding.bottomAppBar.visibility = View.GONE
-            binding.fab.visibility = View.GONE
-            binding.fabAddPicture.visibility = View.GONE
-            binding.fabAddVideo.visibility = View.GONE
+            binding.apply {
+                topAppBar.appBarLayout.visibility = View.GONE
+                topAppBar2.fragmentAppBarLayout.visibility = View.VISIBLE
+                bottomAppBar.visibility = View.GONE
+
+                fab.visibility = View.GONE
+                fabAddPicture.visibility = View.GONE
+                fabAddVideo.visibility = View.GONE
+            }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
@@ -140,10 +159,10 @@ class PhotosActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return NavigationUI.onNavDestinationSelected(
-            item,
-            navController
+                item,
+                navController
         ) || super.onOptionsItemSelected(
-            item
+                item
         )
     }
 
@@ -235,16 +254,16 @@ class PhotosActivity : AppCompatActivity() {
             "app_color" -> {
 
                 val COLORS_RESOURCES = listOf(
-                    R.color.red_500 to ICON_COLOR.RED,
-                    R.color.orange_500 to ICON_COLOR.ORANGE,
-                    R.color.amber_500 to ICON_COLOR.YELLOW,
-                    R.color.green_500 to ICON_COLOR.GREEN,
-                    R.color.blue_500 to ICON_COLOR.BLUE,
-                    R.color.indigo_500 to ICON_COLOR.INDIGO,
-                    R.color.purple_500 to ICON_COLOR.PURPLE,
-                    R.color.pink_500 to ICON_COLOR.PINK,
-                    R.color.brown_500 to ICON_COLOR.BROWN,
-                    R.color.grey_500 to ICON_COLOR.GREY,
+                        R.color.red_500 to ICON_COLOR.RED,
+                        R.color.orange_500 to ICON_COLOR.ORANGE,
+                        R.color.amber_500 to ICON_COLOR.YELLOW,
+                        R.color.green_500 to ICON_COLOR.GREEN,
+                        R.color.blue_500 to ICON_COLOR.BLUE,
+                        R.color.indigo_500 to ICON_COLOR.INDIGO,
+                        R.color.purple_500 to ICON_COLOR.PURPLE,
+                        R.color.pink_500 to ICON_COLOR.PINK,
+                        R.color.brown_500 to ICON_COLOR.BROWN,
+                        R.color.grey_500 to ICON_COLOR.GREY,
                 ).map { resources.getInteger(it.first) to it.second }.toMap()
 
                 val RESOURCE_MAPPER = COLORS_RESOURCES.toMap()
@@ -263,8 +282,8 @@ class PhotosActivity : AppCompatActivity() {
 
     fun onLicenseButtonClick(view: View) {
         val fragment = LicensesDialogFragment.Builder(this)
-            .setNotices(R.raw.licenses)
-            .build()
+                .setNotices(R.raw.licenses)
+                .build()
 
         fragment.show(supportFragmentManager, null)
     }

@@ -11,27 +11,38 @@
         android:layout_height="match_parent"
         android:background="?colorSurface">
 
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/navHostFragment"
-                android:name="androidx.navigation.fragment.NavHostFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:defaultNavHost="true"
-                app:navGraph="@navigation/navigation"
-                tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"
-                tools:layout="@layout/fragment_photos" />
-
-        </androidx.core.widget.NestedScrollView>
-
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent">
+
+            android:background="?colorSurface">
+
+            <include
+                android:id="@+id/top_app_bar"
+                android:visibility="visible"
+                layout="@layout/search_bar" />
+
+            <include
+                android:id="@+id/top_app_bar2"
+                android:visibility="gone"
+                layout="@layout/top_app_bar" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/navHostFragment"
+                    android:name="androidx.navigation.fragment.NavHostFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:defaultNavHost="true"
+                    app:navGraph="@navigation/navigation"
+                    tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"
+                    tools:layout="@layout/fragment_photos" />
+            </FrameLayout>
 
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottom_app_bar"
