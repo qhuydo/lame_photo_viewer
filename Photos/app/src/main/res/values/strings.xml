@@ -26,5 +26,14 @@
     <string name="bottom_bar_preference_title">Show/Hide bottom bar</string>
     <string name="licenses">Licenses</string>
     <string name="language_title">Language</string>
+    <string name="share_title">Share</string>
+    <string name="edit_title">Edit</string>
+    <string name="delete_title">Delete</string>
+    <string name="bright">bright</string>
+    <string name="add_icon">add_icon</string>
+    <string name="draw">Draw</string>
+    <string name="filter">Filter</string>
+    <string name="drop">Drop</string>
+    <string name="changeColor">Color</string>
 
 </resources>

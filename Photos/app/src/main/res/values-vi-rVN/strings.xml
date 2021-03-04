@@ -21,4 +21,13 @@
     <string name="appearance_header">Hiển thị</string>
     <string name="app_name">App ảnh siêu cute dễ thương của Hiển</string>
     <string name="language_title">Ngôn ngữ</string>
+    <string name="share_title">Chia sẽ</string>
+    <string name="edit_title">Thay đổi</string>
+    <string name="delete_title">Xóa</string>
+    <string name="bright">Độ sáng</string>
+    <string name="add_icon">Thêm icon</string>
+    <string name="draw">Vẽ</string>
+    <string name="filter">Lọc</string>
+    <string name="drop">Cắt</string>
+    <string name="changeColor">Màu sắc</string>
 </resources>

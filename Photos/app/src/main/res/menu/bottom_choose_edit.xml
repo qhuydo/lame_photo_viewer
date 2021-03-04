@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bright"
+        android:icon="@drawable/ic_baseline_brightness_7_24"
+        android:title="@string/bright" />
+    <item
+        android:id="@+id/add_icon"
+        android:icon="@drawable/ic_baseline_add_a_photo_24"
+        android:title="@string/add_icon" />
+    <item
+        android:id="@+id/draw"
+        android:icon="@drawable/ic_baseline_color_lens_24"
+        android:title="@string/draw" />
+    <item
+        android:id="@+id/filter"
+        android:icon="@drawable/ic_baseline_filter_alt_24"
+        android:title="@string/filter" />
+    <item
+        android:id="@+id/drop"
+        android:title="@string/drop" />
+    <item
+        android:id="@+id/changeColor"
+        android:icon="@drawable/ic_baseline_invert_colors_24"
+        android:title="@string/changeColor" />
+</menu>
