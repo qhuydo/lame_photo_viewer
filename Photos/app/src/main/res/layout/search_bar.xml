@@ -21,6 +21,8 @@
                 android:id="@+id/search_action_bar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/search_bar_height"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar"
                 android:background="@drawable/search_bar_selected_background">
 
                 <!-- These following views are just for prototype purpose

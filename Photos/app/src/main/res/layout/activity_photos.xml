@@ -11,15 +11,22 @@
         android:layout_height="match_parent"
         android:background="?colorSurface">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/navHostFragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/navigation"
-            tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"
-            tools:layout="@layout/fragment_photos" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/navHostFragment"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:defaultNavHost="true"
+                app:navGraph="@navigation/navigation"
+                tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"
+                tools:layout="@layout/fragment_photos" />
+
+        </androidx.core.widget.NestedScrollView>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
@@ -32,7 +39,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:backgroundTint="?colorSurface"
-                app:fabAlignmentMode="end">
+                app:fabAlignmentMode="end"
+                app:hideOnScroll="true">
 
                 <com.google.android.material.bottomnavigation.BottomNavigationView
                     android:id="@+id/bottom_nav"
@@ -61,9 +69,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:onClick="fab_add_picture"
                 android:src="@drawable/ic_baseline_add_a_photo_24"
                 app:fabSize="mini"
-                android:onClick="fab_add_picture"
                 app:layout_anchor="@id/fab"
                 app:layout_anchorGravity="top|center"
                 app:rippleColor="@color/white"
@@ -71,31 +79,17 @@
                 tools:ignore="ContentDescription"
                 tools:translationY="-20dp" />
 
-            <!--            <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-            <!--                android:id="@+id/fab_add_video"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_centerInParent="true"-->
-            <!--                android:src="@drawable/ic_outline_video_call_24"-->
-            <!--                app:fabSize="mini"-->
-            <!--                app:layout_anchor="@id/fab_add_picture"-->
-            <!--                app:layout_anchorGravity="top|center"-->
-            <!--                app:rippleColor="@color/white"-->
-            <!--                app:useCompatPadding="true"-->
-            <!--                tools:ignore="ContentDescription"-->
-            <!--                tools:translationY="-20dp" />-->
-
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:onClick="fab_add_video"
                 android:src="@drawable/ic_outline_video_call_24"
                 app:fabSize="mini"
                 app:layout_anchor="@id/fab_add_picture"
                 app:layout_anchorGravity="top|center"
                 app:rippleColor="@color/white"
-                android:onClick="fab_add_video"
                 app:useCompatPadding="true"
                 tools:ignore="ContentDescription"
                 tools:translationY="-20dp" />

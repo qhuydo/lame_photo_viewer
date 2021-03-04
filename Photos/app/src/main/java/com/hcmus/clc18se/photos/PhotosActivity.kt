@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -124,12 +125,16 @@ class PhotosActivity : AppCompatActivity() {
             binding.fab.visibility = View.VISIBLE
             binding.fabAddPicture.visibility = View.VISIBLE
             binding.fabAddVideo.visibility = View.VISIBLE
+
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         } else {
             //binding.bottomAppBar.performHide()
             binding.bottomAppBar.visibility = View.GONE
             binding.fab.visibility = View.GONE
             binding.fabAddPicture.visibility = View.GONE
             binding.fabAddVideo.visibility = View.GONE
+
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
     }
 

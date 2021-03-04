@@ -4,23 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:id="@+id/photo_group">
-        <item
-            android:id="@+id/page_photo"
-            android:icon="@drawable/selector_photo"
-            android:title="@string/photo_title" />
+<!--    <group android:id="@+id/photo_group">-->
+<!--        <item-->
+<!--            android:id="@+id/page_photo"-->
+<!--            android:icon="@drawable/selector_photo"-->
+<!--            android:title="@string/photo_title" />-->
 
-        <item
-            android:id="@+id/page_people"
-            android:icon="@drawable/selector_face"
-            android:title="@string/people_title" />
+<!--        <item-->
+<!--            android:id="@+id/page_people"-->
+<!--            android:icon="@drawable/selector_face"-->
+<!--            android:title="@string/people_title" />-->
 
-        <item
-            android:id="@+id/page_album"
-            android:enabled="true"
-            android:icon="@drawable/selector_photo_album"
-            android:title="@string/album_title" />
-    </group>
+<!--        <item-->
+<!--            android:id="@+id/page_album"-->
+<!--            android:enabled="true"-->
+<!--            android:icon="@drawable/selector_photo_album"-->
+<!--            android:title="@string/album_title" />-->
+<!--    </group>-->
 
     <group android:id="@+id/photo_extra_group">
 
