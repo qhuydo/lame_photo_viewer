@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about">このアプリについて</string>
+    <string name="photo_title">写真</string>
+    <string name="people_title">人</string>
+    <string name="album_title">アルバム</string>
+    <string name="empty_album_label">あなたのバルバムや写真がここに表示します。</string>
+    <string name="hello_blank_fragment">空きページ</string>
+    <string name="settings_title">設定</string>
+    <string name="secret_photos_title">秘密のフォトアルバム</string>
+    <string name="favorites_title">お気に入り</string>
+    <string name="file_explorer_title">ファイルエクスプローラー</string>
+    <string name="trash">ゴミ箱</string>
+    <string name="create">作成</string>
+    <string name="custom_album_title">アルバム</string>
+    <string name="navigation_header">ナビゲーション</string>
+    <string name="theme_title">テーマ</string>
+    <string name="color_title">テーマカラー</string>
+    <string name="licenses">ライセンス</string>
+    <string name="language_title">言語</string>
+    <string name="bottom_bar_preference_title">ボタムバーの設定</string>
+    <string name="appearance_header">外見</string>
+    <string name="app_name">Lame Photo viewer</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="theme_entries">
+        <item>Mặc định</item>
+        <item>Trắng</item>
+        <item>Đen</item>
+    </string-array>
+
+    <string-array name="language_entries">
+        <item>Mặc định</item>
+        <item>Tiếng Anh</item>
+        <item>Tiếng Nhật</item>
+        <item>Tiếng Việt</item>
+    </string-array>
+</resources>

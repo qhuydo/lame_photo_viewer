@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="theme_entries">
+        <item>システムデフォルト</item>
+        <item>ライト</item>
+        <item>ダーク</item>
+    </string-array>
+
+    <string-array name="language_entries">
+        <item>デフォルト</item>
+        <item>英語</item>
+        <item>日本語</item>
+        <item>ベトナム語</item>
+    </string-array>
+</resources>

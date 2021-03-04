@@ -18,7 +18,7 @@
     <string name="licenses">Bản quyền</string>
     <string name="theme_title">Chủ đề</string>
     <string name="navigation_header">Thanh đường dẫn</string>
-    <string name="appearance_header">Hiện</string>
-    <string name="app_name">Xem ảnh chưa hoàn thiện</string>
+    <string name="appearance_header">Hiển thị</string>
+    <string name="app_name">App ảnh siêu cute dễ thương của Hiển</string>
     <string name="language_title">Ngôn ngữ</string>
 </resources>
