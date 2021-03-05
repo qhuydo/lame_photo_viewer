@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="photosViewModel"
+            type="com.hcmus.clc18se.photos.viewModels.PhotosViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <include layout="@layout/photo_list_upper_bar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/photo_list_recycler_view"
+            app:samplePhotoListItem="@{photosViewModel.photoList}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/photo_list_item" />
+
+    </LinearLayout>
+</layout>
