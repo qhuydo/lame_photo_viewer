@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/editor_red"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:value="0"
+        android:valueFrom="-255.0"
+        android:valueTo="255.0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/editor_green"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:value="0"
+        android:valueFrom="-255.0"
+        android:valueTo="255.0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editor_red" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/editor_blue"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:value="0"
+        android:valueFrom="-255.0"
+        android:valueTo="255.0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editor_green" />
+
+    <TextView
+        android:id="@+id/rLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="R"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/editor_red"
+        app:layout_constraintEnd_toStartOf="@+id/editor_red"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/gLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="G"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/editor_green"
+        app:layout_constraintEnd_toStartOf="@+id/editor_green"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editor_green" />
+
+    <TextView
+        android:id="@+id/bLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="B"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/editor_blue"
+        app:layout_constraintEnd_toStartOf="@+id/editor_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editor_blue" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
