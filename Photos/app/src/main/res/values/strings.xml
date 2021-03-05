@@ -33,7 +33,7 @@
     <string name="add_icon">add_icon</string>
     <string name="draw">Draw</string>
     <string name="filter">Filter</string>
-    <string name="drop">Drop</string>
+    <string name="crop">Crop</string>
     <string name="changeColor">Color</string>
 
 </resources>

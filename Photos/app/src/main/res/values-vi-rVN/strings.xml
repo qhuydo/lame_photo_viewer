@@ -28,6 +28,6 @@
     <string name="add_icon">Thêm icon</string>
     <string name="draw">Vẽ</string>
     <string name="filter">Lọc</string>
-    <string name="drop">Cắt</string>
+    <string name="crop">Cắt</string>
     <string name="changeColor">Màu sắc</string>
 </resources>
