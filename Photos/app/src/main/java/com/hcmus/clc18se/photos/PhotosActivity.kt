@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -17,6 +18,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
+import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
 import com.hcmus.clc18se.photos.utils.ICON_COLOR
 import com.hcmus.clc18se.photos.utils.ViewAnimation
@@ -44,22 +46,26 @@ class PhotosActivity : AppCompatActivity() {
     private val colorThemeMapper by lazy {
         listOf(
                 R.color.red_500 to R.style.Theme_Photos_Red_NoActionBar,
-                R.color.orange_500 to R.style.Theme_Photos_Orange_NoActionBar,
+                R.color.deep_orange_500 to R.style.Theme_Photos_Orange_NoActionBar,
                 R.color.amber_500 to R.style.Theme_Photos_Yellow_NoActionBar,
                 R.color.green_500 to R.style.Theme_Photos_Green_NoActionBar,
                 R.color.blue_500 to R.style.Theme_Photos_Blue_NoActionBar,
                 R.color.indigo_500 to R.style.Theme_Photos_Indigo_NoActionBar,
-                R.color.purple_500 to R.style.Theme_Photos_Purple_NoActionBar,
+                R.color.dark_purple_500 to R.style.Theme_Photos_Purple_NoActionBar,
                 R.color.pink_500 to R.style.Theme_Photos_Pink_NoActionBar,
                 R.color.brown_500 to R.style.Theme_Photos_Brown_NoActionBar,
                 R.color.grey_500 to R.style.Theme_Photos_Grey_NoActionBar
         ).map { resources.getInteger(it.first) to it.second }.toMap()
     }
 
+    private fun getCurrentThemeColor(): Int {
+        val currentColor = preferences.getInt("app_color", R.color.indigo_500)
+        return colorThemeMapper[currentColor] ?: R.style.Theme_Photos_Indigo_NoActionBar
+    }
+
     private fun configColor() {
         Timber.d("Config color")
-        val currentColor = preferences.getInt("app_color", R.color.indigo_500)
-        val theme = colorThemeMapper[currentColor] ?: R.style.Theme_Photos_Indigo_NoActionBar
+        val theme = getCurrentThemeColor()
         Timber.d("Theme ${resources?.getResourceEntryName(theme)}")
         setTheme(theme)
     }
@@ -126,34 +132,42 @@ class PhotosActivity : AppCompatActivity() {
             }
         }
         configColor()
-
     }
 
     private fun setAppbarVisibility(visibility: Boolean) {
         Timber.d("setAppbarVisibility(visibility: $visibility)")
 
+        val layoutParams = binding.navHostOuterFrame.layoutParams as CoordinatorLayout.LayoutParams
+
         if (visibility) {
             binding.apply {
-                topAppBar2.fragmentAppBarLayout.visibility = View.GONE
 
                 topAppBar.appBarLayout.visibility = View.VISIBLE
                 topAppBar.searchActionBar.visibility = View.VISIBLE
                 topAppBar.appBarLayout.bringToFront()
 
+                topAppBar2.fragmentAppBarLayout.visibility = View.GONE
+
                 bottomAppBar.visibility = View.VISIBLE
 
                 //bottomAppBar.performShow()
                 fab.visibility = View.VISIBLE
+                
+                layoutParams.behavior = AppBarLayout.ScrollingViewBehavior()
+                mainCoordinatorLayout.requestLayout()
             }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         } else {
             binding.apply {
+                layoutParams.behavior = null
+                mainCoordinatorLayout.requestLayout()
 
                 topAppBar.appBarLayout.visibility = View.GONE
+                topAppBar.searchActionBar.visibility = View.GONE
 
                 topAppBar2.fragmentAppBarLayout.visibility = View.VISIBLE
-                topAppBar2.fragmentAppBarLayout.bringToFront()
+                topAppBar2.fragmentToolBar.bringToFront()
 
                 bottomAppBar.visibility = View.GONE
 
@@ -264,12 +278,12 @@ class PhotosActivity : AppCompatActivity() {
 
                 val COLORS_RESOURCES = listOf(
                         R.color.red_500 to ICON_COLOR.RED,
-                        R.color.orange_500 to ICON_COLOR.ORANGE,
+                        R.color.deep_orange_500 to ICON_COLOR.ORANGE,
                         R.color.amber_500 to ICON_COLOR.YELLOW,
                         R.color.green_500 to ICON_COLOR.GREEN,
                         R.color.blue_500 to ICON_COLOR.BLUE,
                         R.color.indigo_500 to ICON_COLOR.INDIGO,
-                        R.color.purple_500 to ICON_COLOR.PURPLE,
+                        R.color.dark_purple_500 to ICON_COLOR.PURPLE,
                         R.color.pink_500 to ICON_COLOR.PINK,
                         R.color.brown_500 to ICON_COLOR.BROWN,
                         R.color.grey_500 to ICON_COLOR.GREY,
@@ -292,6 +306,7 @@ class PhotosActivity : AppCompatActivity() {
     fun onLicenseButtonClick(view: View) {
         val fragment = LicensesDialogFragment.Builder(this)
                 .setNotices(R.raw.licenses)
+                .setThemeResourceId(getCurrentThemeColor())
                 .build()
 
         fragment.show(supportFragmentManager, null)

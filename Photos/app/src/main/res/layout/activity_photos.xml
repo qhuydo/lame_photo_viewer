@@ -12,6 +12,7 @@
         android:background="?colorSurface">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/main_coordinator_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="?colorSurface">
@@ -35,7 +36,7 @@
                 android:clipToPadding="true"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <androidx.fragment.app.FragmentContainerView
+                <fragment
                     android:id="@+id/navHostFragment"
                     android:name="androidx.navigation.fragment.NavHostFragment"
                     android:layout_width="match_parent"
@@ -60,7 +61,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
-                    android:translationX="-16dp"
                     app:elevation="0dp"
                     app:labelVisibilityMode="labeled"
                     app:menu="@menu/bottom_navigation_menu" />

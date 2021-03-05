@@ -28,5 +28,6 @@ class EditPhotoActivity : AppCompatActivity() {
             }
             else -> Timber.w("No edit option has been set")
         }
+        return false
     }
 }
