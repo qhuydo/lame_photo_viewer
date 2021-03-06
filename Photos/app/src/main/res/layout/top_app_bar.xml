@@ -4,7 +4,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/fragment_app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/search_bar_height"
         android:background="?colorSurface"
         android:fitsSystemWindows="true">
 

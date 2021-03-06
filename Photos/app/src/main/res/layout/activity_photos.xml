@@ -20,32 +20,23 @@
             <include
                 android:id="@+id/top_app_bar2"
                 layout="@layout/top_app_bar"
-                android:visibility="gone"
-                tools:visibility="gone" />
+                android:visibility="gone" />
 
             <include
                 android:id="@+id/top_app_bar"
                 layout="@layout/search_bar"
-                android:visibility="visible"
-                tools:visibility="visible" />
+                android:visibility="visible" />
 
-            <FrameLayout
-                android:id="@+id/nav_host_outer_frame"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/navHostFragment"
+                android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clipToPadding="true"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-                <fragment
-                    android:id="@+id/navHostFragment"
-                    android:name="androidx.navigation.fragment.NavHostFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:defaultNavHost="true"
-                    app:navGraph="@navigation/navigation"
-                    tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"
-                    tools:layout="@layout/fragment_photos" />
-            </FrameLayout>
+                app:defaultNavHost="true"
+                android:layout_marginTop="@dimen/search_bar_height"
+                app:navGraph="@navigation/navigation"
+                tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"
+                tools:layout="@layout/fragment_photos" />
 
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottom_app_bar"
@@ -62,6 +53,7 @@
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     app:elevation="0dp"
+                    android:translationX="-12dp"
                     app:labelVisibilityMode="labeled"
                     app:menu="@menu/bottom_navigation_menu" />
 
@@ -116,7 +108,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:clipToPadding="false"
+            android:clipToPadding="true"
             app:headerLayout="@layout/nav_header"
             app:menu="@menu/navdrawer_menu" />
 
