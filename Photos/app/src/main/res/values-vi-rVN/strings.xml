@@ -30,4 +30,12 @@
     <string name="filter">Lọc</string>
     <string name="crop">Cắt</string>
     <string name="changeColor">Màu sắc</string>
+    <string name="original">Cơ bản</string>
+    <string name="none">Không có</string>
+    <string name="lighten">Sáng</string>
+    <string name="dark">Tối</string>
+    <string name="misty">Sương</string>
+    <string name="colorise">Colorise</string>
+    <string name="pencilDraw">Vẽ</string>
+    <string name="blur">Mờ</string>
 </resources>
