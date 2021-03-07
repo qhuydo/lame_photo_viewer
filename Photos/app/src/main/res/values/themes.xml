@@ -16,6 +16,8 @@
 
         <item name="customSurfaceColor">@color/indigo_100</item>
         <item name="customIcon">@drawable/ic_launcher_indigo_foreground</item>
+
+        <item name="dividerColor">@color/divider_dark</item>
     </style>
 
     <style name="Theme.Photos.Indigo.NoActionBar" parent="Theme.Photos.Indigo">
@@ -128,6 +130,11 @@
     <style name="Theme.Photos.OutlineButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="strokeColor">?colorPrimary</item>
         <item name="cornerRadius">4dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Nav" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
     </style>
 
     <color name="search_bar_background">@color/white</color>

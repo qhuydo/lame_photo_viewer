@@ -19,8 +19,9 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:statusBarColor">@color/dark_grey</item>
         <item name="android:navigationBarColor">@color/dark_grey</item>
-
         <item name="customSurfaceColor">?colorSurface</item>
+
+        <item name="dividerColor">@color/divider_dark</item>
     </style>
 
     <color name="search_bar_background">@color/cardview_dark_background</color>

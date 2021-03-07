@@ -32,8 +32,8 @@
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:defaultNavHost="true"
                 android:layout_marginTop="@dimen/search_bar_height"
+                app:defaultNavHost="true"
                 app:navGraph="@navigation/navigation"
                 tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"
                 tools:layout="@layout/fragment_photos" />
@@ -52,8 +52,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
-                    app:elevation="0dp"
                     android:translationX="-12dp"
+                    app:elevation="0dp"
                     app:labelVisibilityMode="labeled"
                     app:menu="@menu/bottom_navigation_menu" />
 
@@ -108,6 +108,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="start"
+            android:background="?colorSurface"
             android:clipToPadding="true"
             app:headerLayout="@layout/nav_header"
             app:menu="@menu/navdrawer_menu" />

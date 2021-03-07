@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -20,6 +19,7 @@
             tools:text="Sort type" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/list_view_btn"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -15,14 +15,16 @@ class PhotosViewModel : ViewModel() {
 
     init {
         _photoList.value = listOf(
-                SamplePhoto(R.mipmap.ic_launcher, "Blue.png"),
-                SamplePhoto(R.mipmap.ic_launcher, "Blue.png"),
-                SamplePhoto(R.mipmap.ic_launcher, "Blue.png"),
-                SamplePhoto(R.mipmap.ic_launcher, "Blue.png"),
-                SamplePhoto(R.mipmap.ic_launcher, "Blue.png"),
-                SamplePhoto(R.mipmap.ic_launcher, "Blue.png"),
-                SamplePhoto(R.mipmap.ic_launcher, "Blue.png"),
-                SamplePhoto(R.mipmap.ic_launcher, "Blue.png")
+                SamplePhoto(R.drawable.ic_launcher_sample, "ic_launcher_sample.png"),
+                SamplePhoto(R.drawable.ic_launcher_red_sample, "ic_launcher_red_sample.png"),
+                SamplePhoto(R.drawable.ic_launcher_orange_sample, "ic_launcher_orange_sample.png"),
+                SamplePhoto(R.drawable.ic_launcher_yellow_sample, "ic_launcher_yellow_sample.png"),
+                SamplePhoto(R.drawable.ic_launcher_green_sample, "ic_launcher_green_sample.png"),
+                SamplePhoto(R.drawable.ic_launcher_blue_sample, "ic_launcher_blue_sample.png"),
+                SamplePhoto(R.drawable.ic_launcher_indigo_sample, "ic_launcher_indigo_sample.png"),
+                SamplePhoto(R.drawable.ic_launcher_purple_sample, "ic_launcher_purple_sample.png"),
+                SamplePhoto(R.drawable.ic_launcher_pink_sample, "ic_launcher_pink_sample.png"),
+                SamplePhoto(R.drawable.ic_launcher_brown_sample, "ic_launcher_brown_sample.png"),
         )
     }
 }

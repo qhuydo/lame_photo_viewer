@@ -12,12 +12,15 @@ fun bindSamplePhotoListRecyclerView(recyclerView: RecyclerView, data: List<Sampl
     adapter.submitList(data)
 }
 
+/**
+ * Bind the image binary to the image view from drawable resource id
+ */
 @BindingAdapter("imageFromResId")
 fun bindImage(imgView: ImageView, imgRes: Int?) {
     imgRes?.let {
-//        Glide.with(imgView.context)
-//                .load(imgRes)
-//                .into(imgView)
-        imgView.setImageResource(it)
+        Glide.with(imgView.context)
+                .load(imgRes)
+                .into(imgView)
+        // imgView.setImageResource(it)
     }
 }

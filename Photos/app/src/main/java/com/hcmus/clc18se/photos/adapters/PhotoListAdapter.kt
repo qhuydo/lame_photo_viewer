@@ -2,13 +2,15 @@ package com.hcmus.clc18se.photos.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hcmus.clc18se.photos.data.SamplePhoto
-import com.hcmus.clc18se.photos.databinding.PhotoListItemBinding
+import com.hcmus.clc18se.photos.databinding.ItemPhotoListBinding
+import com.hcmus.clc18se.photos.databinding.ItemPhotoListThumbnailBinding
 
-class PhotoListAdapter :
+class PhotoListAdapter(private val adapterViewType: Int = 0) :
         ListAdapter<SamplePhoto, PhotoListAdapter.ViewHolder>(DiffCallback) {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -16,20 +18,35 @@ class PhotoListAdapter :
         holder.bind(photo)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder.from(parent)
+    override fun getItemViewType(position: Int): Int {
+        return adapterViewType
+    }
 
-    class ViewHolder(private val binding: PhotoListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+            ViewHolder.from(parent, viewType)
+
+    class ViewHolder(private val listBinding: ViewDataBinding) : RecyclerView.ViewHolder(listBinding.root) {
         fun bind(item: SamplePhoto) {
-            binding.apply {
-                photo = item
+            when (listBinding) {
+                is ItemPhotoListBinding -> listBinding.apply {
+                    photo = item
+                }
+                is ItemPhotoListThumbnailBinding -> listBinding.apply {
+                    photo = item
+                }
             }
         }
 
         companion object {
-            fun from(parent: ViewGroup): ViewHolder {
-                return ViewHolder(
-                        PhotoListItemBinding.inflate(LayoutInflater.from(parent.context))
-                )
+            fun from(parent: ViewGroup, viewType: Int): ViewHolder {
+                return when (viewType) {
+                    ITEM_TYPE_LIST -> ViewHolder(
+                            ItemPhotoListBinding.inflate(LayoutInflater.from(parent.context))
+                    )
+                    else -> ViewHolder(
+                            ItemPhotoListThumbnailBinding.inflate(LayoutInflater.from(parent.context))
+                    )
+                }
             }
         }
     }
@@ -42,5 +59,9 @@ class PhotoListAdapter :
         override fun areItemsTheSame(oldItem: SamplePhoto, newItem: SamplePhoto): Boolean {
             return oldItem == newItem
         }
+
     }
 }
+
+const val ITEM_TYPE_LIST = 0
+const val ITEM_TYPE_THUMBNAIL = 1

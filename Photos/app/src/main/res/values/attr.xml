@@ -3,5 +3,7 @@
     <declare-styleable name="Theme.Photos.Indigo">
         <attr name="customSurfaceColor" format="color" />
         <attr name="customIcon" format="reference" />
+        <attr name="dividerColor" format="color" />
     </declare-styleable>
+
 </resources>
