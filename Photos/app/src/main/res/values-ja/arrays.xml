@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="theme_entries">
-        <item>システムデフォルト</item>
+        <item>システムデのフォルト</item>
         <item>ライト</item>
         <item>ダーク</item>
     </string-array>
 
     <string-array name="language_entries">
-        <item>デフォルト</item>
+        <item>システムデのフォルト</item>
         <item>英語</item>
         <item>日本語</item>
         <item>ベトナム語</item>
@@ -18,4 +18,8 @@
         <item>グリッド</item>
     </string-array>
 
+    <string-array name="bottom_bar_preference_entries">
+        <item>表示</item>
+        <item>非表示</item>
+    </string-array>
 </resources>

@@ -51,5 +51,9 @@
     <string name="photo_list_view_type_key" translatable="false">photo_list_view_type</string>
     <string name="app_color_key" translatable="false">app_color</string>
     <string name="app_theme_key" translatable="false">app_theme</string>
+    <string name="app_language_key" translatable="false">app_language</string>
+    <string name="app_bottom_bar_navigation_key" translatable="false">app_bottom_bar_navigation</string>
+    <string name="photo_list_item_size_key" translatable="false">photo_list_item_size</string>
+    <string name="photo_list_item_size">Photo List item size</string>
 
 </resources>

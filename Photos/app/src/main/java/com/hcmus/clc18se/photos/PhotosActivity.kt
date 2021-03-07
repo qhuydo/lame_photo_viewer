@@ -66,6 +66,10 @@ class PhotosActivity : AppCompatActivity() {
         setTheme(theme)
     }
 
+    private fun displayBottomBarPreference(): Boolean {
+        return preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0") == "0"
+    }
+
     private var bottomAppBarVisibility: Boolean = true
     private val bottomAppBarVisibilityKey: String = "bottomAppBarVisibilityKey"
 
@@ -81,7 +85,7 @@ class PhotosActivity : AppCompatActivity() {
         Timber.d("On Create called")
         Timber.d("----------------")
 
-        regsiterOnChangedPreferenceListener()
+        registerOnChangedPreferenceListener()
 
         setContentView(binding.root)
 
@@ -91,7 +95,6 @@ class PhotosActivity : AppCompatActivity() {
             setAppbarVisibility(bottomAppBarVisibility)
         }
     }
-
 
     private fun addOnDestinationChangedListener() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -118,7 +121,6 @@ class PhotosActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
-
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.navView.setupWithNavController(navController)
@@ -140,7 +142,6 @@ class PhotosActivity : AppCompatActivity() {
         binding.topAppBar.appBarLayout.bringToFront()
     }
 
-
     private fun setAppbarVisibility(visibility: Boolean) {
         Timber.d("setAppbarVisibility(visibility: $visibility)")
 
@@ -150,7 +151,7 @@ class PhotosActivity : AppCompatActivity() {
             binding.apply {
                 topAppBar.appBarLayout.visibility = View.VISIBLE
                 topAppBar2.fragmentAppBarLayout.visibility = View.INVISIBLE
-                bottomAppBar.visibility = View.VISIBLE
+                bottomAppBar.visibility = if (!displayBottomBarPreference()) View.GONE else View.VISIBLE
 
                 fab.visibility = View.VISIBLE
 
@@ -239,23 +240,19 @@ class PhotosActivity : AppCompatActivity() {
     }
 
     private fun configLanguage(uiMode: Int? = null) {
-        val DEFAULT = 0
-        val ENGLISH = 1
-        val VIETNAM = 2
-        val languageOptions = preferences.getString("app_language", "")
+        val defaultIdx = 0
+
+        val languageOptions = preferences.getString("app_language", "default")
         val options = resources.getStringArray(R.array.language_values)
 
         when (languageOptions) {
-            options[DEFAULT] -> {
+            options[defaultIdx] -> {
+                //val systemLanguage =
+            }
+            else -> {
 
             }
-            options[ENGLISH] -> {
 
-            }
-            options[VIETNAM] -> {
-
-            }
-            else -> Timber.w("No language has been set")
         }
         recreate()
 
@@ -313,7 +310,7 @@ class PhotosActivity : AppCompatActivity() {
         }
     }
 
-    private fun regsiterOnChangedPreferenceListener() {
+    private fun registerOnChangedPreferenceListener() {
         preferences.registerOnSharedPreferenceChangeListener(preferencesListener)
     }
 
@@ -326,8 +323,8 @@ class PhotosActivity : AppCompatActivity() {
         fragment.show(supportFragmentManager, null)
     }
 
-    val REQUEST_IMAGE_CAPTURE = 1
-    val REQUEST_VIDEO_CAPTURE = 1
+    private val REQUEST_IMAGE_CAPTURE = 1
+    private val REQUEST_VIDEO_CAPTURE = 1
 
     fun fab_add_video(view: View) {
         Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->

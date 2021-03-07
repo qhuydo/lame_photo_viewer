@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.ClassCastException
 
+// TODO: simplify the adapter when the header is unused
 class PhotoListAdapter(private val adapterViewType: Int = 0) :
         ListAdapter<DataItem, RecyclerView.ViewHolder>(DiffCallback) {
 

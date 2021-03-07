@@ -15,7 +15,8 @@
         android:id="@+id/item_view_size"
         android:title="@string/item_size"
         app:showAsAction="never">
-        <menu>
+
+        <menu android:id="@+id/photo_list_item_size_menu">
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/item_view_size_big"

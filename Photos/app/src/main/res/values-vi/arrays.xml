@@ -17,4 +17,9 @@
         <item>Dạng danh sách</item>
         <item>Dạng lưới</item>
     </string-array>
+
+    <string-array name="bottom_bar_preference_entries">
+        <item>Hiển thị</item>
+        <item>Ẩn</item>
+    </string-array>
 </resources>

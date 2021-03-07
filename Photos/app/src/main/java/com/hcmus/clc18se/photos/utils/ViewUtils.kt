@@ -1,18 +1,14 @@
 package com.hcmus.clc18se.photos.utils
 
-import android.content.res.Configuration
-import android.graphics.Rect
+import android.content.res.Resources
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.R
+import com.hcmus.clc18se.photos.adapters.PhotoListAdapter.Companion.ITEM_TYPE_LIST
 import com.hcmus.clc18se.photos.adapters.PhotoListAdapter.Companion.ITEM_TYPE_THUMBNAIL
 
 fun getAppBarSizeAttr(activity: AppCompatActivity): Int? {
@@ -46,6 +42,32 @@ fun setPhotoListIcon(menuItem: MenuItem, itemType: Int) {
         }
         else -> {
             menuItem.setIcon(R.drawable.ic_outline_list_alt_24)
+        }
+    }
+}
+
+fun setPhotoListItemSizeOption(resources: Resources, menu: Menu, currentPreferences: String) {
+    val big = 0
+    val medium = 1
+    val small = 2
+
+    val options = resources.getStringArray(R.array.photo_list_item_size_value)
+    when (currentPreferences) {
+        options[big] -> menu.findItem(R.id.item_view_size_big).isChecked = true
+        options[medium] -> menu.findItem(R.id.item_view_size_medium).isChecked = true
+        options[small] -> menu.findItem(R.id.item_view_size_small).isChecked = true
+    }
+}
+
+fun getSpanCountForPhotoList(resources: Resources, viewType: Int, iconSize: Int): Int {
+    return when (viewType) {
+        ITEM_TYPE_LIST -> resources.getInteger(R.integer.span_count_photo_list_big)
+        else -> {
+            return when (iconSize) {
+                0 -> resources.getInteger(R.integer.span_count_photo_grid_big)
+                1 -> resources.getInteger(R.integer.span_count_photo_grid_medium)
+                else -> resources.getInteger(R.integer.span_count_photo_grid_small)
+            }
         }
     }
 }

@@ -12,13 +12,13 @@
             app:entries="@array/theme_entries"
             app:entryValues="@array/theme_values"
             app:iconSpaceReserved="false"
-            app:key="app_theme"
+            app:key="@string/app_theme_key"
             app:title="@string/theme_title"
             app:useSimpleSummaryProvider="true" />
 
         <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
             android:defaultValue="@color/indigo_500"
-            android:key="app_color"
+            android:key="@string/app_color_key"
             android:title="@string/color_title"
             app:colorChoices="@array/color_choices"
             app:colorShape="circle"
@@ -30,11 +30,11 @@
         <ListPreference
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            app:defaultValue="0"
+            app:defaultValue="default"
             app:entries="@array/language_entries"
             app:entryValues="@array/language_values"
             app:iconSpaceReserved="false"
-            app:key="app_language"
+            app:key="@string/app_language_key"
             app:title="@string/language_title"
             app:useSimpleSummaryProvider="true" />
 
@@ -43,12 +43,26 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/show_photo_list_as"
-            app:defaultValue="0"
+            app:defaultValue="1"
             app:entryValues="@array/photo_list_view_type_value"
             app:iconSpaceReserved="false"
             app:isPreferenceVisible="true"
-            app:key="photo_list_view_type"
+            app:key="@string/photo_list_view_type_key"
             app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:entries="@array/photo_list_item_size_entries"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/photo_list_item_size"
+            app:defaultValue="1"
+            app:entryValues="@array/photo_list_item_size_value"
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="true"
+            app:key="@string/photo_list_item_size_key"
+            app:useSimpleSummaryProvider="true" />
+
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -61,7 +75,7 @@
             app:entries="@array/bottom_bar_preference_entries"
             app:entryValues="@array/bottom_bar_preference_values"
             app:iconSpaceReserved="false"
-            app:key="app_bottom_bar_navigation"
+            app:key="@string/app_bottom_bar_navigation_key"
             app:title="@string/bottom_bar_preference_title"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>

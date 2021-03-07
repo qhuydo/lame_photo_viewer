@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="span_count_photo_list_big">3</integer>
+
+    <integer name="span_count_photo_grid_big">5</integer>
+    <integer name="span_count_photo_grid_medium">6</integer>
+    <integer name="span_count_photo_grid_small">8</integer>
+</resources>

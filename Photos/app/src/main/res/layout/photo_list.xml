@@ -31,9 +31,9 @@
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:samplePhotoListItem="@{photoList}"
-            app:spanCount="1"
+            app:spanCount="@integer/span_count_photo_grid_big"
             tools:itemCount="16"
-            tools:listitem="@layout/item_photo_list" />
+            tools:listitem="@layout/item_photo_list_thumbnail" />
 
     </LinearLayout>
 </layout>
