@@ -49,7 +49,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginTop="16dp"
         android:text="100 images"
-
+        android:visibility="gone"
         app:drawableStartCompat="@drawable/ic_outline_photo_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nav_header_card_view"
@@ -63,6 +63,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
         android:text="100 videos"
+        android:visibility="gone"
         app:drawableStartCompat="@drawable/ic_outline_video_library_24"
         app:layout_constraintBaseline_toBaselineOf="@+id/nav_header_n_images"
         app:layout_constraintStart_toEndOf="@+id/nav_header_n_images"
@@ -72,8 +73,8 @@
     <View
         android:id="@+id/nav_header_divider"
         android:layout_width="match_parent"
-        android:layout_marginTop="8dp"
         android:layout_height="1dp"
+        android:layout_marginTop="8dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nav_header_n_images" />

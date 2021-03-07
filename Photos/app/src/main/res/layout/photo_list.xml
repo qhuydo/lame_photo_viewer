@@ -5,9 +5,11 @@
 
     <data>
 
+        <import type="com.hcmus.clc18se.photos.data.SamplePhoto"/>
+
         <variable
-            name="photosViewModel"
-            type="com.hcmus.clc18se.photos.viewModels.PhotosViewModel" />
+            name="photoList"
+            type="java.util.List&lt;SamplePhoto&gt;"/>
     </data>
 
     <LinearLayout
@@ -17,16 +19,18 @@
         android:background="?colorSurface"
         android:orientation="vertical">
 
-        <include layout="@layout/photo_list_upper_bar"
+        <include
             android:id="@+id/upper_bar"
-            />
+            layout="@layout/item_photo_list_view_option"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photo_list_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:samplePhotoListItem="@{photosViewModel.photoList}"
+            app:samplePhotoListItem="@{photoList}"
             app:spanCount="1"
             tools:itemCount="16"
             tools:listitem="@layout/item_photo_list" />

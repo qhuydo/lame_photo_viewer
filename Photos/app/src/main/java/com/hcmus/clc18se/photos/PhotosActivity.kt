@@ -55,7 +55,7 @@ class PhotosActivity : AppCompatActivity() {
     }
 
     private fun getCurrentThemeColor(): Int {
-        val currentColor = preferences.getInt("app_color", R.color.indigo_500)
+        val currentColor = preferences.getInt(getString(R.string.app_color_key), R.color.indigo_500)
         return colorThemeMapper[currentColor] ?: R.style.Theme_Photos_Indigo_NoActionBar
     }
 
@@ -92,7 +92,8 @@ class PhotosActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUpNavigationBar() {
+
+    private fun addOnDestinationChangedListener() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val newState = destination.id in arrayOf(
                     R.id.page_photo,
@@ -104,14 +105,19 @@ class PhotosActivity : AppCompatActivity() {
                 setAppbarVisibility(bottomAppBarVisibility)
             }
         }
+    }
+
+    private fun setUpNavigationBar() {
+        addOnDestinationChangedListener()
+
+        val toolbar2 = binding.topAppBar2.fragmentToolBar
+        setSupportActionBar(toolbar2)
+        toolbar2.setupWithNavController(navController, appBarConfiguration)
 
         val toolbar = binding.topAppBar.searchActionBar
         setSupportActionBar(toolbar)
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
-        val toolbar2 = binding.topAppBar2.fragmentToolBar
-        setSupportActionBar(toolbar2)
-        toolbar2.setupWithNavController(navController, appBarConfiguration)
 
         setupActionBarWithNavController(navController, appBarConfiguration)
 
@@ -215,7 +221,7 @@ class PhotosActivity : AppCompatActivity() {
         val WHITE = 1
         val DARK = 2
 
-        val themeOptions = preferences.getString("app_theme", "")
+        val themeOptions = preferences.getString(getString(R.string.app_theme_key), "")
         val options = resources.getStringArray(R.array.theme_values)
 
         Timber.d("configTheme(uiMode: $uiMode)")
@@ -272,7 +278,7 @@ class PhotosActivity : AppCompatActivity() {
 
     private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
-            "app_theme" -> {
+            getString(R.string.app_theme_key) -> {
                 configTheme(null)
                 //navController.navigateUp()
                 //recreate()
@@ -281,7 +287,7 @@ class PhotosActivity : AppCompatActivity() {
                 startActivity(getIntent())
                 overridePendingTransition(0, 0)
             }
-            "app_color" -> {
+            getString(R.string.app_color_key) -> {
 
                 val COLORS_RESOURCES = listOf(
                         R.color.red_500 to ICON_COLOR.RED,
@@ -299,10 +305,11 @@ class PhotosActivity : AppCompatActivity() {
                 val RESOURCE_MAPPER = COLORS_RESOURCES.toMap()
 
                 Timber.d("Color config change")
-                val newColor = preferences.getInt("app_color", R.color.indigo_500)
+                val newColor = preferences.getInt(getString(R.string.app_color_key), R.color.indigo_500)
                 Timber.d("Color ${RESOURCE_MAPPER[newColor] ?: ICON_COLOR.INDIGO}")
                 setIcon(packageManager, RESOURCE_MAPPER[newColor] ?: ICON_COLOR.INDIGO)
             }
+
         }
     }
 

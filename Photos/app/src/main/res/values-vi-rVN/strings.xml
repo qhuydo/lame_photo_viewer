@@ -38,4 +38,9 @@
     <string name="colorise">Colorise</string>
     <string name="pencilDraw">Vẽ</string>
     <string name="blur">Mờ</string>
+    <string name="big">Lớn</string>
+    <string name="medium">Vừa</string>
+    <string name="small">Nhỏ</string>
+    <string name="item_size">Kích thước</string>
+    <string name="show_photo_list_as">Dạng danh sách ảnh</string>
 </resources>

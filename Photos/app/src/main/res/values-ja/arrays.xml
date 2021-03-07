@@ -12,4 +12,10 @@
         <item>日本語</item>
         <item>ベトナム語</item>
     </string-array>
+
+    <string-array name="photo_list_view_type_entries">
+        <item>リスト</item>
+        <item>グリッド</item>
+    </string-array>
+
 </resources>

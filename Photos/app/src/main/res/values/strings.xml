@@ -43,5 +43,13 @@
     <string name="colorise">Colorise</string>
     <string name="pencilDraw">Pencil</string>
     <string name="blur">Blur</string>
+    <string name="big">Big</string>
+    <string name="medium">Medium</string>
+    <string name="small">Small</string>
+    <string name="item_size">Item size</string>
+    <string name="show_photo_list_as">Show photo list as</string>
+    <string name="photo_list_view_type_key" translatable="false">photo_list_view_type</string>
+    <string name="app_color_key" translatable="false">app_color</string>
+    <string name="app_theme_key" translatable="false">app_theme</string>
 
 </resources>

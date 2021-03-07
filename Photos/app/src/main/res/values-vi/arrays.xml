@@ -12,4 +12,9 @@
         <item>Tiếng Nhật</item>
         <item>Tiếng Việt</item>
     </string-array>
+
+    <string-array name="photo_list_view_type_entries">
+        <item>Dạng danh sách</item>
+        <item>Dạng lưới</item>
+    </string-array>
 </resources>

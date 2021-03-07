@@ -68,7 +68,6 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     implementation 'de.psdev.licensesdialog:licensesdialog:2.1.0'
     implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
-    implementation 'com.getbase:floatingactionbutton:1.10.1'
 
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$rootProject.testExtJunit"

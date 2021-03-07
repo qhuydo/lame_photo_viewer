@@ -30,4 +30,17 @@
     <string name="filter">ファルタ</string>
     <string name="crop">切り抜き</string>
     <string name="changeColor">色</string>
+    <string name="none">なし</string>
+    <string name="pencilDraw">ブラシ</string>
+    <string name="blur">暈し</string>
+    <string name="dark">ダーク</string>
+    <string name="colorise">着色化</string>
+    <string name="misty">"ミスティー "</string>
+    <string name="lighten">ライト</string>
+    <string name="original">"オリジナル "</string>
+    <string name="big">大</string>
+    <string name="medium">中</string>
+    <string name="small">小</string>
+    <string name="item_size">サイズ</string>
+    <string name="show_photo_list_as">写真リストの表示形式</string>
 </resources>

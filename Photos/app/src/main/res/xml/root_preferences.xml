@@ -16,17 +16,6 @@
             app:title="@string/theme_title"
             app:useSimpleSummaryProvider="true" />
 
-        <ListPreference
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            app:defaultValue="0"
-            app:entries="@array/language_entries"
-            app:entryValues="@array/language_values"
-            app:iconSpaceReserved="false"
-            app:key="app_language"
-            app:title="@string/language_title"
-            app:useSimpleSummaryProvider="true" />
-
         <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
             android:defaultValue="@color/indigo_500"
             android:key="app_color"
@@ -38,6 +27,28 @@
             app:showDialog="true"
             app:viewSize="large" />
 
+        <ListPreference
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            app:defaultValue="0"
+            app:entries="@array/language_entries"
+            app:entryValues="@array/language_values"
+            app:iconSpaceReserved="false"
+            app:key="app_language"
+            app:title="@string/language_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:entries="@array/photo_list_view_type_entries"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/show_photo_list_as"
+            app:defaultValue="0"
+            app:entryValues="@array/photo_list_view_type_value"
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="true"
+            app:key="photo_list_view_type"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory
