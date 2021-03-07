@@ -4,30 +4,38 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
 import timber.log.Timber
 
 class EditPhotoActivity : AppCompatActivity() {
+    var choose = 0
+    private val binding by lazy { ActivityPhotosBinding.inflate(layoutInflater) }
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
         setContentView(R.layout.activity_edit_photo)
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_edit)
     }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        when (item.getItemId()) {
-            R.id.bright -> {
+    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        when (item.itemId) {
+            R.id.filter_editor -> {
+                return@OnNavigationItemSelectedListener true
             }
-            R.id.add_icon -> {
+            R.id.bright_editor -> {
+                return@OnNavigationItemSelectedListener true
             }
-            R.id.draw -> {
+            R.id.color_editor -> {
+                return@OnNavigationItemSelectedListener true
             }
-            R.id.crop -> {
+            R.id.add_icon_editor -> {
+                return@OnNavigationItemSelectedListener true
             }
-            R.id.filter -> {
+            R.id.crop_editor -> {
+                return@OnNavigationItemSelectedListener true
             }
-            R.id.changeColor -> {
-            }
-            else -> Timber.w("No edit option has been set")
         }
-        return false
+        false
     }
 }

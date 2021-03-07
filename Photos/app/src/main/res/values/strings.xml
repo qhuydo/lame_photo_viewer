@@ -29,11 +29,19 @@
     <string name="share_title">Share</string>
     <string name="edit_title">Edit</string>
     <string name="delete_title">Delete</string>
-    <string name="bright">bright</string>
-    <string name="add_icon">add_icon</string>
+    <string name="bright">Bright</string>
+    <string name="add_icon">Add_icon</string>
     <string name="draw">Draw</string>
     <string name="filter">Filter</string>
     <string name="crop">Crop</string>
     <string name="changeColor">Color</string>
+    <string name="original">Original</string>
+    <string name="misty">Misty</string>
+    <string name="none">None</string>
+    <string name="lighten">Lighten</string>
+    <string name="dark">Dark</string>
+    <string name="colorise">Colorise</string>
+    <string name="pencilDraw">Pencil</string>
+    <string name="blur">Blur</string>
 
 </resources>
