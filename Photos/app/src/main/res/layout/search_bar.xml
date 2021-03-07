@@ -6,7 +6,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/search_bar_height"
         android:background="@android:color/transparent"
         android:fitsSystemWindows="true"
         android:showDividers="none"
@@ -22,8 +22,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/search_bar_selected_background"
-                tools:tooltipText="@string/app_name"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar">
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar"
+                tools:tooltipText="@string/app_name">
 
                 <!-- These following views are just for prototype purpose
                     They will be removed in the next version

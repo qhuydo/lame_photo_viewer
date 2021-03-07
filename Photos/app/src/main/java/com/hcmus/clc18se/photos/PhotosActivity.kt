@@ -3,7 +3,6 @@ package com.hcmus.clc18se.photos
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MenuItem
@@ -18,11 +17,8 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
-import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
-import com.hcmus.clc18se.photos.utils.ICON_COLOR
-import com.hcmus.clc18se.photos.utils.ViewAnimation
-import com.hcmus.clc18se.photos.utils.setIcon
+import com.hcmus.clc18se.photos.utils.*
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
 
@@ -88,21 +84,25 @@ class PhotosActivity : AppCompatActivity() {
         regsiterOnChangedPreferenceListener()
 
         setContentView(binding.root)
+
+        setUpNavigationBar()
         savedInstanceState?.let {
             bottomAppBarVisibility = it.getBoolean(bottomAppBarVisibilityKey)
-            //setAppbarVisibility(bottomAppBarVisibility)
+            setAppbarVisibility(bottomAppBarVisibility)
         }
-        setUpNavigationBar()
     }
 
     private fun setUpNavigationBar() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            bottomAppBarVisibility = destination.id in arrayOf(
+            val newState = destination.id in arrayOf(
                     R.id.page_photo,
                     R.id.page_people,
                     R.id.page_album
             )
-            setAppbarVisibility(bottomAppBarVisibility)
+            if (bottomAppBarVisibility != newState) {
+                bottomAppBarVisibility = newState
+                setAppbarVisibility(bottomAppBarVisibility)
+            }
         }
 
         val toolbar = binding.topAppBar.searchActionBar
@@ -131,49 +131,50 @@ class PhotosActivity : AppCompatActivity() {
                 ViewAnimation.showOut(binding.fabAddVideo)
             }
         }
-        configColor()
+        binding.topAppBar.appBarLayout.bringToFront()
     }
+
 
     private fun setAppbarVisibility(visibility: Boolean) {
         Timber.d("setAppbarVisibility(visibility: $visibility)")
 
-        val layoutParams = binding.navHostOuterFrame.layoutParams as CoordinatorLayout.LayoutParams
+        val layoutParams = binding.navHostFragment.layoutParams as CoordinatorLayout.LayoutParams
 
         if (visibility) {
             binding.apply {
-
                 topAppBar.appBarLayout.visibility = View.VISIBLE
-                topAppBar.searchActionBar.visibility = View.VISIBLE
-                topAppBar.appBarLayout.bringToFront()
-
-                topAppBar2.fragmentAppBarLayout.visibility = View.GONE
-
+                topAppBar2.fragmentAppBarLayout.visibility = View.INVISIBLE
                 bottomAppBar.visibility = View.VISIBLE
 
-                //bottomAppBar.performShow()
                 fab.visibility = View.VISIBLE
-                
-                layoutParams.behavior = AppBarLayout.ScrollingViewBehavior()
+
+                layoutParams.topMargin = resources.getDimensionPixelSize(R.dimen.search_bar_height)
+
                 mainCoordinatorLayout.requestLayout()
+                mainCoordinatorLayout.invalidate()
             }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         } else {
             binding.apply {
-                layoutParams.behavior = null
-                mainCoordinatorLayout.requestLayout()
-
                 topAppBar.appBarLayout.visibility = View.GONE
-                topAppBar.searchActionBar.visibility = View.GONE
-
                 topAppBar2.fragmentAppBarLayout.visibility = View.VISIBLE
-                topAppBar2.fragmentToolBar.bringToFront()
 
                 bottomAppBar.visibility = View.GONE
 
                 fab.visibility = View.GONE
                 fabAddPicture.visibility = View.GONE
                 fabAddVideo.visibility = View.GONE
+
+                setAppBarHeight<CoordinatorLayout.LayoutParams>(
+                        binding.topAppBar2.fragmentAppBarLayout,
+                        getAppBarSizeAttr(this@PhotosActivity) ?: DEFAULT_APP_BAR_HEIGHT)
+
+                layoutParams.topMargin = getAppBarSizeAttr(this@PhotosActivity)
+                        ?: DEFAULT_APP_BAR_HEIGHT
+
+                mainCoordinatorLayout.requestLayout()
+                mainCoordinatorLayout.invalidate()
             }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -194,8 +195,10 @@ class PhotosActivity : AppCompatActivity() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        Timber.d("onConfigurationChanged")
         super.onConfigurationChanged(newConfig)
         configTheme(newConfig.uiMode)
+        recreate()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -267,12 +270,16 @@ class PhotosActivity : AppCompatActivity() {
         }
     }
 
-
     private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             "app_theme" -> {
                 configTheme(null)
-                recreate()
+                //navController.navigateUp()
+                //recreate()
+                finish()
+                overridePendingTransition(0, 0)
+                startActivity(getIntent())
+                overridePendingTransition(0, 0)
             }
             "app_color" -> {
 

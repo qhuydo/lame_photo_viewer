@@ -21,4 +21,13 @@
     <string name="bottom_bar_preference_title">ボタムバーの設定</string>
     <string name="appearance_header">外見</string>
     <string name="app_name">Lame Photo viewer</string>
+    <string name="share_title">共通</string>
+    <string name="edit_title">論集</string>
+    <string name="delete_title">削除</string>
+    <string name="bright">明るさ</string>
+    <string name="add_icon">アイコンを追加</string>
+    <string name="draw">ブラシ</string>
+    <string name="filter">ファルタ</string>
+    <string name="crop">切り抜き</string>
+    <string name="changeColor">色</string>
 </resources>
