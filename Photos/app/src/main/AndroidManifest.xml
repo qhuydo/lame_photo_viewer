@@ -25,6 +25,17 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:label="@string/edit_title"
+            android:name=".EditPhotoActivity"
+            android:theme="@style/Theme.Photos.Pink.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+
+            </intent-filter>
+        </activity>
+
         <activity-alias
             android:name="RED"
             android:enabled="false"

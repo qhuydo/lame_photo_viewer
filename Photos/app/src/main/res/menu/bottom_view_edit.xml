@@ -17,7 +17,7 @@
         android:icon="@drawable/ic_outline_crop_24"
         android:title="@string/crop" />
     <item
-        android:id="@+id/changeColor"
+        android:id="@+id/change_color"
         android:icon="@drawable/ic_outline_color_lens_24"
         android:title="@string/changeColor" />
 </menu>
