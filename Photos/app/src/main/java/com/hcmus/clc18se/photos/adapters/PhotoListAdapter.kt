@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.SamplePhoto
 import com.hcmus.clc18se.photos.databinding.ItemPhotoListBinding
-import com.hcmus.clc18se.photos.databinding.ItemPhotoListThumbnailBinding
+import com.hcmus.clc18se.photos.databinding.ItemPhotoListGridBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -77,7 +77,7 @@ class PhotoListAdapter(private val adapterViewType: Int = 0) :
                 is ItemPhotoListBinding -> listBinding.apply {
                     photo = item.photo
                 }
-                is ItemPhotoListThumbnailBinding -> listBinding.apply {
+                is ItemPhotoListGridBinding -> listBinding.apply {
                     photo = item.photo
                 }
             }
@@ -91,7 +91,7 @@ class PhotoListAdapter(private val adapterViewType: Int = 0) :
                             ItemPhotoListBinding.inflate(LayoutInflater.from(parent.context))
                     )
                     else -> ViewHolder(
-                            ItemPhotoListThumbnailBinding.inflate(LayoutInflater.from(parent.context))
+                            ItemPhotoListGridBinding.inflate(LayoutInflater.from(parent.context))
                     )
                 }
             }
@@ -133,4 +133,3 @@ sealed class DataItem {
         override val id: String = ""
     }
 }
-

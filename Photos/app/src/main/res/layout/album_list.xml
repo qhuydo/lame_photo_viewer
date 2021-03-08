@@ -12,9 +12,9 @@
             type="java.util.List&lt;SampleAlbum&gt;" />
     </data>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:background="?colorSurface"
         android:orientation="vertical">
@@ -24,8 +24,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:sampleAlbumListItem="@{albumList}"
             app:spanCount="@integer/span_count_photo_grid_big"
-            tools:listitem="@layout/item_album_list_grid"
-            tools:itemCount="16" />
-    </LinearLayout>
+            tools:itemCount="16"
+            tools:listitem="@layout/item_album_list_grid" />
+    </FrameLayout>
 </layout>

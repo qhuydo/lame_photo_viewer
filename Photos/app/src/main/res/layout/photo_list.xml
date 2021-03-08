@@ -33,7 +33,7 @@
             app:samplePhotoListItem="@{photoList}"
             app:spanCount="@integer/span_count_photo_grid_big"
             tools:itemCount="16"
-            tools:listitem="@layout/item_photo_list_thumbnail" />
+            tools:listitem="@layout/item_photo_list_grid" />
 
     </LinearLayout>
 </layout>

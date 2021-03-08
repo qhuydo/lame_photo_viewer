@@ -34,6 +34,8 @@ fun <T : ViewGroup.LayoutParams> setAppBarHeight(appBarLayout: AppBarLayout, dp:
     appBarLayout.requestLayout()
 }
 
+fun setAlbumListIcon(menuItem: MenuItem, itemType: Int) = setPhotoListIcon(menuItem, itemType)
+
 fun setPhotoListIcon(menuItem: MenuItem, itemType: Int) {
 
     when (itemType) {
@@ -43,6 +45,19 @@ fun setPhotoListIcon(menuItem: MenuItem, itemType: Int) {
         else -> {
             menuItem.setIcon(R.drawable.ic_outline_list_alt_24)
         }
+    }
+}
+
+fun setAlbumListItemSizeOption(resources: Resources, menu: Menu, currentPreferences: String) {
+    val big = 0
+    val medium = 1
+    val small = 2
+
+    val options = resources.getStringArray(R.array.photo_list_item_size_value)
+    when (currentPreferences) {
+        options[big] -> menu.findItem(R.id.album_item_view_size_big).isChecked = true
+        options[medium] -> menu.findItem(R.id.album_item_view_size_medium).isChecked = true
+        options[small] -> menu.findItem(R.id.album_item_view_size_small).isChecked = true
     }
 }
 
@@ -71,3 +86,6 @@ fun getSpanCountForPhotoList(resources: Resources, viewType: Int, iconSize: Int)
         }
     }
 }
+
+fun getSpanCountForAlbumList(resources: Resources, viewType: Int, iconSize: Int) =
+        getSpanCountForPhotoList(resources, viewType, iconSize)

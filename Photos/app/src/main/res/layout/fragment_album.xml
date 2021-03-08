@@ -4,81 +4,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+
+        <variable
+            name="albumViewModel"
+            type="com.hcmus.clc18se.photos.viewModels.AlbumViewModel" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorSurface">
+        android:background="?colorSurface"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nestedScrollView2"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <Button
+                android:id="@+id/favorites"
+                style="@style/Theme.Photos.OutlineButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/favorites_title"
+                app:flow_verticalBias="0.0"
+                app:icon="@drawable/ic_outline_favorite_border_24"
+                app:layout_constraintBottom_toBottomOf="@+id/barrier"
+                app:layout_constraintEnd_toStartOf="@+id/custom_album"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="favorites, custom_album" />
+
+            <Button
+                android:id="@+id/custom_album"
+                style="@style/Theme.Photos.OutlineButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/custom_album_title"
+                app:icon="@drawable/ic_outline_collections_24"
+                app:layout_constraintBottom_toBottomOf="@+id/barrier"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/favorites"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <include
+                android:id="@+id/album_list_layout"
+                layout="@layout/album_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/favorites" />
 
-                <Button
-                    android:id="@+id/favorites"
-                    style="@style/Theme.Photos.OutlineButton"
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/favorites_title"
-                    app:icon="@drawable/ic_outline_favorite_border_24"
-                    app:layout_constraintEnd_toStartOf="@+id/custom_album"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <Button
-                    android:id="@+id/favorites2"
-                    style="@style/Theme.Photos.OutlineButton"
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/favorites_title"
-                    app:icon="@drawable/ic_outline_favorite_border_24"
-                    app:layout_constraintEnd_toStartOf="@+id/custom_album"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+    </androidx.core.widget.NestedScrollView>
 
-                <Button
-                    android:id="@+id/custom_album"
-                    style="@style/Theme.Photos.OutlineButton"
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/custom_album_title"
-                    app:icon="@drawable/ic_outline_collections_24"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/favorites"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_outline_photo_album_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/empty_album_label"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

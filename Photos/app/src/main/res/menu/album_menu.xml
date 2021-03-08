@@ -24,7 +24,7 @@
                     android:id="@+id/album_item_view_size_medium"
                     android:title="@string/medium" />
                 <item
-                    android:id="@+id/album_view_size_small"
+                    android:id="@+id/album_item_view_size_small"
                     android:title="@string/small" />
             </group>
         </menu>

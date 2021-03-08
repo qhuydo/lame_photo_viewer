@@ -76,7 +76,7 @@
             app:defaultValue="1"
             app:entryValues="@array/photo_list_item_size_value"
             app:isPreferenceVisible="true"
-            app:key="@string/photo_list_item_size_key"
+            app:key="@string/album_list_item_size_key"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
