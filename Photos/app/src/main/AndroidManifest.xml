@@ -9,6 +9,7 @@
     </queries>
 
     <application
+
         android:name=".PhotosApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -26,8 +27,8 @@
         </activity>
 
         <activity
-            android:label="@string/edit_title"
             android:name=".EditPhotoActivity"
+            android:label="@string/edit_title"
             android:theme="@style/Theme.Photos.Pink.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

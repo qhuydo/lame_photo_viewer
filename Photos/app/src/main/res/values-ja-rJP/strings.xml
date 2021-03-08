@@ -44,4 +44,6 @@
     <string name="item_size">サイズ</string>
     <string name="show_photo_list_as">写真リストの表示形式</string>
     <string name="photo_list_item_size">写真リストのアイテムサイズ</string>
+    <string name="show_album_list_as">アルバムリストの表示形式</string>
+    <string name="album_list_item_size">アルバムリストのアイテムサイズ</string>
 </resources>

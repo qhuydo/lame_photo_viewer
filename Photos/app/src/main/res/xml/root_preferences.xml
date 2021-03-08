@@ -57,6 +57,27 @@
             app:key="@string/photo_list_item_size_key"
             app:useSimpleSummaryProvider="true" />
 
+        <ListPreference
+            android:entries="@array/photo_list_view_type_entries"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/show_album_list_as"
+            app:defaultValue="1"
+            app:entryValues="@array/photo_list_view_type_value"
+            app:isPreferenceVisible="true"
+            app:key="@string/album_list_view_type_key"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:entries="@array/photo_list_item_size_entries"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/album_list_item_size"
+            app:defaultValue="1"
+            app:entryValues="@array/photo_list_item_size_value"
+            app:isPreferenceVisible="true"
+            app:key="@string/photo_list_item_size_key"
+            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 

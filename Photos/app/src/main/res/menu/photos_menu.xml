@@ -5,12 +5,11 @@
     <item
         android:id="@+id/photo_list_item_view_type"
         android:icon="@drawable/ic_outline_list_alt_24"
-        android:title="List view"
+        android:title="@string/show_photo_list_as"
         android:titleCondensed="View"
         android:visible="true"
         app:showAsAction="always"
-        tools:ignore="AlwaysShowAction,HardcodedText" />
-
+        tools:ignore="AlwaysShowAction" />
     <item
         android:id="@+id/item_view_size"
         android:title="@string/item_size"

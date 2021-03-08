@@ -43,4 +43,6 @@
     <string name="small">Nhỏ</string>
     <string name="item_size">Kích thước</string>
     <string name="show_photo_list_as">Dạng danh sách ảnh</string>
+    <string name="photo_list_item_size">Kích thước trong danh sách ảnh</string>
+    <string name="show_album_list_as">Dạng danh sách album</string>
 </resources>
