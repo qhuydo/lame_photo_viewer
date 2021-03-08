@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="photo"
-            type="com.hcmus.clc18se.photos.data.SamplePhoto" />
+            name="album"
+            type="com.hcmus.clc18se.photos.data.SampleAlbum" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,11 +19,11 @@
         android:orientation="horizontal">
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/photo_list_item_image"
+            android:id="@+id/album_list_item_image"
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:scaleType="centerCrop"
-            app:imageFromResId="@{photo.resId}"
+            app:imageFromResId="@{album.resId}"
             app:cornerSize="10%"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,20 +32,19 @@
             tools:src="@tools:sample/backgrounds/scenic" />
 
         <TextView
-            android:id="@+id/photo_list_item_name"
+            android:id="@+id/album_list_item_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"
             android:fontFamily="sans-serif"
             android:lines="1"
-            android:text="@{photo.name}"
+            android:text="@{album.name}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/photo_list_item_image"
-            app:layout_constraintTop_toTopOf="@+id/photo_list_item_image"
+            app:layout_constraintStart_toEndOf="@+id/album_list_item_image"
+            app:layout_constraintTop_toTopOf="@+id/album_list_item_image"
             tools:text="TDB.png" />
 
         <View
-            android:id="@+id/short_separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_gravity="bottom"

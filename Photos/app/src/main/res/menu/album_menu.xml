@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/album_list_item_view_type"
+        android:icon="@drawable/ic_outline_list_alt_24"
+        android:title="@string/show_album_list_as"
+        android:titleCondensed="View"
+        android:visible="true"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+    <item
+        android:id="@+id/album_item_view_size"
+        android:title="@string/item_size"
+        app:showAsAction="never">
+
+        <menu android:id="@+id/album_list_item_size_menu">
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/album_item_view_size_big"
+                    android:title="@string/big" />
+                <item
+                    android:id="@+id/album_item_view_size_medium"
+                    android:title="@string/medium" />
+                <item
+                    android:id="@+id/album_view_size_small"
+                    android:title="@string/small" />
+            </group>
+        </menu>
+    </item>
+</menu>
