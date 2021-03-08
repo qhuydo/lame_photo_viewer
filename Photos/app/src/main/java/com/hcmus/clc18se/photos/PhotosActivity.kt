@@ -94,6 +94,8 @@ class PhotosActivity : AppCompatActivity() {
             bottomAppBarVisibility = it.getBoolean(bottomAppBarVisibilityKey)
             setAppbarVisibility(bottomAppBarVisibility)
         }
+        setBottomAppBarVisibility()
+
     }
 
     private fun addOnDestinationChangedListener() {
@@ -151,7 +153,7 @@ class PhotosActivity : AppCompatActivity() {
             binding.apply {
                 topAppBar.appBarLayout.visibility = View.VISIBLE
                 topAppBar2.fragmentAppBarLayout.visibility = View.INVISIBLE
-                bottomAppBar.visibility = if (!displayBottomBarPreference()) View.GONE else View.VISIBLE
+                setBottomAppBarVisibility()
 
                 fab.visibility = View.VISIBLE
 
@@ -186,6 +188,10 @@ class PhotosActivity : AppCompatActivity() {
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
+    }
+
+    private fun setBottomAppBarVisibility() {
+        binding.bottomAppBar.visibility = if (!displayBottomBarPreference()) View.INVISIBLE else View.VISIBLE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
