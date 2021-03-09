@@ -1,8 +1,10 @@
 package com.hcmus.clc18se.photos.adapters
 
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -18,13 +20,19 @@ import kotlinx.coroutines.withContext
 import java.lang.ClassCastException
 
 // TODO: simplify the adapter when the header is unused
-class PhotoListAdapter(private val adapterViewType: Int = 0) :
+class PhotoListAdapter(private val resources: Resources,
+                       private val adapterViewType: Int = 0,
+                       private val itemViewSize: Int = 0) :
         ListAdapter<DataItem, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
         const val ITEM_TYPE_HEADER = -1
         const val ITEM_TYPE_LIST = 0
         const val ITEM_TYPE_THUMBNAIL = 1
+
+        const val ITEM_SIZE_BIG = 0
+        const val ITEM_SIZE_MEDIUM = 1
+        const val ITEM_SIZE_SMALL = 2
     }
 
     private val adapterScope = CoroutineScope(Dispatchers.Default)
@@ -48,7 +56,7 @@ class PhotoListAdapter(private val adapterViewType: Int = 0) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ITEM_TYPE_HEADER -> HeaderViewHolder.from(parent)
-            adapterViewType -> ViewHolder.from(parent, viewType)
+            adapterViewType -> ViewHolder.from(parent, viewType, resources, itemViewSize)
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
@@ -69,12 +77,15 @@ class PhotoListAdapter(private val adapterViewType: Int = 0) :
         }
     }
 
-    class ViewHolder(private val listBinding: ViewDataBinding) :
+    class ViewHolder(private val listBinding: ViewDataBinding,
+                     private val resources: Resources,
+                     private val itemViewSize: Int = ITEM_SIZE_MEDIUM) :
             RecyclerView.ViewHolder(listBinding.root) {
 
         fun bind(item: DataItem.PhotoItem) {
             when (listBinding) {
                 is ItemPhotoListBinding -> listBinding.apply {
+                    setItemListSize(resources, photoListItemImage, itemViewSize)
                     photo = item.photo
                 }
                 is ItemPhotoListGridBinding -> listBinding.apply {
@@ -85,14 +96,31 @@ class PhotoListAdapter(private val adapterViewType: Int = 0) :
         }
 
         companion object {
-            fun from(parent: ViewGroup, viewType: Int): ViewHolder {
+            fun from(parent: ViewGroup,
+                     viewType: Int,
+                     resources: Resources,
+                     itemViewSize: Int = ITEM_SIZE_MEDIUM): ViewHolder {
                 return when (viewType) {
                     ITEM_TYPE_LIST -> ViewHolder(
-                            ItemPhotoListBinding.inflate(LayoutInflater.from(parent.context))
+                            ItemPhotoListBinding.inflate(LayoutInflater.from(parent.context)),
+                            resources,
+                            itemViewSize
                     )
                     else -> ViewHolder(
-                            ItemPhotoListGridBinding.inflate(LayoutInflater.from(parent.context))
+                            ItemPhotoListGridBinding.inflate(LayoutInflater.from(parent.context)),
+                            resources,
+                            itemViewSize
                     )
+                }
+            }
+
+            fun setItemListSize(resources: Resources, item: ImageView, itemSize: Int) {
+                val layoutParams = item.layoutParams
+                layoutParams.width = when (itemSize) {
+                    ITEM_SIZE_BIG -> resources.getDimensionPixelSize(R.dimen.photo_list_item_size_big)
+                    ITEM_SIZE_MEDIUM -> resources.getDimensionPixelSize(R.dimen.photo_list_item_size_medium)
+                    ITEM_SIZE_SMALL -> resources.getDimensionPixelSize(R.dimen.photo_list_item_size_small)
+                    else -> layoutParams.width
                 }
             }
         }

@@ -7,6 +7,10 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="bottom_actions_height">16dp</dimen>
-    <dimen name="abitrary_thumbnail_height">175dp</dimen>
-    <dimen name="abitrary_thumbnail_width">175dp</dimen>
+    <dimen name="arbitrary_thumbnail_height">175dp</dimen>
+    <dimen name="arbitrary_thumbnail_width">175dp</dimen>
+
+    <dimen name="photo_list_item_size_small">64dp</dimen>
+    <dimen name="photo_list_item_size_medium">80dp</dimen>
+    <dimen name="photo_list_item_size_big">104dp</dimen>
 </resources>
