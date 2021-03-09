@@ -21,14 +21,14 @@ import java.lang.ClassCastException
 
 // TODO: simplify the adapter when the header is unused
 class PhotoListAdapter(private val resources: Resources,
-                       private val adapterViewType: Int = 0,
-                       private val itemViewSize: Int = 0) :
+                       private val adapterViewType: Int = ITEM_TYPE_GRID,
+                       private val itemViewSize: Int = ITEM_SIZE_MEDIUM) :
         ListAdapter<DataItem, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
         const val ITEM_TYPE_HEADER = -1
         const val ITEM_TYPE_LIST = 0
-        const val ITEM_TYPE_THUMBNAIL = 1
+        const val ITEM_TYPE_GRID = 1
 
         const val ITEM_SIZE_BIG = 0
         const val ITEM_SIZE_MEDIUM = 1
@@ -113,7 +113,6 @@ class PhotoListAdapter(private val resources: Resources,
                     )
                 }
             }
-
             fun setItemListSize(resources: Resources, item: ImageView, itemSize: Int) {
                 val layoutParams = item.layoutParams
                 layoutParams.width = when (itemSize) {

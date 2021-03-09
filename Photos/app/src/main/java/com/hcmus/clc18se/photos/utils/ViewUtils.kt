@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.PhotoListAdapter.Companion.ITEM_TYPE_LIST
-import com.hcmus.clc18se.photos.adapters.PhotoListAdapter.Companion.ITEM_TYPE_THUMBNAIL
+import com.hcmus.clc18se.photos.adapters.PhotoListAdapter.Companion.ITEM_TYPE_GRID
 
 fun getAppBarSizeAttr(activity: AppCompatActivity): Int? {
     val tv = TypedValue()
@@ -39,7 +39,7 @@ fun setAlbumListIcon(menuItem: MenuItem, itemType: Int) = setPhotoListIcon(menuI
 fun setPhotoListIcon(menuItem: MenuItem, itemType: Int) {
 
     when (itemType) {
-        ITEM_TYPE_THUMBNAIL -> {
+        ITEM_TYPE_GRID -> {
             menuItem.setIcon(R.drawable.ic_outline_grid_view_24)
         }
         else -> {

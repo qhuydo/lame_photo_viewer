@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.PhotoListAdapter
 import com.hcmus.clc18se.photos.adapters.PhotoListAdapter.Companion.ITEM_TYPE_LIST
-import com.hcmus.clc18se.photos.adapters.PhotoListAdapter.Companion.ITEM_TYPE_THUMBNAIL
+import com.hcmus.clc18se.photos.adapters.PhotoListAdapter.Companion.ITEM_TYPE_GRID
 import com.hcmus.clc18se.photos.adapters.bindSamplePhotoListRecyclerView
 import com.hcmus.clc18se.photos.databinding.FragmentPhotosBinding
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
@@ -94,7 +94,7 @@ class PhotosFragment : Fragment() {
 
     private fun onItemTypeButtonClicked() {
         currentListItemView = if (currentListItemView == ITEM_TYPE_LIST)
-            ITEM_TYPE_THUMBNAIL else ITEM_TYPE_LIST
+            ITEM_TYPE_GRID else ITEM_TYPE_LIST
 
         // Save the preference
         preferences.edit()

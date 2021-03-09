@@ -49,7 +49,8 @@ class AlbumFragment : Fragment() {
                     .get(AlbumViewModel::class.java)
 
             albumViewModel = viewModel
-            albumListLayout.albumListRecyclerView.adapter = AlbumListAdapter(currentListItemView)
+            albumListLayout.albumListRecyclerView.adapter = AlbumListAdapter(resources,
+                    currentListItemView, currentListItemSize)
             albumListLayout.albumList = viewModel.albumList.value
 
             val layoutManager = albumListLayout.albumListRecyclerView.layoutManager as GridLayoutManager
@@ -90,7 +91,7 @@ class AlbumFragment : Fragment() {
 
     private fun onItemTypeButtonClicked() {
         currentListItemView = if (currentListItemView == AlbumListAdapter.ITEM_TYPE_LIST)
-            AlbumListAdapter.ITEM_TYPE_THUMBNAIL else AlbumListAdapter.ITEM_TYPE_LIST
+            AlbumListAdapter.ITEM_TYPE_GRID else AlbumListAdapter.ITEM_TYPE_LIST
 
         // Save the preference
         preferences.edit()
@@ -124,7 +125,7 @@ class AlbumFragment : Fragment() {
 
     private fun refreshRecyclerView() {
         binding.apply {
-            val adapter = AlbumListAdapter(currentListItemView)
+            val adapter = AlbumListAdapter(resources, currentListItemView, currentListItemSize)
             val recyclerView = albumListLayout.albumListRecyclerView
             val albumList = albumListLayout.albumList
 
