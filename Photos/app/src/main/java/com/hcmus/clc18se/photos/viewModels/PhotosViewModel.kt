@@ -1,6 +1,5 @@
 package com.hcmus.clc18se.photos.viewModels
 
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,8 +12,8 @@ class PhotosViewModel : ViewModel() {
     val photoList: LiveData<List<SamplePhoto>>
         get() = _photoList
 
-    init {
-        _photoList.value = listOf(
+    companion object {
+        private val samplePhoto = listOf(
                 SamplePhoto(R.drawable.ic_launcher_sample, "ic_launcher_sample.png"),
                 SamplePhoto(R.drawable.ic_launcher_red_sample, "ic_launcher_red_sample.png"),
                 SamplePhoto(R.drawable.ic_launcher_orange_sample, "ic_launcher_orange_sample.png"),
@@ -26,5 +25,9 @@ class PhotosViewModel : ViewModel() {
                 SamplePhoto(R.drawable.ic_launcher_pink_sample, "ic_launcher_pink_sample.png"),
                 SamplePhoto(R.drawable.ic_launcher_brown_sample, "ic_launcher_brown_sample.png"),
         )
+    }
+
+    init {
+        _photoList.value = samplePhoto
     }
 }

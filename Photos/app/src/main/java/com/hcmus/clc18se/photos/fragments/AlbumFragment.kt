@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.hcmus.clc18se.photos.R
@@ -25,7 +27,14 @@ class AlbumFragment : Fragment() {
     }
 
     private var currentListItemView: Int = AlbumListAdapter.ITEM_TYPE_LIST
+
     private var currentListItemSize: Int = 0
+
+    private lateinit var viewModel: AlbumViewModel
+
+    private val albumAdapterListener = AlbumListAdapter.OnClickListener {
+        viewModel.startNavigatingToPhotoList(it)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(
@@ -40,17 +49,27 @@ class AlbumFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
+        val viewModelFactory = AlbumViewModelFractory(resources)
+        binding.lifecycleOwner = this@AlbumFragment
+        viewModel = ViewModelProvider(this@AlbumFragment, viewModelFactory)
+                .get(AlbumViewModel::class.java)
+
+        viewModel.navigateToPhotoList.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                this.findNavController().navigate(
+                        AlbumFragmentDirections.actionPageAlbumToPhotoListFragment(it.name))
+                viewModel._doneNavigatingToPhotoList()
+            }
+        })
+
         binding.apply {
 
-            lifecycleOwner = this@AlbumFragment
-
-            val viewModelFactory = AlbumViewModelFractory(resources)
-            val viewModel = ViewModelProvider(this@AlbumFragment, viewModelFactory)
-                    .get(AlbumViewModel::class.java)
-
             albumViewModel = viewModel
-            albumListLayout.albumListRecyclerView.adapter = AlbumListAdapter(resources,
-                    currentListItemView, currentListItemSize)
+            albumListLayout.albumListRecyclerView.adapter = AlbumListAdapter(albumAdapterListener,
+                    resources,
+                    currentListItemView,
+                    currentListItemSize)
+
             albumListLayout.albumList = viewModel.albumList.value
 
             val layoutManager = albumListLayout.albumListRecyclerView.layoutManager as GridLayoutManager
@@ -125,7 +144,8 @@ class AlbumFragment : Fragment() {
 
     private fun refreshRecyclerView() {
         binding.apply {
-            val adapter = AlbumListAdapter(resources, currentListItemView, currentListItemSize)
+            val adapter = AlbumListAdapter(albumAdapterListener,
+                    resources, currentListItemView, currentListItemSize)
             val recyclerView = albumListLayout.albumListRecyclerView
             val albumList = albumListLayout.albumList
 

@@ -13,6 +13,7 @@ import com.hcmus.clc18se.photos.data.SampleAlbum
 import com.hcmus.clc18se.photos.databinding.*
 
 class AlbumListAdapter(
+        private val onClickListener: OnClickListener,
         private val resources: Resources,
         private val adapterItemType: Int = ITEM_TYPE_GRID,
         private val adapterItemSize: Int = ITEM_SIZE_MEDIUM) :
@@ -29,6 +30,9 @@ class AlbumListAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val album = getItem(position)
+        holder.itemView.setOnClickListener {
+            onClickListener.onClick(album)
+        }
         holder.bind(album)
     }
 
@@ -77,6 +81,10 @@ class AlbumListAdapter(
                 }
             }
         }
+    }
+
+    class OnClickListener(val clickListener: (album: SampleAlbum) -> Unit) {
+        fun onClick(album: SampleAlbum) = clickListener(album)
     }
 }
 

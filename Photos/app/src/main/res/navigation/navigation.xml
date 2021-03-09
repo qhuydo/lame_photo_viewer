@@ -9,7 +9,11 @@
         android:id="@+id/page_album"
         android:name="com.hcmus.clc18se.photos.fragments.AlbumFragment"
         android:label="@string/album_title"
-        tools:layout="@layout/fragment_album" />
+        tools:layout="@layout/fragment_album">
+        <action
+            android:id="@+id/action_page_album_to_photoListFragment"
+            app:destination="@id/photoListFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/page_people"
@@ -38,4 +42,13 @@
     <action
         android:id="@+id/open_settings_fragment"
         app:destination="@id/settingsFragment" />
+    <fragment
+        android:id="@+id/photoListFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.PhotoListFragment"
+        android:label="PhotoListFragment"
+        tools:layout="@layout/photo_list" >
+        <argument
+            android:name="albumName"
+            app:argType="string" />
+    </fragment>
 </navigation>

@@ -45,4 +45,6 @@
     <string name="show_photo_list_as">Dạng danh sách ảnh</string>
     <string name="photo_list_item_size">Kích thước trong danh sách ảnh</string>
     <string name="show_album_list_as">Dạng danh sách album</string>
+    <string name="album_list_item_size">Kích thước trong danh sách album</string>
+    <string name="search">Tìm kiếm</string>
 </resources>

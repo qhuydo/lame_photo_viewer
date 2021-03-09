@@ -25,7 +25,7 @@ import timber.log.Timber
 
 class PhotosActivity : AppCompatActivity() {
 
-    private val binding by lazy { ActivityPhotosBinding.inflate(layoutInflater) }
+    internal val binding by lazy { ActivityPhotosBinding.inflate(layoutInflater) }
 
     private val navHostFragment by lazy { supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment }
 
@@ -90,11 +90,11 @@ class PhotosActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setUpNavigationBar()
+        setBottomAppBarVisibility()
         savedInstanceState?.let {
             bottomAppBarVisibility = it.getBoolean(bottomAppBarVisibilityKey)
             setAppbarVisibility(bottomAppBarVisibility)
         }
-        setBottomAppBarVisibility()
 
     }
 
