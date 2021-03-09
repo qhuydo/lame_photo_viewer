@@ -161,6 +161,9 @@ class PhotosActivity : AppCompatActivity() {
 
                 mainCoordinatorLayout.requestLayout()
                 mainCoordinatorLayout.invalidate()
+
+                setSupportActionBar(topAppBar.searchActionBar)
+                topAppBar.searchActionBar.setupWithNavController(navController, appBarConfiguration)
             }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
@@ -184,6 +187,9 @@ class PhotosActivity : AppCompatActivity() {
 
                 mainCoordinatorLayout.requestLayout()
                 mainCoordinatorLayout.invalidate()
+
+                setSupportActionBar(topAppBar2.fragmentToolBar)
+                topAppBar2.fragmentToolBar.setupWithNavController(navController, appBarConfiguration)
             }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)

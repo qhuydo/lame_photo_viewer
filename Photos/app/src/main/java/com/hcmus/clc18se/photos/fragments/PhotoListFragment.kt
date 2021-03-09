@@ -50,7 +50,6 @@ class PhotoListFragment : Fragment() {
                 "0")!!.toInt()
 
         setHasOptionsMenu(true)
-        setUpToolbar()
 
         binding.apply {
             lifecycleOwner = this@PhotoListFragment
@@ -63,13 +62,6 @@ class PhotoListFragment : Fragment() {
                     resources, currentListItemView, currentListItemSize)
         }
         return binding.root
-    }
-
-    private fun setUpToolbar() {
-        val photosActivity = requireActivity() as PhotosActivity
-        photosActivity.setSupportActionBar(photosActivity.binding.topAppBar2.fragmentToolBar)
-        photosActivity.supportActionBar?.title = args.albumName
-
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
