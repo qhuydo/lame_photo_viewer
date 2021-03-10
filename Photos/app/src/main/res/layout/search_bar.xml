@@ -7,7 +7,7 @@
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_bar_height"
-        android:background="@android:color/transparent"
+        android:background="?attr/selectableItemBackground"
         android:fitsSystemWindows="true"
         android:showDividers="none"
         app:elevation="0dp">
@@ -47,7 +47,6 @@
                     tools:visibility="visible" />
 
             </androidx.appcompat.widget.Toolbar>
-
 
         </androidx.cardview.widget.CardView>
 

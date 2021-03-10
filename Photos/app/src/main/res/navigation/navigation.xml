@@ -25,7 +25,11 @@
         android:id="@+id/page_photo"
         android:name="com.hcmus.clc18se.photos.fragments.PhotosFragment"
         android:label="@string/photo_title"
-        tools:layout="@layout/fragment_photos" />
+        tools:layout="@layout/fragment_photos">
+        <action
+            android:id="@+id/action_page_photo_to_photoViewFragment"
+            app:destination="@id/photoViewFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/aboutFragment"
@@ -46,9 +50,18 @@
         android:id="@+id/photoListFragment"
         android:name="com.hcmus.clc18se.photos.fragments.PhotoListFragment"
         android:label="PhotoListFragment"
-        tools:layout="@layout/photo_list" >
+        tools:layout="@layout/photo_list">
         <argument
             android:name="albumName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_photoListFragment_to_photoViewFragment"
+            app:destination="@id/photoViewFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/photoViewFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.PhotoViewFragment"
+        android:label="PhotoViewFragment"
+        tools:layout="@layout/fragment_photo_view" />
 </navigation>

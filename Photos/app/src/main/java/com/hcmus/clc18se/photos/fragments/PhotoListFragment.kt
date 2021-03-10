@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -28,11 +31,14 @@ class PhotoListFragment : Fragment() {
     private var currentListItemView: Int = PhotoListAdapter.ITEM_TYPE_LIST
     private var currentListItemSize: Int = 0
 
-    private val viewModel by lazy {
-        ViewModelProvider(this).get(PhotosViewModel::class.java)
-    }
+    private val viewModel: PhotosViewModel by activityViewModels()
 
-    private val args: PhotoListFragmentArgs by navArgs()
+    //private val args: PhotoListFragmentArgs by navArgs()
+    private val onClickListener = PhotoListAdapter.OnClickListener {
+        this.findNavController().navigate(
+                PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
+        )
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -55,7 +61,9 @@ class PhotoListFragment : Fragment() {
             lifecycleOwner = this@PhotoListFragment
             photoListLayout.photoList = viewModel.photoList.value
             photoListLayout.photoListRecyclerView.adapter = PhotoListAdapter(resources,
-                    currentListItemView, currentListItemSize)
+                    onClickListener,
+                    currentListItemView,
+                    currentListItemSize)
 
             val layoutManager = photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager
             layoutManager.spanCount = getSpanCountForPhotoList(
@@ -129,7 +137,11 @@ class PhotoListFragment : Fragment() {
 
     private fun refreshRecyclerView() {
         binding.apply {
-            val adapter = PhotoListAdapter(resources, currentListItemView, currentListItemSize)
+            val adapter = PhotoListAdapter(resources,
+                    onClickListener,
+                    currentListItemView,
+                    currentListItemSize)
+
             val recyclerView = photoListLayout.photoListRecyclerView
             val photoList = photoListLayout.photoList
 

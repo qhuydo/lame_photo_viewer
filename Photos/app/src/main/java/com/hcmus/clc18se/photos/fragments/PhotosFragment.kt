@@ -55,7 +55,10 @@ class PhotosFragment : Fragment() {
 
             photosViewModel = viewModel
             photoListLayout.photoList = viewModel.photoList.value
-            photoListLayout.photoListRecyclerView.adapter = PhotoListAdapter(resources, currentListItemView, currentListItemSize)
+            photoListLayout.photoListRecyclerView.adapter = PhotoListAdapter(resources,
+                    PhotoListAdapter.OnClickListener { },
+                    currentListItemView, currentListItemSize)
+
             val layoutManager = photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager
             layoutManager.spanCount = getSpanCountForPhotoList(
                     resources, currentListItemView, currentListItemSize)
@@ -128,7 +131,9 @@ class PhotosFragment : Fragment() {
 
     private fun refreshRecyclerView() {
         binding.apply {
-            val adapter = PhotoListAdapter(resources, currentListItemView, currentListItemSize)
+            val adapter = PhotoListAdapter(resources,
+                    PhotoListAdapter.OnClickListener { },
+                    currentListItemView, currentListItemSize)
             val recyclerView = photoListLayout.photoListRecyclerView
             val photoList = photoListLayout.photoList
 

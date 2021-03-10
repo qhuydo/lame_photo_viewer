@@ -28,6 +28,13 @@
     </notice>
 
     <notice>
+        <name>Subsampling Scale Image View</name>
+        <url>https://github.com/davemorrissey/subsampling-scale-image-view</url>
+        <copyright>Copyritght 2018 David Morrissey</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+
+    <notice>
         <name>Timber</name>
         <url>https://github.com/JakeWharton/timber</url>
         <copyright>Copyright 2013 Jake Wharton</copyright>

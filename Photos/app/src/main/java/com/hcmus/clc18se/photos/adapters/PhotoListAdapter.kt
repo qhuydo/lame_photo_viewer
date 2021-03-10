@@ -21,6 +21,7 @@ import java.lang.ClassCastException
 
 // TODO: simplify the adapter when the header is unused
 class PhotoListAdapter(private val resources: Resources,
+                       private val onClickListener: OnClickListener,
                        private val adapterViewType: Int = ITEM_TYPE_GRID,
                        private val itemViewSize: Int = ITEM_SIZE_MEDIUM) :
         ListAdapter<DataItem, RecyclerView.ViewHolder>(DiffCallback) {
@@ -42,6 +43,7 @@ class PhotoListAdapter(private val resources: Resources,
             is ViewHolder -> {
                 val photo = getItem(position) as DataItem.PhotoItem
                 holder.bind(photo)
+                holder.itemView.setOnClickListener { onClickListener.onClick(photo.photo) }
             }
         }
     }
@@ -135,6 +137,10 @@ class PhotoListAdapter(private val resources: Resources,
                 return HeaderViewHolder(view)
             }
         }
+    }
+
+    class OnClickListener(val clickListener: (samplePhoto: SamplePhoto) -> Any) {
+        fun onClick(samplePhoto: SamplePhoto) = clickListener(samplePhoto)
     }
 
 }

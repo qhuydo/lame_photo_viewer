@@ -8,9 +8,7 @@
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?colorSurface">
-
+        android:layout_height="match_parent">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/main_coordinator_layout"
@@ -115,7 +113,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="?colorSurface"
             android:clipToPadding="true"
             app:headerLayout="@layout/nav_header"
             app:menu="@menu/navdrawer_menu" />
