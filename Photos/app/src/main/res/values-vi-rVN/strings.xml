@@ -47,4 +47,5 @@
     <string name="show_album_list_as">Dạng danh sách album</string>
     <string name="album_list_item_size">Kích thước trong danh sách album</string>
     <string name="search">Tìm kiếm</string>
+    <string name="save_image">lưu ảnh</string>
 </resources>

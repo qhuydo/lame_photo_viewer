@@ -60,5 +60,6 @@
     <string name="album_list_item_size">Album List item size</string>
     <string name="show_album_list_as">Show album list as</string>
     <string name="search">Search</string>
+    <string name="save_image">Save image</string>
 
 </resources>

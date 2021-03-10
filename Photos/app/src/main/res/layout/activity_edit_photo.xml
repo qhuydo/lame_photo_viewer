@@ -13,7 +13,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/bottom_edit"
-            android:visibility="gone" />
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/imageEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/photo_title"/>
+        </FrameLayout>
 
         <include
             android:id="@+id/bright_editor"
@@ -72,20 +78,22 @@
             app:menu="@menu/bottom_view_edit" />
 
         <ImageButton
-            android:id="@+id/save"
+            android:id="@+id/saveImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:contentDescription="@string/draw"
+            android:onClick="onSaveImageButtonClick"
+            android:contentDescription="@string/save_image"
             android:src="@drawable/ic_outline_save_24" />
 
         <ImageButton
-            android:id="@+id/button"
+            android:id="@+id/draw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/save"
+            android:layout_below="@+id/saveImage"
             android:layout_alignParentEnd="true"
+            android:onClick="onDrawButtonClick"
             android:contentDescription="@string/draw"
             android:src="@drawable/ic_outline_edit_24" />
     </RelativeLayout>
