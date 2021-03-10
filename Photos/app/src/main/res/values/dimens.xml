@@ -13,4 +13,7 @@
     <dimen name="photo_list_item_size_small">64dp</dimen>
     <dimen name="photo_list_item_size_medium">80dp</dimen>
     <dimen name="photo_list_item_size_big">104dp</dimen>
+
+    <dimen name="photo_edit_filter_size">100dp</dimen>
+    <dimen name="photo_edit_filter_magin_photo">10dp</dimen>
 </resources>

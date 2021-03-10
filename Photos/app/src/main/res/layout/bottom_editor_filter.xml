@@ -17,14 +17,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="@dimen/photo_edit_filter_size"
+                    android:layout_height="@dimen/photo_edit_filter_size"
                     android:src="@mipmap/blur_foreground" />
 
                 <TextView
@@ -37,13 +37,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="@dimen/photo_edit_filter_size"
+                    android:layout_height="@dimen/photo_edit_filter_size"
                     android:src="@mipmap/orignal_foreground" />
 
                 <TextView
@@ -56,13 +56,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="@dimen/photo_edit_filter_size"
+                    android:layout_height="@dimen/photo_edit_filter_size"
                     android:src="@mipmap/pencil_draw_foreground" />
 
                 <TextView
@@ -75,13 +75,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="@dimen/photo_edit_filter_size"
+                    android:layout_height="@dimen/photo_edit_filter_size"
                     android:src="@mipmap/misty_foreground" />
 
                 <TextView
@@ -94,13 +94,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="@dimen/photo_edit_filter_size"
+                    android:layout_height="@dimen/photo_edit_filter_size"
                     android:src="@mipmap/colorise_foreground" />
 
                 <TextView
@@ -113,13 +113,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="@dimen/photo_edit_filter_size"
+                    android:layout_height="@dimen/photo_edit_filter_size"
                     android:src="@mipmap/morning_foreground" />
 
                 <TextView
