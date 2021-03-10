@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_move_to_secret_album"
+        android:title="@string/move_to_secret_album" />
+
+    <item
+        android:id="@+id/action_rotate"
+        android:title="@string/rotate" />
+
+    <item
+        android:id="@+id/action_move"
+        android:icon="@drawable/ic_baseline_content_cut_24"
+        android:title="@string/move" />
+
+    <item
+        android:id="@+id/action_copy"
+        android:icon="@drawable/ic_baseline_content_copy_24"
+        android:title="@string/copy" />
+
+    <item
+        android:id="@+id/action_rename"
+        android:title="@string/rename" />
+    <item
+        android:id="@+id/action_slideshow"
+        android:title="@string/slideshow" />
+
+    <item
+        android:id="@+id/action_kick_to_other_app"
+        android:title="@string/open_in_another_app" />
+
+    <item
+        android:id="@+id/action_open_settings"
+        android:title="@string/settings_title" />
+</menu>

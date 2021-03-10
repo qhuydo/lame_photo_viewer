@@ -47,5 +47,12 @@
     <string name="show_album_list_as">Dạng danh sách album</string>
     <string name="album_list_item_size">Kích thước trong danh sách album</string>
     <string name="search">Tìm kiếm</string>
-    <string name="save_image">lưu ảnh</string>
+    <string name="save_image">Lưu ảnh</string>
+    <string name="move">Di chuyển</string>
+    <string name="copy">Sao chép</string>
+    <string name="open_in_another_app">Mở ảnh bằng ứng dụng khác</string>
+    <string name="move_to_secret_album">Di chuyển ảnh sang album ẩn</string>
+    <string name="slideshow">Trình chiếu</string>
+    <string name="rename">Đổi tên</string>
+    <string name="rotate">Xoay ảnh</string>
 </resources>

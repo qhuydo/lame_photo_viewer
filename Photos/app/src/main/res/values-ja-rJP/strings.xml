@@ -47,4 +47,12 @@
     <string name="show_album_list_as">アルバムリストの表示形式</string>
     <string name="album_list_item_size">アルバムリストのアイテムサイズ</string>
     <string name="search">検索</string>
+    <string name="save_image">保存</string>
+    <string name="move">移動</string>
+    <string name="copy">コピー</string>
+    <string name="open_in_another_app">別のアプリで開く</string>
+    <string name="move_to_secret_album">秘密アルバムに移動</string>
+    <string name="slideshow">スライドショー</string>
+    <string name="rename">名前を変更</string>
+    <string name="rotate">回転</string>
 </resources>

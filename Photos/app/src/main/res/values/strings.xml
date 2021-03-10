@@ -61,5 +61,13 @@
     <string name="show_album_list_as">Show album list as</string>
     <string name="search">Search</string>
     <string name="save_image">Save image</string>
+    <string name="move">Move</string>
+    <string name="copy">Copy</string>
+    <string name="open_in_another_app">Open in another app</string>
+    <string name="move_to_secret_album">Move to Secret album</string>
+    <string name="slideshow">Slideshow</string>
+    <string name="rename">Rename</string>
+    <string name="rotate">Rotate</string>
+    <string name="photo_properties">Properties</string>
 
 </resources>
