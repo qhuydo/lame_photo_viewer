@@ -22,11 +22,11 @@ class EditPhotoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val cur_intent = intent
-        val myBundle = cur_intent.extras
-        BitmapImage = myBundle!!.getParcelable<Bitmap>("image")
-        imageView = binding.imageEdit
-        imageView?.setImageBitmap(BitmapImage)
+//        val cur_intent = intent
+//        val myBundle = cur_intent.extras
+//        BitmapImage = myBundle!!.getParcelable<Bitmap>("image")
+//        imageView = binding.imageEdit
+//        imageView?.setImageBitmap(BitmapImage)
 
         val bottomNavigation = binding.bottomEdit
         bottomNavigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)

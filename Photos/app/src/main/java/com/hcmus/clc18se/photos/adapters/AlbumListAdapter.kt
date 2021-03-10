@@ -17,7 +17,7 @@ class AlbumListAdapter(
         private val resources: Resources,
         private val adapterItemType: Int = ITEM_TYPE_GRID,
         private val adapterItemSize: Int = ITEM_SIZE_MEDIUM) :
-        ListAdapter<SampleAlbum, AlbumListAdapter.ViewHolder>(DiffCallBack) {
+        ListAdapter<SampleAlbum, AlbumListAdapter.ViewHolder>(AlbumListAdapter.DiffCallBack()) {
 
     companion object {
         const val ITEM_TYPE_LIST = 0
@@ -86,14 +86,15 @@ class AlbumListAdapter(
     class OnClickListener(val clickListener: (album: SampleAlbum) -> Unit) {
         fun onClick(album: SampleAlbum) = clickListener(album)
     }
+
+    class DiffCallBack : DiffUtil.ItemCallback<SampleAlbum>() {
+        override fun areContentsTheSame(oldItem: SampleAlbum, newItem: SampleAlbum): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areItemsTheSame(oldItem: SampleAlbum, newItem: SampleAlbum): Boolean {
+            return oldItem.name == newItem.name
+        }
+    }
 }
 
-object DiffCallBack : DiffUtil.ItemCallback<SampleAlbum>() {
-    override fun areContentsTheSame(oldItem: SampleAlbum, newItem: SampleAlbum): Boolean {
-        return oldItem == newItem
-    }
-
-    override fun areItemsTheSame(oldItem: SampleAlbum, newItem: SampleAlbum): Boolean {
-        return oldItem.name == newItem.name
-    }
-}
