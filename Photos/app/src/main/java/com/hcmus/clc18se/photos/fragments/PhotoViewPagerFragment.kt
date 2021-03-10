@@ -26,8 +26,8 @@ class PhotoViewPagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (savedInstanceState?.containsKey(BUNDLE_ASSET) == true) {
-            resId = savedInstanceState.getInt(BUNDLE_ASSET)
+        if (savedInstanceState?.containsKey(BUNDLE_RESID) == true) {
+            resId = savedInstanceState.getInt(BUNDLE_RESID)
         }
         binding.imageView.setImage(ImageSource.resource(resId))
 
@@ -37,11 +37,11 @@ class PhotoViewPagerFragment : Fragment() {
         super.onSaveInstanceState(outState)
         val rootView = view
         if (rootView != null) {
-            outState.putInt(BUNDLE_ASSET, resId)
+            outState.putInt(BUNDLE_RESID, resId)
         }
     }
 
     companion object {
-        private const val BUNDLE_ASSET = "asset"
+        private const val BUNDLE_RESID = "resId"
     }
 }

@@ -33,8 +33,10 @@ class PhotoListFragment : Fragment() {
 
     private val viewModel: PhotosViewModel by activityViewModels()
 
-    //private val args: PhotoListFragmentArgs by navArgs()
+    private val args: PhotoListFragmentArgs by navArgs()
     private val onClickListener = PhotoListAdapter.OnClickListener {
+        val idx = viewModel.photoList.value?.indexOf(it) ?: -1
+        viewModel.setCurrentItemView(idx)
         this.findNavController().navigate(
                 PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
         )
@@ -56,7 +58,13 @@ class PhotoListFragment : Fragment() {
                 "0")!!.toInt()
 
         setHasOptionsMenu(true)
+        (activity as PhotosActivity).supportActionBar?.title = args.albumName
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.apply {
             lifecycleOwner = this@PhotoListFragment
             photoListLayout.photoList = viewModel.photoList.value
@@ -69,7 +77,6 @@ class PhotoListFragment : Fragment() {
             layoutManager.spanCount = getSpanCountForPhotoList(
                     resources, currentListItemView, currentListItemSize)
         }
-        return binding.root
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

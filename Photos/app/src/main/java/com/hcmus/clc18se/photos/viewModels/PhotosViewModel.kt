@@ -12,6 +12,10 @@ class PhotosViewModel : ViewModel() {
     val photoList: LiveData<List<SamplePhoto>>
         get() = _photoList
 
+    private var _idx = MutableLiveData(0)
+    val idx: LiveData<Int>
+        get() = _idx
+
     companion object {
         private val samplePhoto = listOf(
                 SamplePhoto(R.drawable.ic_launcher_sample, "ic_launcher_sample.png"),
@@ -29,5 +33,13 @@ class PhotosViewModel : ViewModel() {
 
     init {
         _photoList.value = samplePhoto
+    }
+
+    fun setCurrentItemView(newIdx: Int) {
+        _photoList.value?.let {
+            if (newIdx in it.indices) {
+                _idx.value = newIdx
+            }
+        }
     }
 }

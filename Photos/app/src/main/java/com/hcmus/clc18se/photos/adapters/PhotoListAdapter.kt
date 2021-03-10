@@ -24,7 +24,7 @@ class PhotoListAdapter(private val resources: Resources,
                        private val onClickListener: OnClickListener,
                        private val adapterViewType: Int = ITEM_TYPE_GRID,
                        private val itemViewSize: Int = ITEM_SIZE_MEDIUM) :
-        ListAdapter<DataItem, RecyclerView.ViewHolder>(PhotoListAdapter.DiffCallback()) {
+        ListAdapter<DataItem, RecyclerView.ViewHolder>(DiffCallback()) {
 
     companion object {
         const val ITEM_TYPE_HEADER = -1
@@ -115,6 +115,7 @@ class PhotoListAdapter(private val resources: Resources,
                     )
                 }
             }
+
             fun setItemListSize(resources: Resources, item: ImageView, itemSize: Int) {
                 val layoutParams = item.layoutParams
                 layoutParams.width = when (itemSize) {
@@ -142,6 +143,7 @@ class PhotoListAdapter(private val resources: Resources,
     class OnClickListener(val clickListener: (samplePhoto: SamplePhoto) -> Any) {
         fun onClick(samplePhoto: SamplePhoto) = clickListener(samplePhoto)
     }
+
     class DiffCallback : DiffUtil.ItemCallback<DataItem>() {
         override fun areContentsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
             return oldItem.id == newItem.id
@@ -151,7 +153,6 @@ class PhotoListAdapter(private val resources: Resources,
             return oldItem == newItem
         }
     }
-
 }
 
 

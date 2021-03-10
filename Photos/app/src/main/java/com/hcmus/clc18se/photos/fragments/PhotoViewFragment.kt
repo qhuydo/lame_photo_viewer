@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.hcmus.clc18se.photos.PhotosActivity
 import com.hcmus.clc18se.photos.data.SamplePhoto
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
@@ -19,60 +20,47 @@ class PhotoViewFragment : Fragment() {
 
     private lateinit var binding: FragmentPhotoViewBinding
 
-    protected var page: Int = 0
-        private set
-
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
         binding = FragmentPhotoViewBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = this
-        binding.photosViewModel = viewModel
+        binding.apply {
+            lifecycleOwner = this@PhotoViewFragment
+            photosViewModel = viewModel
+        }
+
+        binding.horizontalViewPager.apply {
+            adapter = ScreenSlidePagerAdapter(this@PhotoViewFragment)
+
+            setCurrentItem(viewModel.idx.value!!, false)
+            (activity as PhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
+
+            binding.horizontalViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    (activity as PhotosActivity).supportActionBar?.title = photos[position].name
+                }
+            })
+
+        }
+
         return binding.root
-
     }
 
-    override fun onResume() {
-        super.onResume()
-        binding.horizontalViewPager.adapter = ScreenSlidePagerAdapter(childFragmentManager)
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        if (savedInstanceState?.containsKey(BUNDLE_PAGE) == true) {
-            page = savedInstanceState.getInt(BUNDLE_PAGE)
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(BUNDLE_PAGE, page)
-    }
-
-    companion object {
-        private const val BUNDLE_PAGE = "page"
-    }
-
-    private inner class ScreenSlidePagerAdapter internal constructor(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-
-        override fun getItem(position: Int): Fragment {
-            val fragment = PhotoViewPagerFragment()
-            fragment.resId = photos.get(position).resId
-            return fragment
-        }
-
-        override fun getCount(): Int {
+    private inner class ScreenSlidePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+        override fun getItemCount(): Int {
             return photos.size
         }
+
+        override fun createFragment(position: Int): Fragment {
+            val fragment = PhotoViewPagerFragment()
+
+            fragment.resId = photos[position].resId
+
+            return fragment
+        }
     }
 
-    private operator fun next() {
-        page++
-    }
-
-    private fun previous() {
-        page--
-    }
 }

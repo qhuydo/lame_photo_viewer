@@ -17,7 +17,7 @@ class AlbumListAdapter(
         private val resources: Resources,
         private val adapterItemType: Int = ITEM_TYPE_GRID,
         private val adapterItemSize: Int = ITEM_SIZE_MEDIUM) :
-        ListAdapter<SampleAlbum, AlbumListAdapter.ViewHolder>(AlbumListAdapter.DiffCallBack()) {
+        ListAdapter<SampleAlbum, AlbumListAdapter.ViewHolder>(DiffCallBack()) {
 
     companion object {
         const val ITEM_TYPE_LIST = 0
