@@ -16,13 +16,6 @@
     </notice>
 
     <notice>
-        <name>FloatingActionButton</name>
-        <url>https://github.com/zendesk/android-floating-action-button</url>
-        <copyright>Copyright 2014 Zendesk</copyright>
-        <license>Apache Software License 2.0</license>
-    </notice>
-
-    <notice>
         <name>Glide</name>
         <url>https://github.com/bumptech/glide</url>
     </notice>

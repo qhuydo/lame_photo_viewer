@@ -3,13 +3,16 @@ package com.hcmus.clc18se.photos
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -36,6 +39,8 @@ class PhotosActivity : AppCompatActivity() {
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
     private var isFabRotate = false
+
+    private var bottomAppBarVisibility: Boolean = true
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -69,9 +74,6 @@ class PhotosActivity : AppCompatActivity() {
     private fun displayBottomBarPreference(): Boolean {
         return preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0") == "0"
     }
-
-    private var bottomAppBarVisibility: Boolean = true
-    private val bottomAppBarVisibilityKey: String = "bottomAppBarVisibilityKey"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,6 +110,12 @@ class PhotosActivity : AppCompatActivity() {
             if (bottomAppBarVisibility != newState) {
                 bottomAppBarVisibility = newState
                 setAppbarVisibility(bottomAppBarVisibility)
+            }
+            when (destination.id) {
+                R.id.photoViewFragment -> {
+                    makeToolbarTransparent(false)
+                }
+                else -> makeToolbarTransparent(false)
             }
         }
     }
@@ -200,6 +208,19 @@ class PhotosActivity : AppCompatActivity() {
         binding.bottomAppBar.visibility = if (!displayBottomBarPreference()) View.INVISIBLE else View.VISIBLE
     }
 
+    private fun makeToolbarTransparent(wantToMakeTransparent: Boolean = true) {
+        if (wantToMakeTransparent) {
+            supportActionBar?.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.transparent_bar))
+            //binding.topAppBar2.fragmentAppBarLayout.background = ContextCompat.getDrawable(this, R.drawable.transparent_bar)
+        } else {
+            val typedValue = TypedValue()
+            if (theme.resolveAttribute(R.attr.colorSurface, typedValue, true)) {
+                val color = typedValue.data
+                binding.topAppBar2.fragmentAppBarLayout.background = ColorDrawable(color)
+            }
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return NavigationUI.onNavDestinationSelected(
                 item,
@@ -289,8 +310,6 @@ class PhotosActivity : AppCompatActivity() {
         when (key) {
             getString(R.string.app_theme_key) -> {
                 configTheme(null)
-                //navController.navigateUp()
-                //recreate()
                 finish()
                 overridePendingTransition(0, 0)
                 startActivity(getIntent())
@@ -318,7 +337,9 @@ class PhotosActivity : AppCompatActivity() {
                 Timber.d("Color ${RESOURCE_MAPPER[newColor] ?: ICON_COLOR.INDIGO}")
                 setIcon(packageManager, RESOURCE_MAPPER[newColor] ?: ICON_COLOR.INDIGO)
             }
-
+            getString(R.string.app_language_key) -> {
+                configLanguage()
+            }
         }
     }
 
@@ -326,7 +347,7 @@ class PhotosActivity : AppCompatActivity() {
         preferences.registerOnSharedPreferenceChangeListener(preferencesListener)
     }
 
-    fun onLicenseButtonClick(view: View) {
+    fun onLicenseButtonClick() {
         val fragment = LicensesDialogFragment.Builder(this)
                 .setNotices(R.raw.licenses)
                 .setThemeResourceId(getCurrentThemeColor())
@@ -335,10 +356,7 @@ class PhotosActivity : AppCompatActivity() {
         fragment.show(supportFragmentManager, null)
     }
 
-    private val REQUEST_IMAGE_CAPTURE = 1
-    private val REQUEST_VIDEO_CAPTURE = 1
-
-    fun fab_add_video(view: View) {
+    fun fabAddVideo(view: View) {
         Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->
             takeVideoIntent.resolveActivity(packageManager)?.also {
                 startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
@@ -346,10 +364,17 @@ class PhotosActivity : AppCompatActivity() {
         }
     }
 
-    fun fab_add_picture(view: View) {
+    fun fabAddPicture(view: View) {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(packageManager) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
         }
+    }
+
+    companion object {
+        const val REQUEST_IMAGE_CAPTURE = 1
+        const val REQUEST_VIDEO_CAPTURE = 1
+        const val bottomAppBarVisibilityKey: String = "bottomAppBarVisibilityKey"
+
     }
 }

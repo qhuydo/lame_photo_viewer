@@ -62,6 +62,6 @@
     <fragment
         android:id="@+id/photoViewFragment"
         android:name="com.hcmus.clc18se.photos.fragments.PhotoViewFragment"
-        android:label="PhotoViewFragment"
+        android:label=""
         tools:layout="@layout/fragment_photo_view" />
 </navigation>

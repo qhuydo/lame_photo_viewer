@@ -43,7 +43,6 @@ class PhotoViewFragment : Fragment() {
                     (activity as PhotosActivity).supportActionBar?.title = photos[position].name
                 }
             })
-
         }
 
         return binding.root
@@ -56,10 +55,17 @@ class PhotoViewFragment : Fragment() {
 
         override fun createFragment(position: Int): Fragment {
             val fragment = PhotoViewPagerFragment()
-
             fragment.resId = photos[position].resId
 
             return fragment
+        }
+    }
+
+    internal fun setBottomToolbarVisibility(visibility: Boolean) {
+        if (visibility) {
+            binding.bottomLayout.visibility = View.VISIBLE
+        } else {
+            binding.bottomLayout.visibility = View.INVISIBLE
         }
     }
 

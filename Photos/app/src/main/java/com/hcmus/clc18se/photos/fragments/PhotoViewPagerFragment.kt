@@ -16,6 +16,8 @@ class PhotoViewPagerFragment : Fragment() {
     private lateinit var binding: PhotoViewPagerPageBinding
     private var actionBar: ActionBar? = null
 
+    private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -35,12 +37,13 @@ class PhotoViewPagerFragment : Fragment() {
         }
 
         binding.imageView.setImage(ImageSource.resource(resId))
-
         binding.imageView.setOnClickListener {
             actionBar?.let {
                 if (it.isShowing) {
+                    parentFragment.setBottomToolbarVisibility(false)
                     it.hide()
                 } else {
+                    parentFragment.setBottomToolbarVisibility(true)
                     it.show()
                 }
             }
