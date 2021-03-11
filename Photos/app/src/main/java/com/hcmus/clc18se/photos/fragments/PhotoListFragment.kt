@@ -5,13 +5,11 @@ import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
-import com.hcmus.clc18se.photos.PhotosActivity
+import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.PhotoListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSamplePhotoListRecyclerView
@@ -58,7 +56,7 @@ class PhotoListFragment : Fragment() {
                 "0")!!.toInt()
 
         setHasOptionsMenu(true)
-        (activity as PhotosActivity).supportActionBar?.title = args.albumName
+        (activity as AbstractPhotosActivity).supportActionBar?.title = args.albumName
 
         return binding.root
     }

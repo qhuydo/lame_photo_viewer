@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.hcmus.clc18se.photos.PhotosActivity
+import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.data.SamplePhoto
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
@@ -35,12 +35,12 @@ class PhotoViewFragment : Fragment() {
             adapter = ScreenSlidePagerAdapter(this@PhotoViewFragment)
 
             setCurrentItem(viewModel.idx.value!!, false)
-            (activity as PhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
+            (activity as AbstractPhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
 
             binding.horizontalViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    (activity as PhotosActivity).supportActionBar?.title = photos[position].name
+                    (activity as AbstractPhotosActivity).supportActionBar?.title = photos[position].name
                 }
             })
         }

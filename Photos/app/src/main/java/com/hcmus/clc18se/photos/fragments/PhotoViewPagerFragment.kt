@@ -5,7 +5,7 @@ import android.view.*
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import com.davemorrissey.labs.subscaleview.ImageSource
-import com.hcmus.clc18se.photos.PhotosActivity
+import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 
@@ -30,7 +30,7 @@ class PhotoViewPagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        actionBar = (activity as PhotosActivity).supportActionBar
+        actionBar = (activity as AbstractPhotosActivity).supportActionBar
 
         if (savedInstanceState?.containsKey(BUNDLE_RESID) == true) {
             resId = savedInstanceState.getInt(BUNDLE_RESID)
