@@ -17,7 +17,7 @@ import timber.log.Timber
 import java.util.*
 
 
-abstract class AbstractPhotosActivity: AppCompatActivity() {
+abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
@@ -108,6 +108,7 @@ abstract class AbstractPhotosActivity: AppCompatActivity() {
         configuration.locale = Locale(localeCode.toLowerCase())
         resources.updateConfiguration(configuration, displayMetrics)
     }
+
     protected fun configLanguage(locale: Locale? = null) {
         val defaultIdx = 0
 
@@ -137,13 +138,13 @@ abstract class AbstractPhotosActivity: AppCompatActivity() {
         }
     }
 
-    protected val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+    private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             getString(R.string.app_theme_key) -> {
                 configTheme(null)
                 finish()
                 overridePendingTransition(0, 0)
-                startActivity(getIntent())
+                startActivity(intent)
                 overridePendingTransition(0, 0)
             }
             getString(R.string.app_color_key) -> {
@@ -170,9 +171,17 @@ abstract class AbstractPhotosActivity: AppCompatActivity() {
             }
             getString(R.string.app_language_key) -> {
                 configLanguage()
+                finish()
+                overridePendingTransition(0, 0)
+                startActivity(intent)
+                overridePendingTransition(0, 0)
+            }
+            getString(R.string.app_bottom_bar_navigation_key) -> {
+
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
             }
         }
-        recreate()
     }
 
     protected fun registerOnChangedPreferenceListener() {

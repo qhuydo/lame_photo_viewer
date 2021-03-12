@@ -21,5 +21,6 @@
     <string-array name="bottom_bar_preference_entries">
         <item>表示</item>
         <item>非表示</item>
+        <item>ボタムバーの代わりにタブレイアウトを表示</item>
     </string-array>
 </resources>
