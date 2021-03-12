@@ -34,6 +34,7 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
         configColor()
         configTheme()
+        configLanguage()
 
         appBarConfiguration = AppBarConfiguration(
                 setOf(R.id.homeViewPagerFragment), drawerLayout

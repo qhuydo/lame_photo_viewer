@@ -5,13 +5,17 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.DisplayMetrics
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
-import com.hcmus.clc18se.photos.utils.*
+import com.hcmus.clc18se.photos.utils.ICON_COLOR
+import com.hcmus.clc18se.photos.utils.setIcon
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
+import java.util.*
+
 
 abstract class AbstractPhotosActivity: AppCompatActivity() {
 
@@ -96,23 +100,26 @@ abstract class AbstractPhotosActivity: AppCompatActivity() {
 
     }
 
-    protected fun configLanguage(uiMode: Int? = null) {
+    private fun setAppLocale(localeCode: String) {
+        val displayMetrics: DisplayMetrics = resources.getDisplayMetrics()
+        val configuration: Configuration = resources.getConfiguration()
+        configuration.setLocale(Locale(localeCode.toLowerCase()))
+        resources.updateConfiguration(configuration, displayMetrics)
+        configuration.locale = Locale(localeCode.toLowerCase())
+        resources.updateConfiguration(configuration, displayMetrics)
+    }
+    protected fun configLanguage(locale: Locale? = null) {
         val defaultIdx = 0
 
         val languageOptions = preferences.getString("app_language", "default")
         val options = resources.getStringArray(R.array.language_values)
-
+        Timber.d("languageOptions $languageOptions")
         when (languageOptions) {
             options[defaultIdx] -> {
-                //val systemLanguage =
-            }
-            else -> {
 
             }
-
+            else -> setAppLocale(languageOptions!!)
         }
-        recreate()
-
     }
 
     protected fun configDefaultTheme(uiMode: Int) {
@@ -165,6 +172,7 @@ abstract class AbstractPhotosActivity: AppCompatActivity() {
                 configLanguage()
             }
         }
+        recreate()
     }
 
     protected fun registerOnChangedPreferenceListener() {

@@ -39,6 +39,7 @@ class PhotosActivity : AbstractPhotosActivity() {
 
         configColor()
         configTheme()
+        configLanguage()
 
         appBarConfiguration = AppBarConfiguration(
             setOf(R.id.page_photo, R.id.page_album, R.id.page_people), drawerLayout
