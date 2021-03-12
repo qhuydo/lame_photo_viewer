@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pager_navigation"
+    app:startDestination="@id/homeViewPagerFragment">
+
+    <fragment
+        android:id="@+id/homeViewPagerFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.HomeViewPagerFragment"
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_page_album_to_photoListFragment"
+            app:destination="@id/photoListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/page_album"
+        android:name="com.hcmus.clc18se.photos.fragments.AlbumFragment"
+        android:label="@string/album_title"
+        tools:layout="@layout/fragment_album">
+        <action
+            android:id="@+id/action_page_album_to_photoListFragment"
+            app:destination="@id/photoListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/page_people"
+        android:name="com.hcmus.clc18se.photos.fragments.PeopleFragment"
+        android:label="@string/people_title"
+        tools:layout="@layout/fragment_people" />
+
+    <fragment
+        android:id="@+id/page_photo"
+        android:name="com.hcmus.clc18se.photos.fragments.PhotosFragment"
+        android:label="@string/photo_title"
+        tools:layout="@layout/fragment_photos">
+        <action
+            android:id="@+id/action_page_photo_to_photoViewFragment"
+            app:destination="@id/photoViewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.AboutFragment"
+        android:label="@string/about"
+        tools:layout="@layout/fragment_about" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.SettingsFragment"
+        android:label="@string/settings_title" />
+
+    <!--Global action-->
+    <action
+        android:id="@+id/open_settings_fragment"
+        app:destination="@id/settingsFragment" />
+    <fragment
+        android:id="@+id/photoListFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.PhotoListFragment"
+        android:label="PhotoListFragment"
+        tools:layout="@layout/photo_list">
+        <argument
+            android:name="albumName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_photoListFragment_to_photoViewFragment"
+            app:destination="@id/photoViewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/photoViewFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.PhotoViewFragment"
+        android:label=""
+        tools:layout="@layout/fragment_photo_view" />
+</navigation>

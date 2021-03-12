@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:id="@+id/photo_extra_group">
+
+        <item
+            android:id="@+id/page_favourites"
+            android:icon="@drawable/ic_outline_favorite_border_24"
+            android:title="@string/favorites_title" />
+
+        <item
+            android:id="@+id/secret_photos"
+            android:icon="@drawable/ic_outline_lock_24"
+            android:title="@string/secret_photos_title" />
+
+        <item
+            android:id="@+id/file_explorer"
+            android:icon="@drawable/ic_outline_folder_24"
+            android:title="@string/file_explorer_title" />
+        <item
+            android:id="@+id/trash"
+            android:icon="@drawable/ic_baseline_delete_outline_24"
+            android:title="@string/trash" />
+
+    </group>
+
+
+    <group android:id="@+id/setting_group">
+
+        <item
+            android:id="@+id/settingsFragment"
+            android:icon="@drawable/ic_outline_settings_24"
+            android:title="@string/settings_title" />
+
+        <item
+            android:id="@+id/aboutFragment"
+            android:icon="@drawable/ic_outline_info_24"
+            android:title="@string/about" />
+    </group>
+
+
+</menu>
