@@ -19,27 +19,25 @@
                 layout="@layout/top_app_bar"
                 android:visibility="gone" />
 
+            <include
+                android:id="@+id/top_app_bar"
+                layout="@layout/search_bar_with_tabs"
+                android:visibility="visible" />
+
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/navHostFragmentPager"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:defaultNavHost="true"
-                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
                 app:navGraph="@navigation/pager_navigation"
                 tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"
-                tools:layout="@layout/fragment_photos" />
-
-            <include
-                android:id="@+id/top_app_bar"
-                layout="@layout/search_bar_with_tabs"
-                android:visibility="visible" />
+                tools:layout="@layout/fragment_home_pager" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:contentDescription="@string/create"
                 android:src="@drawable/ic_baseline_add_24"
                 app:hideOnScroll="true"
@@ -58,7 +56,6 @@
                 app:hideOnScroll="true"
                 app:layout_anchor="@id/fab"
                 app:layout_anchorGravity="top|center"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:rippleColor="@color/white"
                 app:useCompatPadding="true"
                 tools:ignore="ContentDescription"
@@ -75,7 +72,6 @@
                 app:hideOnScroll="true"
                 app:layout_anchor="@id/fab_add_picture"
                 app:layout_anchorGravity="top|center"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:rippleColor="@color/white"
                 app:useCompatPadding="true"
                 tools:ignore="ContentDescription"

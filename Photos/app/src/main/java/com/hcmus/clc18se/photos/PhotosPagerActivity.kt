@@ -71,10 +71,6 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
     override fun setUpNavigationBar() {
         addOnDestinationChangedListener()
 
-        val toolbar2 = binding.topAppBar2.fragmentToolBar
-        setSupportActionBar(toolbar2)
-        toolbar2.setupWithNavController(navController, appBarConfiguration)
-
         val toolbar = binding.topAppBar.searchActionBar
         setSupportActionBar(toolbar)
         toolbar.setupWithNavController(navController, appBarConfiguration)
@@ -101,13 +97,16 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
     override fun setAppbarVisibility(visibility: Boolean) {
         Timber.d("setAppbarVisibility(visibility: $visibility)")
-
+        val layoutParams = binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
         if (visibility) {
             binding.apply {
                 topAppBar.appBarLayout.visibility = View.VISIBLE
                 topAppBar2.fragmentAppBarLayout.visibility = View.INVISIBLE
 
                 fab.visibility = View.VISIBLE
+
+                layoutParams.topMargin = (resources.getDimensionPixelSize(R.dimen.search_bar_height)
+                        + (getAppBarSizeAttr(this@PhotosPagerActivity) ?: 0))
 
                 mainCoordinatorLayout.requestLayout()
                 mainCoordinatorLayout.invalidate()
@@ -129,6 +128,9 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
                 setAppBarHeight<CoordinatorLayout.LayoutParams>(
                         binding.topAppBar2.fragmentAppBarLayout,
                         getAppBarSizeAttr(this@PhotosPagerActivity) ?: DEFAULT_APP_BAR_HEIGHT)
+
+                layoutParams.behavior = null
+                layoutParams.topMargin = getAppBarSizeAttr(this@PhotosPagerActivity) ?: 0
 
                 mainCoordinatorLayout.requestLayout()
                 mainCoordinatorLayout.invalidate()

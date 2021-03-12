@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -12,28 +11,28 @@
         android:showDividers="none"
         app:elevation="0dp">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|snap"
             app:toolbarId="@id/toolbar">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/toolbar"
                 style="@style/SearchBarStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:contentPaddingBottom="-8dp">
 
-                <androidx.appcompat.widget.Toolbar
+                <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/search_action_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/search_bar_selected_background"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar"
-                    tools:tooltipText="@string/app_name" />
-            </androidx.cardview.widget.CardView>
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.appcompat.widget.Toolbar>
 
         <!-- Override tabIconTint attribute of style with selector -->
         <com.google.android.material.tabs.TabLayout
