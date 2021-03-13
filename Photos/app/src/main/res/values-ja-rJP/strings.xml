@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources [<!ENTITY appname "Lame photo Viewer">]>
 <resources>
     <string name="about">このアプリについて</string>
     <string name="photo_title">写真</string>
@@ -55,4 +56,7 @@
     <string name="slideshow">スライドショー</string>
     <string name="rename">名前を変更</string>
     <string name="rotate">回転</string>
+    <string name="photo_properties">プロパティ</string>
+    <string name="permission_not_granted">続行するには、&appname; に写真へのアクセスを許可して下さい。</string>
+    <string name="grant_permission">アクセスを許可</string>
 </resources>

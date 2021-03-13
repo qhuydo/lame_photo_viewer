@@ -21,9 +21,16 @@
     </notice>
 
     <notice>
+        <name>Storage Samples Repository</name>
+        <url>https://github.com/android/storage-samples</url>
+        <license>Apache Software License 2.0</license>
+        <copyright>Copyright 2019 Google LLC</copyright>
+    </notice>
+
+    <notice>
         <name>Subsampling Scale Image View</name>
         <url>https://github.com/davemorrissey/subsampling-scale-image-view</url>
-        <copyright>Copyritght 2018 David Morrissey</copyright>
+        <copyright>Copyright 2018 David Morrissey</copyright>
         <license>Apache Software License 2.0</license>
     </notice>
 
