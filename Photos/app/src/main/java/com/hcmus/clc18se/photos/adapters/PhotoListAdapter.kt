@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hcmus.clc18se.photos.R
-import com.hcmus.clc18se.photos.data.SamplePhoto
+import com.hcmus.clc18se.photos.data.SampleMediaItem
 import com.hcmus.clc18se.photos.databinding.ItemPhotoListBinding
 import com.hcmus.clc18se.photos.databinding.ItemPhotoListGridBinding
 import kotlinx.coroutines.CoroutineScope
@@ -43,7 +43,7 @@ class PhotoListAdapter(private val resources: Resources,
             is ViewHolder -> {
                 val photo = getItem(position) as DataItem.PhotoItem
                 holder.bind(photo)
-                holder.itemView.setOnClickListener { onClickListener.onClick(photo.photo) }
+                holder.itemView.setOnClickListener { onClickListener.onClick(photo.mediaItem) }
             }
         }
     }
@@ -63,7 +63,7 @@ class PhotoListAdapter(private val resources: Resources,
         }
     }
 
-    fun addHeaderAndSubmitList(list: List<SamplePhoto>?, hasHeader: Boolean = false) {
+    fun addHeaderAndSubmitList(list: List<SampleMediaItem>?, hasHeader: Boolean = false) {
         adapterScope.launch {
             val items = when (hasHeader) {
                 true -> when (list) {
@@ -88,10 +88,10 @@ class PhotoListAdapter(private val resources: Resources,
             when (listBinding) {
                 is ItemPhotoListBinding -> listBinding.apply {
                     setItemListSize(resources, photoListItemImage, itemViewSize)
-                    photo = item.photo
+                    photo = item.mediaItem
                 }
                 is ItemPhotoListGridBinding -> listBinding.apply {
-                    photo = item.photo
+                    photo = item.mediaItem
                 }
             }
             listBinding.executePendingBindings()
@@ -140,8 +140,8 @@ class PhotoListAdapter(private val resources: Resources,
         }
     }
 
-    class OnClickListener(val clickListener: (samplePhoto: SamplePhoto) -> Any) {
-        fun onClick(samplePhoto: SamplePhoto) = clickListener(samplePhoto)
+    class OnClickListener(val clickListener: (sampleMediaItem: SampleMediaItem) -> Any) {
+        fun onClick(sampleMediaItem: SampleMediaItem) = clickListener(sampleMediaItem)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<DataItem>() {
@@ -159,8 +159,8 @@ class PhotoListAdapter(private val resources: Resources,
 sealed class DataItem {
     abstract val id: String
 
-    data class PhotoItem(val photo: SamplePhoto) : DataItem() {
-        override val id: String = photo.name
+    data class PhotoItem(val mediaItem: SampleMediaItem) : DataItem() {
+        override val id: String = mediaItem.name
     }
 
     object HeaderItem : DataItem() {

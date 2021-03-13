@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.hcmus.clc18se.photos.data.SamplePhoto"/>
+        <import type="com.hcmus.clc18se.photos.data.SampleMediaItem"/>
 
         <variable
             name="photoList"
-            type="java.util.List&lt;SamplePhoto&gt;"/>
+            type="java.util.List&lt;SampleMediaItem&gt;"/>
     </data>
 
     <LinearLayout

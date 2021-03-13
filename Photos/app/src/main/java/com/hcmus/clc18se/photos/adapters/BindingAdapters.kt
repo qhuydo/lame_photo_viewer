@@ -5,10 +5,10 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hcmus.clc18se.photos.data.SampleAlbum
-import com.hcmus.clc18se.photos.data.SamplePhoto
+import com.hcmus.clc18se.photos.data.SampleMediaItem
 
 @BindingAdapter("samplePhotoListItem")
-fun bindSamplePhotoListRecyclerView(recyclerView: RecyclerView, data: List<SamplePhoto>) {
+fun bindSamplePhotoListRecyclerView(recyclerView: RecyclerView, data: List<SampleMediaItem>) {
     val adapter = recyclerView.adapter as PhotoListAdapter
     adapter.addHeaderAndSubmitList(data)
 }

@@ -54,7 +54,7 @@ class PhotosFragment : Fragment() {
             lifecycleOwner = this@PhotosFragment
 
             photosViewModel = viewModel
-            photoListLayout.photoList = viewModel.photoList.value
+            photoListLayout.photoList = viewModel.mediaItemList.value
             photoListLayout.photoListRecyclerView.adapter = PhotoListAdapter(resources,
                     PhotoListAdapter.OnClickListener { },
                     currentListItemView, currentListItemSize)

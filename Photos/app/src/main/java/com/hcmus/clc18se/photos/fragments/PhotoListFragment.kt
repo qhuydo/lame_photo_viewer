@@ -32,8 +32,9 @@ class PhotoListFragment : Fragment() {
     private val viewModel: PhotosViewModel by activityViewModels()
 
     private val args: PhotoListFragmentArgs by navArgs()
+
     private val onClickListener = PhotoListAdapter.OnClickListener {
-        val idx = viewModel.photoList.value?.indexOf(it) ?: -1
+        val idx = viewModel.mediaItemList.value?.indexOf(it) ?: -1
         viewModel.setCurrentItemView(idx)
         this.findNavController().navigate(
                 PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
@@ -62,7 +63,7 @@ class PhotoListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             lifecycleOwner = this@PhotoListFragment
-            photoListLayout.photoList = viewModel.photoList.value
+            photoListLayout.photoList = viewModel.mediaItemList.value
             photoListLayout.photoListRecyclerView.adapter = PhotoListAdapter(resources,
                     onClickListener,
                     currentListItemView,

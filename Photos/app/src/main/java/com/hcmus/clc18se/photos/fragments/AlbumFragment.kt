@@ -58,7 +58,7 @@ class AlbumFragment : Fragment() {
             if (it != null) {
                 this.findNavController().navigate(
                         AlbumFragmentDirections.actionPageAlbumToPhotoListFragment(it.name))
-                viewModel._doneNavigatingToPhotoList()
+                viewModel.doneNavigatingToPhotoList()
             }
         })
 

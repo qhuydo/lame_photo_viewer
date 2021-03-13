@@ -7,7 +7,7 @@
 
         <variable
             name="photo"
-            type="com.hcmus.clc18se.photos.data.SamplePhoto" />
+            type="com.hcmus.clc18se.photos.data.SampleMediaItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
