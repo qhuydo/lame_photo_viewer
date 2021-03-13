@@ -9,14 +9,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
-import com.hcmus.clc18se.photos.data.SampleMediaItem
+import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 
 class PhotoViewFragment : Fragment() {
 
     private val viewModel: PhotosViewModel by activityViewModels()
-    private val photos by lazy { viewModel.mediaItemList.value ?: listOf<SampleMediaItem>() }
+    private val photos by lazy { viewModel.mediaItemList.value ?: listOf<MediaItem>() }
 
     private lateinit var binding: FragmentPhotoViewBinding
 
@@ -55,7 +55,7 @@ class PhotoViewFragment : Fragment() {
 
         override fun createFragment(position: Int): Fragment {
             val fragment = PhotoViewPagerFragment()
-            fragment.resId = photos[position].resId
+            fragment.uri = photos[position].uri
 
             return fragment
         }

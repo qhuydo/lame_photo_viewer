@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.hcmus.clc18se.photos.data.SampleMediaItem"/>
+        <import type="com.hcmus.clc18se.photos.data.MediaItem"/>
 
         <variable
             name="photoList"
-            type="java.util.List&lt;SampleMediaItem&gt;"/>
+            type="java.util.List&lt;MediaItem&gt;"/>
     </data>
 
     <LinearLayout
@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:samplePhotoListItem="@{photoList}"
+            app:mediaListItem="@{photoList}"
             app:spanCount="@integer/span_count_photo_list_big"
             tools:itemCount="16"
             tools:listitem="@layout/item_photo_list" />

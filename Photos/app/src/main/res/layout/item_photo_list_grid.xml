@@ -7,7 +7,7 @@
 
         <variable
             name="photo"
-            type="com.hcmus.clc18se.photos.data.SampleMediaItem" />
+            type="com.hcmus.clc18se.photos.data.MediaItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +22,7 @@
             android:layout_height="0dp"
             android:cropToPadding="true"
             android:scaleType="centerCrop"
-            app:imageFromResId="@{photo.resId}"
+            app:imageFromUri="@{photo.uri}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintLeft_toLeftOf="parent"

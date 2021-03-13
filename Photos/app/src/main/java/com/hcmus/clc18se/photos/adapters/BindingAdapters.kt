@@ -1,16 +1,17 @@
 package com.hcmus.clc18se.photos.adapters
 
+import android.net.Uri
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.data.SampleAlbum
-import com.hcmus.clc18se.photos.data.SampleMediaItem
 
-@BindingAdapter("samplePhotoListItem")
-fun bindSamplePhotoListRecyclerView(recyclerView: RecyclerView, data: List<SampleMediaItem>) {
-    val adapter = recyclerView.adapter as PhotoListAdapter
-    adapter.addHeaderAndSubmitList(data)
+@BindingAdapter("mediaListItem")
+fun bindMediaListRecyclerView(recyclerView: RecyclerView, data: List<MediaItem>) {
+    val adapter = recyclerView.adapter as MediaItemListAdapter
+    adapter.submitList(data)
 }
 
 @BindingAdapter("sampleAlbumListItem")
@@ -26,8 +27,17 @@ fun bindSampleAlbumListRecyclerView(recyclerView: RecyclerView, data: List<Sampl
 fun bindImage(imgView: ImageView, imgRes: Int?) {
     imgRes?.let {
         Glide.with(imgView.context)
-            .load(imgRes)
-            .into(imgView)
+                .load(imgRes)
+                .into(imgView)
         // imgView.setImageResource(it)
+    }
+}
+
+@BindingAdapter("imageFromUri")
+fun bindImage(imgView: ImageView, imgUri: Uri?) {
+    imgUri?.let {
+        Glide.with(imgView.context)
+                .load(imgUri)
+                .into(imgView)
     }
 }

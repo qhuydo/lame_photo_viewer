@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.ActionBar
@@ -11,7 +12,7 @@ import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 
 class PhotoViewPagerFragment : Fragment() {
 
-    internal var resId: Int = R.drawable.ic_launcher_sample
+    internal var uri: Uri = Uri.EMPTY
 
     private lateinit var binding: PhotoViewPagerPageBinding
     private var actionBar: ActionBar? = null
@@ -32,11 +33,11 @@ class PhotoViewPagerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         actionBar = (activity as AbstractPhotosActivity).supportActionBar
 
-        if (savedInstanceState?.containsKey(BUNDLE_RESID) == true) {
-            resId = savedInstanceState.getInt(BUNDLE_RESID)
+        if (savedInstanceState?.containsKey(BUNDLE_URI) == true) {
+            uri = savedInstanceState.getParcelable(BUNDLE_URI) ?: Uri.EMPTY
         }
 
-        binding.imageView.setImage(ImageSource.resource(resId))
+        binding.imageView.setImage(ImageSource.uri(uri))
         binding.imageView.setOnClickListener {
             actionBar?.let {
                 if (it.isShowing) {
@@ -64,11 +65,11 @@ class PhotoViewPagerFragment : Fragment() {
         super.onSaveInstanceState(outState)
         val rootView = view
         if (rootView != null) {
-            outState.putInt(BUNDLE_RESID, resId)
+            outState.putParcelable(BUNDLE_URI, uri)
         }
     }
 
     companion object {
-        private const val BUNDLE_RESID = "resId"
+        private const val BUNDLE_URI = "uri"
     }
 }

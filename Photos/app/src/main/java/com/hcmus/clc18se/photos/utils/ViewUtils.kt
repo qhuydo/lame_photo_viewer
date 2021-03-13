@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.R
-import com.hcmus.clc18se.photos.adapters.PhotoListAdapter.Companion.ITEM_TYPE_LIST
-import com.hcmus.clc18se.photos.adapters.PhotoListAdapter.Companion.ITEM_TYPE_GRID
+import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter.Companion.ITEM_TYPE_LIST
+import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter.Companion.ITEM_TYPE_GRID
 
 fun getAppBarSizeAttr(activity: AppCompatActivity): Int? {
     val tv = TypedValue()
