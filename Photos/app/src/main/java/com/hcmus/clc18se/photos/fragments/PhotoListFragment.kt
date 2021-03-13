@@ -56,25 +56,31 @@ class PhotoListFragment : Fragment() {
         currentListItemSize = preferences.getString(getString(R.string.photo_list_item_size_key),
                 "0")!!.toInt()
 
-        return binding.root
-    }
+        val adapter = MediaItemListAdapter(resources,
+                onClickListener,
+                currentListItemView,
+                currentListItemSize)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         binding.apply {
             lifecycleOwner = this@PhotoListFragment
             photoListLayout.photoList = viewModel.mediaItemList.value
-            photoListLayout.photoListRecyclerView.adapter = MediaItemListAdapter(resources,
-                    onClickListener,
-                    currentListItemView,
-                    currentListItemSize)
-
+            photoListLayout.photoListRecyclerView.adapter = adapter
             val layoutManager = photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager
             layoutManager.spanCount = getSpanCountForPhotoList(
                     resources, currentListItemView, currentListItemSize)
+
         }
+
+        viewModel.mediaItemList.observe(requireActivity(), { images ->
+            adapter.submitList(images)
+        })
+
+        viewModel.loadImages()
+
         (activity as AbstractPhotosActivity).supportActionBar?.title = args.albumName
         setHasOptionsMenu(true)
+
+        return binding.root
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -148,7 +154,7 @@ class PhotoListFragment : Fragment() {
                     currentListItemSize)
 
             val recyclerView = photoListLayout.photoListRecyclerView
-            val photoList = photoListLayout.photoList
+            val photoList = viewModel.mediaItemList.value
 
             recyclerView.adapter = adapter
             val layoutManager = photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager

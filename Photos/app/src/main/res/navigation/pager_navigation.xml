@@ -10,6 +10,9 @@
         android:name="com.hcmus.clc18se.photos.fragments.HomeViewPagerFragment"
         android:label="@string/app_name">
         <action
+            android:id="@+id/action_page_photo_to_photoViewFragment"
+            app:destination="@id/photoViewFragment" />
+        <action
             android:id="@+id/action_page_album_to_photoListFragment"
             app:destination="@id/photoListFragment" />
     </fragment>

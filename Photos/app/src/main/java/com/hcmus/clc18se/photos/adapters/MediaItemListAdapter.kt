@@ -45,6 +45,10 @@ class MediaItemListAdapter(private val resources: Resources,
         return ViewHolder.from(parent, viewType, resources, itemViewSize)
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return adapterViewType
+    }
+
     class ViewHolder(private val listBinding: ViewDataBinding,
                      private val resources: Resources,
                      private val itemViewSize: Int = ITEM_SIZE_MEDIUM) :
