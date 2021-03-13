@@ -142,10 +142,8 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         when (key) {
             getString(R.string.app_theme_key) -> {
                 configTheme(null)
+                startActivity(Intent(this, MainActivity::class.java))
                 finish()
-                overridePendingTransition(0, 0)
-                startActivity(intent)
-                overridePendingTransition(0, 0)
             }
             getString(R.string.app_color_key) -> {
 
@@ -168,6 +166,8 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
                 val newColor = preferences.getInt(getString(R.string.app_color_key), R.color.indigo_500)
                 Timber.d("Color ${RESOURCE_MAPPER[newColor] ?: ICON_COLOR.INDIGO}")
                 setIcon(packageManager, RESOURCE_MAPPER[newColor] ?: ICON_COLOR.INDIGO)
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
             }
             getString(R.string.app_language_key) -> {
                 configLanguage()
@@ -218,4 +218,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         const val bottomAppBarVisibilityKey: String = "bottomAppBarVisibilityKey"
 
     }
+
+    fun onLicenseButtonClick(view: View) = onLicenseButtonClick()
 }

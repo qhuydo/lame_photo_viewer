@@ -55,9 +55,6 @@ class PhotoListFragment : Fragment() {
         currentListItemSize = preferences.getString(getString(R.string.photo_list_item_size_key),
                 "0")!!.toInt()
 
-        setHasOptionsMenu(true)
-        (activity as AbstractPhotosActivity).supportActionBar?.title = args.albumName
-
         return binding.root
     }
 
@@ -75,6 +72,8 @@ class PhotoListFragment : Fragment() {
             layoutManager.spanCount = getSpanCountForPhotoList(
                     resources, currentListItemView, currentListItemSize)
         }
+        (activity as AbstractPhotosActivity).supportActionBar?.title = args.albumName
+        setHasOptionsMenu(true)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

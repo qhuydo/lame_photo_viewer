@@ -70,7 +70,6 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
     }
 
     override fun setUpNavigationBar() {
-        addOnDestinationChangedListener()
 
         val toolbar = binding.topAppBar.searchActionBar
         setSupportActionBar(toolbar)
@@ -94,6 +93,8 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
             }
         }
         binding.topAppBar.appBarLayout.bringToFront()
+        addOnDestinationChangedListener()
+
     }
 
     override fun setAppbarVisibility(visibility: Boolean) {
@@ -157,11 +158,9 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
         return NavigationUI.navigateUp(navController, drawerLayout)
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        Timber.d("onConfigurationChanged")
-        super.onConfigurationChanged(newConfig)
-        configTheme(newConfig.uiMode)
-        recreate()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(bottomAppBarVisibilityKey, bottomAppBarVisibility)
     }
 
 }

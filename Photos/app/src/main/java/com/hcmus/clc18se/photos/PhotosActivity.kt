@@ -217,13 +217,6 @@ class PhotosActivity : AbstractPhotosActivity() {
         return NavigationUI.navigateUp(navController, drawerLayout)
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        Timber.d("onConfigurationChanged")
-        super.onConfigurationChanged(newConfig)
-        configTheme(newConfig.uiMode)
-        recreate()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(bottomAppBarVisibilityKey, bottomAppBarVisibility)

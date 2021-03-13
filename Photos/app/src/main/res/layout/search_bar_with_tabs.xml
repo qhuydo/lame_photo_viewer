@@ -20,8 +20,7 @@
                 android:id="@+id/toolbar"
                 style="@style/SearchBarStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:contentPaddingBottom="-8dp">
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/search_action_bar"
@@ -36,11 +35,12 @@
 
         <!-- Override tabIconTint attribute of style with selector -->
         <com.google.android.material.tabs.TabLayout
+            app:tabSelectedTextColor="?colorPrimary"
             android:id="@+id/tabs"
             style="@style/Widget.MaterialComponents.TabLayout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:tabTextColor="?attr/colorPrimaryDark" />
+            app:tabTextColor="?colorOnSurface" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
