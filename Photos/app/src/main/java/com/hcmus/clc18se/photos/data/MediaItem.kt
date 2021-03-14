@@ -8,7 +8,9 @@ data class MediaItem(
         val id: Long,
         val name: String,
         val uri: Uri,
-        val dateCreated: Date
+        val dateCreated: Date,
+        val mimeType: String,
+        val orientation: Int
 ) {
     companion object {
         val DiffCallBack = object : DiffUtil.ItemCallback<MediaItem>() {

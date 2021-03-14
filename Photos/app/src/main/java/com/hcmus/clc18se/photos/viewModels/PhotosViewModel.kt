@@ -66,10 +66,23 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
 
         withContext(Dispatchers.IO) {
 
-            val projection = arrayOf(MediaStore.MediaColumns._ID,
-                    MediaStore.MediaColumns.DISPLAY_NAME,
-                    MediaStore.MediaColumns.DATE_ADDED
-            )
+            val projection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                arrayOf(MediaStore.MediaColumns._ID,
+                        MediaStore.MediaColumns.DISPLAY_NAME,
+                        MediaStore.MediaColumns.DATE_ADDED,
+                        MediaStore.MediaColumns.MIME_TYPE,
+                        MediaStore.MediaColumns.DATE_MODIFIED,
+                        MediaStore.Images.ImageColumns.ORIENTATION
+                )
+            } else {
+                arrayOf(
+                        MediaStore.MediaColumns._ID,
+                        MediaStore.MediaColumns.DISPLAY_NAME,
+                        MediaStore.MediaColumns.DATE_ADDED,
+                        MediaStore.MediaColumns.MIME_TYPE,
+                        MediaStore.MediaColumns.DATE_MODIFIED,
+                )
+            }
 
             val selection = MediaStore.Images.Media.DATE_ADDED
             val selectionArgs: Array<String>? = null
@@ -86,17 +99,24 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
                 val dateModifiedColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
                 val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+                val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
 
                 while (cursor.moveToNext()) {
                     val id = cursor.getLong(idColumn)
                     val dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateModifiedColumn)))
                     val displayName = cursor.getString(displayNameColumn)
+                    val mimeType = cursor.getString(mimeTypeColumn)
+                    val orientation = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                        cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.ORIENTATION))
+                    } else {
+                        0
+                    }
 
                     val uri = ContentUris.withAppendedId(
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                             id)
 
-                    val image = MediaItem(id, displayName, uri, dateAdded)
+                    val image = MediaItem(id, displayName, uri, dateAdded, mimeType, orientation)
                     mediaItems += image
 
                 }

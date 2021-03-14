@@ -20,13 +20,13 @@
         android:focusable="true"
         android:orientation="horizontal">
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <ImageView
             android:id="@+id/photo_list_item_image"
             android:layout_width="@dimen/photo_list_item_size_big"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             app:cornerSize="10%"
-            app:imageFromUri="@{photo.uri}"
+            app:imageFromMediaItem="@{photo}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintStart_toStartOf="parent"

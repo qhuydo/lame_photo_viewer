@@ -149,7 +149,7 @@ class PhotosFragment : Fragment() {
     private fun refreshRecyclerView() {
         binding.apply {
             val adapter = MediaItemListAdapter(resources,
-                    MediaItemListAdapter.OnClickListener { },
+                    onClickListener,
                     currentListItemView, currentListItemSize)
             val recyclerView = photoListLayout.photoListRecyclerView
             val photoList = viewModel.mediaItemList.value
