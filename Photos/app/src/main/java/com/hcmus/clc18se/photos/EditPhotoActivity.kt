@@ -1,25 +1,20 @@
 package com.hcmus.clc18se.photos
 
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Color
-import com.davemorrissey.labs.subscaleview.ImageSource
+import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
+import android.widget.SeekBar
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.slider.Slider
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
-import com.hcmus.clc18se.photos.fragments.PhotoViewPagerFragment
-import timber.log.Timber
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class EditPhotoActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditPhotoBinding.inflate(layoutInflater) }
@@ -36,7 +31,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         if (intent.hasExtra("uri")){
             uri = intent.getParcelableExtra("uri")
-            binding.imageEdit.setImageURI(uri)
+            bitmap = getBitMapFromUri()
+            //binding.imageEdit.setImageURI(uri)
+            binding.imageEdit.setImageBitmap(bitmap)
         }
 
         val bottomNavigation = binding.bottomEdit
@@ -46,21 +43,51 @@ class EditPhotoActivity : AppCompatActivity() {
             cur_item_id = it.getInt(bottomAppBarItemKey)
             setBarVisibility(cur_item_id)
         }
-        val brightSlider = binding.brightEditor.findViewById<Slider>(R.id.slider_bright)
-        brightSlider.addOnChangeListener { slider, oldValue:Float, fromUser ->
-            val value = oldValue.toInt()
-            for (x in 1..bitmap!!.height)
-                for (y in 1..bitmap!!.width){
-                    if (value > 0) {
-                        val pixel = bitmap!!.getPixel(x, y)
-                        val alpha = Color.alpha(pixel)
-                        val red = if (Color.red(pixel) + value > 255) 255 else Color.red(pixel) + value
-                        val green = if (Color.green(pixel) + value > 255) 255 else Color.green(pixel) + value
-                        val blue = if (Color.blue(pixel) + value > 255) 255 else Color.blue(pixel) + value
-                        bitmap!!.setPixel(x, y, Color.argb(alpha, red, green, blue))
-                    }
-                }
-        }
+        val brightSeekBar = binding.brightEditor.findViewById<SeekBar>(R.id.bright_seek_bar)
+        brightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+            ) {
+                val brightness = brightSeekBar.progress.toFloat() - 100
+                val contrast = 10 / 10F
+
+                binding.imageEdit.setImageBitmap(
+                        setBrightnessContrast(
+                                bmp = bitmap,
+                                brightness = brightness,
+                                contrast = contrast
+                        )
+                )
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
+    }
+
+    fun setBrightnessContrast(
+            bmp:Bitmap?,
+            brightness: Float = 0.0F,
+            contrast: Float = 1.0F
+    ):Bitmap?{
+        val cm = ColorMatrix(floatArrayOf(contrast, 0f, 0f, 0f,
+                brightness, 0f, contrast, 0f, 0f, brightness, 0f, 0f, contrast, 0f, brightness, 0f, 0f, 0f, 1f, 0f))
+
+        val ret = Bitmap.createBitmap(bmp!!.getWidth(), bmp!!.getHeight(),
+                bmp!!.getConfig()) /*from  www . j a va  2 s .  c om*/
+
+        val canvas = Canvas(ret)
+
+        val paint = Paint()
+        paint.colorFilter = ColorMatrixColorFilter(cm)
+        canvas.drawBitmap(bmp, 0f, 0f, paint)
+
+        return ret;
     }
 
     private fun getBitMapFromUri():Bitmap{
@@ -89,7 +116,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(bottomAppBarItemKey,cur_item_id)
+        outState.putInt(bottomAppBarItemKey, cur_item_id)
     }
 
     private fun setBarVisibility(itemId: Int) {
