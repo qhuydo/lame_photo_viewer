@@ -31,6 +31,8 @@ class PhotoViewFragment : Fragment() {
         binding.apply {
             lifecycleOwner = this@PhotoViewFragment
             photosViewModel = viewModel
+
+            positionCurrent = viewModel.idx.value
         }
 
         binding.horizontalViewPager.apply {
@@ -41,7 +43,6 @@ class PhotoViewFragment : Fragment() {
 
             binding.horizontalViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
-                    positionCurrent = position
                     super.onPageSelected(position)
                     (activity as AbstractPhotosActivity).supportActionBar?.title = photos[position].name
                 }
