@@ -1,6 +1,7 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,12 +16,13 @@ import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 
+
 class PhotoViewFragment : Fragment() {
 
     private val viewModel: PhotosViewModel by activityViewModels()
     private val photos by lazy { viewModel.mediaItemList.value ?: listOf<MediaItem>() }
     private lateinit var binding: FragmentPhotoViewBinding
-    private var positionCurrent:Int? = null
+    private var positionCurrent: Int? = null
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -31,8 +33,9 @@ class PhotoViewFragment : Fragment() {
         binding.apply {
             lifecycleOwner = this@PhotoViewFragment
             photosViewModel = viewModel
-
             positionCurrent = viewModel.idx.value
+
+            navBarColor = activity?.window?.navigationBarColor ?: Color.BLACK
         }
 
         binding.horizontalViewPager.apply {
@@ -43,6 +46,7 @@ class PhotoViewFragment : Fragment() {
 
             binding.horizontalViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
+                    positionCurrent = position
                     super.onPageSelected(position)
                     (activity as AbstractPhotosActivity).supportActionBar?.title = photos[position].name
                 }
@@ -50,14 +54,15 @@ class PhotoViewFragment : Fragment() {
 
         }
 
-        binding.bottomLayout.editButton.setOnClickListener(){
+        binding.bottomLayout.editButton.setOnClickListener() {
             if (positionCurrent != null) {
-                val intent = Intent(context,EditPhotoActivity::class.java)
-                intent.putExtra("uri",photos[positionCurrent!!].uri)
+                val intent = Intent(context, EditPhotoActivity::class.java)
+                intent.putExtra("uri", photos[positionCurrent!!].uri)
                 startActivity(intent)
             }
         }
 
+        activity?.window?.navigationBarColor = Color.BLACK
         return binding.root
     }
 
@@ -82,5 +87,9 @@ class PhotoViewFragment : Fragment() {
         }
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        activity?.window?.navigationBarColor = binding.navBarColor
+    }
 }
 

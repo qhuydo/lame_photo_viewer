@@ -2,10 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
         <variable
             name="photosViewModel"
             type="com.hcmus.clc18se.photos.viewModels.PhotosViewModel" />
+
+        <variable
+            name="navBarColor"
+            type="int" />
     </data>
 
     <FrameLayout

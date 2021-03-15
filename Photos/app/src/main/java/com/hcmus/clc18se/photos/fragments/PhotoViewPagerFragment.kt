@@ -6,9 +6,11 @@ import android.view.*
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
+import java.lang.Exception
 
 class PhotoViewPagerFragment : Fragment() {
 
@@ -38,6 +40,26 @@ class PhotoViewPagerFragment : Fragment() {
         }
 
         binding.imageView.setImage(ImageSource.uri(uri))
+        binding.imageView.setOnImageEventListener(object : SubsamplingScaleImageView.OnImageEventListener {
+
+            override fun onImageLoadError(e: Exception?) {
+                binding.progressCircular.visibility = View.GONE
+            }
+
+            override fun onImageLoaded() {
+                binding.progressCircular.visibility = View.GONE
+            }
+
+            override fun onPreviewLoadError(e: Exception?) {
+                binding.progressCircular.visibility = View.GONE
+            }
+
+            override fun onPreviewReleased() {}
+
+            override fun onReady() {}
+
+            override fun onTileLoadError(e: Exception?) {}
+        })
         binding.imageView.setOnClickListener {
             actionBar?.let {
                 if (it.isShowing) {
