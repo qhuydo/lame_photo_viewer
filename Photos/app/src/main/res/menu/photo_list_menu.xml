@@ -4,6 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
+        android:id="@+id/menu_refresh"
+        android:title="Refresh"
+        app:showAsAction="never" />
+
+    <item
         android:title="@string/search"
         android:id="@+id/search"
         android:icon="@drawable/ic_baseline_search_24"

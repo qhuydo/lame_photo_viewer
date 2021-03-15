@@ -63,9 +63,9 @@ class PhotoViewFragment : Fragment() {
 
     internal fun setBottomToolbarVisibility(visibility: Boolean) {
         if (visibility) {
-            binding.bottomLayout.visibility = View.VISIBLE
+            binding.bottomLayout.layout.visibility = View.VISIBLE
         } else {
-            binding.bottomLayout.visibility = View.INVISIBLE
+            binding.bottomLayout.layout.visibility = View.INVISIBLE
         }
     }
 

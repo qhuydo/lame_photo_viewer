@@ -1,6 +1,5 @@
 package com.hcmus.clc18se.photos
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -160,7 +159,7 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(bottomAppBarVisibilityKey, bottomAppBarVisibility)
+        outState.putBoolean(BUNDLE_BOTTOM_APPBAR_VISIBILITY, bottomAppBarVisibility)
     }
 
 }

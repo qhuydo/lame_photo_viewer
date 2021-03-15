@@ -1,6 +1,5 @@
 package com.hcmus.clc18se.photos
 
-import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.TypedValue
@@ -14,7 +13,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.preference.PreferenceManager
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
 import com.hcmus.clc18se.photos.utils.*
 import timber.log.Timber
@@ -54,7 +52,7 @@ class PhotosActivity : AbstractPhotosActivity() {
         setUpNavigationBar()
         setBottomAppBarVisibility()
         savedInstanceState?.let {
-            bottomAppBarVisibility = it.getBoolean(bottomAppBarVisibilityKey)
+            bottomAppBarVisibility = it.getBoolean(BUNDLE_BOTTOM_APPBAR_VISIBILITY)
             setAppbarVisibility(bottomAppBarVisibility)
         }
 
@@ -219,6 +217,6 @@ class PhotosActivity : AbstractPhotosActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(bottomAppBarVisibilityKey, bottomAppBarVisibility)
+        outState.putBoolean(BUNDLE_BOTTOM_APPBAR_VISIBILITY, bottomAppBarVisibility)
     }
 }

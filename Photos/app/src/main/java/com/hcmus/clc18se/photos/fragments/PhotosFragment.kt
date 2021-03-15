@@ -39,6 +39,8 @@ class PhotosFragment : Fragment() {
         )
     }
 
+    private lateinit var adapter: MediaItemListAdapter
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -56,7 +58,7 @@ class PhotosFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        val adapter = MediaItemListAdapter(resources,
+        adapter = MediaItemListAdapter(resources,
                 onClickListener,
                 currentListItemView,
                 currentListItemSize)
@@ -66,12 +68,19 @@ class PhotosFragment : Fragment() {
 
             photosViewModel = viewModel
 
-            photoListLayout.photoList = viewModel.mediaItemList.value
-            photoListLayout.photoListRecyclerView.adapter = adapter
+            photoListLayout.apply {
+                photoList = viewModel.mediaItemList.value
+                photoListRecyclerView.adapter = adapter
 
-            val layoutManager = photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager
-            layoutManager.spanCount = getSpanCountForPhotoList(
-                    resources, currentListItemView, currentListItemSize)
+                (photoListRecyclerView.layoutManager as GridLayoutManager).apply {
+                    spanCount = getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
+                }
+
+                swipeRefreshLayout.setOnRefreshListener {
+                    adapter.notifyDataSetChanged()
+                    swipeRefreshLayout.isRefreshing = false
+                }
+            }
         }
 
         viewModel.mediaItemList.observe(requireActivity(), { images ->
@@ -108,6 +117,13 @@ class PhotosFragment : Fragment() {
             R.id.item_view_size_big -> onItemSizeOptionClicked(item)
             R.id.item_view_size_medium -> onItemSizeOptionClicked(item)
             R.id.item_view_size_small -> onItemSizeOptionClicked(item)
+            R.id.menu_refresh -> {
+                binding.photoListLayout.apply {
+                    adapter.notifyDataSetChanged()
+                    swipeRefreshLayout.isRefreshing = false
+                }
+                true
+            }
             else -> false
         }
     }
@@ -148,16 +164,16 @@ class PhotosFragment : Fragment() {
 
     private fun refreshRecyclerView() {
         binding.apply {
-            val adapter = MediaItemListAdapter(resources,
+            adapter = MediaItemListAdapter(resources,
                     onClickListener,
                     currentListItemView, currentListItemSize)
             val recyclerView = photoListLayout.photoListRecyclerView
             val photoList = viewModel.mediaItemList.value
 
             recyclerView.adapter = adapter
-            val layoutManager = photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager
-            layoutManager.spanCount = getSpanCountForPhotoList(
-                    resources, currentListItemView, currentListItemSize)
+            (photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager).apply {
+                spanCount = getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
+            }
 
             bindMediaListRecyclerView(recyclerView, photoList ?: listOf())
 

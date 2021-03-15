@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <item
         android:id="@+id/photo_list_item_view_type"
         android:icon="@drawable/ic_outline_list_alt_24"
@@ -10,6 +11,12 @@
         android:visible="true"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="Refresh"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/item_view_size"
         android:title="@string/item_size"

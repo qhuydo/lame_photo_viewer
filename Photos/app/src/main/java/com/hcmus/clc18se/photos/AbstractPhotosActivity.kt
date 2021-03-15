@@ -19,6 +19,15 @@ import java.util.*
 
 abstract class AbstractPhotosActivity : AppCompatActivity() {
 
+    companion object {
+        const val BUNDLE_BOTTOM_APPBAR_VISIBILITY: String = "bottomAppBarVisibilityKey"
+
+        const val THEME_USE_DEFAULT = 0
+        const val THEME_WHITE = 1
+        const val THEME_DARK = 2
+
+    }
+
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
     protected var bottomAppBarVisibility: Boolean = true
@@ -38,7 +47,23 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         ).map { resources.getInteger(it.first) to it.second }.toMap()
     }
 
-    protected fun getCurrentThemeColor(): Int {
+    private val colorResources by lazy {
+        listOf(
+                R.color.red_500 to ICON_COLOR.RED,
+                R.color.deep_orange_500 to ICON_COLOR.ORANGE,
+                R.color.amber_500 to ICON_COLOR.YELLOW,
+                R.color.green_500 to ICON_COLOR.GREEN,
+                R.color.blue_500 to ICON_COLOR.BLUE,
+                R.color.indigo_500 to ICON_COLOR.INDIGO,
+                R.color.dark_purple_500 to ICON_COLOR.PURPLE,
+                R.color.pink_500 to ICON_COLOR.PINK,
+                R.color.brown_500 to ICON_COLOR.BROWN,
+                R.color.grey_500 to ICON_COLOR.GREY,
+        ).map { resources.getInteger(it.first) to it.second }
+    }
+    private val colorResourceMapper by lazy { colorResources.toMap() }
+
+    private fun getCurrentThemeColor(): Int {
         val currentColor = preferences.getInt(getString(R.string.app_color_key), R.color.indigo_500)
         return colorThemeMapper[currentColor] ?: R.style.Theme_Photos_Indigo_NoActionBar
     }
@@ -71,7 +96,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(bottomAppBarVisibilityKey, bottomAppBarVisibility)
+        outState.putBoolean(BUNDLE_BOTTOM_APPBAR_VISIBILITY, bottomAppBarVisibility)
     }
 
     /**
@@ -79,9 +104,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
      * @param uiMode: new configuration mode, use null when no the fun did not called in onConfigurationChanged
      */
     protected fun configTheme(uiMode: Int? = null) {
-        val USE_DEFAULT = 0
-        val WHITE = 1
-        val DARK = 2
 
         val themeOptions = preferences.getString(getString(R.string.app_theme_key), "")
         val options = resources.getStringArray(R.array.theme_values)
@@ -89,12 +111,12 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         Timber.d("configTheme(uiMode: $uiMode)")
         Timber.d("themeOptions $themeOptions")
         when (themeOptions) {
-            options[USE_DEFAULT] -> {
+            options[THEME_USE_DEFAULT] -> {
                 Timber.d("Config default theme: ${uiMode ?: resources.configuration.uiMode}")
                 configDefaultTheme(uiMode ?: resources.configuration.uiMode)
             }
-            options[WHITE] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            options[DARK] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            options[THEME_WHITE] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            options[THEME_DARK] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             else -> Timber.w("No theme has been set")
         }
 
@@ -147,25 +169,10 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
             }
             getString(R.string.app_color_key) -> {
 
-                val COLORS_RESOURCES = listOf(
-                        R.color.red_500 to ICON_COLOR.RED,
-                        R.color.deep_orange_500 to ICON_COLOR.ORANGE,
-                        R.color.amber_500 to ICON_COLOR.YELLOW,
-                        R.color.green_500 to ICON_COLOR.GREEN,
-                        R.color.blue_500 to ICON_COLOR.BLUE,
-                        R.color.indigo_500 to ICON_COLOR.INDIGO,
-                        R.color.dark_purple_500 to ICON_COLOR.PURPLE,
-                        R.color.pink_500 to ICON_COLOR.PINK,
-                        R.color.brown_500 to ICON_COLOR.BROWN,
-                        R.color.grey_500 to ICON_COLOR.GREY,
-                ).map { resources.getInteger(it.first) to it.second }
-
-                val RESOURCE_MAPPER = COLORS_RESOURCES.toMap()
-
                 Timber.d("Color config change")
                 val newColor = preferences.getInt(getString(R.string.app_color_key), R.color.indigo_500)
-                Timber.d("Color ${RESOURCE_MAPPER[newColor] ?: ICON_COLOR.INDIGO}")
-                setIcon(packageManager, RESOURCE_MAPPER[newColor] ?: ICON_COLOR.INDIGO)
+                Timber.d("Color ${colorResourceMapper[newColor] ?: ICON_COLOR.INDIGO}")
+                setIcon(packageManager, colorResourceMapper[newColor] ?: ICON_COLOR.INDIGO)
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
@@ -197,27 +204,24 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         fragment.show(supportFragmentManager, null)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun fabAddVideo(view: View) {
-        Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->
+        Intent(MediaStore.INTENT_ACTION_VIDEO_CAMERA).also { takeVideoIntent ->
             takeVideoIntent.resolveActivity(packageManager)?.also {
-                startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
+                startActivity(takeVideoIntent)
             }
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun fabAddPicture(view: View) {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).also { takePictureIntent ->
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                startActivity(takePictureIntent)
+            }
         }
     }
 
-    companion object {
-        const val REQUEST_IMAGE_CAPTURE = 1
-        const val REQUEST_VIDEO_CAPTURE = 1
-        const val bottomAppBarVisibilityKey: String = "bottomAppBarVisibilityKey"
-
-    }
-
+    @Suppress("UNUSED_PARAMETER")
     fun onLicenseButtonClick(view: View) = onLicenseButtonClick()
 }

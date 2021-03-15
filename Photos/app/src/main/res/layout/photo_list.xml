@@ -5,25 +5,20 @@
 
     <data>
 
-        <import type="com.hcmus.clc18se.photos.data.MediaItem"/>
+        <import type="com.hcmus.clc18se.photos.data.MediaItem" />
 
         <variable
             name="photoList"
-            type="java.util.List&lt;MediaItem&gt;"/>
+            type="java.util.List&lt;MediaItem&gt;" />
     </data>
 
-    <LinearLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:background="?colorSurface"
         android:orientation="vertical">
-
-        <include
-            android:id="@+id/upper_bar"
-            layout="@layout/item_photo_list_view_option"
-            android:visibility="gone"
-            tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photo_list_recycler_view"
@@ -35,5 +30,5 @@
             tools:itemCount="16"
             tools:listitem="@layout/item_photo_list" />
 
-    </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>
