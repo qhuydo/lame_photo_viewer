@@ -14,6 +14,7 @@ import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
 
 
 class EditPhotoActivity : AppCompatActivity() {
@@ -24,6 +25,9 @@ class EditPhotoActivity : AppCompatActivity() {
     private var imageView: ImageView? = null
     private var uri: Uri? = null
     private var bitmap: Bitmap? = null
+    private var tempRed:Int = 100
+    private var tempGreen:Int = 100
+    private var tempBlue:Int = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +54,59 @@ class EditPhotoActivity : AppCompatActivity() {
                     progress: Int,
                     fromUser: Boolean
             ) {
-                val brightness = brightSeekBar.progress
-                val contrast = 10 / 10F
+                val brightness = brightSeekBar.progress - 255
                 binding.imageEdit.setColorFilter(setBrightness(brightness))
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
+        val redSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_red)
+        redSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+            ) {
+                tempRed = redSeekBar.progress
+                binding.imageEdit.setColorFilter(setColor(tempRed,tempRed,tempGreen,tempBlue))
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
+        val greenSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_green)
+        greenSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+            ) {
+                tempGreen = greenSeekBar.progress
+                binding.imageEdit.setColorFilter(setColor(tempGreen,tempRed,tempGreen,tempBlue))
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
+        val blueSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_blue)
+        blueSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+            ) {
+                tempBlue = blueSeekBar.progress
+                binding.imageEdit.setColorFilter(setColor(tempBlue,tempRed,tempGreen,tempBlue))
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -71,6 +125,11 @@ class EditPhotoActivity : AppCompatActivity() {
             val value = (100 - progress) * 255 / 100
             PorterDuffColorFilter(Color.argb(value, 0, 0, 0), PorterDuff.Mode.SRC_ATOP)
         }
+    }
+
+    fun setColor(progress: Int,progressRed: Int,progressGreen: Int,progressBlue:Int): PorterDuffColorFilter? {
+        val value = abs(progress - 100) * 255 / 100
+        return PorterDuffColorFilter(Color.argb(value, progressRed, progressGreen, progressBlue), PorterDuff.Mode.OVERLAY)
     }
 
     private fun getBitMapFromUri():Bitmap{
