@@ -32,8 +32,8 @@ class EditPhotoActivity : AppCompatActivity() {
         if (intent.hasExtra("uri")){
             uri = intent.getParcelableExtra("uri")
             bitmap = getBitMapFromUri()
-            //binding.imageEdit.setImageURI(uri)
-            binding.imageEdit.setImageBitmap(bitmap)
+            binding.imageEdit.setImageURI(uri)
+            //binding.imageEdit.setImageBitmap(bitmap)
         }
 
         val bottomNavigation = binding.bottomEdit
@@ -50,16 +50,9 @@ class EditPhotoActivity : AppCompatActivity() {
                     progress: Int,
                     fromUser: Boolean
             ) {
-                val brightness = brightSeekBar.progress.toFloat() - 100
+                val brightness = brightSeekBar.progress
                 val contrast = 10 / 10F
-
-                binding.imageEdit.setImageBitmap(
-                        setBrightnessContrast(
-                                bmp = bitmap,
-                                brightness = brightness,
-                                contrast = contrast
-                        )
-                )
+                binding.imageEdit.setColorFilter(setBrightness(brightness))
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -70,24 +63,14 @@ class EditPhotoActivity : AppCompatActivity() {
         })
     }
 
-    fun setBrightnessContrast(
-            bmp:Bitmap?,
-            brightness: Float = 0.0F,
-            contrast: Float = 1.0F
-    ):Bitmap?{
-        val cm = ColorMatrix(floatArrayOf(contrast, 0f, 0f, 0f,
-                brightness, 0f, contrast, 0f, 0f, brightness, 0f, 0f, contrast, 0f, brightness, 0f, 0f, 0f, 1f, 0f))
-
-        val ret = Bitmap.createBitmap(bmp!!.getWidth(), bmp!!.getHeight(),
-                bmp!!.getConfig()) /*from  www . j a va  2 s .  c om*/
-
-        val canvas = Canvas(ret)
-
-        val paint = Paint()
-        paint.colorFilter = ColorMatrixColorFilter(cm)
-        canvas.drawBitmap(bmp, 0f, 0f, paint)
-
-        return ret;
+    fun setBrightness(progress: Int): PorterDuffColorFilter? {
+        return if (progress >= 100) {
+            val value = (progress - 100) * 255 / 100
+            PorterDuffColorFilter(Color.argb(value, 255, 255, 255), PorterDuff.Mode.SRC_OVER)
+        } else {
+            val value = (100 - progress) * 255 / 100
+            PorterDuffColorFilter(Color.argb(value, 0, 0, 0), PorterDuff.Mode.SRC_ATOP)
+        }
     }
 
     private fun getBitMapFromUri():Bitmap{
@@ -97,7 +80,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
     private fun createFileToSave(): File {
         val timeStamp = SimpleDateFormat("yyyyddMM_HHmmss").format(Date())
-        var file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         return File(file.path + timeStamp)
     }
 
