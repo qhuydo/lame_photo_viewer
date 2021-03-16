@@ -5,35 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.slider.Slider
+    <SeekBar
         android:id="@+id/editor_red"
         android:layout_width="300dp"
         android:layout_height="30dp"
-        android:value="0"
-        android:valueFrom="-255.0"
-        android:valueTo="255.0"
+        android:progress="100"
+        android:max="200"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.slider.Slider
+    <SeekBar
         android:id="@+id/editor_green"
         android:layout_width="300dp"
         android:layout_height="30dp"
         android:layout_marginTop="8dp"
-        android:value="0"
-        android:valueFrom="-255.0"
-        android:valueTo="255.0"
+        android:progress="100"
+        android:max="200"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editor_red" />
 
-    <com.google.android.material.slider.Slider
+    <SeekBar
         android:id="@+id/editor_blue"
         android:layout_width="300dp"
         android:layout_height="30dp"
         android:layout_marginTop="8dp"
-        android:value="0"
-        android:valueFrom="-255.0"
-        android:valueTo="255.0"
+        android:progress="100"
+        android:max="200"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
