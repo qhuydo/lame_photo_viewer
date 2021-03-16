@@ -64,9 +64,11 @@ class PhotoViewPagerFragment : Fragment() {
             actionBar?.let {
                 if (it.isShowing) {
                     parentFragment.setBottomToolbarVisibility(false)
+                    // (requireActivity() as AbstractPhotosActivity).hideSystemUI()
                     it.hide()
                 } else {
                     parentFragment.setBottomToolbarVisibility(true)
+                    // (requireActivity() as AbstractPhotosActivity).showSystemUI()
                     it.show()
                 }
             }
@@ -79,8 +81,9 @@ class PhotoViewPagerFragment : Fragment() {
     }
 
     override fun onDetach() {
-        actionBar?.show()
         super.onDetach()
+        actionBar?.show()
+        // (requireActivity() as AbstractPhotosActivity).showSystemUI()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

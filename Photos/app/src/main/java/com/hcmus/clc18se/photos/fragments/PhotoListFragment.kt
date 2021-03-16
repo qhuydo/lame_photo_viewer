@@ -2,6 +2,9 @@ package com.hcmus.clc18se.photos.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -59,7 +62,8 @@ class PhotoListFragment : Fragment() {
         currentListItemSize = preferences.getString(getString(R.string.photo_list_item_size_key),
                 "0")!!.toInt()
 
-        adapter = MediaItemListAdapter(resources,
+        adapter = MediaItemListAdapter((requireActivity() as AppCompatActivity),
+                actionModeCallBack,
                 onClickListener,
                 currentListItemView,
                 currentListItemSize)
@@ -166,9 +170,15 @@ class PhotoListFragment : Fragment() {
         return true
     }
 
+    override fun onStop() {
+        super.onStop()
+        actionMode?.finish()
+    }
+
     private fun refreshRecyclerView() {
         binding.apply {
-            adapter = MediaItemListAdapter(resources,
+            adapter = MediaItemListAdapter((requireActivity() as AppCompatActivity),
+                    actionModeCallBack,
                     onClickListener,
                     currentListItemView,
                     currentListItemSize)
@@ -187,4 +197,33 @@ class PhotoListFragment : Fragment() {
         }
     }
 
+    private var actionMode: ActionMode? = null
+
+    private val actionModeCallBack = object: ActionMode.Callback {
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            if (item?.itemId == R.id.action_multiple_delete) {
+                // Delete button is clicked, handle the deletion and finish the multi select process
+                Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
+                mode?.finish()
+            }
+            return true
+        }
+
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            actionMode = mode
+            mode?.menuInflater?.inflate(R.menu.photo_list_long_click_menu, menu)
+            return true
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+            actionMode = null
+            // finished multi selection
+            adapter.finishSelection()
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            return false
+        }
+    }
 }

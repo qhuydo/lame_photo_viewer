@@ -16,7 +16,7 @@ class HomeViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     /**
      * Mapping of the ViewPager page indexes to their respective Fragments
      */
-    private val tabFragmentsCreators: Map<Int, () -> Fragment> = mapOf(
+    internal val tabFragmentsCreators: Map<Int, () -> Fragment> = mapOf(
             PAGE_PHOTOS to { PhotosFragment() },
             PAGE_PEOPLE to { PeopleFragment() },
             PAGE_ALBUM to { AlbumFragment() },

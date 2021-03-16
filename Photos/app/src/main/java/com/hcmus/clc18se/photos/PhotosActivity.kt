@@ -40,7 +40,7 @@ class PhotosActivity : AbstractPhotosActivity() {
         configLanguage()
 
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.page_photo, R.id.page_album, R.id.page_people), drawerLayout
+                setOf(R.id.page_photo, R.id.page_album, R.id.page_people), drawerLayout
         )
         Timber.d("On Create called")
         Timber.d("----------------")
@@ -55,15 +55,14 @@ class PhotosActivity : AbstractPhotosActivity() {
             bottomAppBarVisibility = it.getBoolean(BUNDLE_BOTTOM_APPBAR_VISIBILITY)
             setAppbarVisibility(bottomAppBarVisibility)
         }
-
     }
 
     override fun addOnDestinationChangedListener() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val newState = destination.id in arrayOf(
-                R.id.page_photo,
-                R.id.page_people,
-                R.id.page_album
+                    R.id.page_photo,
+                    R.id.page_people,
+                    R.id.page_album
             )
 
             if (bottomAppBarVisibility != newState) {
@@ -93,10 +92,6 @@ class PhotosActivity : AbstractPhotosActivity() {
 
     override fun setUpNavigationBar() {
         addOnDestinationChangedListener()
-
-        val toolbar2 = binding.topAppBar2.fragmentToolBar
-        setSupportActionBar(toolbar2)
-        toolbar2.setupWithNavController(navController, appBarConfiguration)
 
         val toolbar = binding.topAppBar.searchActionBar
         setSupportActionBar(toolbar)
@@ -131,7 +126,7 @@ class PhotosActivity : AbstractPhotosActivity() {
         if (visibility) {
             binding.apply {
                 topAppBar.appBarLayout.visibility = View.VISIBLE
-                topAppBar2.fragmentAppBarLayout.visibility = View.INVISIBLE
+                topAppBar2.fragmentAppBarLayout.visibility = View.GONE
                 setBottomAppBarVisibility()
 
                 fab.visibility = View.VISIBLE
@@ -158,20 +153,20 @@ class PhotosActivity : AbstractPhotosActivity() {
                 fabAddVideo.visibility = View.GONE
 
                 setAppBarHeight<CoordinatorLayout.LayoutParams>(
-                    binding.topAppBar2.fragmentAppBarLayout,
-                    getAppBarSizeAttr(this@PhotosActivity) ?: DEFAULT_APP_BAR_HEIGHT
+                        binding.topAppBar2.fragmentAppBarLayout,
+                        getAppBarSizeAttr(this@PhotosActivity) ?: DEFAULT_APP_BAR_HEIGHT
                 )
 
                 layoutParams.topMargin = getAppBarSizeAttr(this@PhotosActivity)
-                    ?: DEFAULT_APP_BAR_HEIGHT
+                        ?: DEFAULT_APP_BAR_HEIGHT
 
                 mainCoordinatorLayout.requestLayout()
                 mainCoordinatorLayout.invalidate()
 
                 setSupportActionBar(topAppBar2.fragmentToolBar)
                 topAppBar2.fragmentToolBar.setupWithNavController(
-                    navController,
-                    appBarConfiguration
+                        navController,
+                        appBarConfiguration
                 )
             }
 
@@ -181,16 +176,16 @@ class PhotosActivity : AbstractPhotosActivity() {
 
     private fun setBottomAppBarVisibility() {
         binding.bottomAppBar.visibility =
-            if (!displayBottomBarPreference()) View.INVISIBLE else View.VISIBLE
+                if (!displayBottomBarPreference()) View.INVISIBLE else View.VISIBLE
     }
 
     private fun makeToolbarTransparent(@Suppress("SameParameterValue") wantToMakeTransparent: Boolean = true) {
         if (wantToMakeTransparent) {
             supportActionBar?.setBackgroundDrawable(
-                ContextCompat.getDrawable(
-                    this,
-                    R.drawable.transparent_bar
-                )
+                    ContextCompat.getDrawable(
+                            this,
+                            R.drawable.transparent_bar
+                    )
             )
             //binding.topAppBar2.fragmentAppBarLayout.background = ContextCompat.getDrawable(this, R.drawable.transparent_bar)
         } else {
@@ -204,19 +199,14 @@ class PhotosActivity : AbstractPhotosActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return NavigationUI.onNavDestinationSelected(
-            item,
-            navController
+                item,
+                navController
         ) || super.onOptionsItemSelected(
-            item
+                item
         )
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, drawerLayout)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean(BUNDLE_BOTTOM_APPBAR_VISIBILITY, bottomAppBarVisibility)
     }
 }

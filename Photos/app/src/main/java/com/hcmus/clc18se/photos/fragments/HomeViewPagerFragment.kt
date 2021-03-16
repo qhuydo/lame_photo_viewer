@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hcmus.clc18se.photos.PhotosPagerActivity
 import com.hcmus.clc18se.photos.R
@@ -13,6 +14,7 @@ import com.hcmus.clc18se.photos.adapters.PAGE_ALBUM
 import com.hcmus.clc18se.photos.adapters.PAGE_PEOPLE
 import com.hcmus.clc18se.photos.adapters.PAGE_PHOTOS
 import com.hcmus.clc18se.photos.databinding.FragmentHomePagerBinding
+import timber.log.Timber
 
 class HomeViewPagerFragment : Fragment() {
 
@@ -28,14 +30,34 @@ class HomeViewPagerFragment : Fragment() {
     private fun setUpTabsLayout() {
         val tabLayout = parentActivity.binding.topAppBar.tabs
         val viewPager = binding.viewPager
+        val adapter = HomeViewPagerAdapter(this)
 
-        viewPager.adapter = HomeViewPagerAdapter(this)
+        viewPager.adapter = adapter
 
         // set text for tab elements
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.setIcon(getTabIcon(position))
             tab.text = getTabText(position)
         }.attach()
+
+        // Register on page change listener to dismiss the multi-select menu in photo fragment when
+        // changing to other tabs
+        viewPager.registerOnPageChangeCallback(
+
+                object : ViewPager2.OnPageChangeCallback() {
+
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+
+                        if (position != PAGE_PHOTOS) {
+                            val photosFragment = childFragmentManager.findFragmentByTag("f$PAGE_PHOTOS") as PhotosFragment
+                            photosFragment.actionMode?.let { it.finish()
+                                Timber.d("Mutil-select menu dissmissed")
+                            }
+                        }
+                    }
+                }
+        )
 
         parentActivity.setSupportActionBar(parentActivity.binding.topAppBar.searchActionBar)
 
