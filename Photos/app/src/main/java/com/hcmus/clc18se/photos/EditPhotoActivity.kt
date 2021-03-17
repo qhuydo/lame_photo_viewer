@@ -21,8 +21,6 @@ class EditPhotoActivity : AppCompatActivity() {
     private val binding by lazy { ActivityEditPhotoBinding.inflate(layoutInflater) }
     private var cur_item_id = 0
     private val bottomAppBarItemKey: String = "curItemId"
-    private var BitmapImage: Bitmap? = null
-    private var imageView: ImageView? = null
     private var uri: Uri? = null
     private var bitmap: Bitmap? = null
     private var tempRed:Int = 100
@@ -54,7 +52,7 @@ class EditPhotoActivity : AppCompatActivity() {
                     progress: Int,
                     fromUser: Boolean
             ) {
-                val brightness = brightSeekBar.progress - 255
+                val brightness = brightSeekBar.progress
                 binding.imageEdit.setColorFilter(setBrightness(brightness))
             }
 
