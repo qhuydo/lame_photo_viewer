@@ -20,7 +20,8 @@
                 android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:onClick="blurImage">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"
@@ -39,7 +40,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:onClick="grayImage">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"
@@ -50,7 +52,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/original" />
+                    android:text="@string/gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -96,7 +98,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:onClick="coloriseImage">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"

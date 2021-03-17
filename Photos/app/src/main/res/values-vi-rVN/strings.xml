@@ -31,7 +31,7 @@
     <string name="filter">Lọc</string>
     <string name="crop">Cắt</string>
     <string name="changeColor">Màu sắc</string>
-    <string name="original">Cơ bản</string>
+    <string name="gray">Xám</string>
     <string name="none">Không có</string>
     <string name="lighten">Sáng</string>
     <string name="dark">Tối</string>

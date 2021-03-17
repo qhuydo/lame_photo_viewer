@@ -5,8 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.renderscript.Allocation
+import android.renderscript.Element
+import android.renderscript.RenderScript
+import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
-import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -18,6 +21,7 @@ import kotlin.math.abs
 
 
 class EditPhotoActivity : AppCompatActivity() {
+    private val BLUR_RADIUS = 25f
     private val binding by lazy { ActivityEditPhotoBinding.inflate(layoutInflater) }
     private var cur_item_id = 0
     private val bottomAppBarItemKey: String = "curItemId"
@@ -70,7 +74,7 @@ class EditPhotoActivity : AppCompatActivity() {
                     fromUser: Boolean
             ) {
                 tempRed = redSeekBar.progress
-                binding.imageEdit.setColorFilter(setColor(tempRed,tempRed,tempGreen,tempBlue))
+                binding.imageEdit.setColorFilter(setColor(tempRed, tempRed, tempGreen, tempBlue))
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -87,7 +91,7 @@ class EditPhotoActivity : AppCompatActivity() {
                     fromUser: Boolean
             ) {
                 tempGreen = greenSeekBar.progress
-                binding.imageEdit.setColorFilter(setColor(tempGreen,tempRed,tempGreen,tempBlue))
+                binding.imageEdit.setColorFilter(setColor(tempGreen, tempRed, tempGreen, tempBlue))
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -104,7 +108,7 @@ class EditPhotoActivity : AppCompatActivity() {
                     fromUser: Boolean
             ) {
                 tempBlue = blueSeekBar.progress
-                binding.imageEdit.setColorFilter(setColor(tempBlue,tempRed,tempGreen,tempBlue))
+                binding.imageEdit.setColorFilter(setColor(tempBlue, tempRed, tempGreen, tempBlue))
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -113,6 +117,53 @@ class EditPhotoActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
+    }
+
+    fun coloriseImage(view: View){
+        if (bitmap != null)
+            binding.imageEdit.setColorFilter(PorterDuffColorFilter(Color.argb(200, 0, 255, 0), PorterDuff.Mode.SRC_OVER))
+    }
+
+    fun grayImage(view: View){
+        if (bitmap != null)
+            binding.imageEdit.setImageBitmap(toGrayscale(bitmap!!))
+    }
+
+    fun toGrayscale(bmpOriginal: Bitmap): Bitmap? {
+        val width: Int
+        val height: Int
+        height = bmpOriginal.height
+        width = bmpOriginal.width
+        val bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val c = Canvas(bmpGrayscale)
+        val paint = Paint()
+        val cm = ColorMatrix()
+        cm.setSaturation(0f)
+        val f = ColorMatrixColorFilter(cm)
+        paint.colorFilter = f
+        c.drawBitmap(bmpOriginal, 0f, 0f, paint)
+        return bmpGrayscale
+    }
+
+    fun blurImage(view: View){
+        if (bitmap != null)
+            binding.imageEdit.setImageBitmap(blur(bitmap))
+    }
+
+    fun blur(image: Bitmap?): Bitmap? {
+        if (null == image) return null
+        val outputBitmap = Bitmap.createBitmap(image)
+        val renderScript = RenderScript.create(this)
+        val tmpIn = Allocation.createFromBitmap(renderScript, image)
+        val tmpOut = Allocation.createFromBitmap(renderScript, outputBitmap)
+
+        //Intrinsic Gausian blur filter
+        val theIntrinsic = ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript))
+        theIntrinsic.setRadius(BLUR_RADIUS)
+        theIntrinsic.setInput(tmpIn)
+        theIntrinsic.forEach(tmpOut)
+        tmpOut.copyTo(outputBitmap)
+        return outputBitmap
     }
 
     fun setBrightness(progress: Int): PorterDuffColorFilter? {
@@ -125,7 +176,7 @@ class EditPhotoActivity : AppCompatActivity() {
         }
     }
 
-    fun setColor(progress: Int,progressRed: Int,progressGreen: Int,progressBlue:Int): PorterDuffColorFilter? {
+    fun setColor(progress: Int, progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter? {
         val value = abs(progress - 100) * 255 / 100
         return PorterDuffColorFilter(Color.argb(value, progressRed, progressGreen, progressBlue), PorterDuff.Mode.OVERLAY)
     }
