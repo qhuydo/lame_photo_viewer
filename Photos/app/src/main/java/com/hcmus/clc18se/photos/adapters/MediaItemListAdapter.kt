@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ActionMode
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +15,6 @@ import com.hcmus.clc18se.photos.databinding.ItemPhotoListBinding
 import com.hcmus.clc18se.photos.databinding.ItemPhotoListGridBinding
 
 class MediaItemListAdapter(private val activity: AppCompatActivity,
-                           private val actionMode: ActionMode.Callback,
                            private val onClickListener: OnClickListener,
                            private val adapterViewType: Int = ITEM_TYPE_GRID,
                            private val itemViewSize: Int = ITEM_SIZE_MEDIUM) :
@@ -35,6 +34,9 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
     private var multiSelect = false
     private val selectedItems = arrayListOf<MediaItem>()
 
+    fun numberOfSelectedItems(): Int {
+        return selectedItems.size
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
@@ -42,9 +44,19 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
                 val photo = getItem(position) as MediaItem
                 holder.bind(photo)
 
+                holder.itemView.setOnLongClickListener {
+                    if (!multiSelect) {
+                        multiSelect = true
+                        selectItem(holder, photo)
+                        onClickListener.onSelectionChange()
+                    }
+                    true
+                }
+
                 holder.itemView.setOnClickListener {
                     if (multiSelect) {
                         selectItem(holder, photo)
+                        onClickListener.onSelectionChange()
                     } else {
                         onClickListener.onClick(photo)
                     }
@@ -57,21 +69,12 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
                     // else, keep it as it is
                     holder.itemView.alpha = 1.0f
                 }
-
-                holder.itemView.setOnLongClickListener {
-                    if (!multiSelect) {
-                        multiSelect = true
-                        activity.startSupportActionMode(actionMode)
-                        selectItem(holder, photo)
-                    }
-                    true
-                }
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return ViewHolder.from(parent, viewType, activity.resources, itemViewSize)
+        return ViewHolder.from(parent, viewType, activity, itemViewSize)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -79,20 +82,28 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
     }
 
     class ViewHolder(private val listBinding: ViewDataBinding,
-                     private val resources: Resources,
+                     private val activity: AppCompatActivity,
                      private val itemViewSize: Int = ITEM_SIZE_MEDIUM) :
             RecyclerView.ViewHolder(listBinding.root) {
+
+        internal var selected: Boolean = false
 
         fun bind(item: MediaItem) {
             when (listBinding) {
                 is ItemPhotoListBinding -> listBinding.apply {
-                    setItemListSize(resources, photoListItemImage, itemViewSize)
+                    setItemListSize(activity.resources, photoListItemImage, itemViewSize)
                     photo = item
-
                 }
                 is ItemPhotoListGridBinding -> listBinding.apply {
                     photo = item
                 }
+            }
+            if (selected) {
+                listBinding.root.background = ResourcesCompat.getDrawable(
+                        activity.resources,
+                        R.drawable.frame_border,
+                        activity.theme
+                )
             }
             listBinding.executePendingBindings()
         }
@@ -100,17 +111,17 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
         companion object {
             fun from(parent: ViewGroup,
                      viewType: Int,
-                     resources: Resources,
+                     activity: AppCompatActivity,
                      itemViewSize: Int = ITEM_SIZE_MEDIUM): ViewHolder {
                 return when (viewType) {
                     ITEM_TYPE_LIST -> ViewHolder(
                             ItemPhotoListBinding.inflate(LayoutInflater.from(parent.context)),
-                            resources,
+                            activity,
                             itemViewSize
                     )
                     else -> ViewHolder(
                             ItemPhotoListGridBinding.inflate(LayoutInflater.from(parent.context)),
-                            resources,
+                            activity,
                             itemViewSize
                     )
                 }
@@ -128,8 +139,9 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
         }
     }
 
-    class OnClickListener(val clickListener: (mediaItem: MediaItem) -> Any) {
-        fun onClick(mediaItem: MediaItem) = clickListener(mediaItem)
+    interface OnClickListener {
+        fun onClick(mediaItem: MediaItem)
+        fun onSelectionChange()
     }
 
     // helper function that adds/removes an item to the list depending on the app's state

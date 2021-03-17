@@ -12,6 +12,7 @@
         app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:toolbarId="@id/toolbar">
@@ -29,17 +30,22 @@
                     android:background="@drawable/search_bar_selected_background"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
+            <ViewStub
+                android:id="@+id/cab_stub_tab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             </com.google.android.material.card.MaterialCardView>
+
 
         </androidx.appcompat.widget.Toolbar>
 
         <!-- Override tabIconTint attribute of style with selector -->
         <com.google.android.material.tabs.TabLayout
-            app:tabSelectedTextColor="?colorPrimary"
             android:id="@+id/tabs"
             style="@style/Widget.MaterialComponents.TabLayout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:tabSelectedTextColor="?colorPrimary"
             app:tabTextColor="?colorOnSurface" />
 
     </com.google.android.material.appbar.AppBarLayout>

@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos
 
+import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.TypedValue

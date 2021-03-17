@@ -7,24 +7,34 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.hcmus.clc18se.photos.MainActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
+import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.FragmentPhotosBinding
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 
-class PhotosFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
+class PhotosFragment : AbstractPhotoListFragment(
+        R.menu.photo_list_menu
+) {
 
     private lateinit var binding: FragmentPhotosBinding
     private val viewModel: PhotosViewModel by activityViewModels()
 
-    override val onClickListener = MediaItemListAdapter.OnClickListener {
-        val idx = viewModel.mediaItemList.value?.indexOf(it) ?: -1
-        viewModel.setCurrentItemView(idx)
-        this.findNavController().navigate(
-                PhotosFragmentDirections.actionPagePhotoToPhotoViewFragment()
-        )
+    override val onClickListener = object : MediaItemListAdapter.OnClickListener {
+        override fun onClick(mediaItem: MediaItem) {
+            val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
+            viewModel.setCurrentItemView(idx)
+            this@PhotosFragment.findNavController().navigate(
+                    PhotosFragmentDirections.actionPagePhotoToPhotoViewFragment()
+            )
+        }
+
+        override fun onSelectionChange() {
+            invalidateCab()
+        }
     }
 
     override fun onCreateView(
@@ -47,7 +57,6 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
         setHasOptionsMenu(true)
 
         adapter = MediaItemListAdapter((requireActivity() as AppCompatActivity),
-                actionModeCallBack,
                 onClickListener,
                 currentListItemView,
                 currentListItemSize)
@@ -84,7 +93,6 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     override fun refreshRecyclerView() {
         binding.apply {
             adapter = MediaItemListAdapter((requireActivity() as AppCompatActivity),
-                    actionModeCallBack,
                     onClickListener,
                     currentListItemView,
                     currentListItemSize)
@@ -101,6 +109,12 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
             adapter.notifyDataSetChanged()
         }
+    }
+
+    override fun getCadSubId(): Int {
+        val bottomAppBarPref = preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0")
+        val usingTabLayout = bottomAppBarPref == MainActivity.TAB_LAYOUT_OPTION
+        return if (usingTabLayout) R.id.cab_stub_tab else R.id.cab_stub
     }
 
 }

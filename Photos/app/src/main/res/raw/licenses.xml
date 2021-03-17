@@ -21,6 +21,13 @@
     </notice>
 
     <notice>
+        <name>Material Contextual Action Bar</name>
+        <url>Material Contextual Action Bar</url>
+        <license>Apache Software License 2.0</license>
+        <copyright>Copyright 2016 Aidan Follestad</copyright>
+    </notice>
+
+    <notice>
         <name>Storage Samples Repository</name>
         <url>https://github.com/android/storage-samples</url>
         <license>Apache Software License 2.0</license>

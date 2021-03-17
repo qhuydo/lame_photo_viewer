@@ -4,13 +4,11 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.view.ActionMode
 import androidx.preference.PreferenceManager
 import com.hcmus.clc18se.photos.utils.ICON_COLOR
 import com.hcmus.clc18se.photos.utils.setIcon

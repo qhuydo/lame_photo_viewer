@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.afollestad.materialcab.attached.destroy
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hcmus.clc18se.photos.PhotosPagerActivity
 import com.hcmus.clc18se.photos.R
@@ -51,8 +52,10 @@ class HomeViewPagerFragment : Fragment() {
 
                         if (position != PAGE_PHOTOS) {
                             val photosFragment = childFragmentManager.findFragmentByTag("f$PAGE_PHOTOS") as PhotosFragment
-                            photosFragment.actionMode?.let { it.finish()
-                                Timber.d("Mutil-select menu dissmissed")
+                            photosFragment.mainCab?.let {
+                                it.destroy()
+                                // photosFragment.mainCab = null
+                                Timber.d("Multi-select menu dismissed")
                             }
                         }
                     }

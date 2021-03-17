@@ -1,13 +1,15 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.content.SharedPreferences
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.content.res.Configuration
+import android.view.*
 import android.widget.Toast
-import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.afollestad.materialcab.attached.AttachedCab
+import com.afollestad.materialcab.attached.destroy
+import com.afollestad.materialcab.attached.isActive
+import com.afollestad.materialcab.createCab
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.databinding.PhotoListBinding
@@ -32,7 +34,9 @@ import com.hcmus.clc18se.photos.utils.setPhotoListItemSizeOption
  * @see [PhotosFragment]
  * @see [PhotoListFragment]
  */
-abstract class AbstractPhotoListFragment(private val menuRes: Int): Fragment() {
+abstract class AbstractPhotoListFragment(
+        private val menuRes: Int
+) : Fragment() {
 
     protected val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireActivity())
@@ -40,7 +44,8 @@ abstract class AbstractPhotoListFragment(private val menuRes: Int): Fragment() {
 
     // Current list item view type, get from preference
     protected var currentListItemView: Int = MediaItemListAdapter.ITEM_TYPE_LIST
-    // Current list iten size, get from preference
+
+    // Current list item size, get from preference
     protected var currentListItemSize: Int = MediaItemListAdapter.ITEM_SIZE_MEDIUM
 
     // On click listener object used by MediaItemListAdapter
@@ -52,9 +57,16 @@ abstract class AbstractPhotoListFragment(private val menuRes: Int): Fragment() {
 
     protected lateinit var adapter: MediaItemListAdapter
 
+    internal var mainCab: AttachedCab? = null
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(menuRes, menu)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        mainCab?.destroy()
+        super.onConfigurationChanged(newConfig)
     }
 
     /**
@@ -130,39 +142,78 @@ abstract class AbstractPhotoListFragment(private val menuRes: Int): Fragment() {
 
     override fun onStop() {
         super.onStop()
-        actionMode?.finish()
+        mainCab?.destroy()
+        removeStupidCabWhenConfigChange()
     }
 
     abstract fun refreshRecyclerView()
 
-    internal var actionMode: ActionMode? = null
+    abstract fun getCadSubId(): Int
 
-    protected val actionModeCallBack = object: ActionMode.Callback {
+    fun invalidateCab() {
+        if (adapter.numberOfSelectedItems() == 0) {
+            mainCab?.destroy()
+            // mainCab = null
+            return
+        }
 
-        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            if (item?.itemId == R.id.action_multiple_delete) {
-                // Delete button is clicked, handle the deletion and finish the multi select process
-                Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
-                mode?.finish()
+        if (mainCab.isActive()) {
+            mainCab?.apply {
+                title(literal = "${adapter.numberOfSelectedItems()}")
             }
-            return true
-        }
+        } else {
+            mainCab = createCab(getCadSubId()) {
+                title(literal = "${adapter.numberOfSelectedItems()}")
+                menu(R.menu.photo_list_long_click_menu)
+                popupTheme(R.style.Theme_Photos_Indigo_NoActionBar)
+                slideDown()
 
-        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            actionMode = mode
-            mode?.menuInflater?.inflate(R.menu.photo_list_long_click_menu, menu)
-            return true
-        }
-
-        override fun onDestroyActionMode(mode: ActionMode?) {
-            actionMode = null
-            // finished multi selection
-            adapter.finishSelection()
-        }
-
-        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            return false
+                onCreate { cab, menu -> onCabCreated(menu) }
+                onSelection { onCabItemSelected(it) }
+                onDestroy {
+                    adapter.finishSelection()
+                    // mainCab = null
+                    true
+                }
+            }
         }
     }
 
+    private fun onCabCreated(menu: Menu): Boolean {
+        // Makes the icons in the overflow menu visible
+        if (menu.javaClass.simpleName == "MenuBuilder") {
+            try {
+                val field = menu.javaClass.getDeclaredField("mOptionalIconsVisible")
+                field.isAccessible = true
+                field.setBoolean(menu, true)
+            } catch (ignored: Exception) {
+                ignored.printStackTrace()
+            }
+        }
+        return true // allow creation
+    }
+
+    private fun onCabItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_multiple_delete) {
+            // Delete button is clicked, handle the deletion and finish the multi select process
+            Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
+        }
+        return true
+    }
+
+    /**
+     * ((ヾ(≧皿≦；)ノ＿))
+     *
+     * This method must be called from saved instance state unless you want to have an error like this
+     *     java.lang.IllegalArgumentException: Wrong state class, expecting View State
+     *     but received class androidx.appcompat.widget.Toolbar$SavedState instead.
+     *     This usually happens when two views of different type have the same id in the same hierarchy.
+     *     This view's id is id/cab_stub. Make sure other views do not use the same id.
+     *
+     * Try to feel the bug when selecting the photo item, then rotating the screen.
+     */
+    private fun removeStupidCabWhenConfigChange() {
+        val stupidCab = requireActivity().findViewById<View>(getCadSubId())
+        (stupidCab?.parent as? ViewGroup)?.removeView(stupidCab)
+    }
 }
