@@ -27,10 +27,11 @@
 
             </com.google.android.material.appbar.MaterialToolbar>
 
-            <ViewStub
+            <androidx.cardview.widget.CardView
                 android:id="@+id/cab_stub"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="?colorPrimary" />
 
         </androidx.cardview.widget.CardView>
 

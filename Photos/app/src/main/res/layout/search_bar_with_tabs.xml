@@ -30,7 +30,7 @@
                     android:background="@drawable/search_bar_selected_background"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
-            <ViewStub
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cab_stub_tab"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

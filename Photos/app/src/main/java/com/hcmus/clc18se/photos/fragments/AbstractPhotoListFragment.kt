@@ -143,7 +143,6 @@ abstract class AbstractPhotoListFragment(
     override fun onStop() {
         super.onStop()
         mainCab?.destroy()
-        removeStupidCabWhenConfigChange()
     }
 
     abstract fun refreshRecyclerView()
@@ -165,7 +164,6 @@ abstract class AbstractPhotoListFragment(
             mainCab = createCab(getCadSubId()) {
                 title(literal = "${adapter.numberOfSelectedItems()}")
                 menu(R.menu.photo_list_long_click_menu)
-                popupTheme(R.style.Theme_Photos_Indigo_NoActionBar)
                 slideDown()
 
                 onCreate { cab, menu -> onCabCreated(menu) }
@@ -199,21 +197,5 @@ abstract class AbstractPhotoListFragment(
             Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
         }
         return true
-    }
-
-    /**
-     * ((ヾ(≧皿≦；)ノ＿))
-     *
-     * This method must be called from saved instance state unless you want to have an error like this
-     *     java.lang.IllegalArgumentException: Wrong state class, expecting View State
-     *     but received class androidx.appcompat.widget.Toolbar$SavedState instead.
-     *     This usually happens when two views of different type have the same id in the same hierarchy.
-     *     This view's id is id/cab_stub. Make sure other views do not use the same id.
-     *
-     * Try to feel the bug when selecting the photo item, then rotating the screen.
-     */
-    private fun removeStupidCabWhenConfigChange() {
-        val stupidCab = requireActivity().findViewById<View>(getCadSubId())
-        (stupidCab?.parent as? ViewGroup)?.removeView(stupidCab)
     }
 }

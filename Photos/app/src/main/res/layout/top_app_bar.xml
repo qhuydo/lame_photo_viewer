@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/fragment_app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/search_bar_height"
+        android:layout_height="wrap_content"
         android:background="?colorSurface"
         android:fitsSystemWindows="true">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/fragment_tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent">
 
-            <ViewStub
+            <androidx.cardview.widget.CardView
                 android:id="@+id/cab_stub2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+        </com.google.android.material.appbar.MaterialToolbar>
 
-        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
-
 </layout>
