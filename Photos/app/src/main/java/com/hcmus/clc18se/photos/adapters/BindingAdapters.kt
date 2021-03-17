@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos.adapters
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
@@ -56,6 +57,21 @@ fun bindImage(imgView: ImageView, imgUri: Uri?) {
                 .into(imgView)
     }
 }
+
+@BindingAdapter("imageFromBitmap")
+fun bindImage(imgView: ImageView, bitmap: Bitmap?) {
+
+    bitmap?.let {
+        val requestOptions = RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+
+        Glide.with(imgView.context)
+                .load(bitmap)
+                .apply(requestOptions)
+                .into(imgView)
+    }
+}
+
 
 @BindingAdapter("imageFromMediaItem")
 fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {

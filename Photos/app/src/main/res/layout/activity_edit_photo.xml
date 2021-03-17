@@ -13,13 +13,24 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/bottom_edit">
+
             <ImageView
                 android:id="@+id/imageEdit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/photo_title"
-                android:background="?colorSurface" />
+                android:background="?colorSurface"
+                android:contentDescription="@string/photo_title" />
         </FrameLayout>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            />
 
         <include
             android:id="@+id/bright_editor"
@@ -83,8 +94,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:onClick="onSaveImageButtonClick"
             android:contentDescription="@string/save_image"
+            android:onClick="onSaveImageButtonClick"
             android:src="@drawable/ic_outline_save_24" />
 
         <ImageButton
@@ -93,8 +104,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/saveImage"
             android:layout_alignParentEnd="true"
-            android:onClick="onDrawButtonClick"
             android:contentDescription="@string/draw"
+            android:onClick="onDrawButtonClick"
             android:src="@drawable/ic_outline_edit_24" />
     </RelativeLayout>
 </layout>

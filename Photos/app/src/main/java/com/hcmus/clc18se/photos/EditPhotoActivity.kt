@@ -12,7 +12,9 @@ import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
 import java.io.*
 import java.text.SimpleDateFormat
@@ -21,24 +23,28 @@ import kotlin.math.abs
 
 
 class EditPhotoActivity : AppCompatActivity() {
+
+    private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+
     private val BLUR_RADIUS = 25f
     private val binding by lazy { ActivityEditPhotoBinding.inflate(layoutInflater) }
     private var cur_item_id = 0
     private val bottomAppBarItemKey: String = "curItemId"
     private var uri: Uri? = null
     private var bitmap: Bitmap? = null
-    private var tempRed:Int = 100
-    private var tempGreen:Int = 100
-    private var tempBlue:Int = 100
+    private var tempRed: Int = 100
+    private var tempGreen: Int = 100
+    private var tempBlue: Int = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        if (intent.hasExtra("uri")){
+        if (intent.hasExtra("uri")) {
             uri = intent.getParcelableExtra("uri")
             bitmap = getBitMapFromUri()
-            binding.imageEdit.setImageURI(uri)
+            // binding.imageEdit.setImageURI(uri)
+            bindImage(binding.imageEdit, uri)
             //binding.imageEdit.setImageBitmap(bitmap)
         }
 
@@ -57,14 +63,12 @@ class EditPhotoActivity : AppCompatActivity() {
                     fromUser: Boolean
             ) {
                 val brightness = brightSeekBar.progress
-                binding.imageEdit.setColorFilter(setBrightness(brightness))
+                binding.imageEdit.colorFilter = setBrightness(brightness)
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
         val redSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_red)
         redSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -74,14 +78,12 @@ class EditPhotoActivity : AppCompatActivity() {
                     fromUser: Boolean
             ) {
                 tempRed = redSeekBar.progress
-                binding.imageEdit.setColorFilter(setColor(tempRed, tempRed, tempGreen, tempBlue))
+                binding.imageEdit.colorFilter = setColor(tempRed, tempRed, tempGreen, tempBlue)
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
         val greenSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_green)
         greenSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -91,14 +93,11 @@ class EditPhotoActivity : AppCompatActivity() {
                     fromUser: Boolean
             ) {
                 tempGreen = greenSeekBar.progress
-                binding.imageEdit.setColorFilter(setColor(tempGreen, tempRed, tempGreen, tempBlue))
+                binding.imageEdit.colorFilter = setColor(tempGreen, tempRed, tempGreen, tempBlue)
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
         val blueSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_blue)
         blueSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -108,25 +107,36 @@ class EditPhotoActivity : AppCompatActivity() {
                     fromUser: Boolean
             ) {
                 tempBlue = blueSeekBar.progress
-                binding.imageEdit.setColorFilter(setColor(tempBlue, tempRed, tempGreen, tempBlue))
+                binding.imageEdit.colorFilter = setColor(tempBlue, tempRed, tempGreen, tempBlue)
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
     }
 
-    fun coloriseImage(view: View){
-        if (bitmap != null)
-            binding.imageEdit.setColorFilter(PorterDuffColorFilter(Color.argb(200, 0, 255, 0), PorterDuff.Mode.SRC_OVER))
+    fun coloriseImage(view: View) {
+        if (bitmap != null) {
+            binding.progressCircular.visibility = View.VISIBLE
+            binding.imageEdit.colorFilter =
+                    PorterDuffColorFilter(
+                            Color.argb(200, 0, 255, 0),
+                            PorterDuff.Mode.SRC_OVER)
+            binding.progressCircular.visibility = View.INVISIBLE
+        }
     }
 
-    fun grayImage(view: View){
-        if (bitmap != null)
-            binding.imageEdit.setImageBitmap(toGrayscale(bitmap!!))
+    @Suppress("UNUSED_PARAMETER")
+    fun grayImage(view: View) {
+        bitmap?.let {
+            binding.progressCircular.visibility = View.VISIBLE
+            bindImage(binding.imageEdit, toGrayscale(it))
+            binding.progressCircular.visibility = View.INVISIBLE
+        }
+//        if (bitmap != null) {
+//            binding.imageEdit.setImageBitmap(toGrayscale(bitmap!!))
+//        }
     }
 
     fun toGrayscale(bmpOriginal: Bitmap): Bitmap? {
@@ -145,9 +155,16 @@ class EditPhotoActivity : AppCompatActivity() {
         return bmpGrayscale
     }
 
-    fun blurImage(view: View){
-        if (bitmap != null)
-            binding.imageEdit.setImageBitmap(blur(bitmap))
+    @Suppress("UNUSED_PARAMETER")
+    fun blurImage(view: View) {
+        bitmap?.let {
+            binding.progressCircular.visibility = View.VISIBLE
+            bindImage(binding.imageEdit, blur(it))
+            binding.progressCircular.visibility = View.INVISIBLE
+        }
+//        if (bitmap != null) {
+//            binding.imageEdit.setImageBitmap(blur(bitmap))
+//        }
     }
 
     fun blur(image: Bitmap?): Bitmap? {
@@ -181,7 +198,7 @@ class EditPhotoActivity : AppCompatActivity() {
         return PorterDuffColorFilter(Color.argb(value, progressRed, progressGreen, progressBlue), PorterDuff.Mode.OVERLAY)
     }
 
-    private fun getBitMapFromUri():Bitmap{
+    private fun getBitMapFromUri(): Bitmap {
         val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uri);
         return bitmap
     }
@@ -229,11 +246,13 @@ class EditPhotoActivity : AppCompatActivity() {
         }
     }
 
-    fun onDrawButtonClick(view: View){
+    @Suppress("UNUSED_PARAMETER")
+    fun onDrawButtonClick(view: View) {
         setBarVisibility(R.id.draw)
     }
 
-    fun onSaveImageButtonClick(view: View){
+    @Suppress("UNUSED_PARAMETER")
+    fun onSaveImageButtonClick(view: View) {
 
     }
 
