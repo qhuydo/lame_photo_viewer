@@ -72,5 +72,6 @@
     <string name="photo_properties">Properties</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="permission_not_granted">To continue, please give &appname; access to your photos</string>
+    <string name="undo">Undo</string>
 
 </resources>

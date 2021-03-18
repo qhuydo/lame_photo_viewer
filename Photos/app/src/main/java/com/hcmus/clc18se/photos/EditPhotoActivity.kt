@@ -20,6 +20,7 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.max
 
 
 class EditPhotoActivity : AppCompatActivity() {
@@ -78,7 +79,7 @@ class EditPhotoActivity : AppCompatActivity() {
                     fromUser: Boolean
             ) {
                 tempRed = redSeekBar.progress
-                binding.imageEdit.colorFilter = setColor(tempRed, tempRed, tempGreen, tempBlue)
+                binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -93,7 +94,7 @@ class EditPhotoActivity : AppCompatActivity() {
                     fromUser: Boolean
             ) {
                 tempGreen = greenSeekBar.progress
-                binding.imageEdit.colorFilter = setColor(tempGreen, tempRed, tempGreen, tempBlue)
+                binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -107,7 +108,7 @@ class EditPhotoActivity : AppCompatActivity() {
                     fromUser: Boolean
             ) {
                 tempBlue = blueSeekBar.progress
-                binding.imageEdit.colorFilter = setColor(tempBlue, tempRed, tempGreen, tempBlue)
+                binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -134,9 +135,6 @@ class EditPhotoActivity : AppCompatActivity() {
             bindImage(binding.imageEdit, toGrayscale(it))
             binding.progressCircular.visibility = View.INVISIBLE
         }
-//        if (bitmap != null) {
-//            binding.imageEdit.setImageBitmap(toGrayscale(bitmap!!))
-//        }
     }
 
     fun toGrayscale(bmpOriginal: Bitmap): Bitmap? {
@@ -155,6 +153,28 @@ class EditPhotoActivity : AppCompatActivity() {
         return bmpGrayscale
     }
 
+    fun invertColors(bmpOriginal: Bitmap): Bitmap? {
+        val bitmap = Bitmap.createBitmap(
+                bmpOriginal.width,
+                bmpOriginal.height,
+                Bitmap.Config.ARGB_8888
+        )
+
+        var matrixInvert = ColorMatrix(floatArrayOf(
+                -1.0f, 0.0f, 0.0f, 0.0f, 255.0f,
+                0.0f, -1.0f, 0.0f, 0.0f, 255.0f,
+                0.0f, 0.0f, -1.0f, 0.0f, 255.0f,
+                0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+        ))
+
+
+        val paint = Paint()
+        paint.colorFilter = ColorMatrixColorFilter(matrixInvert)
+
+        Canvas(bitmap).drawBitmap(bmpOriginal, 0f, 0f, paint)
+        return bitmap
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun blurImage(view: View) {
         bitmap?.let {
@@ -162,9 +182,6 @@ class EditPhotoActivity : AppCompatActivity() {
             bindImage(binding.imageEdit, blur(it))
             binding.progressCircular.visibility = View.INVISIBLE
         }
-//        if (bitmap != null) {
-//            binding.imageEdit.setImageBitmap(blur(bitmap))
-//        }
     }
 
     fun blur(image: Bitmap?): Bitmap? {
@@ -193,8 +210,9 @@ class EditPhotoActivity : AppCompatActivity() {
         }
     }
 
-    fun setColor(progress: Int, progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter? {
-        val value = abs(progress - 100) * 255 / 100
+    fun setColor(progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter? {
+        val progress = max(max(abs( progressRed - 100), abs(progressGreen- 100)), abs(progressBlue- 100))
+        val value = progress * 255 / 100
         return PorterDuffColorFilter(Color.argb(value, progressRed, progressGreen, progressBlue), PorterDuff.Mode.OVERLAY)
     }
 
@@ -204,7 +222,7 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     private fun createFileToSave(): File {
-        val timeStamp = SimpleDateFormat("yyyyddMM_HHmmss").format(Date())
+        val timeStamp = SimpleDateFormat("yyyyddMM_HHmmss", Locale.CHINA).format(Date())
         val file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         return File(file.path + timeStamp)
     }

@@ -107,5 +107,14 @@
             android:contentDescription="@string/draw"
             android:onClick="onDrawButtonClick"
             android:src="@drawable/ic_outline_edit_24" />
+        <ImageButton
+            android:id="@+id/undo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/draw"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/undo"
+            android:onClick="onDrawButtonClick"
+            android:src="@drawable/ic_outline_undo_24" />
     </RelativeLayout>
 </layout>

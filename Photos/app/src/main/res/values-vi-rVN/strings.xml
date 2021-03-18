@@ -59,4 +59,5 @@
     <string name="photo_properties">Chi tiết</string>
     <string name="permission_not_granted">Để tiếp tục, &appname; xin phép quyền truy cập ảnh trong thiết bị của bạn</string>
     <string name="grant_permission">Cho phép truy cập</string>
+    <string name="undo">Hoàn tác</string>
 </resources>
