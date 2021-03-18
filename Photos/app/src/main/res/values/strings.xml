@@ -36,7 +36,7 @@
     <string name="filter">Filter</string>
     <string name="crop">Crop</string>
     <string name="changeColor">Color</string>
-    <string name="gray">Gray</string>
+    <string name="gray">Grayscale</string>
     <string name="misty">Misty</string>
     <string name="none">None</string>
     <string name="lighten">Lighten</string>
@@ -66,12 +66,13 @@
     <string name="copy">Copy</string>
     <string name="open_in_another_app">Open in another app</string>
     <string name="move_to_secret_album">Move to Secret album</string>
-    <string name="slideshow" translatable="false">Slideshow</string>
+    <string name="slideshow">Slideshow</string>
     <string name="rename">Rename</string>
     <string name="rotate">Rotate</string>
     <string name="photo_properties">Properties</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="permission_not_granted">To continue, please give &appname; access to your photos</string>
     <string name="undo">Undo</string>
+    <string name="select_all">Select all</string>
 
 </resources>

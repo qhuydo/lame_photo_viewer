@@ -1,15 +1,18 @@
 package com.hcmus.clc18se.photos.utils
 
 import android.content.res.Resources
+import android.content.res.Resources.Theme
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.R
-import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter.Companion.ITEM_TYPE_LIST
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter.Companion.ITEM_TYPE_GRID
+import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter.Companion.ITEM_TYPE_LIST
+
 
 fun getAppBarSizeAttr(activity: AppCompatActivity): Int? {
     val tv = TypedValue()
@@ -22,12 +25,15 @@ fun getAppBarSizeAttr(activity: AppCompatActivity): Int? {
 const val SEARCH_BAR_HEIGHT = 88
 const val DEFAULT_APP_BAR_HEIGHT = 56
 
-fun <T : ViewGroup.LayoutParams> setAppBarHeight(appBarLayout: AppBarLayout, dp: Int,
-                                                 activity: AppCompatActivity? = null) {
+fun <T : ViewGroup.LayoutParams> setAppBarHeight(
+    appBarLayout: AppBarLayout, dp: Int,
+    activity: AppCompatActivity? = null
+) {
     @Suppress("UNCHECKED_CAST") val layoutParams = appBarLayout.layoutParams as T
     if (activity != null) {
         layoutParams.height = TypedValue.complexToDimensionPixelSize(
-                dp, activity.resources.displayMetrics)
+            dp, activity.resources.displayMetrics
+        )
     } else {
         layoutParams.height = dp
     }
@@ -88,4 +94,12 @@ fun getSpanCountForPhotoList(resources: Resources, viewType: Int, iconSize: Int)
 }
 
 fun getSpanCountForAlbumList(resources: Resources, viewType: Int, iconSize: Int) =
-        getSpanCountForPhotoList(resources, viewType, iconSize)
+    getSpanCountForPhotoList(resources, viewType, iconSize)
+
+fun getColorAttribute(activity: AppCompatActivity, attribute: Int): Int {
+    val typedValue = TypedValue()
+    val theme: Theme = activity.theme
+    theme.resolveAttribute(attribute, typedValue, true)
+    @ColorInt val color = typedValue.data
+    return color
+}

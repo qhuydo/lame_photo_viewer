@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.afollestad.materialcab.attached.AttachedCab
@@ -13,8 +14,10 @@ import com.afollestad.materialcab.createCab
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.databinding.PhotoListBinding
+import com.hcmus.clc18se.photos.utils.getColorAttribute
 import com.hcmus.clc18se.photos.utils.setPhotoListIcon
 import com.hcmus.clc18se.photos.utils.setPhotoListItemSizeOption
+import timber.log.Timber
 
 /**
  * Inherited by [PhotoListFragment] & [PhotosFragment]
@@ -35,7 +38,7 @@ import com.hcmus.clc18se.photos.utils.setPhotoListItemSizeOption
  * @see [PhotoListFragment]
  */
 abstract class AbstractPhotoListFragment(
-        private val menuRes: Int
+    private val menuRes: Int
 ) : Fragment() {
 
     protected val preferences: SharedPreferences by lazy {
@@ -77,8 +80,11 @@ abstract class AbstractPhotoListFragment(
         val photoListImageItem = menu.findItem(R.id.photo_list_item_view_type)
         setPhotoListIcon(photoListImageItem, currentListItemView)
 
-        val currentPreference = preferences.getString(getString(
-                R.string.photo_list_item_size_key), "0") ?: "0"
+        val currentPreference = preferences.getString(
+            getString(
+                R.string.photo_list_item_size_key
+            ), "0"
+        ) ?: "0"
         setPhotoListItemSizeOption(resources, menu, currentPreference)
     }
 
@@ -112,8 +118,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-                .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
-                .apply()
+            .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
+            .apply()
 
         refreshRecyclerView()
     }
@@ -132,8 +138,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-                .putString(getString(R.string.photo_list_item_size_key), option)
-                .apply()
+            .putString(getString(R.string.photo_list_item_size_key), option)
+            .apply()
 
         refreshRecyclerView()
 
@@ -161,9 +167,18 @@ abstract class AbstractPhotoListFragment(
                 title(literal = "${adapter.numberOfSelectedItems()}")
             }
         } else {
+            val colorPrimary = getColorAttribute(requireActivity() as AppCompatActivity, R.attr.colorPrimary)
+            Timber.d("Color primary $colorPrimary")
+            val colorOnPrimary = getColorAttribute(requireActivity() as AppCompatActivity, R.attr.colorOnPrimary)
+            Timber.d("Color On primary $colorOnPrimary")
+
             mainCab = createCab(getCadSubId()) {
                 title(literal = "${adapter.numberOfSelectedItems()}")
-                menu(R.menu.photo_list_long_click_menu)
+                menu(R.menu.photo_list_context_menu)
+                popupTheme(R.style.Theme_Photos_Indigo)
+                titleColor(literal = colorOnPrimary)
+                subtitleColor(literal = colorOnPrimary)
+                backgroundColor(literal = colorPrimary)
                 slideDown()
 
                 onCreate { _, menu -> onCabCreated(menu) }

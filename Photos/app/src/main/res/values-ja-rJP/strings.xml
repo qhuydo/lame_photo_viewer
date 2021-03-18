@@ -38,7 +38,7 @@
     <string name="colorise">着色化</string>
     <string name="misty">"ミスティー "</string>
     <string name="lighten">ライト</string>
-    <string name="gray">" "</string>
+    <string name="gray">"グレースケール "</string>
     <string name="big">大</string>
     <string name="medium">中</string>
     <string name="small">小</string>
@@ -59,4 +59,6 @@
     <string name="photo_properties">プロパティ</string>
     <string name="permission_not_granted">続行するには、&appname; に写真へのアクセスを許可して下さい。</string>
     <string name="grant_permission">アクセスを許可</string>
+    <string name="undo">元に戻す</string>
+    <string name="select_all">全てを選択</string>
 </resources>

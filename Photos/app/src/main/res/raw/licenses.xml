@@ -21,6 +21,13 @@
     </notice>
 
     <notice>
+        <name>FlexibleAdapter</name>
+        <url>https://github.com/davideas/FlexibleAdapter</url>
+        <license>Apache Software License 2.0</license>
+        <copyright>Copyright 2015-2017 Davide Steduto.</copyright>
+    </notice>
+
+    <notice>
         <name>Material Contextual Action Bar</name>
         <url>Material Contextual Action Bar</url>
         <license>Apache Software License 2.0</license>

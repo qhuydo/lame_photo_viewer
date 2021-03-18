@@ -17,7 +17,7 @@ import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 
 class PhotosFragment : AbstractPhotoListFragment(
-        R.menu.photo_list_menu
+        R.menu.photos_menu
 ) {
 
     private lateinit var binding: FragmentPhotosBinding
