@@ -26,7 +26,8 @@ import kotlin.math.max
 class EditPhotoActivity : AppCompatActivity() {
 
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
-
+    private val HIGHEST_COLOR_VALUE = 255
+    private val LOWEST_COLOR_VALUE = 0
     private val BLUR_RADIUS = 25f
     private val binding by lazy { ActivityEditPhotoBinding.inflate(layoutInflater) }
     private var cur_item_id = 0
@@ -117,8 +118,63 @@ class EditPhotoActivity : AppCompatActivity() {
         })
     }
 
+    fun pencilImage(view: View){
+        bitmap?.let {
+            binding.progressCircular.visibility = View.VISIBLE
+            binding.imageEdit.setImageBitmap(toPencilImage(bitmap!!))
+            binding.progressCircular.visibility = View.INVISIBLE
+        }
+    }
+
+    //link hàm  toPencilImage https://github.com/theshivamlko/ImageFilterAlogrithm/tree/master/ImageFIlters
+    fun toPencilImage(bmp: Bitmap):Bitmap{
+        val newBitmap: Bitmap = bmp.copy(Bitmap.Config.ARGB_8888, true)
+
+        val imageHeight = newBitmap.height
+        val imageWidth = newBitmap.width
+
+        // traversing each pixel in Image as an 2D Array
+        for (i in 0 until imageWidth) {
+            for (j in 0 until imageHeight) {
+
+                // operating on each pixel
+                val oldPixel: Int = bmp.getPixel(i, j)
+
+                // each pixel is made from RED_BLUE_GREEN
+                // so, getting current values of pixel
+                val oldRed = Color.red(oldPixel)
+                val oldBlue = Color.blue(oldPixel)
+                val oldGreen = Color.green(oldPixel)
+                val oldAlpha = Color.alpha(oldPixel)
+
+
+                // Algorithm for getting new values after calculation of filter
+                // Algorithm for SKETCH FILTER
+                val intensity = (oldRed + oldBlue + oldGreen) / 3
+
+                // applying new pixel value to newBitmap
+                // condition for Sketch
+                var newPixel = 0
+                val INTENSITY_FACTOR = 120
+                newPixel = if (intensity > INTENSITY_FACTOR) {
+                    // apply white color
+                    Color.argb(oldAlpha, HIGHEST_COLOR_VALUE, HIGHEST_COLOR_VALUE, HIGHEST_COLOR_VALUE)
+                } else if (intensity > 100) {
+                    // apply grey color
+                    Color.argb(oldAlpha, 150, 150, 150)
+                } else {
+                    // apply black color
+                    Color.argb(oldAlpha, LOWEST_COLOR_VALUE, LOWEST_COLOR_VALUE, LOWEST_COLOR_VALUE)
+                }
+                newBitmap.setPixel(i, j, newPixel)
+            }
+        }
+
+        return newBitmap
+    }
+
     fun coloriseImage(view: View) {
-        if (bitmap != null) {
+        bitmap?.let {
             binding.progressCircular.visibility = View.VISIBLE
             binding.imageEdit.colorFilter =
                     PorterDuffColorFilter(
@@ -211,7 +267,7 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     fun setColor(progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter? {
-        val progress = max(max(abs( progressRed - 100), abs(progressGreen- 100)), abs(progressBlue- 100))
+        val progress = max(max(abs(progressRed - 100), abs(progressGreen - 100)), abs(progressBlue - 100))
         val value = progress * 255 / 100
         return PorterDuffColorFilter(Color.argb(value, progressRed, progressGreen, progressBlue), PorterDuff.Mode.OVERLAY)
     }
