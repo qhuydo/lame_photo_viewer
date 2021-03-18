@@ -16,6 +16,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
+import kotlinx.coroutines.*
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,13 +39,21 @@ class EditPhotoActivity : AppCompatActivity() {
     private var tempGreen: Int = 100
     private var tempBlue: Int = 100
 
+    // a task that runs in background
+    private val job = Job()
+    private val scope = CoroutineScope(Dispatchers.Default + job)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         if (intent.hasExtra("uri")) {
             uri = intent.getParcelableExtra("uri")
-            bitmap = getBitMapFromUri()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                bitmap = getBitMapFromUri()
+            }
+
             // binding.imageEdit.setImageURI(uri)
             bindImage(binding.imageEdit, uri)
             //binding.imageEdit.setImageBitmap(bitmap)
@@ -118,16 +127,27 @@ class EditPhotoActivity : AppCompatActivity() {
         })
     }
 
-    fun pencilImage(view: View){
+    override fun onDestroy() {
+        // cancel the job when activity is destroyed to prevent memory leak
+        job.cancel()
+        super.onDestroy()
+    }
+
+    fun pencilImage(view: View) {
         bitmap?.let {
             binding.progressCircular.visibility = View.VISIBLE
-            binding.imageEdit.setImageBitmap(toPencilImage(bitmap!!))
-            binding.progressCircular.visibility = View.INVISIBLE
+            scope.launch {
+                val bitmap = toPencilImage(it)
+                withContext(Dispatchers.Main) {
+                    binding.imageEdit.setImageBitmap(bitmap)
+                    binding.progressCircular.visibility = View.INVISIBLE
+                }
+            }
         }
     }
 
     //link hàm  toPencilImage https://github.com/theshivamlko/ImageFilterAlogrithm/tree/master/ImageFIlters
-    fun toPencilImage(bmp: Bitmap):Bitmap{
+    private fun toPencilImage(bmp: Bitmap): Bitmap {
         val newBitmap: Bitmap = bmp.copy(Bitmap.Config.ARGB_8888, true)
 
         val imageHeight = newBitmap.height
@@ -188,12 +208,17 @@ class EditPhotoActivity : AppCompatActivity() {
     fun grayImage(view: View) {
         bitmap?.let {
             binding.progressCircular.visibility = View.VISIBLE
-            bindImage(binding.imageEdit, toGrayscale(it))
-            binding.progressCircular.visibility = View.INVISIBLE
+            scope.launch {
+                val bitmap = toGrayscale(it)
+                withContext(Dispatchers.Main) {
+                    bindImage(binding.imageEdit, bitmap)
+                    binding.progressCircular.visibility = View.INVISIBLE
+                }
+            }
         }
     }
 
-    fun toGrayscale(bmpOriginal: Bitmap): Bitmap? {
+    private fun toGrayscale(bmpOriginal: Bitmap): Bitmap? {
         val width: Int
         val height: Int
         height = bmpOriginal.height
@@ -216,7 +241,7 @@ class EditPhotoActivity : AppCompatActivity() {
                 Bitmap.Config.ARGB_8888
         )
 
-        var matrixInvert = ColorMatrix(floatArrayOf(
+        val matrixInvert = ColorMatrix(floatArrayOf(
                 -1.0f, 0.0f, 0.0f, 0.0f, 255.0f,
                 0.0f, -1.0f, 0.0f, 0.0f, 255.0f,
                 0.0f, 0.0f, -1.0f, 0.0f, 255.0f,
@@ -235,12 +260,18 @@ class EditPhotoActivity : AppCompatActivity() {
     fun blurImage(view: View) {
         bitmap?.let {
             binding.progressCircular.visibility = View.VISIBLE
-            bindImage(binding.imageEdit, blur(it))
-            binding.progressCircular.visibility = View.INVISIBLE
+            scope.launch {
+                val bitmap = blur(it)
+
+                withContext(Dispatchers.Main) {
+                    bindImage(binding.imageEdit, bitmap)
+                    binding.progressCircular.visibility = View.INVISIBLE
+                }
+            }
         }
     }
 
-    fun blur(image: Bitmap?): Bitmap? {
+    private fun blur(image: Bitmap?): Bitmap? {
         if (null == image) return null
         val outputBitmap = Bitmap.createBitmap(image)
         val renderScript = RenderScript.create(this)
@@ -273,7 +304,7 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     private fun getBitMapFromUri(): Bitmap {
-        val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uri);
+        val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
         return bitmap
     }
 

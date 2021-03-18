@@ -166,7 +166,7 @@ abstract class AbstractPhotoListFragment(
                 menu(R.menu.photo_list_long_click_menu)
                 slideDown()
 
-                onCreate { cab, menu -> onCabCreated(menu) }
+                onCreate { _, menu -> onCabCreated(menu) }
                 onSelection { onCabItemSelected(it) }
                 onDestroy {
                     adapter.finishSelection()

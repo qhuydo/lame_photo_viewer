@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -20,8 +22,8 @@
                 android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:onClick="blurImage">
+                android:onClick="blurImage"
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"
@@ -40,8 +42,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
-                android:orientation="vertical"
-                android:onClick="grayImage">
+                android:onClick="grayImage"
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"
@@ -60,6 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
+                android:onClick="pencilImage"
                 android:orientation="vertical">
 
                 <ImageView
@@ -98,8 +101,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
-                android:orientation="vertical"
-                android:onClick="coloriseImage">
+                android:onClick="coloriseImage"
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"
