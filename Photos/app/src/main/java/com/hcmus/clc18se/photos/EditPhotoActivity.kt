@@ -1,6 +1,7 @@
 package com.hcmus.clc18se.photos
 
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -36,6 +37,7 @@ class EditPhotoActivity : AppCompatActivity() {
     private val bottomAppBarItemKey: String = "curItemId"
     private var uri: Uri? = null
     private var bitmap: Bitmap? = null
+    private var brightness: Int = 100
     private var tempRed: Int = 100
     private var tempGreen: Int = 100
     private var tempBlue: Int = 100
@@ -72,13 +74,22 @@ class EditPhotoActivity : AppCompatActivity() {
             setBarVisibility(cur_item_id)
         }
         val brightSeekBar = binding.brightEditor.findViewById<SeekBar>(R.id.bright_seek_bar)
+        val redSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_red)
+        val greenSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_green)
+        val blueSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_blue)
         brightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
                     progress: Int,
                     fromUser: Boolean
             ) {
-                val brightness = brightSeekBar.progress
+                brightness = brightSeekBar.progress
+                tempRed = brightness
+                tempGreen = brightness
+                tempBlue = brightness
+                redSeekBar.progress = brightness
+                greenSeekBar.progress = brightness
+                blueSeekBar.progress = brightness
                 binding.imageEdit.colorFilter = setBrightness(brightness)
             }
 
@@ -86,7 +97,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        val redSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_red)
+
         redSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -101,7 +112,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        val greenSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_green)
+
         greenSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -115,7 +126,7 @@ class EditPhotoActivity : AppCompatActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        val blueSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_blue)
+
         blueSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -305,7 +316,7 @@ class EditPhotoActivity : AppCompatActivity() {
     fun setColor(progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter? {
         val progress = max(max(abs(progressRed - 100), abs(progressGreen - 100)), abs(progressBlue - 100))
         val value = progress * 255 / 100
-        return PorterDuffColorFilter(Color.argb(value, progressRed, progressGreen, progressBlue), PorterDuff.Mode.OVERLAY)
+        return PorterDuffColorFilter(Color.argb(value, progressRed, progressGreen, progressBlue), PorterDuff.Mode.SRC_OVER)
     }
 
     private fun getBitMapFromUri(): Bitmap {
@@ -360,10 +371,13 @@ class EditPhotoActivity : AppCompatActivity() {
             R.id.bright -> binding.brightEditor.visibility = View.VISIBLE
             R.id.filter -> binding.filterEditor.visibility = View.VISIBLE
             R.id.add_icon -> binding.addIconEditor.visibility = View.VISIBLE
-            R.id.crop ->{
-                binding.fragmentContainerEditPhoto.visibility = View.GONE
+            R.id.crop -> {
+                //bitmap = (binding.imageEdit.drawable as BitmapDrawable).bitmap
                 viewCrop!!.setImageBitmap(bitmap)
+                viewCrop!!.guidelines = CropImageView.Guidelines.ON
+                viewCrop!!.setAspectRatio(1,1)
                 binding.cropEditor.visibility = View.VISIBLE
+                binding.fragmentContainerEditPhoto.visibility = View.GONE
                 isCrop = true
             }
             R.id.change_color -> binding.colorEditor.visibility = View.VISIBLE
