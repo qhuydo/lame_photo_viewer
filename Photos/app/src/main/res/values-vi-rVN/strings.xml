@@ -61,4 +61,5 @@
     <string name="grant_permission">Cho phép truy cập</string>
     <string name="undo">Hoàn tác</string>
     <string name="select_all">Chọn tất cả</string>
+    <string name="set_as">" Đặt làm"</string>
 </resources>

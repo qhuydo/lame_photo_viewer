@@ -8,15 +8,17 @@
 [![forthebadge](https://forthebadge.com/images/badges/powered-by-coffee.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com)
 
-[photosfragmentgrid_ja](https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/photosfragmentgrid_ja.png)
-[photosfragment_ja](https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/photosfragment_ja.png)
-[albumfragmentgrid_ja](https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/albumfragmentgrid_ja.png)
-[albumfragmentgrid_ja](https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/albumfragmentgrid_ja.png)
-[albumfragmentdarkmode](https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/albumfragmentdarkmode.png)
-[drawer](https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/drawer.png)
+<p align="center">
+    <img src="https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/photosfragmentgrid_ja.png" alt="photosfragmentgrid_ja" width="250"/>
+    <img src="https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/photosfragment_ja.png" alt="photosfragment_ja" width="250"/>
+    <img src="https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/albumfragmentgrid_ja.png" alt="albumfragmentgrid_ja" width="250"/>
+    <img src="https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/albumfragmentdarkmode.png" alt="albumfragmentdarkmode" width="250"/>
+    <img src="https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/photoview.png" alt="photoview" width="250"/>
+    <img src="https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/drawer.png" alt="drawer" width="250"/>
+</p>
 
 <p align="center">
-<img src="https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/albumfragmentrotate.png" />
+    <img src="https://github.com/qhuydo/18clc_10_doan/blob/main/Photos/app/src/main/res/drawable/albumfragmentrotate.png" width="750" />
 </p>
 
 ## Installation
@@ -43,3 +45,4 @@ This project is maintained by:
 ### Lectures & instructor
 - Thầy Trương Phước Lộc - `tploc@fit.hcmus.edu.vn`
 - Thầy Mai Anh Tuấn - `matuan@fit.hcmus.edu.vn`
+

@@ -1,8 +1,11 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -10,7 +13,6 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
-import java.lang.Exception
 
 class PhotoViewPagerFragment : Fragment() {
 
@@ -80,6 +82,20 @@ class PhotoViewPagerFragment : Fragment() {
         inflater.inflate(R.menu.view_photo_menu, menu)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_kick_to_other_app -> {
+                openWith()
+                true
+            }
+            R.id.action_set_as -> {
+                setAs()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onDetach() {
         super.onDetach()
         actionBar?.show()
@@ -91,6 +107,31 @@ class PhotoViewPagerFragment : Fragment() {
         val rootView = view
         if (rootView != null) {
             outState.putParcelable(BUNDLE_URI, uri)
+        }
+    }
+
+    private fun setAs() {
+        val intent = Intent(Intent.ACTION_ATTACH_DATA)
+                .setDataAndType(uri, requireContext().contentResolver.getType(uri))
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
+        } catch (anfe: ActivityNotFoundException) {
+            Toast.makeText(requireContext(), "No App found", Toast.LENGTH_SHORT).show()
+            anfe.printStackTrace()
+        }
+    }
+
+    private fun openWith() {
+        val intent = Intent(Intent.ACTION_VIEW)
+                .setDataAndType(uri, requireContext().contentResolver.getType(uri))
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
+        } catch (anfe: ActivityNotFoundException) {
+            Toast.makeText(requireContext(), "No App found", Toast.LENGTH_SHORT).show()
+            anfe.printStackTrace()
         }
     }
 

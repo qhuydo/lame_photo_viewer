@@ -30,7 +30,12 @@
         android:id="@+id/action_kick_to_other_app"
         android:title="@string/open_in_another_app" />
 
+
     <item
-        android:id="@+id/action_open_settings"
+        android:id="@+id/action_set_as"
+        android:title="@string/set_as"/>
+
+    <item
+        android:id="@+id/settingsFragment"
         android:title="@string/settings_title" />
 </menu>

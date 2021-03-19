@@ -74,5 +74,6 @@
     <string name="permission_not_granted">To continue, please give &appname; access to your photos</string>
     <string name="undo">Undo</string>
     <string name="select_all">Select all</string>
+    <string name="set_as">Set as</string>
 
 </resources>
