@@ -383,7 +383,7 @@ class EditPhotoActivity : AppCompatActivity() {
 //                binding.fragmentContainerEditPhoto.visibility = View.GONE
                 binding.fragmentContainerEditPhoto.visibility = View.GONE
                 viewCrop!!.setImageBitmap(bitmap)
-                binding.cropEditor.visibility = View.VISIBLE
+                binding.cropEditor.cropEditorLayout.visibility = View.VISIBLE
                 isCrop = true
             }
             R.id.change_color -> binding.colorEditor.colorEditorLayout.visibility = View.VISIBLE
