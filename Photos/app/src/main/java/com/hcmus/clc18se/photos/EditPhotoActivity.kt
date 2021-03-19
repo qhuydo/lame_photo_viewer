@@ -381,10 +381,11 @@ class EditPhotoActivity : AppCompatActivity() {
 //                viewCrop!!.setAspectRatio(1,1)
 //                binding.cropEditor.visibility = View.VISIBLE
 //                binding.fragmentContainerEditPhoto.visibility = View.GONE
-                binding.fragmentContainerEditPhoto.visibility = View.GONE
-                viewCrop!!.setImageBitmap(bitmap)
-                binding.cropEditor.cropEditorLayout.visibility = View.VISIBLE
-                isCrop = true
+                viewCrop?.let {
+                    it.setImageUriAsync(uri)
+                    binding.cropEditor.cropEditorLayout.visibility = View.VISIBLE
+                    isCrop = true
+                }
             }
             R.id.change_color -> binding.colorEditor.colorEditorLayout.visibility = View.VISIBLE
             R.id.draw -> binding.drawEditor.visibility = View.VISIBLE

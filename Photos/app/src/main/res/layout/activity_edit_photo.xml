@@ -12,9 +12,7 @@
             android:id="@+id/fragment_container_edit_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/bottom_edit"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="60dp">
+            android:layout_above="@+id/bottom_edit">
 
             <ImageView
                 android:id="@+id/imageEdit"
