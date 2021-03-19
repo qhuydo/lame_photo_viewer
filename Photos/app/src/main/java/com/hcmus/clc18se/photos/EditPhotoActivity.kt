@@ -16,6 +16,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
+import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.*
 import java.io.*
 import java.text.SimpleDateFormat
@@ -38,6 +39,8 @@ class EditPhotoActivity : AppCompatActivity() {
     private var tempRed: Int = 100
     private var tempGreen: Int = 100
     private var tempBlue: Int = 100
+    private var isCrop:Boolean = false
+    private var viewCrop:CropImageView? = null
 
     // a task that runs in background
     private val job = Job()
@@ -58,6 +61,8 @@ class EditPhotoActivity : AppCompatActivity() {
             bindImage(binding.imageEdit, uri)
             //binding.imageEdit.setImageBitmap(bitmap)
         }
+
+        viewCrop = binding.cropEditor.findViewById<CropImageView>(R.id.cropImageView)
 
         val bottomNavigation = binding.bottomEdit
         bottomNavigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
@@ -320,7 +325,16 @@ class EditPhotoActivity : AppCompatActivity() {
                         R.id.add_icon,
                         R.id.crop,
                         R.id.change_color)) {
+            if (isCrop)
+            {
+//                viewCrop!!.croppedImage?.let {
+//                    bitmap = viewCrop!!.croppedImage
+//                    bindImage(binding.imageEdit, bitmap)
+//                }
+                isCrop = false
+            }
             setBarVisibility(item.itemId)
+
             cur_item_id = item.itemId
             return@OnNavigationItemSelectedListener true
         }
@@ -334,6 +348,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
     private fun setBarVisibility(itemId: Int) {
         binding.apply {
+            fragmentContainerEditPhoto.visibility = View.VISIBLE
             brightEditor.visibility = View.GONE
             filterEditor.visibility = View.GONE
             addIconEditor.visibility = View.GONE
@@ -345,7 +360,12 @@ class EditPhotoActivity : AppCompatActivity() {
             R.id.bright -> binding.brightEditor.visibility = View.VISIBLE
             R.id.filter -> binding.filterEditor.visibility = View.VISIBLE
             R.id.add_icon -> binding.addIconEditor.visibility = View.VISIBLE
-            R.id.crop -> binding.cropEditor.visibility = View.VISIBLE
+            R.id.crop ->{
+                binding.fragmentContainerEditPhoto.visibility = View.GONE
+                viewCrop!!.setImageBitmap(bitmap)
+                binding.cropEditor.visibility = View.VISIBLE
+                isCrop = true
+            }
             R.id.change_color -> binding.colorEditor.visibility = View.VISIBLE
             R.id.draw -> binding.drawEditor.visibility = View.VISIBLE
         }

@@ -76,6 +76,8 @@ dependencies {
     implementation 'eu.davidea:flexible-adapter-livedata:1.0.0-b3'
     // From 1.0.0-b3, library is compiled with data binding v2
     implementation 'eu.davidea:flexible-adapter-databinding:1.0.0'
+    // Crop image
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$rootProject.testExtJunit"
