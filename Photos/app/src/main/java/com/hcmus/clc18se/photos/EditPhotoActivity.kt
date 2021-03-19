@@ -1,6 +1,7 @@
 package com.hcmus.clc18se.photos
 
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -40,6 +41,7 @@ class EditPhotoActivity : AppCompatActivity() {
     private val bottomAppBarItemKey: String = "curItemId"
     private var uri: Uri? = null
     private var bitmap: Bitmap? = null
+    private var brightness: Int = 100
     private var tempRed: Int = 100
     private var tempGreen: Int = 100
     private var tempBlue: Int = 100
@@ -58,11 +60,7 @@ class EditPhotoActivity : AppCompatActivity() {
             uri = intent.getParcelableExtra("uri")
 
             CoroutineScope(Dispatchers.IO).launch {
-                val deferredBitmap = getBitMapFromUri()
-                withContext(Dispatchers.Main) {
-                    bitmap = deferredBitmap.await()
-                    Timber.d("Bitmap loaded")
-                }
+                bitmap = getBitMapFromUri()
             }
 
             bindImage(binding.imageEdit, uri)
@@ -79,6 +77,9 @@ class EditPhotoActivity : AppCompatActivity() {
         }
 
         val brightSeekBar = binding.brightEditor.brightSeekBar
+        val redSeekBar = binding.colorEditor.editorRed
+        val greenSeekBar = binding.colorEditor.editorGreen
+        val blueSeekBar = binding.colorEditor.editorBlue
 
         brightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
@@ -86,7 +87,13 @@ class EditPhotoActivity : AppCompatActivity() {
                     progress: Int,
                     fromUser: Boolean
             ) {
-                val brightness = brightSeekBar.progress
+                brightness = brightSeekBar.progress
+                tempRed = brightness
+                tempGreen = brightness
+                tempBlue = brightness
+                redSeekBar.progress = brightness
+                greenSeekBar.progress = brightness
+                blueSeekBar.progress = brightness
                 binding.imageEdit.colorFilter = setBrightness(brightness)
             }
 
@@ -95,7 +102,6 @@ class EditPhotoActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        val redSeekBar = binding.colorEditor.editorRed
         redSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -110,7 +116,6 @@ class EditPhotoActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        val greenSeekBar = binding.colorEditor.editorGreen
         greenSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -125,7 +130,6 @@ class EditPhotoActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        val blueSeekBar = binding.colorEditor.editorBlue
         blueSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -317,13 +321,12 @@ class EditPhotoActivity : AppCompatActivity() {
     fun setColor(progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter {
         val progress = max(max(abs(progressRed - 100), abs(progressGreen - 100)), abs(progressBlue - 100))
         val value = progress * 255 / 100
-        return PorterDuffColorFilter(Color.argb(value, progressRed, progressGreen, progressBlue), PorterDuff.Mode.OVERLAY)
+        return PorterDuffColorFilter(Color.argb(value, progressRed, progressGreen, progressBlue), PorterDuff.Mode.SRC_OVER)
     }
 
-    private suspend fun getBitMapFromUri(): Deferred<Bitmap> {
-        return CoroutineScope(Dispatchers.IO).async {
-            MediaStore.Images.Media.getBitmap(this@EditPhotoActivity.contentResolver, uri)
-        }
+    private fun getBitMapFromUri(): Bitmap {
+        val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
+        return bitmap
     }
 
     private fun createFileToSave(): File {
@@ -373,12 +376,15 @@ class EditPhotoActivity : AppCompatActivity() {
             R.id.filter -> binding.filterEditor.visibility = View.VISIBLE
             R.id.add_icon -> binding.addIconEditor.visibility = View.VISIBLE
             R.id.crop -> {
-                // binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
-                viewCrop?.let {
-                    it.setImageUriAsync(uri)
-                    binding.cropEditor.cropEditorLayout.visibility = View.VISIBLE
-                    isCrop = true
-                }
+//                viewCrop!!.setImageBitmap(bitmap)
+//                viewCrop!!.guidelines = CropImageView.Guidelines.ON
+//                viewCrop!!.setAspectRatio(1,1)
+//                binding.cropEditor.visibility = View.VISIBLE
+//                binding.fragmentContainerEditPhoto.visibility = View.GONE
+                binding.fragmentContainerEditPhoto.visibility = View.GONE
+                viewCrop!!.setImageBitmap(bitmap)
+                binding.cropEditor.visibility = View.VISIBLE
+                isCrop = true
             }
             R.id.change_color -> binding.colorEditor.colorEditorLayout.visibility = View.VISIBLE
             R.id.draw -> binding.drawEditor.visibility = View.VISIBLE
