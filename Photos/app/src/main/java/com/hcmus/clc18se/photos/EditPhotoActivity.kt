@@ -342,10 +342,8 @@ class EditPhotoActivity : AppCompatActivity() {
                         R.id.crop,
                         R.id.change_color)) {
             if (isCrop) {
-//                viewCrop!!.croppedImage?.let {
-//                    bitmap = viewCrop!!.croppedImage
-//                    bindImage(binding.imageEdit, bitmap)
-//                }
+                bitmap = viewCrop!!.croppedImage
+                bindImage(binding.imageEdit, bitmap)
                 isCrop = false
             }
             setBarVisibility(item.itemId)
@@ -376,11 +374,6 @@ class EditPhotoActivity : AppCompatActivity() {
             R.id.filter -> binding.filterEditor.visibility = View.VISIBLE
             R.id.add_icon -> binding.addIconEditor.visibility = View.VISIBLE
             R.id.crop -> {
-//                viewCrop!!.setImageBitmap(bitmap)
-//                viewCrop!!.guidelines = CropImageView.Guidelines.ON
-//                viewCrop!!.setAspectRatio(1,1)
-//                binding.cropEditor.visibility = View.VISIBLE
-//                binding.fragmentContainerEditPhoto.visibility = View.GONE
                 viewCrop?.let {
                     it.setImageUriAsync(uri)
                     binding.cropEditor.cropEditorLayout.visibility = View.VISIBLE
