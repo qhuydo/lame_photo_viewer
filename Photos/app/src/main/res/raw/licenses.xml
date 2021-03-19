@@ -9,6 +9,13 @@
     </notice>
 
     <notice>
+        <name>Android Image Cropper</name>
+        <url>https://github.com/ArthurHub/Android-Image-Cropper</url>
+        <copyright>Copyright 2016, Arthur Teplitzki 2013, Edmodo, Inc.</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+
+    <notice>
         <name>colorpreference</name>
         <url>https://github.com/kizitonwose/colorpreference</url>
         <copyright>Copyright (C) 2016 Kizito Nwose</copyright>

@@ -18,6 +18,7 @@ import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.*
+import timber.log.Timber
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,10 +28,13 @@ import kotlin.math.max
 
 class EditPhotoActivity : AppCompatActivity() {
 
+    companion object {
+        const val HIGHEST_COLOR_VALUE = 255
+        const val LOWEST_COLOR_VALUE = 0
+        const val BLUR_RADIUS = 25f
+    }
+
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
-    private val HIGHEST_COLOR_VALUE = 255
-    private val LOWEST_COLOR_VALUE = 0
-    private val BLUR_RADIUS = 25f
     private val binding by lazy { ActivityEditPhotoBinding.inflate(layoutInflater) }
     private var cur_item_id = 0
     private val bottomAppBarItemKey: String = "curItemId"
@@ -39,8 +43,8 @@ class EditPhotoActivity : AppCompatActivity() {
     private var tempRed: Int = 100
     private var tempGreen: Int = 100
     private var tempBlue: Int = 100
-    private var isCrop:Boolean = false
-    private var viewCrop:CropImageView? = null
+    private var isCrop: Boolean = false
+    private var viewCrop: CropImageView? = null
 
     // a task that runs in background
     private val job = Job()
@@ -54,15 +58,17 @@ class EditPhotoActivity : AppCompatActivity() {
             uri = intent.getParcelableExtra("uri")
 
             CoroutineScope(Dispatchers.IO).launch {
-                bitmap = getBitMapFromUri()
+                val deferredBitmap = getBitMapFromUri()
+                withContext(Dispatchers.Main) {
+                    bitmap = deferredBitmap.await()
+                    Timber.d("Bitmap loaded")
+                }
             }
 
-            // binding.imageEdit.setImageURI(uri)
             bindImage(binding.imageEdit, uri)
-            //binding.imageEdit.setImageBitmap(bitmap)
         }
 
-        viewCrop = binding.cropEditor.findViewById<CropImageView>(R.id.cropImageView)
+        viewCrop = binding.cropEditor.cropImageView
 
         val bottomNavigation = binding.bottomEdit
         bottomNavigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
@@ -71,7 +77,9 @@ class EditPhotoActivity : AppCompatActivity() {
             cur_item_id = it.getInt(bottomAppBarItemKey)
             setBarVisibility(cur_item_id)
         }
-        val brightSeekBar = binding.brightEditor.findViewById<SeekBar>(R.id.bright_seek_bar)
+
+        val brightSeekBar = binding.brightEditor.brightSeekBar
+
         brightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -86,7 +94,8 @@ class EditPhotoActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        val redSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_red)
+
+        val redSeekBar = binding.colorEditor.editorRed
         redSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -101,7 +110,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        val greenSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_green)
+        val greenSeekBar = binding.colorEditor.editorGreen
         greenSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -115,7 +124,8 @@ class EditPhotoActivity : AppCompatActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        val blueSeekBar = binding.colorEditor.findViewById<SeekBar>(R.id.editor_blue)
+
+        val blueSeekBar = binding.colorEditor.editorBlue
         blueSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -138,6 +148,7 @@ class EditPhotoActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun pencilImage(view: View) {
         bitmap?.let {
             binding.progressCircular.visibility = View.VISIBLE
@@ -198,6 +209,7 @@ class EditPhotoActivity : AppCompatActivity() {
         return newBitmap
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun coloriseImage(view: View) {
         bitmap?.let {
             binding.progressCircular.visibility = View.VISIBLE
@@ -292,7 +304,7 @@ class EditPhotoActivity : AppCompatActivity() {
         return outputBitmap
     }
 
-    fun setBrightness(progress: Int): PorterDuffColorFilter? {
+    fun setBrightness(progress: Int): PorterDuffColorFilter {
         return if (progress >= 100) {
             val value = (progress - 100) * 255 / 100
             PorterDuffColorFilter(Color.argb(value, 255, 255, 255), PorterDuff.Mode.SRC_OVER)
@@ -302,15 +314,16 @@ class EditPhotoActivity : AppCompatActivity() {
         }
     }
 
-    fun setColor(progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter? {
+    fun setColor(progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter {
         val progress = max(max(abs(progressRed - 100), abs(progressGreen - 100)), abs(progressBlue - 100))
         val value = progress * 255 / 100
         return PorterDuffColorFilter(Color.argb(value, progressRed, progressGreen, progressBlue), PorterDuff.Mode.OVERLAY)
     }
 
-    private fun getBitMapFromUri(): Bitmap {
-        val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
-        return bitmap
+    private suspend fun getBitMapFromUri(): Deferred<Bitmap> {
+        return CoroutineScope(Dispatchers.IO).async {
+            MediaStore.Images.Media.getBitmap(this@EditPhotoActivity.contentResolver, uri)
+        }
     }
 
     private fun createFileToSave(): File {
@@ -325,8 +338,7 @@ class EditPhotoActivity : AppCompatActivity() {
                         R.id.add_icon,
                         R.id.crop,
                         R.id.change_color)) {
-            if (isCrop)
-            {
+            if (isCrop) {
 //                viewCrop!!.croppedImage?.let {
 //                    bitmap = viewCrop!!.croppedImage
 //                    bindImage(binding.imageEdit, bitmap)
@@ -348,25 +360,27 @@ class EditPhotoActivity : AppCompatActivity() {
 
     private fun setBarVisibility(itemId: Int) {
         binding.apply {
-            fragmentContainerEditPhoto.visibility = View.VISIBLE
-            brightEditor.visibility = View.GONE
+            // fragmentContainerEditPhoto.visibility = View.VISIBLE
+            brightEditor.brightEditorLayout.visibility = View.GONE
             filterEditor.visibility = View.GONE
             addIconEditor.visibility = View.GONE
-            cropEditor.visibility = View.GONE
-            colorEditor.visibility = View.GONE
+            cropEditor.cropEditorLayout.visibility = View.GONE
+            colorEditor.colorEditorLayout.visibility = View.GONE
             drawEditor.visibility = View.GONE
         }
         when (itemId) {
-            R.id.bright -> binding.brightEditor.visibility = View.VISIBLE
+            R.id.bright -> binding.brightEditor.brightEditorLayout.visibility = View.VISIBLE
             R.id.filter -> binding.filterEditor.visibility = View.VISIBLE
             R.id.add_icon -> binding.addIconEditor.visibility = View.VISIBLE
-            R.id.crop ->{
-                binding.fragmentContainerEditPhoto.visibility = View.GONE
-                viewCrop!!.setImageBitmap(bitmap)
-                binding.cropEditor.visibility = View.VISIBLE
-                isCrop = true
+            R.id.crop -> {
+                // binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
+                viewCrop?.let {
+                    it.setImageUriAsync(uri)
+                    binding.cropEditor.cropEditorLayout.visibility = View.VISIBLE
+                    isCrop = true
+                }
             }
-            R.id.change_color -> binding.colorEditor.visibility = View.VISIBLE
+            R.id.change_color -> binding.colorEditor.colorEditorLayout.visibility = View.VISIBLE
             R.id.draw -> binding.drawEditor.visibility = View.VISIBLE
         }
     }

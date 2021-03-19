@@ -1,6 +1,6 @@
 <!DOCTYPE resources [<!ENTITY appname "Lame photo Viewer">]>
 <resources>
-    <string name="app_name">&appname;</string>
+    <string name="app_name" translatable="false">&appname;</string>
     <string name="about">About</string>
     <string name="photo_title">Photos</string>
     <string name="people_title">People</string>
@@ -71,7 +71,7 @@
     <string name="rotate">Rotate</string>
     <string name="photo_properties">Properties</string>
     <string name="grant_permission">Grant Permission</string>
-    <string name="permission_not_granted">To continue, please give &appname; access to your photos</string>
+    <string name="permission_not_granted">&appname;To continue, please give access to your photos</string>
     <string name="undo">Undo</string>
     <string name="select_all">Select all</string>
     <string name="set_as">Set as</string>
