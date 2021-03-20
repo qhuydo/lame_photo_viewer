@@ -75,5 +75,6 @@
     <string name="undo">Undo</string>
     <string name="select_all">Select all</string>
     <string name="set_as">Set as</string>
+    <string name="refresh">Refresh</string>
 
 </resources>

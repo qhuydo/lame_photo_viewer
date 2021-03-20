@@ -66,11 +66,11 @@ class PhotoViewPagerFragment : Fragment() {
             actionBar?.let {
                 if (it.isShowing) {
                     parentFragment.setBottomToolbarVisibility(false)
-                    // (requireActivity() as AbstractPhotosActivity).hideSystemUI()
+                    (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(true)
                     it.hide()
                 } else {
                     parentFragment.setBottomToolbarVisibility(true)
-                    // (requireActivity() as AbstractPhotosActivity).showSystemUI()
+                    (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(false)
                     it.show()
                 }
             }

@@ -1,13 +1,9 @@
 package com.hcmus.clc18se.photos
 
-import android.content.res.Configuration
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -75,9 +71,9 @@ class PhotosActivity : AbstractPhotosActivity() {
 
             when (destination.id) {
                 R.id.photoViewFragment -> {
-                    makeToolbarTransparent(false)
+                    val layoutParams = binding.navHostFragment.layoutParams as CoordinatorLayout.LayoutParams
+                    layoutParams.topMargin = 0
                 }
-                else -> makeToolbarTransparent(false)
             }
         }
     }
@@ -180,22 +176,11 @@ class PhotosActivity : AbstractPhotosActivity() {
                 if (!displayBottomBarPreference()) View.INVISIBLE else View.VISIBLE
     }
 
-    private fun makeToolbarTransparent(@Suppress("SameParameterValue") wantToMakeTransparent: Boolean = true) {
-        if (wantToMakeTransparent) {
-            supportActionBar?.setBackgroundDrawable(
-                    ContextCompat.getDrawable(
-                            this,
-                            R.drawable.transparent_bar
-                    )
-            )
-            //binding.topAppBar2.fragmentAppBarLayout.background = ContextCompat.getDrawable(this, R.drawable.transparent_bar)
-        } else {
-            val typedValue = TypedValue()
-            if (theme.resolveAttribute(R.attr.colorSurface, typedValue, true)) {
-                val color = typedValue.data
-                binding.topAppBar2.fragmentAppBarLayout.background = ColorDrawable(color)
-            }
-        }
+    override fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean) {
+        val visibility = if (wantToMakeToolbarInvisible) View.INVISIBLE else View.VISIBLE
+        //binding.topAppBar.appBarLayout.visibility = visibility
+        binding.topAppBar2.fragmentAppBarLayout.visibility = visibility
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

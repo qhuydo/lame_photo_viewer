@@ -61,4 +61,5 @@
     <string name="undo">元に戻す</string>
     <string name="select_all">全てを選択</string>
     <string name="set_as">他で使う</string>
+    <string name="refresh">更新</string>
 </resources>

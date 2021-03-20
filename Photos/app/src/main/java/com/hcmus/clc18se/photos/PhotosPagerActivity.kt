@@ -57,6 +57,13 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
             setAppbarVisibility(newState)
 
             closeFabBeforeNavigating()
+
+            when (destination.id) {
+                R.id.photoViewFragment -> {
+                    val layoutParams = binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
+                    layoutParams.topMargin = 0
+                }
+            }
         }
     }
 
@@ -161,6 +168,14 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(BUNDLE_BOTTOM_APPBAR_VISIBILITY, bottomAppBarVisibility)
+    }
+
+    override fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean) {
+        val visibility = if (wantToMakeToolbarInvisible) View.INVISIBLE else View.VISIBLE
+
+        // binding.topAppBar.appBarLayout.visibility = visibility
+        binding.topAppBar2.fragmentAppBarLayout.visibility = visibility
+
     }
 
 }

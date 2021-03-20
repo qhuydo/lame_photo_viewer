@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
+
         if (haveStoragePermission()) {
             jumpToAnotherActivity()
         }

@@ -2,6 +2,7 @@ package com.hcmus.clc18se.photos.utils
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -13,7 +14,12 @@ class ColorResource(
         private val application: Application,
         private val preferences: SharedPreferences) {
 
-    private val resources by lazy {application.resources}
+    private val resources by lazy { application.resources }
+
+    private var setNewIcon: Boolean = false
+    internal fun enableSetNewIconFlag() {
+        setNewIcon = true
+    }
 
     private val colorThemeMapper by lazy {
         listOf(
@@ -59,7 +65,7 @@ class ColorResource(
         activity.setTheme(theme)
     }
 
-    internal fun configDefaultTheme(uiMode: Int) {
+    private fun configDefaultTheme(uiMode: Int) {
         when (uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_NO -> {
                 Timber.d("Config UI_MODE_NIGHT_NO")
@@ -70,7 +76,6 @@ class ColorResource(
                 Timber.d("Config MODE_NIGHT_YES")
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             } // Night mode is active, we're using dark theme
-
         }
     }
 
@@ -85,6 +90,7 @@ class ColorResource(
 
         Timber.d("configTheme(uiMode: $uiMode)")
         Timber.d("themeOptions $themeOptions")
+
         when (themeOptions) {
             options[AbstractPhotosActivity.THEME_USE_DEFAULT] -> {
                 Timber.d("Config default theme: ${uiMode ?: resources.configuration.uiMode}")
@@ -94,7 +100,15 @@ class ColorResource(
             options[AbstractPhotosActivity.THEME_DARK] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             else -> Timber.w("No theme has been set")
         }
+    }
 
+    internal fun updateIcon(packageManager: PackageManager) {
+        if (setNewIcon) {
+            val newColor = preferences.getInt(application.getString(R.string.app_color_key), R.color.indigo_500)
+            Timber.d("Color ${colorResourceMapper[newColor] ?: ICON_COLOR.INDIGO}")
+            setIcon(packageManager, colorResourceMapper[newColor]
+                    ?: ICON_COLOR.INDIGO)
+        }
     }
 
 }

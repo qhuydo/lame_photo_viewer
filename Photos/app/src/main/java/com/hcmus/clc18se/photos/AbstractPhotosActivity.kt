@@ -47,6 +47,8 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     protected abstract fun setAppbarVisibility(visibility: Boolean)
 
+    abstract internal fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean = false)
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         Timber.d("onConfigurationChanged")
         super.onConfigurationChanged(newConfig)
@@ -94,10 +96,8 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
             getString(R.string.app_color_key) -> {
 
                 Timber.d("Color config change")
-                val newColor = preferences.getInt(getString(R.string.app_color_key), R.color.indigo_500)
-                Timber.d("Color ${colorResource.colorResourceMapper[newColor] ?: ICON_COLOR.INDIGO}")
-                setIcon(packageManager, colorResource.colorResourceMapper[newColor]
-                        ?: ICON_COLOR.INDIGO)
+                colorResource.enableSetNewIconFlag()
+                colorResource.updateIcon(packageManager)
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
