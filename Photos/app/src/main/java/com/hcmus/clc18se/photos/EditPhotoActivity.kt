@@ -35,7 +35,8 @@ class EditPhotoActivity : AppCompatActivity() {
         const val BLUR_RADIUS = 25f
     }
 
-    private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+    protected val colorResource by lazy { (application as PhotosApplication).colorResource }
+
     private val binding by lazy { ActivityEditPhotoBinding.inflate(layoutInflater) }
     private var cur_item_id = 0
     private val bottomAppBarItemKey: String = "curItemId"
@@ -54,6 +55,10 @@ class EditPhotoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        colorResource.configColor(this)
+        colorResource.configTheme()
+
         setContentView(binding.root)
 
         if (intent.hasExtra("uri")) {
@@ -342,9 +347,11 @@ class EditPhotoActivity : AppCompatActivity() {
                         R.id.crop,
                         R.id.change_color)) {
             if (isCrop) {
-                bitmap = viewCrop!!.croppedImage
-                bindImage(binding.imageEdit, bitmap)
-                isCrop = false
+                viewCrop?.let {
+                    bitmap = it.croppedImage
+                    bindImage(binding.imageEdit, bitmap)
+                    isCrop = false
+                }
             }
             setBarVisibility(item.itemId)
 
@@ -361,7 +368,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
     private fun setBarVisibility(itemId: Int) {
         binding.apply {
-            // fragmentContainerEditPhoto.visibility = View.VISIBLE
+            fragmentContainerEditPhoto.visibility = View.VISIBLE
             brightEditor.brightEditorLayout.visibility = View.GONE
             filterEditor.visibility = View.GONE
             addIconEditor.visibility = View.GONE
@@ -375,6 +382,7 @@ class EditPhotoActivity : AppCompatActivity() {
             R.id.add_icon -> binding.addIconEditor.visibility = View.VISIBLE
             R.id.crop -> {
                 viewCrop?.let {
+                    binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
                     it.setImageUriAsync(uri)
                     binding.cropEditor.cropEditorLayout.visibility = View.VISIBLE
                     isCrop = true

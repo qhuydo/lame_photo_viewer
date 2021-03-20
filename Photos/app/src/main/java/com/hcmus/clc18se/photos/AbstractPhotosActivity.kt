@@ -8,7 +8,6 @@ import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.hcmus.clc18se.photos.utils.ICON_COLOR
 import com.hcmus.clc18se.photos.utils.setIcon
@@ -31,51 +30,10 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
+    protected val colorResource by lazy { (application as PhotosApplication).colorResource }
+
     protected var bottomAppBarVisibility: Boolean = true
     protected var defaultSystemUiVisibility: Int = -1
-
-    private val colorThemeMapper by lazy {
-        listOf(
-                R.color.red_500 to R.style.Theme_Photos_Red_NoActionBar,
-                R.color.deep_orange_500 to R.style.Theme_Photos_Orange_NoActionBar,
-                R.color.amber_500 to R.style.Theme_Photos_Yellow_NoActionBar,
-                R.color.green_500 to R.style.Theme_Photos_Green_NoActionBar,
-                R.color.blue_500 to R.style.Theme_Photos_Blue_NoActionBar,
-                R.color.indigo_500 to R.style.Theme_Photos_Indigo_NoActionBar,
-                R.color.dark_purple_500 to R.style.Theme_Photos_Purple_NoActionBar,
-                R.color.pink_500 to R.style.Theme_Photos_Pink_NoActionBar,
-                R.color.brown_500 to R.style.Theme_Photos_Brown_NoActionBar,
-                R.color.grey_500 to R.style.Theme_Photos_Grey_NoActionBar
-        ).map { resources.getInteger(it.first) to it.second }.toMap()
-    }
-
-    private val colorResources by lazy {
-        listOf(
-                R.color.red_500 to ICON_COLOR.RED,
-                R.color.deep_orange_500 to ICON_COLOR.ORANGE,
-                R.color.amber_500 to ICON_COLOR.YELLOW,
-                R.color.green_500 to ICON_COLOR.GREEN,
-                R.color.blue_500 to ICON_COLOR.BLUE,
-                R.color.indigo_500 to ICON_COLOR.INDIGO,
-                R.color.dark_purple_500 to ICON_COLOR.PURPLE,
-                R.color.pink_500 to ICON_COLOR.PINK,
-                R.color.brown_500 to ICON_COLOR.BROWN,
-                R.color.grey_500 to ICON_COLOR.GREY,
-        ).map { resources.getInteger(it.first) to it.second }
-    }
-    private val colorResourceMapper by lazy { colorResources.toMap() }
-
-    private fun getCurrentThemeColor(): Int {
-        val currentColor = preferences.getInt(getString(R.string.app_color_key), R.color.indigo_500)
-        return colorThemeMapper[currentColor] ?: R.style.Theme_Photos_Indigo_NoActionBar
-    }
-
-    protected fun configColor() {
-        Timber.d("Config color")
-        val theme = getCurrentThemeColor()
-        Timber.d("Theme ${resources?.getResourceEntryName(theme)}")
-        setTheme(theme)
-    }
 
     protected fun displayBottomBarPreference(): Boolean {
         return preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0") == "0"
@@ -92,7 +50,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         Timber.d("onConfigurationChanged")
         super.onConfigurationChanged(newConfig)
-        configTheme(newConfig.uiMode)
+        colorResource.configTheme(newConfig.uiMode)
         recreate()
     }
 
@@ -102,28 +60,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         outState.putInt(BUNDLE_DEFAULT_SYSTEM_UI_VISIBILITY, defaultSystemUiVisibility)
     }
 
-    /**
-     * Config the system theme
-     * @param uiMode: new configuration mode, use null when no the fun did not called in onConfigurationChanged
-     */
-    protected fun configTheme(uiMode: Int? = null) {
-
-        val themeOptions = preferences.getString(getString(R.string.app_theme_key), "")
-        val options = resources.getStringArray(R.array.theme_values)
-
-        Timber.d("configTheme(uiMode: $uiMode)")
-        Timber.d("themeOptions $themeOptions")
-        when (themeOptions) {
-            options[THEME_USE_DEFAULT] -> {
-                Timber.d("Config default theme: ${uiMode ?: resources.configuration.uiMode}")
-                configDefaultTheme(uiMode ?: resources.configuration.uiMode)
-            }
-            options[THEME_WHITE] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            options[THEME_DARK] -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            else -> Timber.w("No theme has been set")
-        }
-
-    }
 
     private fun setAppLocale(localeCode: String) {
         val displayMetrics: DisplayMetrics = resources.getDisplayMetrics()
@@ -148,25 +84,10 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         }
     }
 
-    protected fun configDefaultTheme(uiMode: Int) {
-        when (uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> {
-                Timber.d("Config UI_MODE_NIGHT_NO")
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
-            } // Night mode is not active, we're using the light theme
-            Configuration.UI_MODE_NIGHT_YES -> {
-                Timber.d("Config MODE_NIGHT_YES")
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } // Night mode is active, we're using dark theme
-
-        }
-    }
-
     private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             getString(R.string.app_theme_key) -> {
-                configTheme(null)
+                colorResource.configTheme(null)
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
@@ -174,8 +95,9 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
                 Timber.d("Color config change")
                 val newColor = preferences.getInt(getString(R.string.app_color_key), R.color.indigo_500)
-                Timber.d("Color ${colorResourceMapper[newColor] ?: ICON_COLOR.INDIGO}")
-                setIcon(packageManager, colorResourceMapper[newColor] ?: ICON_COLOR.INDIGO)
+                Timber.d("Color ${colorResource.colorResourceMapper[newColor] ?: ICON_COLOR.INDIGO}")
+                setIcon(packageManager, colorResource.colorResourceMapper[newColor]
+                        ?: ICON_COLOR.INDIGO)
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
@@ -201,7 +123,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     fun onLicenseButtonClick() {
         val fragment = LicensesDialogFragment.Builder(this)
                 .setNotices(R.raw.licenses)
-                .setThemeResourceId(getCurrentThemeColor())
+                .setThemeResourceId(colorResource.getCurrentThemeColor())
                 .build()
 
         fragment.show(supportFragmentManager, null)

@@ -31,8 +31,9 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        configColor()
-        configTheme()
+        colorResource.configColor(this)
+        colorResource.configTheme()
+
         configLanguage()
 
         appBarConfiguration = AppBarConfiguration(
