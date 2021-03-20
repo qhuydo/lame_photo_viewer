@@ -235,7 +235,7 @@ class EditPhotoActivity : AppCompatActivity() {
         bitmap?.let {
             binding.progressCircular.visibility = View.VISIBLE
             scope.launch {
-                val bitmap = toGrayscale(it)
+                bitmap = toGrayscale(it)
                 withContext(Dispatchers.Main) {
                     bindImage(binding.imageEdit, bitmap)
                     binding.progressCircular.visibility = View.INVISIBLE
@@ -287,7 +287,7 @@ class EditPhotoActivity : AppCompatActivity() {
         bitmap?.let {
             binding.progressCircular.visibility = View.VISIBLE
             scope.launch {
-                val bitmap = blur(it)
+                bitmap = blur(it)
 
                 withContext(Dispatchers.Main) {
                     bindImage(binding.imageEdit, bitmap)

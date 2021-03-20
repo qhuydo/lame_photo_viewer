@@ -63,7 +63,7 @@ fun bindImage(imgView: ImageView, bitmap: Bitmap?) {
 
     bitmap?.let {
         val requestOptions = RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
 
         Glide.with(imgView.context)
                 .load(bitmap)
