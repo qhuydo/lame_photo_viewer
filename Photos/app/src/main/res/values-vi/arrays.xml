@@ -2,8 +2,8 @@
 <resources>
     <string-array name="theme_entries">
         <item>Mặc định</item>
-        <item>Trắng</item>
-        <item>Đen</item>
+        <item>Sáng</item>
+        <item>Tối</item>
     </string-array>
 
     <string-array name="language_entries">
@@ -11,6 +11,12 @@
         <item>Tiếng Anh</item>
         <item>Tiếng Nhật</item>
         <item>Tiếng Việt</item>
+    </string-array>
+
+    <string-array name="theme_summaries">
+        <item>Bật giao diện tối khi thiết bị của bạn đang có giao diện tối hoặc chế độ tiết kiệm pin được bật</item>
+        <item>Sáng</item>
+        <item>Tối</item>
     </string-array>
 
     <string-array name="photo_list_view_type_entries">

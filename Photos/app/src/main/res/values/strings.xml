@@ -76,5 +76,8 @@
     <string name="select_all">Select all</string>
     <string name="set_as">Set as</string>
     <string name="refresh">Refresh</string>
+    <string name="display">Display</string>
+    <string name="adaptive_icon_title">Adaptive icon color</string>
+    <string name="adaptive_icon_color_key">adaptive_icon_color</string>
 
 </resources>

@@ -1,8 +1,8 @@
 <resources>
-    <!-- Reply Preference -->
+
     <string-array name="theme_entries">
         <item>Use system default</item>
-        <item>White</item>
+        <item>Light</item>
         <item>Dark</item>
     </string-array>
 
@@ -10,6 +10,12 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
+    </string-array>
+
+    <string-array name="theme_summaries">
+        <item>Turn on dark theme when your devices\'s dark theme or Battery Saver is on</item>
+        <item>Light</item>
+        <item>Dark</item>
     </string-array>
 
     <string-array name="language_entries">

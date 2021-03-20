@@ -4,6 +4,18 @@
     <PreferenceCategory app:title="@string/appearance_header">
 
         <ListPreference
+            android:icon="@drawable/ic_outline_translate_24"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            app:defaultValue="default"
+            app:entries="@array/language_entries"
+            app:entryValues="@array/language_values"
+            app:key="@string/app_language_key"
+            app:title="@string/language_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:icon="@drawable/ic_outline_light_mode_24"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             app:defaultValue="0"
@@ -24,16 +36,15 @@
             app:showDialog="true"
             app:viewSize="large" />
 
-        <ListPreference
-            android:icon="@drawable/ic_outline_translate_24"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            app:defaultValue="default"
-            app:entries="@array/language_entries"
-            app:entryValues="@array/language_values"
-            app:key="@string/app_language_key"
-            app:title="@string/language_title"
-            app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:summaryOff="The app icon color is not matched with theme color"
+            android:summaryOn="The app icon color is matched with theme color"
+            app:key="@string/adaptive_icon_color_key"
+            app:title="@string/adaptive_icon_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/display">
 
         <ListPreference
             android:entries="@array/photo_list_view_type_entries"
@@ -78,7 +89,6 @@
             app:isPreferenceVisible="true"
             app:key="@string/album_list_item_size_key"
             app:useSimpleSummaryProvider="true" />
-
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/navigation_header">

@@ -62,4 +62,6 @@
     <string name="select_all">全てを選択</string>
     <string name="set_as">他で使う</string>
     <string name="refresh">更新</string>
+    <string name="display">表示</string>
+    <string name="adaptive_icon_title">アダプティブ アイコン コーラ</string>
 </resources>

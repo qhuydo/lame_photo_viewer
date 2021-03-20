@@ -2,8 +2,8 @@
 <resources>
     <string-array name="theme_entries">
         <item>システムデのフォルト</item>
-        <item>ライト</item>
-        <item>ダーク</item>
+        <item>明</item>
+        <item>暗</item>
     </string-array>
 
     <string-array name="language_entries">
@@ -11,6 +11,12 @@
         <item>英語</item>
         <item>日本語</item>
         <item>ベトナム語</item>
+    </string-array>
+
+    <string-array name="theme_summaries">
+        <item>デバイスのダークテーマまたはバッテリーセーバーがオンにする時にダークテーマをオンにする</item>
+        <item>明</item>
+        <item>暗</item>
     </string-array>
 
     <string-array name="photo_list_view_type_entries">

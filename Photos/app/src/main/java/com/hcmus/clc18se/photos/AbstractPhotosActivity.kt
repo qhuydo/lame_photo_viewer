@@ -93,11 +93,17 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
+
             getString(R.string.app_color_key) -> {
 
                 Timber.d("Color config change")
-                colorResource.enableSetNewIconFlag()
-                colorResource.updateIcon(packageManager)
+                val adaptiveIconColor = preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
+
+                if (adaptiveIconColor) {
+                    colorResource.enableSetNewIconFlag()
+                    colorResource.updateIcon(packageManager)
+                }
+
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
@@ -109,9 +115,20 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
                 overridePendingTransition(0, 0)
             }
             getString(R.string.app_bottom_bar_navigation_key) -> {
-
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
+            }
+
+            getString(R.string.adaptive_icon_color_key) -> {
+                val adaptiveIconColor = preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
+
+                if (adaptiveIconColor) {
+                    val currentIconColor = colorResource.getCurrentThemeColor()
+                    if (colorResource.colorResourceMapper[currentIconColor] != ICON_COLOR.INDIGO) {
+                        colorResource.enableSetNewIconFlag()
+                        colorResource.updateIcon(packageManager)
+                    }
+                }
             }
         }
     }
