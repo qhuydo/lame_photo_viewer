@@ -1,7 +1,6 @@
 package com.hcmus.clc18se.photos
 
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -13,13 +12,11 @@ import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.*
-import timber.log.Timber
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*

@@ -65,4 +65,7 @@
     <string name="refresh">Làm mới</string>
     <string name="display">Hiển thị</string>
     <string name="adaptive_icon_title">Màu icon</string>
+    <string name="experimental_options">Chức năng thử nghiệm</string>
+    <string name="adapter_color_summary">Ứng dụng có thể bị dừng đột ngột khi bật chức năng này</string>
+    <string name="image_debugger">Image debugger</string>
 </resources>

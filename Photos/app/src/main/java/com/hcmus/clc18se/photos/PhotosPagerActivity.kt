@@ -57,13 +57,6 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
             setAppbarVisibility(newState)
 
             closeFabBeforeNavigating()
-
-            when (destination.id) {
-                R.id.photoViewFragment -> {
-                    val layoutParams = binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
-                    layoutParams.topMargin = 0
-                }
-            }
         }
     }
 
@@ -175,7 +168,11 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
         // binding.topAppBar.appBarLayout.visibility = visibility
         binding.topAppBar2.fragmentAppBarLayout.visibility = visibility
+    }
 
+    override fun setNavHostFragmentTopMargin(pixelValue: Int) {
+        val layoutParams = binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
+        layoutParams.topMargin = pixelValue
     }
 
 }

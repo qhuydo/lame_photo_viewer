@@ -8,10 +8,10 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
-import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
+import com.hcmus.clc18se.photos.adapters.bindScaleImage
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 
 class PhotoViewPagerFragment : Fragment() {
@@ -20,13 +20,14 @@ class PhotoViewPagerFragment : Fragment() {
 
     private lateinit var binding: PhotoViewPagerPageBinding
     private var actionBar: ActionBar? = null
+    internal var debug: Boolean = false
 
     private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         binding = PhotoViewPagerPageBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
@@ -41,8 +42,10 @@ class PhotoViewPagerFragment : Fragment() {
             uri = savedInstanceState.getParcelable(BUNDLE_URI) ?: Uri.EMPTY
         }
 
-        binding.imageView.setImage(ImageSource.uri(uri))
-        binding.imageView.setOnImageEventListener(object : SubsamplingScaleImageView.OnImageEventListener {
+        bindScaleImage(binding.imageView, uri, debug)
+
+        binding.imageView.setOnImageEventListener(object :
+            SubsamplingScaleImageView.OnImageEventListener {
 
             override fun onImageLoadError(e: Exception?) {
                 binding.progressCircular.visibility = View.GONE
@@ -112,8 +115,8 @@ class PhotoViewPagerFragment : Fragment() {
 
     private fun setAs() {
         val intent = Intent(Intent.ACTION_ATTACH_DATA)
-                .setDataAndType(uri, requireContext().contentResolver.getType(uri))
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .setDataAndType(uri, requireContext().contentResolver.getType(uri))
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
@@ -125,8 +128,8 @@ class PhotoViewPagerFragment : Fragment() {
 
     private fun openWith() {
         val intent = Intent(Intent.ACTION_VIEW)
-                .setDataAndType(uri, requireContext().contentResolver.getType(uri))
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .setDataAndType(uri, requireContext().contentResolver.getType(uri))
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
         } catch (anfe: ActivityNotFoundException) {

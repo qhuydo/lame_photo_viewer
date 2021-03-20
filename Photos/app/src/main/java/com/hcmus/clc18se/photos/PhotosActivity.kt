@@ -68,14 +68,12 @@ class PhotosActivity : AbstractPhotosActivity() {
             }
 
             closeFabBeforeNavigating()
-
-            when (destination.id) {
-                R.id.photoViewFragment -> {
-                    val layoutParams = binding.navHostFragment.layoutParams as CoordinatorLayout.LayoutParams
-                    layoutParams.topMargin = 0
-                }
-            }
         }
+    }
+
+    override fun setNavHostFragmentTopMargin(pixelValue: Int) {
+        val layoutParams = binding.navHostFragment.layoutParams as CoordinatorLayout.LayoutParams
+        layoutParams.topMargin = pixelValue
     }
 
     override fun closeFabBeforeNavigating() {

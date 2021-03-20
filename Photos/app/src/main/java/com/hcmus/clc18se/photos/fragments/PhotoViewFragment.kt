@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.EditPhotoActivity
+import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
@@ -24,11 +26,15 @@ class PhotoViewFragment : Fragment() {
     private lateinit var binding: FragmentPhotoViewBinding
     private var positionCurrent: Int? = null
 
+    private var debug: Boolean = false
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
+        (activity as AbstractPhotosActivity).setNavHostFragmentTopMargin(0)
+
         binding = FragmentPhotoViewBinding.inflate(inflater, container, false)
         binding.apply {
             lifecycleOwner = this@PhotoViewFragment
@@ -42,13 +48,16 @@ class PhotoViewFragment : Fragment() {
             adapter = ScreenSlidePagerAdapter(this@PhotoViewFragment)
 
             setCurrentItem(viewModel.idx.value!!, false)
-            (activity as AbstractPhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
+            (activity as AbstractPhotosActivity).supportActionBar?.title =
+                    photos[viewModel.idx.value!!].name
 
-            binding.horizontalViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            binding.horizontalViewPager.registerOnPageChangeCallback(object :
+                    ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     positionCurrent = position
                     super.onPageSelected(position)
-                    (activity as AbstractPhotosActivity).supportActionBar?.title = photos[position].name
+                    (activity as AbstractPhotosActivity).supportActionBar?.title =
+                            photos[position].name
                 }
             })
 
@@ -62,11 +71,15 @@ class PhotoViewFragment : Fragment() {
             }
         }
 
+        val preferences = (requireActivity() as AbstractPhotosActivity).preferences
+        debug = preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
+
         activity?.window?.navigationBarColor = Color.BLACK
         return binding.root
     }
 
-    private inner class ScreenSlidePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+    private inner class ScreenSlidePagerAdapter(fragment: Fragment) :
+            FragmentStateAdapter(fragment) {
         override fun getItemCount(): Int {
             return photos.size
         }
@@ -74,7 +87,7 @@ class PhotoViewFragment : Fragment() {
         override fun createFragment(position: Int): Fragment {
             val fragment = PhotoViewPagerFragment()
             fragment.uri = photos[position].uri
-
+            fragment.debug = debug
             return fragment
         }
     }

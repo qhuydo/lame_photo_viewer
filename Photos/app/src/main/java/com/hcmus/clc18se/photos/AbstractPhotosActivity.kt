@@ -28,7 +28,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     }
 
-    private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+    internal val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
     protected val colorResource by lazy { (application as PhotosApplication).colorResource }
 
@@ -97,7 +97,8 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
             getString(R.string.app_color_key) -> {
 
                 Timber.d("Color config change")
-                val adaptiveIconColor = preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
+                val adaptiveIconColor =
+                        preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
 
                 if (adaptiveIconColor) {
                     colorResource.enableSetNewIconFlag()
@@ -120,7 +121,8 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
             }
 
             getString(R.string.adaptive_icon_color_key) -> {
-                val adaptiveIconColor = preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
+                val adaptiveIconColor =
+                        preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
 
                 if (adaptiveIconColor) {
                     val currentIconColor = colorResource.getCurrentThemeColor()
@@ -188,4 +190,5 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = defaultSystemUiVisibility
     }
 
+    abstract fun setNavHostFragmentTopMargin(pixelValue: Int)
 }

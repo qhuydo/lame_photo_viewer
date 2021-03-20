@@ -35,13 +35,6 @@
             app:numColumns="5"
             app:showDialog="true"
             app:viewSize="large" />
-
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:summaryOff="The app icon color is not matched with theme color"
-            android:summaryOn="The app icon color is matched with theme color"
-            app:key="@string/adaptive_icon_color_key"
-            app:title="@string/adaptive_icon_title" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/display">
@@ -101,6 +94,22 @@
             app:key="@string/app_bottom_bar_navigation_key"
             app:title="@string/bottom_bar_preference_title"
             app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:icon="@drawable/ic_baseline_developer_mode_24"
+        android:title="@string/experimental_options">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            app:key="@string/adaptive_icon_color_key"
+            app:summary="@string/adapter_color_summary"
+            app:title="@string/adaptive_icon_title" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:title="@string/image_debugger"
+            app:key="@string/image_debugger_key" />
     </PreferenceCategory>
 
 </PreferenceScreen>

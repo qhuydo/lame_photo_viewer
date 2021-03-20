@@ -92,9 +92,12 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {
     }
 }
 
-@BindingAdapter("subSamplingScaleImageViewFromUri")
-fun bindImage(imgView: SubsamplingScaleImageView, imgUri: Uri?) {
+//@BindingAdapter("subSamplingScaleImageViewFromUri")
+fun bindScaleImage(imgView: SubsamplingScaleImageView, imgUri: Uri?, debug: Boolean = false) {
     imgUri?.let {
-        imgView.setImage(ImageSource.uri(imgUri))
+        imgView.apply {
+            setImage(ImageSource.uri(imgUri))
+            setDebug(debug)
+        }
     }
 }
