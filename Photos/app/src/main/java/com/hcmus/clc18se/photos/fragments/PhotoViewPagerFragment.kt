@@ -27,6 +27,20 @@ class PhotoViewPagerFragment : Fragment() {
 
     private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
 
+    private val onImageClickListener = View.OnClickListener {
+        actionBar?.let {
+            if (it.isShowing) {
+                parentFragment.setBottomToolbarVisibility(false)
+                (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(true)
+                it.hide()
+            } else {
+                parentFragment.setBottomToolbarVisibility(true)
+                (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(false)
+                it.show()
+            }
+        }
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -40,6 +54,8 @@ class PhotoViewPagerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         actionBar = (activity as AbstractPhotosActivity).supportActionBar
+
+//        parentFragment.setEditButtonVisibility(mediaItem?.isEditable())
 
         binding.imageView.setOnImageEventListener(object :
                 SubsamplingScaleImageView.OnImageEventListener {
@@ -75,19 +91,11 @@ class PhotoViewPagerFragment : Fragment() {
                 debug
         )
 
-        binding.imageView.setOnClickListener {
-            actionBar?.let {
-                if (it.isShowing) {
-                    parentFragment.setBottomToolbarVisibility(false)
-                    (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(true)
-                    it.hide()
-                } else {
-                    parentFragment.setBottomToolbarVisibility(true)
-                    (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(false)
-                    it.show()
-                }
-            }
+        binding.apply {
+            imageView.setOnClickListener(onImageClickListener)
+            glideImageView.setOnClickListener(onImageClickListener)
         }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

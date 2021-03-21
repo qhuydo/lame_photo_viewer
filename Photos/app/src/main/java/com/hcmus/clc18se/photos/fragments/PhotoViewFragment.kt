@@ -48,16 +48,17 @@ class PhotoViewFragment : Fragment() {
             adapter = ScreenSlidePagerAdapter(this@PhotoViewFragment)
 
             setCurrentItem(viewModel.idx.value!!, false)
-            (activity as AbstractPhotosActivity).supportActionBar?.title =
-                    photos[viewModel.idx.value!!].name
+            (activity as AbstractPhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
 
             binding.horizontalViewPager.registerOnPageChangeCallback(object :
                     ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     positionCurrent = position
                     super.onPageSelected(position)
-                    (activity as AbstractPhotosActivity).supportActionBar?.title =
-                            photos[position].name
+
+                    (activity as AbstractPhotosActivity).supportActionBar?.title = photos[position].name
+                    setEditButtonVisibility(photos[position].isEditable())
+
                 }
             })
 
@@ -88,13 +89,7 @@ class PhotoViewFragment : Fragment() {
             val fragment = PhotoViewPagerFragment()
 
             val mediaItem = photos[position]
-            if (!mediaItem.isEditable()) {
-                binding.bottomLayout.editButton.visibility = View.GONE
-                binding.bottomLayout.invalidateAll()
-            }
-            else {
-                binding.bottomLayout.editButton.visibility = View.VISIBLE
-            }
+
             fragment.mediaItem = mediaItem
             fragment.debug = debug
             return fragment
@@ -107,6 +102,15 @@ class PhotoViewFragment : Fragment() {
         } else {
             binding.bottomLayout.layout.visibility = View.INVISIBLE
         }
+    }
+
+    internal fun setEditButtonVisibility(visibility: Boolean?) {
+        binding.bottomLayout.apply {
+            editButton.visibility = if (visibility == false) View.GONE else View.VISIBLE
+            this.root.requestLayout()
+            this.root.invalidate()
+        }
+
     }
 
     override fun onDetach() {
