@@ -72,7 +72,7 @@ class PhotoViewFragment : Fragment() {
         }
 
         val preferences = (requireActivity() as AbstractPhotosActivity).preferences
-        debug = preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
+        debug = preferences.getBoolean(getString(R.string.image_debugger_key), false)
 
         activity?.window?.navigationBarColor = Color.BLACK
         return binding.root
@@ -86,7 +86,16 @@ class PhotoViewFragment : Fragment() {
 
         override fun createFragment(position: Int): Fragment {
             val fragment = PhotoViewPagerFragment()
-            fragment.uri = photos[position].uri
+
+            val mediaItem = photos[position]
+            if (!mediaItem.isEditable()) {
+                binding.bottomLayout.editButton.visibility = View.GONE
+                binding.bottomLayout.invalidateAll()
+            }
+            else {
+                binding.bottomLayout.editButton.visibility = View.VISIBLE
+            }
+            fragment.mediaItem = mediaItem
             fragment.debug = debug
             return fragment
         }

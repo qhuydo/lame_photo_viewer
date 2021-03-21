@@ -2,7 +2,9 @@ package com.hcmus.clc18se.photos.fragments
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.PictureDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -12,11 +14,12 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.bindScaleImage
+import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 
 class PhotoViewPagerFragment : Fragment() {
 
-    internal var uri: Uri = Uri.EMPTY
+    internal var mediaItem: MediaItem? = null
 
     private lateinit var binding: PhotoViewPagerPageBinding
     private var actionBar: ActionBar? = null
@@ -25,9 +28,9 @@ class PhotoViewPagerFragment : Fragment() {
     private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         binding = PhotoViewPagerPageBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
@@ -38,14 +41,8 @@ class PhotoViewPagerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         actionBar = (activity as AbstractPhotosActivity).supportActionBar
 
-        if (savedInstanceState?.containsKey(BUNDLE_URI) == true) {
-            uri = savedInstanceState.getParcelable(BUNDLE_URI) ?: Uri.EMPTY
-        }
-
-        bindScaleImage(binding.imageView, uri, debug)
-
         binding.imageView.setOnImageEventListener(object :
-            SubsamplingScaleImageView.OnImageEventListener {
+                SubsamplingScaleImageView.OnImageEventListener {
 
             override fun onImageLoadError(e: Exception?) {
                 binding.progressCircular.visibility = View.GONE
@@ -65,6 +62,19 @@ class PhotoViewPagerFragment : Fragment() {
 
             override fun onTileLoadError(e: Exception?) {}
         })
+
+        if (savedInstanceState?.containsKey(BUNDLE_MEDIAITEM) == true) {
+            mediaItem = savedInstanceState.getParcelable(BUNDLE_MEDIAITEM)
+        }
+
+        MediaItem.bindMediaItemToImageDrawable(
+                this,
+                binding.imageView,
+                binding.glideImageView,
+                mediaItem,
+                debug
+        )
+
         binding.imageView.setOnClickListener {
             actionBar?.let {
                 if (it.isShowing) {
@@ -109,14 +119,14 @@ class PhotoViewPagerFragment : Fragment() {
         super.onSaveInstanceState(outState)
         val rootView = view
         if (rootView != null) {
-            outState.putParcelable(BUNDLE_URI, uri)
+            outState.putParcelable(BUNDLE_MEDIAITEM, mediaItem)
         }
     }
 
     private fun setAs() {
         val intent = Intent(Intent.ACTION_ATTACH_DATA)
-            .setDataAndType(uri, requireContext().contentResolver.getType(uri))
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                .setDataAndType(mediaItem?.uri, mediaItem?.mimeType)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
@@ -128,8 +138,8 @@ class PhotoViewPagerFragment : Fragment() {
 
     private fun openWith() {
         val intent = Intent(Intent.ACTION_VIEW)
-            .setDataAndType(uri, requireContext().contentResolver.getType(uri))
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                .setDataAndType(mediaItem?.uri, mediaItem?.mimeType)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
         } catch (anfe: ActivityNotFoundException) {
@@ -139,6 +149,6 @@ class PhotoViewPagerFragment : Fragment() {
     }
 
     companion object {
-        private const val BUNDLE_URI = "uri"
+        private const val BUNDLE_MEDIAITEM = "uri"
     }
 }
