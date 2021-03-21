@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
@@ -34,6 +35,17 @@ class AlbumFragment : Fragment() {
 
     private val albumAdapterListener = AlbumListAdapter.OnClickListener {
         viewModel.startNavigatingToPhotoList(it)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = 300L
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = 300L
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

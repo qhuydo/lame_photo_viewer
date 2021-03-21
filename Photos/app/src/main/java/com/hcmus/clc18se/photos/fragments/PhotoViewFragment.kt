@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.EditPhotoActivity
 import com.hcmus.clc18se.photos.R
@@ -27,6 +29,18 @@ class PhotoViewFragment : Fragment() {
     private var positionCurrent: Int? = null
 
     private var debug: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = 300L
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = 300L
+        }
+
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,

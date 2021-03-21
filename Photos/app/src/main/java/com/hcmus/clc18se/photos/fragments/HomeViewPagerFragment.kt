@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialcab.attached.destroy
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.PhotosPagerActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.HomeViewPagerAdapter
@@ -21,6 +22,17 @@ class HomeViewPagerFragment : Fragment() {
 
     private lateinit var binding: FragmentHomePagerBinding
     private val parentActivity by lazy { requireActivity() as PhotosPagerActivity }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+            duration = 300L
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+            duration = 300L
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentHomePagerBinding.inflate(inflater, container, false)

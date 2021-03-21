@@ -1,5 +1,7 @@
 package com.hcmus.clc18se.photos
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -122,6 +124,7 @@ class PhotosActivity : AbstractPhotosActivity() {
             binding.apply {
                 topAppBar.appBarLayout.visibility = View.VISIBLE
                 topAppBar2.fragmentAppBarLayout.visibility = View.GONE
+
                 setBottomAppBarVisibility()
 
                 fab.visibility = View.VISIBLE
@@ -138,8 +141,8 @@ class PhotosActivity : AbstractPhotosActivity() {
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         } else {
             binding.apply {
-                topAppBar.appBarLayout.visibility = View.GONE
                 topAppBar2.fragmentAppBarLayout.visibility = View.VISIBLE
+                topAppBar.appBarLayout.visibility = View.GONE
 
                 bottomAppBar.visibility = View.GONE
 
