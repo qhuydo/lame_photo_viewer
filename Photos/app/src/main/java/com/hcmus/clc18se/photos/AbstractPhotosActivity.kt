@@ -47,7 +47,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     protected abstract fun setAppbarVisibility(visibility: Boolean)
 
-    abstract internal fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean = false)
+    internal abstract fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean = false)
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         Timber.d("onConfigurationChanged")

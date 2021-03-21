@@ -1,7 +1,5 @@
 package com.hcmus.clc18se.photos
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -64,10 +62,8 @@ class PhotosActivity : AbstractPhotosActivity() {
                     R.id.page_album
             )
 
-            if (bottomAppBarVisibility != newState) {
-                bottomAppBarVisibility = newState
-                setAppbarVisibility(bottomAppBarVisibility)
-            }
+            bottomAppBarVisibility = newState
+            setAppbarVisibility(bottomAppBarVisibility)
 
             closeFabBeforeNavigating()
         }
@@ -88,7 +84,6 @@ class PhotosActivity : AbstractPhotosActivity() {
     }
 
     override fun setUpNavigationBar() {
-        addOnDestinationChangedListener()
 
         val toolbar = binding.topAppBar.searchActionBar
         setSupportActionBar(toolbar)
@@ -112,6 +107,8 @@ class PhotosActivity : AbstractPhotosActivity() {
                 ViewAnimation.showOut(binding.fabAddVideo)
             }
         }
+        addOnDestinationChangedListener()
+
         binding.topAppBar.appBarLayout.bringToFront()
     }
 
@@ -123,7 +120,7 @@ class PhotosActivity : AbstractPhotosActivity() {
         if (visibility) {
             binding.apply {
                 topAppBar.appBarLayout.visibility = View.VISIBLE
-                topAppBar2.fragmentAppBarLayout.visibility = View.GONE
+                topAppBar2.fragmentAppBarLayout.visibility = View.INVISIBLE
 
                 setBottomAppBarVisibility()
 
@@ -181,7 +178,6 @@ class PhotosActivity : AbstractPhotosActivity() {
         val visibility = if (wantToMakeToolbarInvisible) View.INVISIBLE else View.VISIBLE
         //binding.topAppBar.appBarLayout.visibility = visibility
         binding.topAppBar2.fragmentAppBarLayout.visibility = visibility
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

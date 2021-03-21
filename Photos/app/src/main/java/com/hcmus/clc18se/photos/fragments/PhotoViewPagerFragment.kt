@@ -55,8 +55,6 @@ class PhotoViewPagerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         actionBar = (activity as AbstractPhotosActivity).supportActionBar
 
-//        parentFragment.setEditButtonVisibility(mediaItem?.isEditable())
-
         binding.imageView.setOnImageEventListener(object :
                 SubsamplingScaleImageView.OnImageEventListener {
 
@@ -95,7 +93,6 @@ class PhotoViewPagerFragment : Fragment() {
             imageView.setOnClickListener(onImageClickListener)
             glideImageView.setOnClickListener(onImageClickListener)
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

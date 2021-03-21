@@ -1,10 +1,8 @@
 package com.hcmus.clc18se.photos
 
 import android.os.Bundle
-import android.transition.Explode
 import android.view.MenuItem
 import android.view.View
-import android.view.Window
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
@@ -35,7 +33,6 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
         colorResource.configColor(this)
         colorResource.configTheme()
-
         configLanguage()
 
         appBarConfiguration = AppBarConfiguration(
@@ -45,13 +42,6 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
         Timber.d("----------------")
 
         registerOnChangedPreferenceListener()
-
-        // make sure to do this before setContentView or else the app will crash
-        with(window) {
-            requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
-            enterTransition = Explode()
-            exitTransition = Explode()
-        }
 
         setContentView(binding.root)
 
@@ -66,6 +56,13 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
             setAppbarVisibility(newState)
 
             closeFabBeforeNavigating()
+
+            when (destination.id) {
+                R.id.photoViewFragment -> {
+                    val layoutParams = binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
+                    layoutParams.topMargin = 0
+                }
+            }
         }
     }
 

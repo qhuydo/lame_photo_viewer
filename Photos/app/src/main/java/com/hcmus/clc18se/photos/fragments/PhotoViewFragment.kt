@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -50,6 +48,11 @@ class PhotoViewFragment : Fragment() {
         (activity as AbstractPhotosActivity).setNavHostFragmentTopMargin(0)
 
         binding = FragmentPhotoViewBinding.inflate(inflater, container, false)
+
+        setBottomToolbarVisibility(false)
+        (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(true)
+        (activity as AbstractPhotosActivity).supportActionBar?.hide()
+
         binding.apply {
             lifecycleOwner = this@PhotoViewFragment
             photosViewModel = viewModel
@@ -63,6 +66,7 @@ class PhotoViewFragment : Fragment() {
 
             setCurrentItem(viewModel.idx.value!!, false)
             (activity as AbstractPhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
+            setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
 
             binding.horizontalViewPager.registerOnPageChangeCallback(object :
                     ViewPager2.OnPageChangeCallback() {
@@ -78,7 +82,7 @@ class PhotoViewFragment : Fragment() {
 
         }
 
-        binding.bottomLayout.editButton.setOnClickListener() {
+        binding.bottomLayout.editButton.setOnClickListener {
             if (positionCurrent != null) {
                 val intent = Intent(context, EditPhotoActivity::class.java)
                 intent.putExtra("uri", photos[positionCurrent!!].uri)
@@ -129,6 +133,7 @@ class PhotoViewFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
+        (activity as AbstractPhotosActivity).supportActionBar?.show()
         activity?.window?.navigationBarColor = binding.navBarColor
     }
 }
