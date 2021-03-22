@@ -32,10 +32,6 @@ class PhotosActivity : AbstractPhotosActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        colorResource.configColor(this)
-        colorResource.configTheme()
-        configLanguage()
-
         appBarConfiguration = AppBarConfiguration(
                 setOf(R.id.page_photo, R.id.page_album, R.id.page_people), drawerLayout
         )
@@ -66,6 +62,13 @@ class PhotosActivity : AbstractPhotosActivity() {
             setAppbarVisibility(bottomAppBarVisibility)
 
             closeFabBeforeNavigating()
+//
+//            when(destination.id) {
+//                R.id.photoViewFragment -> {
+//                    val layoutParams = binding.navHostFragment.layoutParams as CoordinatorLayout.LayoutParams
+//                    layoutParams.topMargin = 0
+//                }
+//            }
         }
     }
 
@@ -120,7 +123,7 @@ class PhotosActivity : AbstractPhotosActivity() {
         if (visibility) {
             binding.apply {
                 topAppBar.appBarLayout.visibility = View.VISIBLE
-                topAppBar2.fragmentAppBarLayout.visibility = View.INVISIBLE
+                topAppBar2.fragmentAppBarLayout.visibility = View.GONE
 
                 setBottomAppBarVisibility()
 

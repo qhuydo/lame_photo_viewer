@@ -83,5 +83,6 @@
     <string name="adapter_color_summary">The app could be crashed when enabling this option</string>
     <string name="image_debugger_key" translatable="false">image_debugger</string>
     <string name="image_debugger">Image debugger</string>
+    <string name="full_screen_view_image_key" translatable="false">full_screen_view_image_key</string>
 
 </resources>

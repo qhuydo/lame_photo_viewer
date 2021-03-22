@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -20,9 +21,9 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 
 
 class PhotoViewFragment : Fragment() {
-
     private val viewModel: PhotosViewModel by activityViewModels()
-    private val photos by lazy { viewModel.mediaItemList.value ?: listOf<MediaItem>() }
+    private val photos by lazy { viewModel.mediaItemList.value ?: listOf() }
+    private val preferences by lazy { (requireActivity() as AbstractPhotosActivity).preferences }
     private lateinit var binding: FragmentPhotoViewBinding
     private var positionCurrent: Int? = null
 
@@ -50,8 +51,6 @@ class PhotoViewFragment : Fragment() {
         binding = FragmentPhotoViewBinding.inflate(inflater, container, false)
 
         setBottomToolbarVisibility(false)
-        (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(true)
-        (activity as AbstractPhotosActivity).supportActionBar?.hide()
 
         binding.apply {
             lifecycleOwner = this@PhotoViewFragment
@@ -64,6 +63,11 @@ class PhotoViewFragment : Fragment() {
         binding.horizontalViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@PhotoViewFragment)
 
+//            val fullscreen = preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
+//            if (fullscreen) {
+//                val window = requireActivity().window
+//                window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+//            }
             setCurrentItem(viewModel.idx.value!!, false)
             (activity as AbstractPhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
             setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
@@ -90,7 +94,6 @@ class PhotoViewFragment : Fragment() {
             }
         }
 
-        val preferences = (requireActivity() as AbstractPhotosActivity).preferences
         debug = preferences.getBoolean(getString(R.string.image_debugger_key), false)
 
         activity?.window?.navigationBarColor = Color.BLACK
@@ -99,6 +102,9 @@ class PhotoViewFragment : Fragment() {
 
     private inner class ScreenSlidePagerAdapter(fragment: Fragment) :
             FragmentStateAdapter(fragment) {
+
+        val fullscreen = preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
+
         override fun getItemCount(): Int {
             return photos.size
         }
@@ -110,6 +116,7 @@ class PhotoViewFragment : Fragment() {
 
             fragment.mediaItem = mediaItem
             fragment.debug = debug
+            fragment.fullScreen = fullscreen
             return fragment
         }
     }

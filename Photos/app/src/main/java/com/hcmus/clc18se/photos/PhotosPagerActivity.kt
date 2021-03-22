@@ -31,10 +31,6 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        colorResource.configColor(this)
-        colorResource.configTheme()
-        configLanguage()
-
         appBarConfiguration = AppBarConfiguration(
                 setOf(R.id.homeViewPagerFragment), drawerLayout
         )

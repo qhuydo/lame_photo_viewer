@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos.utils
 
+import android.app.Activity
 import android.content.res.Resources
 import android.content.res.Resources.Theme
 import android.util.TypedValue
@@ -14,7 +15,7 @@ import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter.Companion.ITEM_TYP
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter.Companion.ITEM_TYPE_LIST
 
 
-fun getAppBarSizeAttr(activity: AppCompatActivity): Int? {
+fun getAppBarSizeAttr(activity: Activity): Int? {
     val tv = TypedValue()
     if (activity.theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
         return TypedValue.complexToDimensionPixelSize(tv.data, activity.resources.displayMetrics)

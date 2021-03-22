@@ -6,8 +6,7 @@
         android:id="@+id/fragment_app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?colorSurface"
-        android:fitsSystemWindows="true">
+        android:background="?colorSurface">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cab_stub2"

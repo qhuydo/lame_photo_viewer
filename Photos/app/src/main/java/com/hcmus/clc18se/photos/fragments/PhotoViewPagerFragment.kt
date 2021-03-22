@@ -2,9 +2,6 @@ package com.hcmus.clc18se.photos.fragments
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.PictureDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -13,7 +10,6 @@ import androidx.fragment.app.Fragment
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
-import com.hcmus.clc18se.photos.adapters.bindScaleImage
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 
@@ -24,17 +20,27 @@ class PhotoViewPagerFragment : Fragment() {
     private lateinit var binding: PhotoViewPagerPageBinding
     private var actionBar: ActionBar? = null
     internal var debug: Boolean = false
+    internal var fullScreen: Boolean = false
 
     private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
 
+
     private val onImageClickListener = View.OnClickListener {
+        val window = requireActivity().window
+
         actionBar?.let {
             if (it.isShowing) {
                 parentFragment.setBottomToolbarVisibility(false)
+                if (fullScreen) {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+                }
                 (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(true)
                 it.hide()
             } else {
                 parentFragment.setBottomToolbarVisibility(true)
+                if (fullScreen) {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+                }
                 (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(false)
                 it.show()
             }
@@ -79,6 +85,7 @@ class PhotoViewPagerFragment : Fragment() {
 
         if (savedInstanceState?.containsKey(BUNDLE_MEDIAITEM) == true) {
             mediaItem = savedInstanceState.getParcelable(BUNDLE_MEDIAITEM)
+            fullScreen = savedInstanceState.getBoolean(BUNDLE_FULLSCREEN)
         }
 
         MediaItem.bindMediaItemToImageDrawable(
@@ -114,17 +121,12 @@ class PhotoViewPagerFragment : Fragment() {
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        actionBar?.show()
-        // (requireActivity() as AbstractPhotosActivity).showSystemUI()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         val rootView = view
         if (rootView != null) {
             outState.putParcelable(BUNDLE_MEDIAITEM, mediaItem)
+            outState.putBoolean(BUNDLE_FULLSCREEN, fullScreen)
         }
     }
 
@@ -153,7 +155,17 @@ class PhotoViewPagerFragment : Fragment() {
         }
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        if (fullScreen) {
+            val window = requireActivity().window
+            window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        }
+        actionBar?.show()
+    }
+
     companion object {
         private const val BUNDLE_MEDIAITEM = "uri"
+        private const val BUNDLE_FULLSCREEN = "fullscreen"
     }
 }

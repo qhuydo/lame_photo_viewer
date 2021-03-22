@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="photosViewModel"
             type="com.hcmus.clc18se.photos.viewModels.PhotosViewModel" />
@@ -13,9 +14,9 @@
 
     <FrameLayout
         android:id="@+id/layout"
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:layout_height="match_parent">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/horizontal_view_pager"

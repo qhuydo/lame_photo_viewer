@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos
 
+import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -7,10 +8,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.hcmus.clc18se.photos.utils.ICON_COLOR
-import com.hcmus.clc18se.photos.utils.setIcon
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
 import java.util.*
@@ -48,6 +50,14 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     protected abstract fun setAppbarVisibility(visibility: Boolean)
 
     internal abstract fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean = false)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        colorResource.configColor(this)
+        colorResource.configTheme()
+        configLanguage()
+    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         Timber.d("onConfigurationChanged")

@@ -77,7 +77,7 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/album_list_item_size"
-            app:defaultValue="1"
+            app:defaultValue="0"
             app:entryValues="@array/photo_list_item_size_value"
             app:isPreferenceVisible="true"
             app:key="@string/album_list_item_size_key"
@@ -99,6 +99,11 @@
     <PreferenceCategory
         android:icon="@drawable/ic_baseline_developer_mode_24"
         android:title="@string/experimental_options">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/full_screen_view_image_key"
+            android:title="View image in fullscreen"/>
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
