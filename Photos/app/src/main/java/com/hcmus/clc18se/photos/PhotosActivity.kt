@@ -195,4 +195,6 @@ class PhotosActivity : AbstractPhotosActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, drawerLayout)
     }
+
+    override fun getNavGraphResId() = R.id.navigation
 }

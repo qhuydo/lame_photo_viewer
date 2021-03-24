@@ -41,6 +41,10 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun loadDataFromOtherViewModel(other: PhotosViewModel) {
+        _mediaItemList.value = other._mediaItemList.value
+    }
+
     fun loadImages() {
         viewModelScope.launch {
             val images = queryMediaItems()

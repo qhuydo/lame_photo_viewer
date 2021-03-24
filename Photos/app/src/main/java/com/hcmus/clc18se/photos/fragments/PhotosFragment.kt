@@ -1,13 +1,16 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.transition.MaterialSharedAxis
+import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.MainActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
@@ -23,9 +26,26 @@ class PhotosFragment : AbstractPhotoListFragment(
 
     private lateinit var binding: FragmentPhotosBinding
     private val viewModel: PhotosViewModel by activityViewModels()
+    //private lateinit var viewModel: PhotosViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+//        val viewModel: PhotosViewModel by navGraphViewModels(
+//                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+//        )
+//        this.viewModel = viewModel
+        viewModel.loadImages()
+
+    }
 
     override val onClickListener = object : MediaItemListAdapter.OnClickListener {
         override fun onClick(mediaItem: MediaItem) {
+
+            val viewModel: PhotosViewModel by navGraphViewModels(
+                    (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+            )
+            viewModel.loadDataFromOtherViewModel(this@PhotosFragment.viewModel)
+
             val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
             viewModel.setCurrentItemView(idx)
             this@PhotosFragment.findNavController().navigate(
@@ -96,8 +116,6 @@ class PhotosFragment : AbstractPhotoListFragment(
         viewModel.mediaItemList.observe(requireActivity(), { images ->
             adapter.submitList(images)
         })
-
-        viewModel.loadImages()
 
         return binding.root
     }

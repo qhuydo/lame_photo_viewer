@@ -14,7 +14,6 @@ import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.data.MediaProvider
 import com.hcmus.clc18se.photos.utils.ICON_COLOR
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
-import com.hcmus.clc18se.photos.viewModels.AlbumViewModelFactory
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
 import java.util.*
@@ -31,9 +30,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     }
 
-    val viewModel: AlbumViewModel by viewModels {
-        AlbumViewModelFactory(application)
-    }
+    val viewModel: AlbumViewModel by viewModels()
 
     val mediaProvider: MediaProvider = MediaProvider(this)
 
@@ -191,4 +188,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     fun onLicenseButtonClick(view: View) = onLicenseButtonClick()
 
     abstract fun setNavHostFragmentTopMargin(pixelValue: Int)
+
+    abstract fun getNavGraphResId(): Int
 }

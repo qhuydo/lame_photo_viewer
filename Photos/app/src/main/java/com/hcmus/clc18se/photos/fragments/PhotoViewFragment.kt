@@ -1,14 +1,14 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.transition.MaterialSharedAxis
@@ -21,13 +21,22 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 
 
 class PhotoViewFragment : Fragment() {
-    private val viewModel: PhotosViewModel by activityViewModels()
+    private lateinit var viewModel: PhotosViewModel
+
     private val photos by lazy { viewModel.mediaItemList.value ?: listOf() }
     private val preferences by lazy { (requireActivity() as AbstractPhotosActivity).preferences }
     private lateinit var binding: FragmentPhotoViewBinding
     private var positionCurrent: Int? = null
 
     private var debug: Boolean = false
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val viewModel: PhotosViewModel by navGraphViewModels(
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+        )
+        this.viewModel = viewModel
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

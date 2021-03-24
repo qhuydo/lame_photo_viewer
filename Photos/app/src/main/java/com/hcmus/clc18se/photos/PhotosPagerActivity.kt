@@ -177,4 +177,6 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
         layoutParams.topMargin = pixelValue
     }
 
+    override fun getNavGraphResId() = R.id.pager_navigation
+
 }
