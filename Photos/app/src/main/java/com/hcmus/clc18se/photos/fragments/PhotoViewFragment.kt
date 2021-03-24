@@ -89,7 +89,7 @@ class PhotoViewFragment : Fragment() {
         binding.bottomLayout.editButton.setOnClickListener {
             if (positionCurrent != null) {
                 val intent = Intent(context, EditPhotoActivity::class.java)
-                intent.putExtra("uri", photos[positionCurrent!!].uri)
+                intent.putExtra("uri", photos[positionCurrent!!].requireUri())
                 startActivity(intent)
             }
         }

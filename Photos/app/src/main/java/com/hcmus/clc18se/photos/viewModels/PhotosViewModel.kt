@@ -116,7 +116,7 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                             id)
 
-                    val image = MediaItem(id, displayName, uri, dateAdded, mimeType, orientation)
+                    val image = MediaItem(id, displayName, uri, dateAdded, mimeType, orientation, null)
                     mediaItems += image
 
                 }

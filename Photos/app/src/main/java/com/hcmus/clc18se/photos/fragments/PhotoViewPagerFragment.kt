@@ -132,7 +132,7 @@ class PhotoViewPagerFragment : Fragment() {
 
     private fun setAs() {
         val intent = Intent(Intent.ACTION_ATTACH_DATA)
-                .setDataAndType(mediaItem?.uri, mediaItem?.mimeType)
+                .setDataAndType(mediaItem?.requireUri(), mediaItem?.mimeType)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         try {
@@ -145,7 +145,7 @@ class PhotoViewPagerFragment : Fragment() {
 
     private fun openWith() {
         val intent = Intent(Intent.ACTION_VIEW)
-                .setDataAndType(mediaItem?.uri, mediaItem?.mimeType)
+                .setDataAndType(mediaItem?.requireUri(), mediaItem?.mimeType)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))

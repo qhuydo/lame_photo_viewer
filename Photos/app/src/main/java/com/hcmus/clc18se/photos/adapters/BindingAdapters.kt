@@ -1,29 +1,21 @@
 package com.hcmus.clc18se.photos.adapters
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.TransitionOptions
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.samples.svg.SvgSoftwareLayerSetter
-import com.bumptech.glide.signature.MediaStoreSignature
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.data.MediaItem
-import com.hcmus.clc18se.photos.data.MediaItem.Companion.TYPE_SVG
-import com.hcmus.clc18se.photos.data.MediaItem.Companion.svgMimeTypes
-import com.hcmus.clc18se.photos.data.SampleAlbum
-import java.util.concurrent.TimeUnit
 
 @BindingAdapter("mediaListItem")
 fun bindMediaListRecyclerView(recyclerView: RecyclerView, data: List<MediaItem>) {
@@ -36,8 +28,6 @@ fun bindSampleAlbumListRecyclerView(recyclerView: RecyclerView, data: List<Album
     val adapter = recyclerView.adapter as AlbumListAdapter
     adapter.submitList(data)
 }
-
-
 
 /**
  * Bind the image binary to the image view from drawable resource id
@@ -93,18 +83,18 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {
             .diskCacheStrategy(DiskCacheStrategy.ALL)
 
 
-        if (mediaItem.mimeType in svgMimeTypes) {
+        if (mediaItem.isSVG()) {
             Glide.with(imgView.context)
                 .`as`(PictureDrawable::class.java)
                 .listener(SvgSoftwareLayerSetter())
-                .load(mediaItem.uri)
+                .load(mediaItem.requireUri())
                 .error(R.drawable.ic_launcher_grey_sample)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(imgView)
 
         } else {
             Glide.with(imgView.context)
-                .load(mediaItem.uri)
+                .load(mediaItem.requireUri())
                 //.apply(requestOptions)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(imgView)
