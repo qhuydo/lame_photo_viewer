@@ -82,7 +82,6 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {
         val requestOptions = RequestOptions()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
 
-
         if (mediaItem.isSVG()) {
             Glide.with(imgView.context)
                 .`as`(PictureDrawable::class.java)

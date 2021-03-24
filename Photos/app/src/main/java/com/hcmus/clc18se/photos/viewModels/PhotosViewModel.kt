@@ -28,7 +28,7 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
         get() = _idx
 
     init {
-        _mediaItemList.value = mutableListOf<MediaItem>()
+        _mediaItemList.value = mutableListOf()
     }
 
     private var contentObserver: ContentObserver? = null
@@ -61,6 +61,10 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun setMediaItemFromAlbum(mediaItems: List<MediaItem>) {
+        _mediaItemList.value = mediaItems
+    }
+
     private suspend fun queryMediaItems(): List<MediaItem> {
         val mediaItems = mutableListOf<MediaItem>()
 
@@ -69,7 +73,7 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
             val projection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 arrayOf(MediaStore.MediaColumns._ID,
                         MediaStore.MediaColumns.DISPLAY_NAME,
-                        MediaStore.MediaColumns.DATE_ADDED,
+                        MediaStore.MediaColumns.DATE_TAKEN,
                         MediaStore.MediaColumns.MIME_TYPE,
                         MediaStore.MediaColumns.DATE_MODIFIED,
                         MediaStore.Images.ImageColumns.ORIENTATION
@@ -78,7 +82,7 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
                 arrayOf(
                         MediaStore.MediaColumns._ID,
                         MediaStore.MediaColumns.DISPLAY_NAME,
-                        MediaStore.MediaColumns.DATE_ADDED,
+                        MediaStore.MediaColumns.DATE_TAKEN,
                         MediaStore.MediaColumns.MIME_TYPE,
                         MediaStore.MediaColumns.DATE_MODIFIED,
                 )
@@ -86,7 +90,7 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
 
             val selection = MediaStore.Images.Media.DATE_ADDED
             val selectionArgs: Array<String>? = null
-            val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+            val sortOrder = "${MediaStore.MediaColumns.DATE_TAKEN} DESC"
 
             getApplication<Application>().contentResolver.query(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -97,7 +101,7 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
             )?.use { cursor ->
 
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val dateModifiedColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+                val dateModifiedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_TAKEN)
                 val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
                 val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
 
@@ -116,7 +120,7 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                             id)
 
-                    val image = MediaItem(id, displayName, uri, dateAdded, mimeType, orientation, null)
+                    val image = MediaItem(id, displayName, uri, dateAdded, mimeType, orientation)
                     mediaItems += image
 
                 }

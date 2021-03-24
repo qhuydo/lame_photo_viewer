@@ -30,28 +30,18 @@ data class MediaItem(
         private var dateCreated: Date?,
         val mimeType: String?,
         private var orientation: Int?,
-        private var type: Int?,
 ) : Parcelable {
 
     fun isSVG(): Boolean {
-        if (type == null) {
-            type = if (mimeType in svgMimeTypes) TYPE_SVG else null
-        }
-        return type != null
+        return mimeType in svgMimeTypes
     }
 
     fun isSupportedStaticImage(): Boolean {
-        if (type == null) {
-            type = if (mimeType in imageMimeTypes) TYPE_SVG else null
-        }
-        return type != null
+        return mimeType in imageMimeTypes
     }
 
     fun isGif(): Boolean {
-        if (type == null) {
-            type = if (mimeType in gifMimeTypes) TYPE_SVG else null
-        }
-        return type != null
+        return (mimeType in gifMimeTypes)
     }
 
     fun isEditable() = isSupportedStaticImage()
@@ -71,7 +61,7 @@ data class MediaItem(
     companion object {
 
         fun getInstance(id: Long, context: Context, uri: Uri?, mimeType: String): MediaItem {
-            return MediaItem(id, null, uri, null, mimeType, null, null)
+            return MediaItem(id, null, uri, null, mimeType, null)
         }
 
         val DiffCallBack = object : DiffUtil.ItemCallback<MediaItem>() {

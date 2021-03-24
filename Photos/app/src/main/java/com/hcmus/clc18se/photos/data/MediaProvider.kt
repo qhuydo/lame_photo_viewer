@@ -50,6 +50,8 @@ class MediaProvider(private val context: Context) {
         val projection = arrayOf(
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.MediaColumns.MIME_TYPE,
+                MediaStore.MediaColumns.BUCKET_ID,
+                MediaStore.MediaColumns.BUCKET_DISPLAY_NAME,
                 BaseColumns._ID,
         )
 

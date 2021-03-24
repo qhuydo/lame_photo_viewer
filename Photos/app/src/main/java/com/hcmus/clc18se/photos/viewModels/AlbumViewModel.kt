@@ -17,6 +17,23 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
     val onAlbumLoaded: LiveData<Boolean>
         get() = _onAlbumLoaded
 
+    private var _idx = MutableLiveData(0)
+    val idx: LiveData<Int>
+        get() = _idx
+
+    fun getSelectedAlbum(): Album? {
+        return _albumList.value?.get(idx.value ?: 0)
+    }
+
+    fun setCurrentItemView(newIdx: Int) {
+        _albumList.value?.let {
+            if (newIdx in it.indices) {
+                _idx.value = newIdx
+            }
+        }
+    }
+
+
     fun notifyAlbumLoaded() {
         _onAlbumLoaded.value = true
         _albumList.value = MediaProvider.albums
@@ -52,15 +69,5 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
 
     fun doneNavigatingToPhotoList() {
         _navigateToPhotoList.value = null
-    }
-}
-
-class AlbumViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    @Suppress("unchecked_cast")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AlbumViewModel::class.java)) {
-            return AlbumViewModel(application) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
