@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.transition.MaterialSharedAxis
+import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
@@ -18,7 +19,8 @@ import com.hcmus.clc18se.photos.utils.getSpanCountForAlbumList
 import com.hcmus.clc18se.photos.utils.setAlbumListIcon
 import com.hcmus.clc18se.photos.utils.setAlbumListItemSizeOption
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
-import com.hcmus.clc18se.photos.viewModels.AlbumViewModelFractory
+import com.hcmus.clc18se.photos.viewModels.AlbumViewModelFactory
+import timber.log.Timber
 
 class AlbumFragment : Fragment() {
     private lateinit var binding: FragmentAlbumBinding
@@ -31,7 +33,9 @@ class AlbumFragment : Fragment() {
 
     private var currentListItemSize: Int = 0
 
-    private lateinit var viewModel: AlbumViewModel
+    private val viewModel: AlbumViewModel by activityViewModels {
+        AlbumViewModelFactory(requireActivity().application)
+    }
 
     private val albumAdapterListener = AlbumListAdapter.OnClickListener {
         viewModel.startNavigatingToPhotoList(it)
@@ -39,6 +43,8 @@ class AlbumFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Timber.d("ALBUM viewModel ${(requireActivity() as AbstractPhotosActivity).viewModel === viewModel}")
 
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
             duration = 300L
@@ -61,15 +67,24 @@ class AlbumFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        val viewModelFactory = AlbumViewModelFractory(resources)
+        // val viewModelFactory = AlbumViewModelFactory(resources)
         binding.lifecycleOwner = this@AlbumFragment
-        viewModel = ViewModelProvider(this@AlbumFragment, viewModelFactory)
-                .get(AlbumViewModel::class.java)
+//        viewModel = ViewModelProvider(this@AlbumFragment, viewModelFactory)
+//                .get(AlbumViewModel::class.java)
+
+        viewModel.onAlbumLoaded.observe(viewLifecycleOwner, {
+            if (it == true) {
+                viewModel.albumList.value?.let { list ->
+                    bindSampleAlbumListRecyclerView(binding.albumListLayout.albumListRecyclerView, list)
+                    binding.albumListLayout.albumListRecyclerView.adapter?.notifyDataSetChanged()
+                }
+            }
+        })
 
         viewModel.navigateToPhotoList.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 this.findNavController().navigate(
-                        AlbumFragmentDirections.actionPageAlbumToPhotoListFragment(it.name))
+                        AlbumFragmentDirections.actionPageAlbumToPhotoListFragment(it.getName() ?:"???" ))
                 viewModel.doneNavigatingToPhotoList()
             }
         })

@@ -1,6 +1,5 @@
 package com.hcmus.clc18se.photos
 
-import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -8,15 +7,17 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
+import com.hcmus.clc18se.photos.data.Album
+import com.hcmus.clc18se.photos.data.MediaProvider
 import com.hcmus.clc18se.photos.utils.ICON_COLOR
+import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
+import com.hcmus.clc18se.photos.viewModels.AlbumViewModelFactory
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
 import java.util.*
-
 
 abstract class AbstractPhotosActivity : AppCompatActivity() {
 
@@ -30,9 +31,15 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     }
 
+    val viewModel: AlbumViewModel by viewModels {
+        AlbumViewModelFactory(application)
+    }
+
+    val mediaProvider: MediaProvider = MediaProvider(this)
+
     internal val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
-    protected val colorResource by lazy { (application as PhotosApplication).colorResource }
+    private val colorResource by lazy { (application as PhotosApplication).colorResource }
 
     protected var bottomAppBarVisibility: Boolean = true
     protected var defaultSystemUiVisibility: Int = -1
@@ -54,6 +61,11 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        mediaProvider.loadAlbum(object: MediaProvider.OnMediaLoadedCallback {
+            override fun onMediaLoaded(albums: ArrayList<Album>?) {
+                viewModel.notifyAlbumLoaded()
+            }
+        })
         colorResource.configColor(this)
         colorResource.configTheme()
         configLanguage()
@@ -72,7 +84,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         outState.putInt(BUNDLE_DEFAULT_SYSTEM_UI_VISIBILITY, defaultSystemUiVisibility)
     }
 
-
     private fun setAppLocale(localeCode: String) {
         val displayMetrics: DisplayMetrics = resources.getDisplayMetrics()
         val configuration: Configuration = resources.getConfiguration()
@@ -82,7 +93,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         resources.updateConfiguration(configuration, displayMetrics)
     }
 
-    protected fun configLanguage(locale: Locale? = null) {
+    private fun configLanguage(locale: Locale? = null) {
         val defaultIdx = 0
 
         val languageOptions = preferences.getString("app_language", "default")
@@ -149,7 +160,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         preferences.registerOnSharedPreferenceChangeListener(preferencesListener)
     }
 
-    fun onLicenseButtonClick() {
+    private fun onLicenseButtonClick() {
         val fragment = LicensesDialogFragment.Builder(this)
                 .setNotices(R.raw.licenses)
                 .setThemeResourceId(colorResource.getCurrentThemeColor())
@@ -178,27 +189,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onLicenseButtonClick(view: View) = onLicenseButtonClick()
-
-    fun hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
-                // Set the content to appear under the system bars so that the
-                // content doesn't resize when the system bars hide and show.
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                // Hide the nav bar and status bar
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
-    }
-
-    // Shows the system bars by removing all the flags
-    // except for the ones that make the content appear under the system bars.
-    fun showSystemUI() {
-        window.decorView.systemUiVisibility = defaultSystemUiVisibility
-    }
 
     abstract fun setNavHostFragmentTopMargin(pixelValue: Int)
 }

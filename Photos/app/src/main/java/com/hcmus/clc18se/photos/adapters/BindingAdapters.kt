@@ -18,8 +18,10 @@ import com.bumptech.glide.signature.MediaStoreSignature
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.R
+import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.data.MediaItem.Companion.TYPE_SVG
+import com.hcmus.clc18se.photos.data.MediaItem.Companion.svgMimeTypes
 import com.hcmus.clc18se.photos.data.SampleAlbum
 import java.util.concurrent.TimeUnit
 
@@ -29,11 +31,13 @@ fun bindMediaListRecyclerView(recyclerView: RecyclerView, data: List<MediaItem>)
     adapter.submitList(data)
 }
 
-@BindingAdapter("sampleAlbumListItem")
-fun bindSampleAlbumListRecyclerView(recyclerView: RecyclerView, data: List<SampleAlbum>) {
+@BindingAdapter("albumListItem")
+fun bindSampleAlbumListRecyclerView(recyclerView: RecyclerView, data: List<Album>) {
     val adapter = recyclerView.adapter as AlbumListAdapter
     adapter.submitList(data)
 }
+
+
 
 /**
  * Bind the image binary to the image view from drawable resource id

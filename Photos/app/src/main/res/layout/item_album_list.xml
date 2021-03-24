@@ -7,7 +7,7 @@
 
         <variable
             name="album"
-            type="com.hcmus.clc18se.photos.data.SampleAlbum" />
+            type="com.hcmus.clc18se.photos.data.Album" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,7 +39,7 @@
             android:layout_marginStart="16dp"
             android:fontFamily="sans-serif"
             android:lines="1"
-            android:text="@{album.name}"
+            android:text="@{album.getName()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/album_list_item_image"
             app:layout_constraintTop_toTopOf="@+id/album_list_item_image"

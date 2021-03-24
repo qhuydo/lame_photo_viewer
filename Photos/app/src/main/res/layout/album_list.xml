@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.hcmus.clc18se.photos.data.SampleAlbum" />
+        <import type="com.hcmus.clc18se.photos.data.Album" />
 
         <variable
             name="albumList"
-            type="java.util.List&lt;SampleAlbum&gt;" />
+            type="java.util.List&lt;Album&gt;" />
     </data>
 
     <FrameLayout
@@ -24,7 +24,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:sampleAlbumListItem="@{albumList}"
             app:spanCount="@integer/span_count_photo_grid_big"
             tools:itemCount="16"
             tools:listitem="@layout/item_album_list_grid" />

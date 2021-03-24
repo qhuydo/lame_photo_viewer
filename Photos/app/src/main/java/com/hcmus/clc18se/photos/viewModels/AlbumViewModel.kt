@@ -1,22 +1,25 @@
 package com.hcmus.clc18se.photos.viewModels
 
-import android.content.res.Resources
+import android.app.Application
 import androidx.lifecycle.*
 import com.hcmus.clc18se.photos.R
-import com.hcmus.clc18se.photos.data.SampleAlbum
-import com.hcmus.clc18se.photos.data.SampleMediaItem
-import kotlinx.coroutines.launch
+import com.hcmus.clc18se.photos.data.*
 
-class AlbumViewModel(private val resources: Resources) : ViewModel() {
-    private var _albumList = MutableLiveData<List<SampleAlbum>>()
-    val albumList: LiveData<List<SampleAlbum>>
+class AlbumViewModel(application: Application) : AndroidViewModel(application) {
+    private var _albumList = MutableLiveData<List<Album>>()
+    val albumList: LiveData<List<Album>>
         get() = _albumList
 
-    private var _navigateToPhotoList = MutableLiveData<SampleAlbum?>(null)
-    val navigateToPhotoList: LiveData<SampleAlbum?> = _navigateToPhotoList
+    private var _navigateToPhotoList = MutableLiveData<Album?>(null)
+    val navigateToPhotoList: LiveData<Album?> = _navigateToPhotoList
 
-    init {
-        initList()
+    private var _onAlbumLoaded = MutableLiveData<Boolean>(false)
+    val onAlbumLoaded: LiveData<Boolean>
+        get() = _onAlbumLoaded
+
+    fun notifyAlbumLoaded() {
+        _onAlbumLoaded.value = true
+        _albumList.value = MediaProvider.albums
     }
 
     companion object {
@@ -43,35 +46,20 @@ class AlbumViewModel(private val resources: Resources) : ViewModel() {
                 brown)
     }
 
-    private fun initList() {
-        viewModelScope.launch {
-
-            val albumList = mutableListOf<SampleAlbum>()
-
-            for (i in 0..5) {
-                val name = "${resources.getString(R.string.album_title)} #${i + 1}"
-                val resId = photoList[(photoList.indices).random()].resId
-                albumList.add(SampleAlbum(resId, name))
-            }
-            _albumList.value = albumList
-        }
-    }
-
-    fun startNavigatingToPhotoList(sampleAlbum: SampleAlbum) {
-        _navigateToPhotoList.value = sampleAlbum
+    fun startNavigatingToPhotoList(album: Album) {
+        _navigateToPhotoList.value = album
     }
 
     fun doneNavigatingToPhotoList() {
         _navigateToPhotoList.value = null
     }
-
 }
 
-class AlbumViewModelFractory(private val resources: Resources) : ViewModelProvider.Factory {
+class AlbumViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
     @Suppress("unchecked_cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AlbumViewModel::class.java)) {
-            return AlbumViewModel(resources) as T
+            return AlbumViewModel(application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

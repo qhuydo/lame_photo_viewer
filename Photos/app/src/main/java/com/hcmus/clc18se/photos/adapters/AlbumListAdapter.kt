@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hcmus.clc18se.photos.R
-import com.hcmus.clc18se.photos.data.SampleAlbum
+import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.databinding.*
 
 class AlbumListAdapter(
@@ -17,7 +17,7 @@ class AlbumListAdapter(
         private val resources: Resources,
         private val adapterItemType: Int = ITEM_TYPE_GRID,
         private val adapterItemSize: Int = ITEM_SIZE_MEDIUM) :
-        ListAdapter<SampleAlbum, AlbumListAdapter.ViewHolder>(DiffCallBack()) {
+        ListAdapter<Album, AlbumListAdapter.ViewHolder>(DiffCallBack()) {
 
     companion object {
         const val ITEM_TYPE_LIST = 0
@@ -47,7 +47,7 @@ class AlbumListAdapter(
                      private val resources: Resources,
                      private val itemSize: Int = ITEM_SIZE_MEDIUM
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(album: SampleAlbum) {
+        fun bind(album: Album) {
             when (binding) {
                 is ItemAlbumListBinding -> {
                     setItemListSize(resources, binding.albumListItemImage, itemSize)
@@ -83,17 +83,17 @@ class AlbumListAdapter(
         }
     }
 
-    class OnClickListener(val clickListener: (album: SampleAlbum) -> Unit) {
-        fun onClick(album: SampleAlbum) = clickListener(album)
+    class OnClickListener(val clickListener: (album: Album) -> Unit) {
+        fun onClick(album: Album) = clickListener(album)
     }
 
-    class DiffCallBack : DiffUtil.ItemCallback<SampleAlbum>() {
-        override fun areContentsTheSame(oldItem: SampleAlbum, newItem: SampleAlbum): Boolean {
+    class DiffCallBack : DiffUtil.ItemCallback<Album>() {
+        override fun areContentsTheSame(oldItem: Album, newItem: Album): Boolean {
             return oldItem == newItem
         }
 
-        override fun areItemsTheSame(oldItem: SampleAlbum, newItem: SampleAlbum): Boolean {
-            return oldItem.name == newItem.name
+        override fun areItemsTheSame(oldItem: Album, newItem: Album): Boolean {
+            return oldItem.path == newItem.path
         }
     }
 }

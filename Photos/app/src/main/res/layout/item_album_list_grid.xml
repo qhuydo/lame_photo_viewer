@@ -7,7 +7,7 @@
 
         <variable
             name="album"
-            type="com.hcmus.clc18se.photos.data.SampleAlbum" />
+            type="com.hcmus.clc18se.photos.data.Album" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:lines="1"
                     android:padding="16dp"
-                    android:text="@{album.name}"
+                    android:text="@{album.getName()}"
                     tools:text="@string/album_title" />
             </LinearLayout>
 
