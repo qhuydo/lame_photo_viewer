@@ -89,7 +89,7 @@ class PhotoViewPagerFragment : Fragment() {
         }
 
         MediaItem.bindMediaItemToImageDrawable(
-                this,
+                requireContext(),
                 binding.imageView,
                 binding.glideImageView,
                 mediaItem,

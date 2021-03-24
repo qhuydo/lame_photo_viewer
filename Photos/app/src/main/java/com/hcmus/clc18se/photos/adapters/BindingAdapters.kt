@@ -87,15 +87,9 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {
     mediaItem?.let {
         val requestOptions = RequestOptions()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .signature(
-                MediaStoreSignature(
-                    mediaItem.mimeType,
-                    TimeUnit.MILLISECONDS.toSeconds(mediaItem.dateCreated.time),
-                    mediaItem.orientation
-                )
-            )
 
-        if (mediaItem.mimeType == TYPE_SVG) {
+
+        if (mediaItem.mimeType in svgMimeTypes) {
             Glide.with(imgView.context)
                 .`as`(PictureDrawable::class.java)
                 .listener(SvgSoftwareLayerSetter())
@@ -107,7 +101,7 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {
         } else {
             Glide.with(imgView.context)
                 .load(mediaItem.uri)
-                .apply(requestOptions)
+                //.apply(requestOptions)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(imgView)
         }

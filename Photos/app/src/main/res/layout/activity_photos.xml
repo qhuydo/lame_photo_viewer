@@ -62,7 +62,6 @@
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:contentDescription="@string/create"
                 android:src="@drawable/ic_baseline_add_24"
                 app:hideOnScroll="true"
