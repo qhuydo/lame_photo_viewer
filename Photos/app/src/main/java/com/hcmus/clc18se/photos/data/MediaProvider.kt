@@ -45,7 +45,7 @@ class MediaProvider(private val context: Context) {
 
         // Return only video and image metadata.
         val selection = "${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
-         " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}"
+                " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}"
 
         val projection = arrayOf(
                 MediaStore.Files.FileColumns.DATA,
@@ -108,8 +108,10 @@ class MediaProvider(private val context: Context) {
 
                 onAlbumLoaded = true
                 _albums = albums
+
+                // TODO: select sort type
+                albums.sortBy { album -> album.getName()?.toLowerCase(Locale.ROOT) }
                 withContext(Dispatchers.Main) {
-                    // TODO: sort the album
                     onMediaLoadedCallback.onMediaLoaded(albums)
                 }
 

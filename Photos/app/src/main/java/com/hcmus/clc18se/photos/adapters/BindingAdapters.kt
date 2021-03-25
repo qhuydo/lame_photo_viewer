@@ -138,3 +138,11 @@ fun setVideoVisibility(videoThumbnail: ImageView, mediaItem: MediaItem?) {
         videoThumbnail.visibility = if (it.isVideo()) View.VISIBLE else View.INVISIBLE
     }
 }
+
+@BindingAdapter("selectThumbnail")
+fun selectAlbumThumbnail(image: ImageView, album: Album?) {
+    album?.let {
+        val mediaItem = album.getRandomMediaItem()
+        bindImage(image, mediaItem)
+    }
+}

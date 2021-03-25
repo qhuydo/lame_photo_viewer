@@ -36,8 +36,8 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:cropToPadding="true"
+                    app:selectThumbnail="@{album}"
                     android:scaleType="centerCrop"
-                    app:imageFromResId="@{album.resId}"
                     tools:src="@tools:sample/backgrounds/scenic" />
 
                 <TextView
