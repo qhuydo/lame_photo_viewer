@@ -30,6 +30,7 @@ data class MediaItem(
         private var dateCreated: Date?,
         val mimeType: String?,
         private var orientation: Int?,
+        private var path: String?,
 ) : Parcelable {
 
     fun isSVG(): Boolean {
@@ -44,6 +45,10 @@ data class MediaItem(
         return (mimeType in gifMimeTypes)
     }
 
+    fun isVideo(): Boolean {
+        return (mimeType in videoMimeTypes)
+    }
+
     fun isEditable() = isSupportedStaticImage()
 
     fun requireUri(): Uri {
@@ -51,17 +56,22 @@ data class MediaItem(
             return it
         }
         val itemUri = ContentUris.withAppendedId(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                MediaStore.Files.getContentUri("external"),
                 id)
         uri = itemUri
         return itemUri
     }
 
+    fun requirePath(): String? {
+        // TODO: get the path from contentUri
+        return path
+    }
+
 
     companion object {
 
-        fun getInstance(id: Long, context: Context, uri: Uri?, mimeType: String): MediaItem {
-            return MediaItem(id, null, uri, null, mimeType, null)
+        fun getInstance(id: Long, context: Context, uri: Uri?, mimeType: String, path: String? = null): MediaItem {
+            return MediaItem(id, null, uri, null, mimeType, null, path)
         }
 
         val DiffCallBack = object : DiffUtil.ItemCallback<MediaItem>() {

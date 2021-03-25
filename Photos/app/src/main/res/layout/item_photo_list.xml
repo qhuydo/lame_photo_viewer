@@ -20,19 +20,36 @@
         android:focusable="true"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/photo_list_item_image"
+        <FrameLayout
+            android:id="@+id/image_frame"
             android:layout_width="@dimen/photo_list_item_size_big"
             android:layout_height="0dp"
-            android:scaleType="centerCrop"
-            app:cornerSize="10%"
-            app:imageFromMediaItem="@{photo}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/photo_list_item_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:cornerSize="10%"
+                app:imageFromMediaItem="@{photo}"
+                tools:ignore="ContentDescription"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                android:id="@+id/play_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_outline_play_circle_outline_24"
+                android:visibility="invisible"
+                app:videoThumbnailVisibility="@{photo}"
+                tools:ignore="ContentDescription"
+                tools:visibility="visible" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/photo_list_item_name"
@@ -43,9 +60,10 @@
             android:lines="1"
             android:text="@{photo.name}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/photo_list_item_image"
-            app:layout_constraintTop_toTopOf="@+id/photo_list_item_image"
-            tools:text="TDB.png" />
+            app:layout_constraintStart_toEndOf="@+id/image_frame"
+            app:layout_constraintTop_toTopOf="@+id/image_frame"
+            tools:text="TDB.png"
+            tools:visibility="visible" />
 
         <View
             android:id="@+id/short_separator"

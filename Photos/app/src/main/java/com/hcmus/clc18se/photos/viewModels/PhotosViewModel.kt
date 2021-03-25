@@ -76,6 +76,7 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
 
             val projection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 arrayOf(MediaStore.MediaColumns._ID,
+                        MediaStore.Files.FileColumns.DATA,
                         MediaStore.MediaColumns.DISPLAY_NAME,
                         MediaStore.MediaColumns.DATE_TAKEN,
                         MediaStore.MediaColumns.MIME_TYPE,
@@ -85,19 +86,23 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
             } else {
                 arrayOf(
                         MediaStore.MediaColumns._ID,
+                        MediaStore.Files.FileColumns.DATA,
                         MediaStore.MediaColumns.DISPLAY_NAME,
                         MediaStore.MediaColumns.DATE_TAKEN,
                         MediaStore.MediaColumns.MIME_TYPE,
                         MediaStore.MediaColumns.DATE_MODIFIED,
                 )
             }
-
-            val selection = MediaStore.Images.Media.DATE_ADDED
+            val selection = "${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
+                    " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}"
+            // val selection = MediaStore.Images.Media.DATE_ADDED
             val selectionArgs: Array<String>? = null
             val sortOrder = "${MediaStore.MediaColumns.DATE_TAKEN} DESC"
 
+            val columnUri = MediaStore.Files.getContentUri("external")
+
             getApplication<Application>().contentResolver.query(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    columnUri,
                     projection,
                     selection,
                     selectionArgs,
@@ -108,6 +113,7 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
                 val dateModifiedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_TAKEN)
                 val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
                 val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+                val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
 
                 while (cursor.moveToNext()) {
                     val id = cursor.getLong(idColumn)
@@ -119,12 +125,13 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
                     } else {
                         0
                     }
+                    val path = cursor.getString(pathColumn)
 
                     val uri = ContentUris.withAppendedId(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            MediaStore.Files.getContentUri("external"),
                             id)
 
-                    val image = MediaItem(id, displayName, uri, dateAdded, mimeType, orientation)
+                    val image = MediaItem(id, displayName, uri, dateAdded, mimeType, orientation, path)
                     mediaItems += image
 
                 }

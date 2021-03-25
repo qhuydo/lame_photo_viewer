@@ -44,8 +44,8 @@ class MediaProvider(private val context: Context) {
         val columnUri = MediaStore.Files.getContentUri("external")
 
         // Return only video and image metadata.
-        val selection = "${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}"
-        " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}"
+        val selection = "${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
+         " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}"
 
         val projection = arrayOf(
                 MediaStore.Files.FileColumns.DATA,
@@ -87,7 +87,7 @@ class MediaProvider(private val context: Context) {
                     id = cursor.getLong(idColumn)
                     mimeType = cursor.getString(mimeTypeColumn)
 
-                    val mediaItem = MediaItem.getInstance(id, context, null, mimeType)
+                    val mediaItem = MediaItem.getInstance(id, context, null, mimeType, path)
 
                     //search bucket
                     val bucketPath = File(path).parent
@@ -109,6 +109,7 @@ class MediaProvider(private val context: Context) {
                 onAlbumLoaded = true
                 _albums = albums
                 withContext(Dispatchers.Main) {
+                    // TODO: sort the album
                     onMediaLoadedCallback.onMediaLoaded(albums)
                 }
 

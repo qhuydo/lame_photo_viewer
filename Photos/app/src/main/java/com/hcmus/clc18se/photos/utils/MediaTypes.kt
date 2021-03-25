@@ -118,12 +118,14 @@ fun getFileName(context: Context, uri: Uri): String? {
 
 // https://stackoverflow.com/questions/3401579/get-filename-and-path-from-uri-from-mediastore
 fun getRealPathFromURI(context: Context, contentUri: Uri?): String? {
-    val projection = arrayOf(MediaStore.Images.Media.DATA)
+    val projection = arrayOf(MediaStore.Files.FileColumns.DATA)
     val cursor = context.contentResolver.query(contentUri!!, projection, null, null, null)
 
-    return cursor?.use {
-        val columnIndex: Int = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+    var result: String? = null
+    cursor?.use {
+        val columnIndex: Int = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
         it.moveToFirst()
-        it.getString(columnIndex)
+        result =  it.getString(columnIndex)
     }
+    return result
 }

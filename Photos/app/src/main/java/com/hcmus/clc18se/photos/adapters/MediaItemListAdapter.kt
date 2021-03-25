@@ -2,6 +2,7 @@ package com.hcmus.clc18se.photos.adapters
 
 import android.content.res.Resources
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -91,7 +92,7 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
         fun bind(item: MediaItem) {
             when (listBinding) {
                 is ItemPhotoListBinding -> listBinding.apply {
-                    setItemListSize(activity.resources, photoListItemImage, itemViewSize)
+                    setItemListSize(activity.resources, imageFrame, itemViewSize)
                     photo = item
                 }
                 is ItemPhotoListGridBinding -> listBinding.apply {
@@ -127,7 +128,7 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
                 }
             }
 
-            fun setItemListSize(resources: Resources, item: ImageView, itemSize: Int) {
+            fun setItemListSize(resources: Resources, item: View, itemSize: Int) {
                 val layoutParams = item.layoutParams
                 layoutParams.width = when (itemSize) {
                     ITEM_SIZE_BIG -> resources.getDimensionPixelSize(R.dimen.photo_list_item_size_big)
