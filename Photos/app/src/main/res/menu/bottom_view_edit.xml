@@ -6,8 +6,8 @@
         android:title="@string/bright" />
     <item
         android:id="@+id/add_icon"
-        android:icon="@drawable/ic_outline_add_photo_alternate_24"
-        android:title="@string/add_icon" />
+        android:icon="@drawable/ic_baseline_add_24"
+        android:title="@string/add_on_image" />
     <item
         android:id="@+id/filter"
         android:icon="@drawable/ic_outline_filter_alt_24"

@@ -68,4 +68,7 @@
     <string name="experimental_options">Chức năng thử nghiệm</string>
     <string name="adapter_color_summary">Ứng dụng có thể bị dừng đột ngột khi bật chức năng này</string>
     <string name="image_debugger">Image debugger</string>
+    <string name="pick_color">Chọn màu</string>
+    <string name="pick_weight">Chọn kích thước nét vẽ</string>
+    <string name="add_on_image">Thêm</string>
 </resources>

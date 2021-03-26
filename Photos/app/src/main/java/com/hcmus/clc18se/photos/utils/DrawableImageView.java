@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -45,16 +46,25 @@ public class DrawableImageView extends AppCompatImageView implements View.OnTouc
         setOnTouchListener(this);
     }
 
-    public void setNewImage(Bitmap alteredBitmap, Bitmap bmp)
+    public void setNewImage(Bitmap alteredBitmap, Bitmap bmp, ColorFilter colorFilter)
     {
-        canvas = new Canvas(alteredBitmap );
+        canvas = new Canvas(alteredBitmap);
         paint = new Paint();
         paint.setColor(Color.GREEN);
         paint.setStrokeWidth(5);
+        paint.setColorFilter(colorFilter);
         matrix = new Matrix();
         canvas.drawBitmap(bmp, matrix, paint);
 
         setImageBitmap(alteredBitmap);
+    }
+
+    public void setNewColor(int color){
+        paint.setColor(color);
+    }
+
+    public void setWeight(int weight){
+        paint.setStrokeWidth(weight);
     }
 
     @Override

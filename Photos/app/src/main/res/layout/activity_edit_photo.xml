@@ -80,6 +80,14 @@
             android:layout_above="@id/bottom_edit"
             android:visibility="gone" />
 
+        <include
+            android:id="@+id/draw_config_editor"
+            layout="@layout/bottom_editor_config_draw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bottom_edit"
+            android:visibility="gone" />
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_edit"
             android:layout_width="match_parent"
@@ -99,22 +107,12 @@
             android:src="@drawable/ic_outline_save_24" />
 
         <ImageButton
-            android:id="@+id/draw"
+            android:id="@+id/undo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/saveImage"
             android:layout_alignParentEnd="true"
-            android:contentDescription="@string/draw"
-            android:onClick="onDrawButtonClick"
-            android:src="@drawable/ic_outline_edit_24" />
-        <ImageButton
-            android:id="@+id/undo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/draw"
-            android:layout_alignParentEnd="true"
             android:contentDescription="@string/undo"
-            android:onClick="onDrawButtonClick"
             android:src="@drawable/ic_outline_undo_24" />
     </RelativeLayout>
 </layout>

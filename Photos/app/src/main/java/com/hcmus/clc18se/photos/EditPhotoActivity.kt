@@ -9,18 +9,18 @@ import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
-import android.view.MotionEvent
 import android.view.View
-import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toBitmap
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
 import com.hcmus.clc18se.photos.utils.DrawableImageView
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.*
-import timber.log.Timber
+import yuku.ambilwarna.AmbilWarnaDialog
+import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -51,6 +51,7 @@ class EditPhotoActivity : AppCompatActivity() {
     private var isDraw: Boolean = false
     private var viewCrop: CropImageView? = null
     private var viewDraw: DrawableImageView? = null
+    private var curColorDraw: Int = Color.GREEN
 
     // use in draw in picture
     var downx: Float = 0f
@@ -103,9 +104,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         brightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
             ) {
                 brightness = brightSeekBar.progress
                 tempRed = brightness
@@ -124,9 +125,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         redSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
             ) {
                 tempRed = redSeekBar.progress
                 binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
@@ -138,9 +139,9 @@ class EditPhotoActivity : AppCompatActivity() {
         })
         greenSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
             ) {
                 tempGreen = greenSeekBar.progress
                 binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
@@ -152,9 +153,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         blueSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
             ) {
                 tempBlue = blueSeekBar.progress
                 binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
@@ -219,10 +220,10 @@ class EditPhotoActivity : AppCompatActivity() {
                 newPixel = if (intensity > INTENSITY_FACTOR) {
                     // apply white color
                     Color.argb(
-                        oldAlpha,
-                        HIGHEST_COLOR_VALUE,
-                        HIGHEST_COLOR_VALUE,
-                        HIGHEST_COLOR_VALUE
+                            oldAlpha,
+                            HIGHEST_COLOR_VALUE,
+                            HIGHEST_COLOR_VALUE,
+                            HIGHEST_COLOR_VALUE
                     )
                 } else if (intensity > 100) {
                     // apply grey color
@@ -244,8 +245,8 @@ class EditPhotoActivity : AppCompatActivity() {
             binding.progressCircular.visibility = View.VISIBLE
             binding.imageEdit.colorFilter =
                     PorterDuffColorFilter(
-                        Color.argb(200, 0, 255, 0),
-                        PorterDuff.Mode.SRC_OVER
+                            Color.argb(200, 0, 255, 0),
+                            PorterDuff.Mode.SRC_OVER
                     )
             binding.progressCircular.visibility = View.INVISIBLE
         }
@@ -283,18 +284,18 @@ class EditPhotoActivity : AppCompatActivity() {
 
     fun invertColors(bmpOriginal: Bitmap): Bitmap? {
         val bitmap = Bitmap.createBitmap(
-            bmpOriginal.width,
-            bmpOriginal.height,
-            Bitmap.Config.ARGB_8888
+                bmpOriginal.width,
+                bmpOriginal.height,
+                Bitmap.Config.ARGB_8888
         )
 
         val matrixInvert = ColorMatrix(
-            floatArrayOf(
-                -1.0f, 0.0f, 0.0f, 0.0f, 255.0f,
-                0.0f, -1.0f, 0.0f, 0.0f, 255.0f,
-                0.0f, 0.0f, -1.0f, 0.0f, 255.0f,
-                0.0f, 0.0f, 0.0f, 1.0f, 0.0f
-            )
+                floatArrayOf(
+                        -1.0f, 0.0f, 0.0f, 0.0f, 255.0f,
+                        0.0f, -1.0f, 0.0f, 0.0f, 255.0f,
+                        0.0f, 0.0f, -1.0f, 0.0f, 255.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+                )
         )
 
 
@@ -348,13 +349,13 @@ class EditPhotoActivity : AppCompatActivity() {
 
     fun setColor(progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter {
         val progress = max(
-            max(abs(progressRed - 100), abs(progressGreen - 100)),
-            abs(progressBlue - 100)
+                max(abs(progressRed - 100), abs(progressGreen - 100)),
+                abs(progressBlue - 100)
         )
         val value = progress * 255 / 100
         return PorterDuffColorFilter(
-            Color.argb(value, progressRed, progressGreen, progressBlue),
-            PorterDuff.Mode.SRC_OVER
+                Color.argb(value, progressRed, progressGreen, progressBlue),
+                PorterDuff.Mode.SRC_OVER
         )
     }
 
@@ -371,15 +372,22 @@ class EditPhotoActivity : AppCompatActivity() {
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         if (item.itemId in listOf(
-                R.id.bright,
-                R.id.filter,
-                R.id.add_icon,
-                R.id.crop,
-                R.id.change_color
-            )) {
+                        R.id.bright,
+                        R.id.filter,
+                        R.id.add_icon,
+                        R.id.crop,
+                        R.id.change_color
+                )) {
             if (isCrop) {
                 viewCrop?.let {
                     bitmap = it.croppedImage
+                    bindImage(binding.imageEdit, bitmap)
+                    isCrop = false
+                }
+            }
+            if (isDraw) {
+                viewDraw?.let {
+                    bitmap = it.drawable.toBitmap(bitmap!!.width,bitmap!!.height,bitmap!!.config)
                     bindImage(binding.imageEdit, bitmap)
                     isCrop = false
                 }
@@ -406,6 +414,7 @@ class EditPhotoActivity : AppCompatActivity() {
             cropEditor.cropEditorLayout.visibility = View.GONE
             colorEditor.colorEditorLayout.visibility = View.GONE
             drawEditor.drawEditorLayout.visibility = View.GONE
+            drawConfigEditor.drawConfigLayout.visibility = View.GONE
         }
         when (itemId) {
             R.id.bright -> binding.brightEditor.brightEditorLayout.visibility = View.VISIBLE
@@ -420,29 +429,40 @@ class EditPhotoActivity : AppCompatActivity() {
                 }
             }
             R.id.change_color -> binding.colorEditor.colorEditorLayout.visibility = View.VISIBLE
-            R.id.draw -> {
-                viewDraw?.let {
-                    binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
-                    alteredBitmap = Bitmap.createBitmap(
-                        bitmap!!.getWidth(), bitmap!!
-                            .getHeight(), bitmap!!.getConfig()
-                    )
-                    viewDraw!!.setNewImage(alteredBitmap,bitmap)
-                    binding.drawEditor.drawEditorLayout.visibility = View.VISIBLE
-                    isDraw = true
-                }
-            }
         }
     }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun onDrawButtonClick(view: View) {
-        setBarVisibility(R.id.draw)
+    fun onDrawMode(view:View){
+        viewDraw?.let {
+            binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
+            binding.addIconEditor.visibility = View.GONE
+            binding.drawConfigEditor.drawConfigLayout.visibility = View.VISIBLE
+            alteredBitmap = Bitmap.createBitmap(
+                    bitmap!!.width, bitmap!!
+                    .height, bitmap!!.getConfig()
+            )
+            viewDraw!!.setNewImage(alteredBitmap, bitmap,setColor(tempRed, tempGreen, tempBlue))
+            viewDraw!!.setNewColor(curColorDraw)
+            binding.drawEditor.drawEditorLayout.visibility = View.VISIBLE
+            isDraw = true
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun onSaveImageButtonClick(view: View) {
 
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onPickColorButtonClick(view: View) {
+        val colorPicker = AmbilWarnaDialog(this, curColorDraw, object : OnAmbilWarnaListener {
+            override fun onCancel(dialog: AmbilWarnaDialog) {}
+            override fun onOk(dialog: AmbilWarnaDialog, color: Int) {
+                curColorDraw = color
+                binding.drawConfigEditor.pickColor.setBackgroundColor(curColorDraw)
+                viewDraw!!.setNewColor(curColorDraw)
+            }
+        })
+        colorPicker.show()
     }
 
 }

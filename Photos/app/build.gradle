@@ -80,6 +80,7 @@ dependencies {
     // Crop image
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
     implementation 'com.caverock:androidsvg-aar:1.4'
+    implementation 'com.github.yukuku:ambilwarna:2.0.1'
 
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$rootProject.testExtJunit"
