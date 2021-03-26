@@ -55,24 +55,33 @@ class HomeViewPagerFragment : Fragment() {
 
         // Register on page change listener to dismiss the multi-select menu in photo fragment when
         // changing to other tabs
-        viewPager.registerOnPageChangeCallback(
-
-                object : ViewPager2.OnPageChangeCallback() {
-
-                    override fun onPageSelected(position: Int) {
-                        super.onPageSelected(position)
-
-                        if (position != PAGE_PHOTOS) {
-                            val photosFragment = childFragmentManager.findFragmentByTag("f$PAGE_PHOTOS") as PhotosFragment
-                            photosFragment.mainCab?.let {
-                                it.destroy()
-                                // photosFragment.mainCab = null
-                                Timber.d("Multi-select menu dismissed")
-                            }
-                        }
-                    }
-                }
-        )
+//        viewPager.registerOnPageChangeCallback(
+//
+//                object : ViewPager2.OnPageChangeCallback() {
+//
+//                    override fun onPageSelected(position: Int) {
+//                        super.onPageSelected(position)
+//
+//                        if (position != PAGE_PHOTOS) {
+//                            Timber.d("OnPageSelected(): position $position")
+//
+//                            var photosFragment: PhotosFragment? = null
+//                            try {
+//                                photosFragment = childFragmentManager.findFragmentByTag("f$PAGE_PHOTOS") as PhotosFragment
+//                                photosFragment.mainCab?.let {
+//                                    it.destroy()
+//                                    // photosFragment.mainCab = null
+//                                    Timber.d("Multi-select menu dismissed")
+//                                }
+//                            } catch (ex: NullPointerException) {
+//                                Timber.e("Something went wrong :((((")
+//                            } finally {
+//
+//                            }
+//                        }
+//                    }
+//                }
+//        )
 
         parentActivity.setSupportActionBar(parentActivity.binding.topAppBar.searchActionBar)
 

@@ -49,6 +49,7 @@ class MediaProvider(private val context: Context) {
 
         val projection = arrayOf(
                 MediaStore.Files.FileColumns.DATA,
+                MediaStore.MediaColumns.DISPLAY_NAME,
                 MediaStore.MediaColumns.MIME_TYPE,
                 MediaStore.MediaColumns.BUCKET_ID,
                 MediaStore.MediaColumns.BUCKET_DISPLAY_NAME,
@@ -59,7 +60,6 @@ class MediaProvider(private val context: Context) {
 
         val sortOrder = MediaStore.Files.FileColumns.DATE_ADDED
 
-        // TODO: checking hidden folders
         val folderMap = HashMap<String, Album>()
 
         scope.launch {
@@ -77,8 +77,10 @@ class MediaProvider(private val context: Context) {
                 var path: String
                 var id: Long
                 var mimeType: String
+                var name: String
 
                 val idColumn = cursor.getColumnIndex(BaseColumns._ID)
+                val nameColumn = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
                 val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
                 val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
 
@@ -86,8 +88,9 @@ class MediaProvider(private val context: Context) {
                     path = cursor.getString(pathColumn)
                     id = cursor.getLong(idColumn)
                     mimeType = cursor.getString(mimeTypeColumn)
+                    name = cursor.getString(nameColumn)
 
-                    val mediaItem = MediaItem.getInstance(id, context, null, mimeType, path)
+                    val mediaItem = MediaItem.getInstance(id, name, null, mimeType, path)
 
                     //search bucket
                     val bucketPath = File(path).parent

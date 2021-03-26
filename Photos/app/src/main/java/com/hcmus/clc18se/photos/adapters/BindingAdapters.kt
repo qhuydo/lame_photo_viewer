@@ -98,10 +98,10 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {
         } else if (mediaItem.isVideo()) {
 
             // val path = getRealPathFromURI(imgView.context, mediaItem.requireUri())
-            val path = mediaItem.requirePath()
+            // val path = mediaItem.requirePath(imgView.context)
             Timber.d("Load video thumbnail from Glide ")
             Timber.d("Uri ${mediaItem.requireUri()}")
-            Timber.d("Path ${mediaItem.requirePath()}")
+            Timber.d("Path ${mediaItem.requirePath(imgView.context)}")
 
             Glide.with(imgView.context)
                     .asBitmap()

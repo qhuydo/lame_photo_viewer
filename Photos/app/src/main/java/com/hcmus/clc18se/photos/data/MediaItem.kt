@@ -25,9 +25,9 @@ import java.util.*
 @Parcelize
 data class MediaItem(
         val id: Long,
-        var name: String?,
+        val name: String,
         private var uri: Uri?,
-        private var dateCreated: Date?,
+        private var dateTaken: Date?,
         val mimeType: String?,
         private var orientation: Int?,
         private var path: String?,
@@ -62,16 +62,21 @@ data class MediaItem(
         return itemUri
     }
 
-    fun requirePath(): String? {
-        // TODO: get the path from contentUri
+    fun requirePath(context: Context): String? {
+        path?.let {
+            try {
+                path = getRealPathFromURI(context, requireUri())
+            } catch (ex: Exception) {
+                Timber.e("$ex")
+            }
+        }
         return path
     }
 
-
     companion object {
 
-        fun getInstance(id: Long, context: Context, uri: Uri?, mimeType: String, path: String? = null): MediaItem {
-            return MediaItem(id, null, uri, null, mimeType, null, path)
+        fun getInstance(id: Long, name: String, uri: Uri?, mimeType: String, path: String? = null): MediaItem {
+            return MediaItem(id, name, uri, null, mimeType, null, path)
         }
 
         val DiffCallBack = object : DiffUtil.ItemCallback<MediaItem>() {

@@ -121,11 +121,10 @@ fun getRealPathFromURI(context: Context, contentUri: Uri?): String? {
     val projection = arrayOf(MediaStore.Files.FileColumns.DATA)
     val cursor = context.contentResolver.query(contentUri!!, projection, null, null, null)
 
-    var result: String? = null
-    cursor?.use {
+    return cursor?.use {
         val columnIndex: Int = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
         it.moveToFirst()
-        result =  it.getString(columnIndex)
+        it.getString(columnIndex)
     }
-    return result
+
 }
