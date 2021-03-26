@@ -52,6 +52,7 @@ class EditPhotoActivity : AppCompatActivity() {
     private var viewCrop: CropImageView? = null
     private var viewDraw: DrawableImageView? = null
     private var curColorDraw: Int = Color.GREEN
+    private var curWeightDraw: Int = 5
 
     // use in draw in picture
     var downx: Float = 0f
@@ -101,6 +102,7 @@ class EditPhotoActivity : AppCompatActivity() {
         val redSeekBar = binding.colorEditor.editorRed
         val greenSeekBar = binding.colorEditor.editorGreen
         val blueSeekBar = binding.colorEditor.editorBlue
+        val weightSeekBar = binding.drawConfigEditor.weightSeekbar
 
         brightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
@@ -159,6 +161,20 @@ class EditPhotoActivity : AppCompatActivity() {
             ) {
                 tempBlue = blueSeekBar.progress
                 binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        weightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+            ) {
+                curWeightDraw = weightSeekBar.progress
+                viewDraw!!.setWeight(curWeightDraw)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -442,6 +458,7 @@ class EditPhotoActivity : AppCompatActivity() {
             )
             viewDraw!!.setNewImage(alteredBitmap, bitmap,setColor(tempRed, tempGreen, tempBlue))
             viewDraw!!.setNewColor(curColorDraw)
+            viewDraw!!.setWeight(curWeightDraw)
             binding.drawEditor.drawEditorLayout.visibility = View.VISIBLE
             isDraw = true
         }
