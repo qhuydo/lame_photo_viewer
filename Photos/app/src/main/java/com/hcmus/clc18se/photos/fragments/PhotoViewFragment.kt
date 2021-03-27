@@ -59,7 +59,7 @@ class PhotoViewFragment : Fragment() {
 
         binding = FragmentPhotoViewBinding.inflate(inflater, container, false)
 
-        setBottomToolbarVisibility(false)
+        // setBottomToolbarVisibility(false)
 
         binding.apply {
             lifecycleOwner = this@PhotoViewFragment

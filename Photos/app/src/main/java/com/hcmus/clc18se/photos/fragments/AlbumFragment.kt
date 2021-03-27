@@ -15,6 +15,8 @@ import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
+import com.hcmus.clc18se.photos.data.Album
+import com.hcmus.clc18se.photos.data.MediaProvider
 import com.hcmus.clc18se.photos.databinding.FragmentAlbumBinding
 import com.hcmus.clc18se.photos.utils.getSpanCountForAlbumList
 import com.hcmus.clc18se.photos.utils.setAlbumListIcon
@@ -22,6 +24,7 @@ import com.hcmus.clc18se.photos.utils.setAlbumListItemSizeOption
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import timber.log.Timber
+import java.util.ArrayList
 
 class AlbumFragment : Fragment() {
     private lateinit var binding: FragmentAlbumBinding
@@ -103,16 +106,27 @@ class AlbumFragment : Fragment() {
         binding.apply {
 
             albumViewModel = this@AlbumFragment.albumViewModel
-            albumListLayout.albumListRecyclerView.adapter = AlbumListAdapter(albumAdapterListener,
+            val adapter = AlbumListAdapter(albumAdapterListener,
                     resources,
                     currentListItemView,
                     currentListItemSize)
 
+            albumListLayout.albumListRecyclerView.adapter = adapter
             albumListLayout.albumList = this@AlbumFragment.albumViewModel.albumList.value
 
             val layoutManager = albumListLayout.albumListRecyclerView.layoutManager as GridLayoutManager
             layoutManager.spanCount = getSpanCountForAlbumList(
                     resources, currentListItemView, currentListItemSize)
+
+            swipeRefreshLayout.setOnRefreshListener {
+                (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.OnMediaLoadedCallback {
+                    override fun onMediaLoaded(albums: ArrayList<Album>?) {
+                        this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
+                        adapter.notifyDataSetChanged()
+                        swipeRefreshLayout.isRefreshing = false
+                    }
+                })
+            }
         }
         return binding.root
     }
@@ -142,8 +156,20 @@ class AlbumFragment : Fragment() {
             R.id.album_item_view_size_big -> onItemSizeOptionClicked(item)
             R.id.album_item_view_size_medium -> onItemSizeOptionClicked(item)
             R.id.album_item_view_size_small -> onItemSizeOptionClicked(item)
+            R.id.menu_refresh -> onRefreshAlbumList()
             else -> false
         }
+    }
+
+    private fun onRefreshAlbumList(): Boolean {
+        binding.swipeRefreshLayout.isRefreshing = true
+        (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.OnMediaLoadedCallback {
+            override fun onMediaLoaded(albums: ArrayList<Album>?) {
+                this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+        })
+        return true
     }
 
     private fun onItemTypeButtonClicked() {

@@ -10,6 +10,12 @@
         android:visible="true"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="@string/refresh"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/album_item_view_size"
         android:title="@string/item_size"

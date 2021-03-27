@@ -21,7 +21,8 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
         get() = _idx
 
     fun getSelectedAlbum(): Album? {
-        return _albumList.value?.get(idx.value ?: 0)
+        // return _albumList.value?.get(idx.value ?: 0)
+        return navigateToPhotoList.value ?: _albumList.value?.get(idx.value ?: 0)
     }
 
     fun setCurrentItemView(newIdx: Int) {
@@ -31,7 +32,6 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-
 
     fun notifyAlbumLoaded() {
         _onAlbumLoaded.value = true

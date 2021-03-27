@@ -40,9 +40,27 @@ class HomeViewPagerFragment : Fragment() {
         return binding.root
     }
 
+    private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+
+        override fun onPageSelected(position: Int) {
+            if (position != PAGE_PHOTOS) {
+                Timber.d("OnPageSelected(): position $position")
+                val photosFragment = childFragmentManager.findFragmentByTag("f$PAGE_PHOTOS") as? PhotosFragment
+
+                photosFragment?.mainCab?.let {
+                    it.destroy()
+                    // photosFragment.mainCab = null
+                    Timber.d("Multi-select menu dismissed")
+                }
+            }
+        }
+    }
+
     private fun setUpTabsLayout() {
-        val tabLayout = parentActivity.binding.topAppBar.tabs
         val viewPager = binding.viewPager
+        viewPager.unregisterOnPageChangeCallback(onPageChangeCallback)
+
+        val tabLayout = parentActivity.binding.topAppBar.tabs
         val adapter = HomeViewPagerAdapter(this)
 
         viewPager.adapter = adapter
@@ -55,33 +73,7 @@ class HomeViewPagerFragment : Fragment() {
 
         // Register on page change listener to dismiss the multi-select menu in photo fragment when
         // changing to other tabs
-//        viewPager.registerOnPageChangeCallback(
-//
-//                object : ViewPager2.OnPageChangeCallback() {
-//
-//                    override fun onPageSelected(position: Int) {
-//                        super.onPageSelected(position)
-//
-//                        if (position != PAGE_PHOTOS) {
-//                            Timber.d("OnPageSelected(): position $position")
-//
-//                            var photosFragment: PhotosFragment? = null
-//                            try {
-//                                photosFragment = childFragmentManager.findFragmentByTag("f$PAGE_PHOTOS") as PhotosFragment
-//                                photosFragment.mainCab?.let {
-//                                    it.destroy()
-//                                    // photosFragment.mainCab = null
-//                                    Timber.d("Multi-select menu dismissed")
-//                                }
-//                            } catch (ex: NullPointerException) {
-//                                Timber.e("Something went wrong :((((")
-//                            } finally {
-//
-//                            }
-//                        }
-//                    }
-//                }
-//        )
+        viewPager.registerOnPageChangeCallback(onPageChangeCallback)
 
         parentActivity.setSupportActionBar(parentActivity.binding.topAppBar.searchActionBar)
 
