@@ -33,12 +33,19 @@ class MediaProvider(private val context: Context) {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    interface OnMediaLoadedCallback {
+    interface MediaProviderCallBack {
         fun onMediaLoaded(albums: ArrayList<Album>?)
+
+        fun onHasNoPermission() {}
     }
 
-    fun loadAlbum(onMediaLoadedCallback: OnMediaLoadedCallback) {
-        // TODO: check permission
+    fun loadAlbum(callback: MediaProviderCallBack) {
+
+        if (!hasPermission()) {
+            Timber.i("Did not have storage permission")
+            callback.onHasNoPermission()
+        }
+
         val albums = ArrayList<Album>()
 
         val columnUri = MediaStore.Files.getContentUri("external")
@@ -115,7 +122,7 @@ class MediaProvider(private val context: Context) {
                 // TODO: select sort type
                 albums.sortBy { album -> album.getName()?.toLowerCase(Locale.ROOT) }
                 withContext(Dispatchers.Main) {
-                    onMediaLoadedCallback.onMediaLoaded(albums)
+                    callback.onMediaLoaded(albums)
                 }
 
                 Timber.d("onMediaLoaded(): ${(System.currentTimeMillis() - startTime)} ms")

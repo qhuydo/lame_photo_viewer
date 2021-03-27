@@ -55,14 +55,26 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     internal abstract fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean = false)
 
+    private val mediaItemCallback = object : MediaProvider.MediaProviderCallBack {
+        override fun onMediaLoaded(albums: ArrayList<Album>?) {
+            viewModel.notifyAlbumLoaded()
+        }
+
+        override fun onHasNoPermission() {
+           jumpToMainActivity()
+        }
+    }
+
+    internal fun jumpToMainActivity() {
+        val intent = Intent(this@AbstractPhotosActivity, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mediaProvider.loadAlbum(object: MediaProvider.OnMediaLoadedCallback {
-            override fun onMediaLoaded(albums: ArrayList<Album>?) {
-                viewModel.notifyAlbumLoaded()
-            }
-        })
+        mediaProvider.loadAlbum(mediaItemCallback)
         colorResource.configColor(this)
         colorResource.configTheme()
         configLanguage()

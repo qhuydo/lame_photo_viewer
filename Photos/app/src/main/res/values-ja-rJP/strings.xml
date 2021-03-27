@@ -67,4 +67,7 @@
     <string name="experimental_options">試験運用版の機能と開発者向けオプション</string>
     <string name="adapter_color_summary">これらのオプションを有効するとき、アプリがクラッシュを引き起こす可能性があります。</string>
     <string name="image_debugger">写真のデバッガー</string>
+    <string name="pick_color">色を選択</string>
+    <string name="pick_weight">ブラシの厚さ</string>
+    <string name="add_on_image">追加…</string>
 </resources>

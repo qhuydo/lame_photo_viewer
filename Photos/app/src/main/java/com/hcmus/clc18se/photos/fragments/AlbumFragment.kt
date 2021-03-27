@@ -50,6 +50,9 @@ class AlbumFragment : Fragment() {
     }
 
     private val albumAdapterListener = AlbumListAdapter.OnClickListener {
+        // I know something went wrong with this, but it was kinda runnable,
+        // so I left this untouched until the obvious bug appears.
+        // TODO: investigate bugs in these line, or somewhere else.
         val idx = albumViewModel.albumList.value?.indexOf(it) ?: -1
         albumViewModel.setCurrentItemView(idx)
         albumViewModel.startNavigatingToPhotoList(it)
@@ -83,11 +86,19 @@ class AlbumFragment : Fragment() {
 
         binding.lifecycleOwner = this@AlbumFragment
 
+        binding.albumViewModel = this@AlbumFragment.albumViewModel
+        val adapter = AlbumListAdapter(albumAdapterListener,
+                resources,
+                currentListItemView,
+                currentListItemSize)
+
+
         albumViewModel.onAlbumLoaded.observe(viewLifecycleOwner, {
             if (it == true) {
+                binding.progressCircular.visibility = View.INVISIBLE
                 albumViewModel.albumList.value?.let { list ->
                     bindSampleAlbumListRecyclerView(binding.albumListLayout.albumListRecyclerView, list)
-                    binding.albumListLayout.albumListRecyclerView.adapter?.notifyDataSetChanged()
+                    adapter.submitList(this@AlbumFragment.albumViewModel.albumList.value)
                 }
             }
         })
@@ -103,13 +114,8 @@ class AlbumFragment : Fragment() {
             }
         })
 
+        // TODO: clean this mess
         binding.apply {
-
-            albumViewModel = this@AlbumFragment.albumViewModel
-            val adapter = AlbumListAdapter(albumAdapterListener,
-                    resources,
-                    currentListItemView,
-                    currentListItemSize)
 
             albumListLayout.albumListRecyclerView.adapter = adapter
             albumListLayout.albumList = this@AlbumFragment.albumViewModel.albumList.value
@@ -119,11 +125,14 @@ class AlbumFragment : Fragment() {
                     resources, currentListItemView, currentListItemSize)
 
             swipeRefreshLayout.setOnRefreshListener {
-                (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.OnMediaLoadedCallback {
+                (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
                     override fun onMediaLoaded(albums: ArrayList<Album>?) {
                         this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
-                        adapter.notifyDataSetChanged()
                         swipeRefreshLayout.isRefreshing = false
+                    }
+
+                    override fun onHasNoPermission() {
+                        (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
                     }
                 })
             }
@@ -163,10 +172,14 @@ class AlbumFragment : Fragment() {
 
     private fun onRefreshAlbumList(): Boolean {
         binding.swipeRefreshLayout.isRefreshing = true
-        (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.OnMediaLoadedCallback {
+        (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
             override fun onMediaLoaded(albums: ArrayList<Album>?) {
                 this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
                 binding.swipeRefreshLayout.isRefreshing = false
+            }
+
+            override fun onHasNoPermission() {
+                (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
             }
         })
         return true

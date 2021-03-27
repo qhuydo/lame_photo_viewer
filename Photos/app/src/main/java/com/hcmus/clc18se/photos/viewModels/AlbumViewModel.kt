@@ -34,8 +34,8 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun notifyAlbumLoaded() {
-        _onAlbumLoaded.value = true
         _albumList.value = MediaProvider.albums
+        _onAlbumLoaded.value = true
     }
 
     fun startNavigatingToPhotoList(album: Album) {

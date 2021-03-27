@@ -1,6 +1,6 @@
 <!DOCTYPE resources [<!ENTITY appname "Lame photo Viewer">]>
-<resources>
-    <string name="app_name" translatable="false">&appname;</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="MissingTranslation">&appname;</string>
     <string name="about">About</string>
     <string name="photo_title">Photos</string>
     <string name="people_title">People</string>
@@ -71,7 +71,7 @@
     <string name="rotate">Rotate</string>
     <string name="photo_properties">Properties</string>
     <string name="grant_permission">Grant Permission</string>
-    <string name="permission_not_granted">&appname;To continue, please give access to your photos</string>
+    <string name="permission_not_granted">To continue, please give &appname; access to your photos</string>
     <string name="undo">Undo</string>
     <string name="select_all">Select all</string>
     <string name="set_as">Set as</string>
@@ -84,8 +84,8 @@
     <string name="image_debugger_key" translatable="false">image_debugger</string>
     <string name="image_debugger">Image debugger</string>
     <string name="full_screen_view_image_key" translatable="false">full_screen_view_image_key</string>
-    <string name="pick_color">pick_color</string>
-    <string name="pick_weight">pick_weight</string>
-    <string name="add_on_image">add</string>
+    <string name="pick_color">Pick color</string>
+    <string name="pick_weight">Brush thickness </string>
+    <string name="add_on_image">Add</string>
 
 </resources>
