@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.provider.BaseColumns
 import android.provider.MediaStore
 import androidx.core.content.ContextCompat
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.io.File
@@ -16,15 +17,20 @@ import kotlin.collections.HashMap
 class MediaProvider(private val context: Context) {
 
     companion object {
-        private var _albums: ArrayList<Album>? = null
+        // TODO: get this variable a better name
+        private var privateAlbums: ArrayList<Album>? = null
         val albums: ArrayList<Album>?
-            get() = _albums
+            get() = privateAlbums
+
+        private var privateFavouriteMediaItems: ArrayList<MediaItem>? = null
+        val favouriteMediaItems: ArrayList<MediaItem>?
+            get() = privateFavouriteMediaItems
+
     }
 
     private var onAlbumLoaded: Boolean = false
 
-    private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.Default + job)
+    private val scope = CoroutineScope(Dispatchers.Default)
 
     private fun hasPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -117,7 +123,7 @@ class MediaProvider(private val context: Context) {
                 }
 
                 onAlbumLoaded = true
-                _albums = albums
+                privateAlbums = albums
 
                 // TODO: select sort type
                 albums.sortBy { album -> album.getName()?.toLowerCase(Locale.ROOT) }
@@ -132,4 +138,76 @@ class MediaProvider(private val context: Context) {
 
     }
 
+    private suspend fun loadMediaItemFromId(id: Long): MediaItem? {
+
+        val columnUri = MediaStore.Files.getContentUri("external")
+
+        // Return only video and image metadata.
+        val selection = "(${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
+                " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO})" +
+                " AND ${BaseColumns._ID}=${id}"
+
+        val projection = arrayOf(
+                MediaStore.Files.FileColumns.DATA,
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                MediaStore.MediaColumns.MIME_TYPE,
+                MediaStore.MediaColumns.BUCKET_ID,
+                MediaStore.MediaColumns.BUCKET_DISPLAY_NAME,
+                BaseColumns._ID,
+        )
+
+        val selectionArgs: Array<String>? = null
+
+        context.contentResolver.query(
+                columnUri,
+                projection,
+                selection,
+                selectionArgs,
+                null
+        )?.use { cursor ->
+
+            val path: String
+            val id: Long
+            val mimeType: String
+            val name: String
+
+            val idColumn = cursor.getColumnIndex(BaseColumns._ID)
+            val nameColumn = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+            val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+            val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
+
+            if (cursor.moveToNext()) {
+                path = cursor.getString(pathColumn)
+                id = cursor.getLong(idColumn)
+                mimeType = cursor.getString(mimeTypeColumn)
+                name = cursor.getString(nameColumn)
+
+                return MediaItem.getInstance(id, name, null, mimeType, path)
+            }
+
+        }
+        return null
+    }
+
+    fun loadFavouriteMediaItems() {
+        scope.launch {
+            Timber.d("Start loading FavouriteMediaItems")
+            val startTime = System.currentTimeMillis()
+
+            val dataSource = PhotosDatabase.getInstance(context).photosDatabaseDao
+            val favourites = dataSource.getAllFavouriteItems()
+
+            val favouriteMediaItems = ArrayList<MediaItem>()
+
+            for (favouriteItem in favourites) {
+                val mediaItem = loadMediaItemFromId(favouriteItem.id)
+                mediaItem?.let { favouriteMediaItems.add(it) }
+                        ?: dataSource.removeFavouriteItems(favouriteItem)
+            }
+
+            privateFavouriteMediaItems = favouriteMediaItems
+
+            Timber.d("loadFavouriteMediaItems(): ${(System.currentTimeMillis() - startTime)} ms")
+        }
+    }
 }

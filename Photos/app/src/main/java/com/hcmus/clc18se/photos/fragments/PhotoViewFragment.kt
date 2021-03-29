@@ -15,18 +15,29 @@ import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.EditPhotoActivity
 import com.hcmus.clc18se.photos.R
-import com.hcmus.clc18se.photos.data.MediaItem
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 
 class PhotoViewFragment : Fragment() {
     private lateinit var viewModel: PhotosViewModel
 
     private val photos by lazy { viewModel.mediaItemList.value ?: listOf() }
+
     private val preferences by lazy { (requireActivity() as AbstractPhotosActivity).preferences }
+
+    private val contentProvider by lazy { PhotosDatabase.getInstance(requireContext()).photosDatabaseDao }
+    // private val mediaProvider by lazy { (requireActivity() as AbstractPhotosActivity).mediaProvider }
+
     private lateinit var binding: FragmentPhotoViewBinding
-    private var positionCurrent: Int? = null
+
+    private var currentPosition = -1
 
     private var debug: Boolean = false
 
@@ -50,24 +61,45 @@ class PhotoViewFragment : Fragment() {
 
     }
 
+    private fun setUpBottomButtons() {
+        binding.bottomLayout.apply {
+            editButton.setOnClickListener {
+                val intent = Intent(context, EditPhotoActivity::class.java)
+                intent.putExtra("uri", photos[currentPosition].requireUri())
+                startActivity(intent)
+            }
+
+            heartButton.setOnClickListener {
+                toggleFavouriteButton()
+            }
+
+        }
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
+        // TODO: clean this code
         (activity as AbstractPhotosActivity).setNavHostFragmentTopMargin(0)
 
         binding = FragmentPhotoViewBinding.inflate(inflater, container, false)
 
-        // setBottomToolbarVisibility(false)
-
         binding.apply {
             lifecycleOwner = this@PhotoViewFragment
             photosViewModel = viewModel
-            positionCurrent = viewModel.idx.value
-
             navBarColor = activity?.window?.navigationBarColor ?: Color.BLACK
         }
+
+        setUpBottomButtons()
+        (activity as AbstractPhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
+
+        setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
+        currentPosition = viewModel.idx.value!!
+
+        initFavouriteButtonState()
+
 
         binding.horizontalViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@PhotoViewFragment)
@@ -77,36 +109,71 @@ class PhotoViewFragment : Fragment() {
 //                val window = requireActivity().window
 //                window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 //            }
+
             setCurrentItem(viewModel.idx.value!!, false)
-            (activity as AbstractPhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
-            setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
 
             binding.horizontalViewPager.registerOnPageChangeCallback(object :
                     ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
-                    positionCurrent = position
+                    currentPosition = position
                     super.onPageSelected(position)
 
                     (activity as AbstractPhotosActivity).supportActionBar?.title = photos[position].name
                     setEditButtonVisibility(photos[position].isEditable())
+                    initFavouriteButtonState()
 
                 }
             })
 
         }
 
-        binding.bottomLayout.editButton.setOnClickListener {
-            if (positionCurrent != null) {
-                val intent = Intent(context, EditPhotoActivity::class.java)
-                intent.putExtra("uri", photos[positionCurrent!!].requireUri())
-                startActivity(intent)
-            }
-        }
-
         debug = preferences.getBoolean(getString(R.string.image_debugger_key), false)
 
         activity?.window?.navigationBarColor = Color.BLACK
         return binding.root
+    }
+
+    private fun toggleFavouriteButton() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val mediaItem = viewModel.mediaItemList.value!![currentPosition]
+            val isFavouriteItem = contentProvider.hasFavouriteItem(mediaItem.id)
+
+            if (isFavouriteItem) {
+                Timber.d("MediaItem ID{${mediaItem.id}} was removed from favourites")
+                contentProvider.removeFavouriteItems(mediaItem.toFavouriteItem())
+            } else {
+                Timber.d("MediaItem ID{${mediaItem.id}} was added to favourites")
+                contentProvider.addFavouriteItems(mediaItem.toFavouriteItem())
+            }
+
+            withContext(Dispatchers.Main) {
+                changeFavouriteButtonState(!isFavouriteItem)
+            }
+        }
+
+    }
+
+    private fun changeFavouriteButtonState(isFavourite: Boolean) {
+        val resId = if (isFavourite) {
+            R.drawable.ic_baseline_favorite_24
+        } else {
+            R.drawable.ic_outline_favorite_border_24
+        }
+
+        // val drawable = ResourcesCompat.getDrawable(resources, resId, requireContext().theme)
+        binding.bottomLayout.heartButton.setImageResource(resId)
+    }
+
+
+    private fun initFavouriteButtonState() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val mediaItem = viewModel.mediaItemList.value!![currentPosition]
+            val isFavouriteItem = contentProvider.hasFavouriteItem(mediaItem.id)
+
+            withContext(Dispatchers.Main) {
+                changeFavouriteButtonState(isFavouriteItem)
+            }
+        }
     }
 
     private inner class ScreenSlidePagerAdapter(fragment: Fragment) :
@@ -144,7 +211,6 @@ class PhotoViewFragment : Fragment() {
             this.root.requestLayout()
             this.root.invalidate()
         }
-
     }
 
     override fun onDetach() {
