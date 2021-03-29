@@ -87,5 +87,6 @@
     <string name="pick_color">Pick color</string>
     <string name="pick_weight">Brush thickness </string>
     <string name="add_on_image">Add</string>
+    <string name="full_screen_view_image">View image in fullscreen</string>
 
 </resources>

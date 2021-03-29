@@ -73,6 +73,16 @@ data class MediaItem(
         return path
     }
 
+    fun toFavouriteItem(): FavouriteItem {
+        return FavouriteItem(id)
+    }
+
+//    fun isFavourite(): Boolean {
+//        return MediaProvider.favouriteMediaItems?.let {
+//            this in it
+//        } ?: false
+//    }
+
     companion object {
 
         fun getInstance(id: Long, name: String, uri: Uri?, mimeType: String, path: String? = null): MediaItem {
@@ -101,6 +111,7 @@ data class MediaItem(
                 mediaItem: MediaItem?,
                 debug: Boolean
         ) {
+            // TODO: refactor kudasai, onii-chan :<
             mediaItem?.let {
                 if (it.isSupportedStaticImage()) {
                     bindScaleImage(subScaleImageView, it.uri, debug)

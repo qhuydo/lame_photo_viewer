@@ -82,6 +82,12 @@
             app:isPreferenceVisible="true"
             app:key="@string/album_list_item_size_key"
             app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:icon="@drawable/ic_baseline_fullscreen_24"
+            android:key="@string/full_screen_view_image_key"
+            android:title="@string/full_screen_view_image" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/navigation_header">
@@ -99,11 +105,6 @@
     <PreferenceCategory
         android:icon="@drawable/ic_baseline_developer_mode_24"
         android:title="@string/experimental_options">
-
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="@string/full_screen_view_image_key"
-            android:title="View image in fullscreen"/>
 
         <SwitchPreferenceCompat
             android:defaultValue="false"

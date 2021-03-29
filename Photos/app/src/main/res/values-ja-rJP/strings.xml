@@ -70,4 +70,5 @@
     <string name="pick_color">色を選択</string>
     <string name="pick_weight">ブラシの厚さ</string>
     <string name="add_on_image">追加…</string>
+    <string name="full_screen_view_image">全画面表示モードで写真を表示</string>
 </resources>

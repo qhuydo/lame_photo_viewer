@@ -71,4 +71,5 @@
     <string name="pick_color">Chọn màu</string>
     <string name="pick_weight">Chọn kích thước nét vẽ</string>
     <string name="add_on_image">Thêm</string>
+    <string name="full_screen_view_image">Xem ảnh ở chế độ toàn màn hình</string>
 </resources>

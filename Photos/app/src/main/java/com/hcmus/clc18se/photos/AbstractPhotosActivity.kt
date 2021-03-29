@@ -61,7 +61,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         }
 
         override fun onHasNoPermission() {
-           jumpToMainActivity()
+            jumpToMainActivity()
         }
     }
 
