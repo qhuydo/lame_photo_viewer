@@ -81,6 +81,8 @@ dependencies {
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
     implementation 'com.caverock:androidsvg-aar:1.4'
     implementation 'com.github.yukuku:ambilwarna:2.0.1'
+    // Some image filter and add sticker image
+    implementation 'ja.burhanrashid52:photoeditor:1.1.0'
 
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$rootProject.testExtJunit"

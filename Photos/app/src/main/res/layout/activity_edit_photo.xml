@@ -41,8 +41,8 @@
             android:visibility="gone" />
 
         <include
-            android:id="@+id/add_icon_editor"
-            layout="@layout/bottom_editor_add_icon"
+            android:id="@+id/add_editor"
+            layout="@layout/bottom_editor_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@id/bottom_edit"
@@ -74,7 +74,15 @@
 
         <include
             android:id="@+id/draw_editor"
-            layout="@layout/bottom_editor_draw"
+            layout="@layout/editor_draw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bottom_edit"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/add_icon_editor"
+            layout="@layout/editor_add_icon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@id/bottom_edit"
@@ -83,6 +91,14 @@
         <include
             android:id="@+id/draw_config_editor"
             layout="@layout/bottom_editor_config_draw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bottom_edit"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/add_icon_config_editor"
+            layout="@layout/bottom_editor_config_add_icon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@id/bottom_edit"

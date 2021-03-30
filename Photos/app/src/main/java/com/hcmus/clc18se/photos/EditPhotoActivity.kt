@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos
 
+import android.content.Intent
 import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
@@ -18,6 +19,9 @@ import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
 import com.hcmus.clc18se.photos.utils.DrawableImageView
 import com.theartofdev.edmodo.cropper.CropImageView
+import ja.burhanrashid52.photoeditor.OnSaveBitmap
+import ja.burhanrashid52.photoeditor.PhotoEditor
+import ja.burhanrashid52.photoeditor.PhotoEditorView
 import kotlinx.coroutines.*
 import yuku.ambilwarna.AmbilWarnaDialog
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener
@@ -34,6 +38,7 @@ class EditPhotoActivity : AppCompatActivity() {
         const val HIGHEST_COLOR_VALUE = 255
         const val LOWEST_COLOR_VALUE = 0
         const val BLUR_RADIUS = 25f
+        const val PICK_IMAGE_INTENT = 2000
     }
 
     protected val colorResource by lazy { (application as PhotosApplication).colorResource }
@@ -49,8 +54,11 @@ class EditPhotoActivity : AppCompatActivity() {
     private var tempBlue: Int = 100
     private var isCrop: Boolean = false
     private var isDraw: Boolean = false
+    private var isAddIcon: Boolean = false
     private var viewCrop: CropImageView? = null
     private var viewDraw: DrawableImageView? = null
+    private var viewAddIcon: PhotoEditorView? = null
+    private lateinit var mPhotoEditor:PhotoEditor
     private var curColorDraw: Int = Color.GREEN
     private var curWeightDraw: Int = 5
 
@@ -81,7 +89,7 @@ class EditPhotoActivity : AppCompatActivity() {
             uri = intent.getParcelableExtra("uri")
 
             CoroutineScope(Dispatchers.IO).launch {
-                bitmap = getBitMapFromUri()
+                bitmap = getBitMapFromUri(uri!!)
             }
 
             bindImage(binding.imageEdit, uri)
@@ -89,6 +97,11 @@ class EditPhotoActivity : AppCompatActivity() {
 
         viewCrop = binding.cropEditor.cropImageView
         viewDraw = binding.drawEditor.drawImageView
+        viewAddIcon = binding.addIconEditor.addIconImageView
+
+        mPhotoEditor = PhotoEditor.Builder(this, viewAddIcon)
+            .setPinchTextScalable(true)
+            .build()
 
         val bottomNavigation = binding.bottomEdit
         bottomNavigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
@@ -106,9 +119,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         brightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
             ) {
                 brightness = brightSeekBar.progress
                 tempRed = brightness
@@ -127,9 +140,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         redSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
             ) {
                 tempRed = redSeekBar.progress
                 binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
@@ -141,9 +154,9 @@ class EditPhotoActivity : AppCompatActivity() {
         })
         greenSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
             ) {
                 tempGreen = greenSeekBar.progress
                 binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
@@ -155,9 +168,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         blueSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
             ) {
                 tempBlue = blueSeekBar.progress
                 binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
@@ -169,9 +182,9 @@ class EditPhotoActivity : AppCompatActivity() {
         })
         weightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
             ) {
                 curWeightDraw = weightSeekBar.progress
                 viewDraw!!.setWeight(curWeightDraw)
@@ -236,10 +249,10 @@ class EditPhotoActivity : AppCompatActivity() {
                 newPixel = if (intensity > INTENSITY_FACTOR) {
                     // apply white color
                     Color.argb(
-                            oldAlpha,
-                            HIGHEST_COLOR_VALUE,
-                            HIGHEST_COLOR_VALUE,
-                            HIGHEST_COLOR_VALUE
+                        oldAlpha,
+                        HIGHEST_COLOR_VALUE,
+                        HIGHEST_COLOR_VALUE,
+                        HIGHEST_COLOR_VALUE
                     )
                 } else if (intensity > 100) {
                     // apply grey color
@@ -261,8 +274,8 @@ class EditPhotoActivity : AppCompatActivity() {
             binding.progressCircular.visibility = View.VISIBLE
             binding.imageEdit.colorFilter =
                     PorterDuffColorFilter(
-                            Color.argb(200, 0, 255, 0),
-                            PorterDuff.Mode.SRC_OVER
+                        Color.argb(200, 0, 255, 0),
+                        PorterDuff.Mode.SRC_OVER
                     )
             binding.progressCircular.visibility = View.INVISIBLE
         }
@@ -300,18 +313,18 @@ class EditPhotoActivity : AppCompatActivity() {
 
     fun invertColors(bmpOriginal: Bitmap): Bitmap? {
         val bitmap = Bitmap.createBitmap(
-                bmpOriginal.width,
-                bmpOriginal.height,
-                Bitmap.Config.ARGB_8888
+            bmpOriginal.width,
+            bmpOriginal.height,
+            Bitmap.Config.ARGB_8888
         )
 
         val matrixInvert = ColorMatrix(
-                floatArrayOf(
-                        -1.0f, 0.0f, 0.0f, 0.0f, 255.0f,
-                        0.0f, -1.0f, 0.0f, 0.0f, 255.0f,
-                        0.0f, 0.0f, -1.0f, 0.0f, 255.0f,
-                        0.0f, 0.0f, 0.0f, 1.0f, 0.0f
-                )
+            floatArrayOf(
+                -1.0f, 0.0f, 0.0f, 0.0f, 255.0f,
+                0.0f, -1.0f, 0.0f, 0.0f, 255.0f,
+                0.0f, 0.0f, -1.0f, 0.0f, 255.0f,
+                0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+            )
         )
 
 
@@ -365,17 +378,17 @@ class EditPhotoActivity : AppCompatActivity() {
 
     fun setColor(progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter {
         val progress = max(
-                max(abs(progressRed - 100), abs(progressGreen - 100)),
-                abs(progressBlue - 100)
+            max(abs(progressRed - 100), abs(progressGreen - 100)),
+            abs(progressBlue - 100)
         )
         val value = progress * 255 / 100
         return PorterDuffColorFilter(
-                Color.argb(value, progressRed, progressGreen, progressBlue),
-                PorterDuff.Mode.SRC_OVER
+            Color.argb(value, progressRed, progressGreen, progressBlue),
+            PorterDuff.Mode.SRC_OVER
         )
     }
 
-    private fun getBitMapFromUri(): Bitmap {
+    private fun getBitMapFromUri(uri: Uri): Bitmap {
         val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
         return bitmap
     }
@@ -388,12 +401,12 @@ class EditPhotoActivity : AppCompatActivity() {
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         if (item.itemId in listOf(
-                        R.id.bright,
-                        R.id.filter,
-                        R.id.add_icon,
-                        R.id.crop,
-                        R.id.change_color
-                )) {
+                R.id.bright,
+                R.id.filter,
+                R.id.add_icon,
+                R.id.crop,
+                R.id.change_color
+            )) {
             if (isCrop) {
                 viewCrop?.let {
                     bitmap = it.croppedImage
@@ -403,9 +416,24 @@ class EditPhotoActivity : AppCompatActivity() {
             }
             if (isDraw) {
                 viewDraw?.let {
-                    bitmap = it.drawable.toBitmap(bitmap!!.width,bitmap!!.height,bitmap!!.config)
+                    bitmap = it.drawable.toBitmap(bitmap!!.width, bitmap!!.height, bitmap!!.config)
                     bindImage(binding.imageEdit, bitmap)
                     isCrop = false
+                }
+            }
+            if (isAddIcon) {
+                viewAddIcon?.let {
+                    mPhotoEditor.saveAsBitmap(object : OnSaveBitmap {
+                        override fun onBitmapReady(saveBitmap: Bitmap) {
+                            bitmap = saveBitmap
+                            bindImage(binding.imageEdit, bitmap)
+                        }
+
+                        override fun onFailure(exception: Exception) {
+                            
+                        }
+                    })
+                    isAddIcon = false
                 }
             }
             setBarVisibility(item.itemId)
@@ -426,16 +454,18 @@ class EditPhotoActivity : AppCompatActivity() {
             fragmentContainerEditPhoto.visibility = View.VISIBLE
             brightEditor.brightEditorLayout.visibility = View.GONE
             filterEditor.visibility = View.GONE
-            addIconEditor.visibility = View.GONE
+            addEditor.visibility = View.GONE
             cropEditor.cropEditorLayout.visibility = View.GONE
             colorEditor.colorEditorLayout.visibility = View.GONE
             drawEditor.drawEditorLayout.visibility = View.GONE
             drawConfigEditor.drawConfigLayout.visibility = View.GONE
+            addIconEditor.addIconEditorLayout.visibility = View.GONE
+            addIconConfigEditor.addIconConfigLayout.visibility = View.GONE
         }
         when (itemId) {
             R.id.bright -> binding.brightEditor.brightEditorLayout.visibility = View.VISIBLE
             R.id.filter -> binding.filterEditor.visibility = View.VISIBLE
-            R.id.add_icon -> binding.addIconEditor.visibility = View.VISIBLE
+            R.id.add_icon -> binding.addEditor.visibility = View.VISIBLE
             R.id.crop -> {
                 viewCrop?.let {
                     binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
@@ -447,20 +477,31 @@ class EditPhotoActivity : AppCompatActivity() {
             R.id.change_color -> binding.colorEditor.colorEditorLayout.visibility = View.VISIBLE
         }
     }
-    fun onDrawMode(view:View){
+    fun onDrawMode(view: View){
         viewDraw?.let {
             binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
-            binding.addIconEditor.visibility = View.GONE
+            binding.addEditor.visibility = View.GONE
             binding.drawConfigEditor.drawConfigLayout.visibility = View.VISIBLE
             alteredBitmap = Bitmap.createBitmap(
-                    bitmap!!.width, bitmap!!
+                bitmap!!.width, bitmap!!
                     .height, bitmap!!.getConfig()
             )
-            viewDraw!!.setNewImage(alteredBitmap, bitmap,setColor(tempRed, tempGreen, tempBlue))
+            viewDraw!!.setNewImage(alteredBitmap, bitmap, setColor(tempRed, tempGreen, tempBlue))
             viewDraw!!.setNewColor(curColorDraw)
             viewDraw!!.setWeight(curWeightDraw)
             binding.drawEditor.drawEditorLayout.visibility = View.VISIBLE
             isDraw = true
+        }
+    }
+
+    fun onAddIconMode(view: View){
+        viewAddIcon?.let {
+            binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
+            binding.addEditor.visibility = View.GONE
+            binding.addIconConfigEditor.addIconConfigLayout.visibility = View.VISIBLE
+            viewAddIcon!!.getSource().setImageBitmap(bitmap);
+            viewAddIcon!!.getSource().setColorFilter(setColor(tempRed, tempGreen, tempBlue));
+            binding.addIconEditor.addIconEditorLayout.visibility = View.VISIBLE
         }
     }
 
@@ -482,4 +523,19 @@ class EditPhotoActivity : AppCompatActivity() {
         colorPicker.show()
     }
 
+    fun pickImageFromPhone(view: View){
+        val i = Intent(
+            Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        )
+        startActivityForResult(i, PICK_IMAGE_INTENT)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_INTENT && resultCode == RESULT_OK){
+            val uriPick = data!!.data
+            mPhotoEditor.addImage(getBitMapFromUri(uriPick!!))
+            isAddIcon = true
+        }
+    }
 }

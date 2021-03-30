@@ -88,5 +88,7 @@
     <string name="pick_weight">Brush thickness </string>
     <string name="add_on_image">Add</string>
     <string name="full_screen_view_image">View image in fullscreen</string>
+    <string name="add_from_phone">Add from phone</string>
+    <string name="emojis">Emojis</string>
 
 </resources>
