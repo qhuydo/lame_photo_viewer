@@ -34,7 +34,7 @@
                 android:layout_marginTop="@dimen/search_bar_height"
                 app:defaultNavHost="true"
                 app:navGraph="@navigation/navigation"
-                tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"
+                tools:context="com.hcmus.clc18se.photos.fragments.PhotosFragment"
                 tools:layout="@layout/fragment_photos" />
 
             <com.google.android.material.bottomappbar.BottomAppBar

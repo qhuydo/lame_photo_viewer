@@ -10,69 +10,81 @@
             type="com.hcmus.clc18se.photos.data.MediaItem" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="4dp"
         android:layout_marginBottom="8dp"
         android:background="?attr/selectableItemBackground"
+        android:checkable="true"
         android:clickable="true"
         android:focusable="true"
-        android:orientation="horizontal">
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@drawable/stroke_color"
+        app:strokeWidth="0.5dp"
+        app:useCompatPadding="true">
 
-        <FrameLayout
-            android:id="@+id/image_frame"
-            android:layout_width="@dimen/photo_list_item_size_big"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="H,1:1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/photo_list_item_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                app:cornerSize="10%"
-                app:imageFromMediaItem="@{photo}"
-                tools:ignore="ContentDescription"
-                tools:src="@tools:sample/backgrounds/scenic" />
-
-            <ImageView
-                android:id="@+id/play_icon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="16dp"
-                android:src="@drawable/ic_outline_play_circle_outline_24"
-                android:visibility="invisible"
-                app:videoThumbnailVisibility="@{photo}"
-                tools:ignore="ContentDescription"
-                tools:visibility="visible" />
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/photo_list_item_name"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:fontFamily="sans-serif"
-            android:lines="1"
-            android:text="@{photo.name}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/image_frame"
-            app:layout_constraintTop_toTopOf="@+id/image_frame"
-            tools:text="TDB.png"
-            tools:visibility="visible" />
-
-        <View
-            android:id="@+id/short_separator"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_gravity="bottom"
-            android:background="?attr/dividerColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <FrameLayout
+                android:id="@+id/image_frame"
+                android:layout_width="@dimen/photo_list_item_size_big"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/photo_list_item_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    app:cornerSize="10%"
+                    app:imageFromMediaItem="@{photo}"
+                    tools:ignore="ContentDescription"
+                    tools:src="@tools:sample/backgrounds/scenic" />
+
+                <ImageView
+                    android:id="@+id/play_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/ic_outline_play_circle_outline_24"
+                    android:visibility="invisible"
+                    app:videoThumbnailVisibility="@{photo}"
+                    tools:ignore="ContentDescription"
+                    tools:visibility="visible" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/photo_list_item_name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:fontFamily="sans-serif"
+                android:lines="1"
+                android:text="@{photo.name}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/image_frame"
+                app:layout_constraintTop_toTopOf="@+id/image_frame"
+                tools:text="TDB.png"
+                tools:visibility="visible" />
+
+            <View
+                android:id="@+id/short_separator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="bottom"
+                android:background="?attr/dividerColor"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
 </layout>

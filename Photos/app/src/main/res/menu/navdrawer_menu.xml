@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:id="@+id/photo_group">
+    <group
+        android:id="@+id/photo_group"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/page_photo"
             android:icon="@drawable/selector_photo"
@@ -21,7 +23,9 @@
             android:title="@string/album_title" />
     </group>
 
-    <group android:id="@+id/photo_extra_group">
+    <group
+        android:id="@+id/photo_extra_group"
+        android:checkableBehavior="single">
 
         <item
             android:id="@+id/page_favourites"
@@ -45,7 +49,9 @@
     </group>
 
 
-    <group android:id="@+id/setting_group">
+    <group
+        android:id="@+id/setting_group"
+        android:checkableBehavior="single">
 
         <item
             android:id="@+id/settingsFragment"

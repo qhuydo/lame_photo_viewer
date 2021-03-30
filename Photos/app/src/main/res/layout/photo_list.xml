@@ -16,8 +16,8 @@
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:background="?colorSurface"
+        android:layout_margin="8dp"
         android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -26,9 +26,9 @@
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:mediaListItem="@{photoList}"
-            app:spanCount="@integer/span_count_photo_list_big"
+            app:spanCount="@integer/span_count_photo_grid_big"
             tools:itemCount="16"
-            tools:listitem="@layout/item_photo_list" />
+            tools:listitem="@layout/item_photo_list_grid" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

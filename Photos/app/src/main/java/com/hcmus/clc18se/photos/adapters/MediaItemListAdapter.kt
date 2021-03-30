@@ -10,6 +10,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.ItemPhotoListBinding
@@ -63,12 +64,9 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
                     }
                 }
 
-                if (selectedItems.contains(photo)) {
-                    // if the item is selected, let the user know by adding a dark layer above it
-                    holder.itemView.alpha = 0.3f
-                } else {
-                    // else, keep it as it is
-                    holder.itemView.alpha = 1.0f
+
+                if (holder.itemView is MaterialCardView) {
+                    (holder.itemView as MaterialCardView).isChecked = selectedItems.contains(photo)
                 }
             }
         }
@@ -147,14 +145,17 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
 
     // helper function that adds/removes an item to the list depending on the app's state
     private fun selectItem(holder: ViewHolder, item: MediaItem) {
-        // If the "selectedItems" list contains the item, remove it and set it's state to normal
+
         if (selectedItems.contains(item)) {
             selectedItems.remove(item)
-            holder.itemView.alpha = 1.0f
+            if (holder.itemView is MaterialCardView) {
+                holder.itemView.isChecked = false
+            }
         } else {
-            // Else, add it to the list and add a darker shade over the image, letting the user know that it was selected
             selectedItems.add(item)
-            holder.itemView.alpha = 0.3f
+            if (holder.itemView is MaterialCardView) {
+                holder.itemView.isChecked = true
+            }
         }
     }
 
