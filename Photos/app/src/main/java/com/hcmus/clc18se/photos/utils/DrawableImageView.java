@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,10 +52,14 @@ public class DrawableImageView extends AppCompatImageView implements View.OnTouc
     {
         canvas = new Canvas(alteredBitmap);
         paint = new Paint();
-        paint.setColor(Color.GREEN);
-        paint.setStrokeJoin(Paint.Join.MITER);
-        paint.setStrokeWidth(5);
+        paint.setAntiAlias(true);
+        paint.setDither(true);
         paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+        paint.setColor(Color.GREEN);
+        paint.setStrokeWidth(5);
         paint.setColorFilter(colorFilter);
         matrix = new Matrix();
         canvas.drawBitmap(bmp, matrix, paint);

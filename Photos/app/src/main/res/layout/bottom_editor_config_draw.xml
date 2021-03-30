@@ -34,7 +34,7 @@
                 android:id="@+id/weight_seekbar"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
-                android:max="10"
+                android:max="100"
                 android:progress="5"
                 />
             <TextView
