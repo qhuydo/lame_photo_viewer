@@ -5,11 +5,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.PictureDrawable
+import android.media.MediaPlayer.OnPreparedListener
 import android.net.Uri
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
+import android.widget.MediaController
+import android.widget.VideoView
 import androidx.recyclerview.widget.DiffUtil
 import com.caverock.androidsvg.SVG
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -21,6 +24,7 @@ import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 import java.io.FileNotFoundException
 import java.util.*
+
 
 @Parcelize
 data class MediaItem(
@@ -109,6 +113,8 @@ data class MediaItem(
                 subScaleImageView: SubsamplingScaleImageView,
                 imageView: ImageView,
                 mediaItem: MediaItem?,
+                videoView: VideoView,
+                mediaController: MediaController,
                 debug: Boolean
         ) {
             // TODO: refactor kudasai, onii-chan :<
@@ -117,10 +123,12 @@ data class MediaItem(
                     bindScaleImage(subScaleImageView, it.uri, debug)
                     imageView.visibility = View.INVISIBLE
                     subScaleImageView.visibility = View.VISIBLE
+                    videoView.visibility = View.INVISIBLE
                 } else if (it.isGif()) {
                     bindImage(imageView, mediaItem)
                     imageView.visibility = View.VISIBLE
                     subScaleImageView.visibility = View.INVISIBLE
+                    videoView.visibility = View.INVISIBLE
                 } else if (it.isSVG()) {
                     try {
                         val inputStream = it.uri?.let { it1 -> context.contentResolver.openInputStream(it1) }
@@ -146,6 +154,13 @@ data class MediaItem(
 
                     imageView.visibility = View.INVISIBLE
                     subScaleImageView.visibility = View.VISIBLE
+                    videoView.visibility = View.INVISIBLE
+                } else if (it.isVideo()){
+                    imageView.visibility = View.INVISIBLE
+                    subScaleImageView.visibility = View.INVISIBLE
+                    videoView.setVideoURI(it.uri)
+                    mediaController.setAnchorView(videoView)
+                    videoView.setMediaController(mediaController)
                 }
             }
         }

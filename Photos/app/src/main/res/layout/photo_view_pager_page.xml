@@ -30,6 +30,12 @@
             android:visibility="invisible"
             tools:ignore="ContentDescription" />
 
+        <VideoView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="MissingConstraints" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

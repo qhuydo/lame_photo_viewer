@@ -2,8 +2,10 @@ package com.hcmus.clc18se.photos.fragments
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.*
+import android.widget.MediaController
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
@@ -23,6 +25,8 @@ class PhotoViewPagerFragment : Fragment() {
     internal var fullScreen: Boolean = false
 
     private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
+
+    private lateinit var mediaController:MediaController
 
 
     private val onImageClickListener = View.OnClickListener {
@@ -83,6 +87,8 @@ class PhotoViewPagerFragment : Fragment() {
             override fun onTileLoadError(e: Exception?) {}
         })
 
+        mediaController = MediaController(requireContext())
+
         if (savedInstanceState?.containsKey(BUNDLE_MEDIAITEM) == true) {
             mediaItem = savedInstanceState.getParcelable(BUNDLE_MEDIAITEM)
             fullScreen = savedInstanceState.getBoolean(BUNDLE_FULLSCREEN)
@@ -93,12 +99,20 @@ class PhotoViewPagerFragment : Fragment() {
                 binding.imageView,
                 binding.glideImageView,
                 mediaItem,
+                binding.videoView,
+                mediaController,
                 debug
         )
 
         binding.apply {
             imageView.setOnClickListener(onImageClickListener)
             glideImageView.setOnClickListener(onImageClickListener)
+            videoView.setOnPreparedListener(MediaPlayer.OnPreparedListener { mediaPlayer ->
+                // When video Screen change size.
+                mediaPlayer.setOnVideoSizeChangedListener { mp, width, height -> // Re-Set the videoView that acts as the anchor for the MediaController
+                    mediaController.setAnchorView(videoView)
+                }
+            })
         }
     }
 
