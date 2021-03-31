@@ -18,8 +18,7 @@ import android.widget.ImageView;
 import androidx.appcompat.widget.AppCompatImageView;
 
 // link https://pristalovpavel.wordpress.com/2015/05/16/drawing-on-image-in-android/
-public class DrawableImageView extends AppCompatImageView implements View.OnTouchListener
-{
+public class DrawableImageView extends AppCompatImageView implements View.OnTouchListener {
 
     float downx = 0;
     float downy = 0;
@@ -29,27 +28,23 @@ public class DrawableImageView extends AppCompatImageView implements View.OnTouc
     Paint paint;
     Matrix matrix;
 
-    public DrawableImageView(Context context)
-    {
+    public DrawableImageView(Context context) {
         super(context);
         setOnTouchListener(this);
     }
 
-    public DrawableImageView(Context context, AttributeSet attrs)
-    {
+    public DrawableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
     }
 
     public DrawableImageView(Context context, AttributeSet attrs,
-                             int defStyleAttr)
-    {
+                             int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOnTouchListener(this);
     }
 
-    public void setNewImage(Bitmap alteredBitmap, Bitmap bmp, ColorFilter colorFilter)
-    {
+    public void setNewImage(Bitmap alteredBitmap, Bitmap bmp, ColorFilter colorFilter) {
         canvas = new Canvas(alteredBitmap);
         paint = new Paint();
         paint.setAntiAlias(true);
@@ -67,21 +62,19 @@ public class DrawableImageView extends AppCompatImageView implements View.OnTouc
         setImageBitmap(alteredBitmap);
     }
 
-    public void setNewColor(int color){
+    public void setNewColor(int color) {
         paint.setColor(color);
     }
 
-    public void setWeight(int weight){
+    public void setWeight(int weight) {
         paint.setStrokeWidth(weight);
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent event)
-    {
+    public boolean onTouch(View v, MotionEvent event) {
         int action = event.getAction();
 
-        switch (action)
-        {
+        switch (action) {
             case MotionEvent.ACTION_DOWN:
                 downx = getPointerCoords(event)[0];//event.getX();
                 downy = getPointerCoords(event)[1];//event.getY();
@@ -108,10 +101,9 @@ public class DrawableImageView extends AppCompatImageView implements View.OnTouc
         return true;
     }
 
-    final float[] getPointerCoords(MotionEvent e)
-    {
+    final float[] getPointerCoords(MotionEvent e) {
         final int index = e.getActionIndex();
-        final float[] coords = new float[] { e.getX(index), e.getY(index) };
+        final float[] coords = new float[]{e.getX(index), e.getY(index)};
         Matrix matrix = new Matrix();
         getImageMatrix().invert(matrix);
         matrix.postTranslate(getScrollX(), getScrollY());
