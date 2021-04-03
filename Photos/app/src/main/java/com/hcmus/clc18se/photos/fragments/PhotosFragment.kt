@@ -17,6 +17,7 @@ import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.FragmentPhotosBinding
+import com.hcmus.clc18se.photos.utils.SpaceItemDecoration
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 
@@ -93,6 +94,7 @@ class PhotosFragment : AbstractPhotoListFragment(
                 currentListItemView,
                 currentListItemSize)
 
+
         binding.apply {
             lifecycleOwner = this@PhotosFragment
 
@@ -101,6 +103,10 @@ class PhotosFragment : AbstractPhotoListFragment(
             photoListLayout.apply {
                 photoList = viewModel.mediaItemList.value
                 photoListRecyclerView.adapter = adapter
+
+                photoListRecyclerView.addItemDecoration(
+                        SpaceItemDecoration(resources.getDimension(R.dimen.photo_list_item_margin).toInt())
+                )
 
                 (photoListRecyclerView.layoutManager as GridLayoutManager).apply {
                     spanCount = getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)

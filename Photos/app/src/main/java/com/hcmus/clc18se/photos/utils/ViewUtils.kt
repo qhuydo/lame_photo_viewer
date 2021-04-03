@@ -1,13 +1,13 @@
 package com.hcmus.clc18se.photos.utils
 
 import android.app.Activity
+import android.content.Context
 import android.content.res.Resources
 import android.content.res.Resources.Theme
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
-import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.R
@@ -97,10 +97,9 @@ fun getSpanCountForPhotoList(resources: Resources, viewType: Int, iconSize: Int)
 fun getSpanCountForAlbumList(resources: Resources, viewType: Int, iconSize: Int) =
     getSpanCountForPhotoList(resources, viewType, iconSize)
 
-fun getColorAttribute(activity: AppCompatActivity, attribute: Int): Int {
+fun getColorAttribute(context: Context, attribute: Int): Int {
     val typedValue = TypedValue()
-    val theme: Theme = activity.theme
+    val theme: Theme = context.theme
     theme.resolveAttribute(attribute, typedValue, true)
-    @ColorInt val color = typedValue.data
-    return color
+    return typedValue.data
 }

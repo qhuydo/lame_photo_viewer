@@ -167,9 +167,9 @@ abstract class AbstractPhotoListFragment(
                 title(literal = "${adapter.numberOfSelectedItems()}")
             }
         } else {
-            val colorPrimary = getColorAttribute(requireActivity() as AppCompatActivity, R.attr.colorPrimary)
+            val colorPrimary = getColorAttribute(requireContext(), R.attr.colorPrimary)
             Timber.d("Color primary $colorPrimary")
-            val colorOnPrimary = getColorAttribute(requireActivity() as AppCompatActivity, R.attr.colorOnPrimary)
+            val colorOnPrimary = getColorAttribute(requireContext(), R.attr.colorOnPrimary)
             Timber.d("Color On primary $colorOnPrimary")
 
             mainCab = createCab(getCadSubId()) {

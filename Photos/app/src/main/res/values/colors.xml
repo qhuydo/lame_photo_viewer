@@ -335,4 +335,6 @@
     <color name="divider_white">#10FFFFFF</color>
     <color name="divider_dark">#10000000</color>
 
+    <color name="black_alpha_30">#4D000000</color>
+
 </resources>

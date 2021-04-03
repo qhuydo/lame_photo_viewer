@@ -19,8 +19,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
-                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
                 android:gravity="center"
                 android:onClick="blurImage"
                 android:orientation="vertical">
@@ -40,8 +40,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
-                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
                 android:onClick="grayImage"
                 android:orientation="vertical">
 
@@ -60,8 +60,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
-                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
                 android:onClick="pencilImage"
                 android:orientation="vertical">
 
@@ -80,8 +80,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
-                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
                 android:orientation="vertical">
 
                 <ImageView
@@ -99,8 +99,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
-                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
                 android:onClick="coloriseImage"
                 android:orientation="vertical">
 
@@ -119,8 +119,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/photo_edit_filter_magin_photo"
-                android:layout_marginRight="@dimen/photo_edit_filter_magin_photo"
+                android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
                 android:orientation="vertical">
 
                 <ImageView

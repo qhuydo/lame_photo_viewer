@@ -7,8 +7,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:paddingVertical="16dp"
-        android:background="@drawable/transparent_bottom_bar">
+        android:paddingVertical="8dp"
+        android:background="@color/black_alpha_30">
 
         <ImageButton
             android:id="@+id/info_button"

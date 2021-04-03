@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:name="vector"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:tint="?colorControlNormal"
+    android:viewportHeight="24">
+    <group android:name="wrapper">
+        <clip-path
+            android:name="__lottie_element_111"
+            android:pathData="M 0 0 L 24 0 L 24 24 L 0 24 Z" />
+        <group android:name="group">
+            <path
+                android:fillColor="@color/colorWhite"
+                android:name="path"
+                android:pathData="M 7 6 C 3.685 6 5.062 8.685 5.062 12 C 5.062 15.315 3.685 18 7 18 C 10.315 18 13 15.315 13 12 C 13 8.685 10.315 6 7 6 Z"
+                android:strokeWidth="1" />
+            <path
+                android:fillColor="@color/colorWhite"
+                android:name="path_1"
+                android:pathData="M 12 6 C 15.31 6 18 8.69 18 12 C 18 15.31 15.31 18 12 18 C 8.69 18 6 15.31 6 12 C 6 8.69 8.69 6 12 6 Z M 4 15.31 L 4 20 L 8.69 20 L 12 23.31 L 15.31 20 L 20 20 L 20 15.31 L 23.31 12 L 20 8.69 L 20 4 L 15.31 4 L 12 0.69 L 8.69 4 L 4 4 L 4 8.69 L 0.69 12 L 4 15.31 Z"
+                android:strokeWidth="1" />
+        </group>
+    </group>
+</vector>
