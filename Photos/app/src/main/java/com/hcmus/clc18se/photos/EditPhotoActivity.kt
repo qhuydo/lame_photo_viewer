@@ -18,6 +18,7 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.drawToBitmap
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
@@ -44,10 +45,6 @@ class EditPhotoActivity : AppCompatActivity() {
         const val LOWEST_COLOR_VALUE = 0
         const val BLUR_RADIUS = 25f
         const val PICK_IMAGE_INTENT = 2000
-        const val EXTRA_OUTPUT_MEDIATORS = 2020
-
-        const val BUNDLE_URI = "uri"
-        const val BUNDLE_BITMAP = "bitmap"
     }
 
     protected val colorResource by lazy { (application as PhotosApplication).colorResource }
@@ -95,10 +92,6 @@ class EditPhotoActivity : AppCompatActivity() {
         savedInstanceState?.let {
             cur_item_id = it.getInt(bottomAppBarItemKey)
             setBarVisibility(cur_item_id)
-
-            uri = it.getParcelable(BUNDLE_URI)
-            bitmap = it.getParcelable(BUNDLE_BITMAP)
-
         }
 
         colorResource.configColor(this)
@@ -417,13 +410,14 @@ class EditPhotoActivity : AppCompatActivity() {
         return File(file.path, "$timeStamp.jpg")
     }
 
-    private fun handlingBitmap() {
+    private fun handlingBitmap():Boolean {
         if (isCrop) {
             viewCrop.let {
                 bitmap = it.croppedImage
                 bindImage(binding.imageEdit, bitmap)
                 isCrop = false
             }
+            return true
         }
         if (isDraw) {
             viewDraw.let {
@@ -431,6 +425,7 @@ class EditPhotoActivity : AppCompatActivity() {
                 bindImage(binding.imageEdit, bitmap)
                 isCrop = false
             }
+            return true
         }
         if (isAddIcon) {
             viewAddIcon.let {
@@ -446,7 +441,9 @@ class EditPhotoActivity : AppCompatActivity() {
                 })
                 isAddIcon = false
             }
+            return true
         }
+        return false
     }
 
     private val onNavigationItemSelectedListener =
@@ -467,16 +464,6 @@ class EditPhotoActivity : AppCompatActivity() {
                 }
                 false
             }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        handlingBitmap()
-
-        outState.putInt(bottomAppBarItemKey, cur_item_id)
-        outState.putParcelable(BUNDLE_BITMAP, bitmap)
-        outState.putParcelable(BUNDLE_URI, uri)
-    }
 
     private fun setBarVisibility(itemId: Int) {
         binding.apply {
@@ -500,7 +487,6 @@ class EditPhotoActivity : AppCompatActivity() {
                 viewCrop.setImageUriAsync(uri)
                 binding.cropEditor.cropEditorLayout.visibility = View.VISIBLE
                 isCrop = true
-
             }
             R.id.change_color -> binding.colorEditor.colorEditorLayout.visibility = View.VISIBLE
         }
@@ -519,7 +505,6 @@ class EditPhotoActivity : AppCompatActivity() {
         viewDraw.setWeight(curWeightDraw)
         binding.drawEditor.drawEditorLayout.visibility = View.VISIBLE
         isDraw = true
-
     }
 
     fun onAddIconMode(view: View) {
@@ -537,7 +522,11 @@ class EditPhotoActivity : AppCompatActivity() {
         val fileSave = createFileToSave()
         var contentValues: ContentValues? = null
         var imageUri: Uri? = null
-        handlingBitmap()
+        val check = handlingBitmap()
+        var bitmap2: Bitmap = bitmap!!
+        if (!check)
+            bitmap2 = binding.imageEdit.drawToBitmap()
+
         try {
             var stream: OutputStream? = null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -548,20 +537,20 @@ class EditPhotoActivity : AppCompatActivity() {
                 contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
                 contentValues.put(MediaStore.MediaColumns.DATE_ADDED, date)
                 contentValues.put(MediaStore.MediaColumns.DATE_MODIFIED, date)
-                contentValues.put(MediaStore.MediaColumns.SIZE, bitmap!!.byteCount)
-                contentValues.put(MediaStore.MediaColumns.WIDTH, bitmap!!.width)
-                contentValues.put(MediaStore.MediaColumns.HEIGHT, bitmap!!.height)
+                contentValues.put(MediaStore.MediaColumns.SIZE, bitmap2!!.byteCount)
+                contentValues.put(MediaStore.MediaColumns.WIDTH, bitmap2.width)
+                contentValues.put(MediaStore.MediaColumns.HEIGHT, bitmap2.height)
                 contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
                 contentValues.put(MediaStore.Images.Media.IS_PENDING, 1)
                 imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
                 baseContext.contentResolver.openOutputStream(imageUri!!, "w").use {
-                    bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                    bitmap2.compress(Bitmap.CompressFormat.JPEG, 100, it)
                 }
             } else {
                 stream = FileOutputStream(fileSave)
-                bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                stream!!.flush()
-                stream!!.close()
+                bitmap2!!.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                stream.flush()
+                stream.close()
             }
         } catch (e: IOException) {
             Toast.makeText(this, "Failed to save Image", Toast.LENGTH_LONG).show()
@@ -590,10 +579,8 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     fun pickImageFromPhone(view: View) {
-        val i = Intent(
-                Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        )
-        startActivityForResult(i, PICK_IMAGE_INTENT)
+        val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_INTENT)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
