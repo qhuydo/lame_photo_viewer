@@ -423,7 +423,7 @@ class EditPhotoActivity : AppCompatActivity() {
             viewDraw.let {
                 bitmap = it.drawable.toBitmap(bitmap!!.width, bitmap!!.height, bitmap!!.config)
                 bindImage(binding.imageEdit, bitmap)
-                isCrop = false
+                isDraw = false
             }
             return true
         }
