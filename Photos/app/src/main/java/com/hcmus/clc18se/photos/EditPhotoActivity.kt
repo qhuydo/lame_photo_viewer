@@ -28,6 +28,7 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import ja.burhanrashid52.photoeditor.OnSaveBitmap
 import ja.burhanrashid52.photoeditor.PhotoEditor
 import ja.burhanrashid52.photoeditor.PhotoEditorView
+import ja.burhanrashid52.photoeditor.SaveSettings
 import kotlinx.coroutines.*
 import yuku.ambilwarna.AmbilWarnaDialog
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener
@@ -88,11 +89,6 @@ class EditPhotoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        savedInstanceState?.let {
-            cur_item_id = it.getInt(bottomAppBarItemKey)
-            setBarVisibility(cur_item_id)
-        }
 
         colorResource.configColor(this)
         colorResource.configTheme()
@@ -429,7 +425,11 @@ class EditPhotoActivity : AppCompatActivity() {
         }
         if (isAddIcon) {
             viewAddIcon.let {
-                photoEditor.saveAsBitmap(object : OnSaveBitmap {
+                val saveSettings = SaveSettings.Builder()
+                        .setClearViewsEnabled(false)
+                        .setTransparencyEnabled(true)
+                        .build()
+                photoEditor.saveAsBitmap(saveSettings,object : OnSaveBitmap {
                     override fun onBitmapReady(saveBitmap: Bitmap) {
                         bitmap = saveBitmap
                         bindImage(binding.imageEdit, bitmap)
@@ -445,7 +445,6 @@ class EditPhotoActivity : AppCompatActivity() {
         }
         return false
     }
-
     private val onNavigationItemSelectedListener =
             BottomNavigationView.OnNavigationItemSelectedListener { item ->
                 if (item.itemId in listOf(
@@ -477,6 +476,7 @@ class EditPhotoActivity : AppCompatActivity() {
             drawConfigEditor.drawConfigLayout.visibility = View.GONE
             addIconEditor.addIconEditorLayout.visibility = View.GONE
             addIconConfigEditor.addIconConfigLayout.visibility = View.GONE
+            binding.saveImage.visibility = View.VISIBLE
         }
         when (itemId) {
             R.id.bright -> binding.brightEditor.brightEditorLayout.visibility = View.VISIBLE
@@ -514,7 +514,7 @@ class EditPhotoActivity : AppCompatActivity() {
         viewAddIcon.getSource().setImageBitmap(bitmap);
         viewAddIcon.getSource().setColorFilter(setColor(tempRed, tempGreen, tempBlue));
         binding.addIconEditor.addIconEditorLayout.visibility = View.VISIBLE
-
+        binding.saveImage.visibility = View.INVISIBLE
     }
 
     @SuppressLint("ShowToast")
@@ -526,7 +526,6 @@ class EditPhotoActivity : AppCompatActivity() {
         var bitmap2: Bitmap = bitmap!!
         if (!check)
             bitmap2 = binding.imageEdit.drawToBitmap()
-
         try {
             var stream: OutputStream? = null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
