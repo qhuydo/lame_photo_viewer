@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
 import android.graphics.*
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,12 +15,12 @@ import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
-import android.widget.SeekBar
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.drawToBitmap
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.internal.ContextUtils.getActivity
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
 import com.hcmus.clc18se.photos.utils.DrawableImageView
@@ -35,6 +36,7 @@ import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -429,7 +431,7 @@ class EditPhotoActivity : AppCompatActivity() {
                         .setClearViewsEnabled(false)
                         .setTransparencyEnabled(true)
                         .build()
-                photoEditor.saveAsBitmap(saveSettings,object : OnSaveBitmap {
+                photoEditor.saveAsBitmap(saveSettings, object : OnSaveBitmap {
                     override fun onBitmapReady(saveBitmap: Bitmap) {
                         bitmap = saveBitmap
                         bindImage(binding.imageEdit, bitmap)
@@ -517,6 +519,24 @@ class EditPhotoActivity : AppCompatActivity() {
         binding.saveImage.visibility = View.INVISIBLE
     }
 
+    @SuppressLint("RestrictedApi")
+    fun pickEmoji(view: View){
+        val gridView = GridView(this)
+        val emojis =  PhotoEditor.getEmojis(applicationContext)
+        val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
+        builder.setView(gridView)
+        gridView.adapter = ArrayAdapter<Any?>(this, android.R.layout.simple_list_item_1, emojis as List<Any?>)
+        gridView.numColumns = 5
+        var dialog:android.app.AlertDialog? = null
+        gridView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            photoEditor.addEmoji(emojis.get(position))
+            isAddIcon = true
+            dialog!!.dismiss()
+        }
+        dialog = builder.create()
+        dialog.show()
+    }
+
     @SuppressLint("ShowToast")
     fun onSaveImageButtonClick(view: View) {
         val fileSave = createFileToSave()
@@ -524,6 +544,7 @@ class EditPhotoActivity : AppCompatActivity() {
         var imageUri: Uri? = null
         val check = handlingBitmap()
         var bitmap2: Bitmap = bitmap!!
+        val exifDateFormatter = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US)
         if (!check)
             bitmap2 = binding.imageEdit.drawToBitmap()
         try {
@@ -531,16 +552,19 @@ class EditPhotoActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val resolver = baseContext.getContentResolver()
                 val date = System.currentTimeMillis()
-                contentValues = ContentValues()
-                contentValues.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, fileSave.name)
-                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-                contentValues.put(MediaStore.MediaColumns.DATE_ADDED, date)
-                contentValues.put(MediaStore.MediaColumns.DATE_MODIFIED, date)
-                contentValues.put(MediaStore.MediaColumns.SIZE, bitmap2!!.byteCount)
-                contentValues.put(MediaStore.MediaColumns.WIDTH, bitmap2.width)
-                contentValues.put(MediaStore.MediaColumns.HEIGHT, bitmap2.height)
-                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                contentValues.put(MediaStore.Images.Media.IS_PENDING, 1)
+                contentValues = ContentValues().apply {
+                    put(MediaStore.Images.ImageColumns.DISPLAY_NAME, fileSave.name)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.MediaColumns.DATE_ADDED, date)
+                    put(MediaStore.MediaColumns.DATE_TAKEN, date)
+                    put(MediaStore.MediaColumns.DATE_MODIFIED, date)
+                    put(MediaStore.MediaColumns.SIZE, bitmap2!!.byteCount)
+                    put(MediaStore.MediaColumns.WIDTH, bitmap2.width)
+                    put(MediaStore.MediaColumns.HEIGHT, bitmap2.height)
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                }
+
                 imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
                 baseContext.contentResolver.openOutputStream(imageUri!!, "w").use {
                     bitmap2.compress(Bitmap.CompressFormat.JPEG, 100, it)
@@ -559,6 +583,18 @@ class EditPhotoActivity : AppCompatActivity() {
             contentValues!!.clear()
             contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
             baseContext.contentResolver.update(imageUri!!, contentValues, null, null)
+            // Add exif data
+            contentResolver.openFileDescriptor(imageUri, "rw")?.use {
+                // set Exif attribute so MediaStore.Images.Media.DATE_TAKEN will be set
+                ExifInterface(it.fileDescriptor)
+                        .apply {
+                            setAttribute(
+                                    ExifInterface.TAG_DATETIME_ORIGINAL,
+                                    exifDateFormatter.format(Date())
+                            )
+                            saveAttributes()
+                        }
+            }
         }
         SingleMediaScanner(this, fileSave)
         Toast.makeText(this, "Image Saved Successfully", Toast.LENGTH_LONG).show()

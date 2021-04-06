@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -71,6 +72,19 @@ class PhotoViewFragment : Fragment() {
 
             heartButton.setOnClickListener {
                 toggleFavouriteButton()
+            }
+
+            nukeButton.setOnClickListener {
+                val resolver = requireContext().contentResolver
+                val result = resolver.delete(photos[currentPosition].requireUri(),null,null)
+                if (result > 0) {
+                    Toast.makeText(context,"Delete success",Toast.LENGTH_SHORT).show()
+                    requireFragmentManager().popBackStack()
+                    requireActivity().recreate()
+                }
+                else
+                    Toast.makeText(context,"Delete unsuccess",Toast.LENGTH_SHORT).show()
+
             }
 
         }
