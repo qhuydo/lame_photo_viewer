@@ -100,6 +100,22 @@ class PhotoViewFragment : Fragment() {
                 dialog.show()
             }
 
+            shareButton.setOnClickListener{
+                if (photos[currentPosition].isVideo()) {
+                    val sendIntent = Intent()
+                    sendIntent.action = Intent.ACTION_SEND
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
+                    sendIntent.type = "video/*"
+                    startActivity(Intent.createChooser(sendIntent, "Send video via:"))
+                }
+                else{
+                    val sendIntent = Intent()
+                    sendIntent.action = Intent.ACTION_SEND
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
+                    sendIntent.type = "image/*"
+                    startActivity(Intent.createChooser(sendIntent, "Send image via:"))
+                }
+            }
         }
     }
 
