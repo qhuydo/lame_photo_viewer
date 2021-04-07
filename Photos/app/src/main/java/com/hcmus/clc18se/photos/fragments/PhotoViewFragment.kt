@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,15 +77,12 @@ class PhotoViewFragment : Fragment() {
 
             nukeButton.setOnClickListener {
                 val resolver = requireContext().contentResolver
-                val result = resolver.delete(photos[currentPosition].requireUri(),null,null)
+                val result = resolver.delete(photos[currentPosition].requireUri(), null, null)
                 if (result > 0) {
-                    Toast.makeText(context,"Delete success",Toast.LENGTH_SHORT).show()
-                    requireFragmentManager().popBackStack()
-                    requireActivity().recreate()
+                    Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show()
+                    requireActivity().onBackPressed()
                 }
-                else
-                    Toast.makeText(context,"Delete unsuccess",Toast.LENGTH_SHORT).show()
-
+                Toast.makeText(context, "Delete unsuccess", Toast.LENGTH_SHORT).show()
             }
 
         }
