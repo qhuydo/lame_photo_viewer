@@ -77,6 +77,10 @@ data class MediaItem(
         return path
     }
 
+    fun requireDateTaken(): Date? {
+        return dateTaken
+    }
+
     fun toFavouriteItem(): FavouriteItem {
         return FavouriteItem(id)
     }

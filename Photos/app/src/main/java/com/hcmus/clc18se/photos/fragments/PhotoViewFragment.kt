@@ -1,13 +1,17 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
@@ -63,6 +67,7 @@ class PhotoViewFragment : Fragment() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setUpBottomButtons() {
         binding.bottomLayout.apply {
             editButton.setOnClickListener {
@@ -83,6 +88,16 @@ class PhotoViewFragment : Fragment() {
                     requireActivity().onBackPressed()
                 }
                 Toast.makeText(context, "Delete unsuccess", Toast.LENGTH_SHORT).show()
+            }
+
+            infoButton.setOnClickListener {
+                val dialog = Dialog(requireContext())
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                dialog.setContentView(R.layout.dialog_info)
+                dialog.findViewById<TextView>(R.id.path).text = "Path: " + photos[currentPosition].requirePath(requireContext())
+                dialog.findViewById<TextView>(R.id.date_create).text = "Date create: " + photos[currentPosition].requireDateTaken()
+                dialog.findViewById<Button>(R.id.off_info_dialog) .setOnClickListener(View.OnClickListener { dialog.dismiss() })
+                dialog.show()
             }
 
         }

@@ -90,5 +90,6 @@
     <string name="full_screen_view_image">View image in fullscreen</string>
     <string name="add_from_phone">Add from phone</string>
     <string name="emojis">Emojis</string>
+    <string name="ok">Ok</string>
 
 </resources>
