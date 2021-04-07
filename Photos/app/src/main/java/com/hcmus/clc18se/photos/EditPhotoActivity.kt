@@ -18,9 +18,9 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.scale
 import androidx.core.view.drawToBitmap
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.internal.ContextUtils.getActivity
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
 import com.hcmus.clc18se.photos.utils.DrawableImageView
@@ -34,9 +34,9 @@ import kotlinx.coroutines.*
 import yuku.ambilwarna.AmbilWarnaDialog
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener
 import java.io.*
+import java.nio.IntBuffer
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -102,6 +102,13 @@ class EditPhotoActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 bitmap = getBitMapFromUri(uri!!)
+                var scale = 1
+                val byteBitmap = bitmap!!.width * bitmap!!.height * 4
+                while (byteBitmap / scale / scale > 6000000)
+                {
+                    scale++
+                }
+                bitmap = bitmap!!.copy(Bitmap.Config.ARGB_8888, true).scale(bitmap!!.width/scale,bitmap!!.height/scale,false)
             }
 
             bindImage(binding.imageEdit, uri)
@@ -225,56 +232,23 @@ class EditPhotoActivity : AppCompatActivity() {
         }
     }
 
-    //link hàm  toPencilImage https://github.com/theshivamlko/ImageFilterAlogrithm/tree/master/ImageFIlters
     private fun toPencilImage(bmp: Bitmap): Bitmap {
-        val newBitmap: Bitmap = bmp.copy(Bitmap.Config.ARGB_8888, true)
+        var scale = 1
 
-        val imageHeight = newBitmap.height
-        val imageWidth = newBitmap.width
-
-        // traversing each pixel in Image as an 2D Array
-        for (i in 0 until imageWidth) {
-            for (j in 0 until imageHeight) {
-
-                // operating on each pixel
-                val oldPixel: Int = bmp.getPixel(i, j)
-
-                // each pixel is made from RED_BLUE_GREEN
-                // so, getting current values of pixel
-                val oldRed = Color.red(oldPixel)
-                val oldBlue = Color.blue(oldPixel)
-                val oldGreen = Color.green(oldPixel)
-                val oldAlpha = Color.alpha(oldPixel)
-
-
-                // Algorithm for getting new values after calculation of filter
-                // Algorithm for SKETCH FILTER
-                val intensity = (oldRed + oldBlue + oldGreen) / 3
-
-                // applying new pixel value to newBitmap
-                // condition for Sketch
-                var newPixel = 0
-                val INTENSITY_FACTOR = 120
-                newPixel = if (intensity > INTENSITY_FACTOR) {
-                    // apply white color
-                    Color.argb(
-                            oldAlpha,
-                            HIGHEST_COLOR_VALUE,
-                            HIGHEST_COLOR_VALUE,
-                            HIGHEST_COLOR_VALUE
-                    )
-                } else if (intensity > 100) {
-                    // apply grey color
-                    Color.argb(oldAlpha, 150, 150, 150)
-                } else {
-                    // apply black color
-                    Color.argb(oldAlpha, LOWEST_COLOR_VALUE, LOWEST_COLOR_VALUE, LOWEST_COLOR_VALUE)
-                }
-                newBitmap.setPixel(i, j, newPixel)
-            }
+        val byteBitmap = bmp.width * bmp.height * 4
+        while (byteBitmap / scale / scale > 6000000)
+        {
+            scale++
         }
 
-        return newBitmap
+        val newBmp = bmp.copy(Bitmap.Config.ARGB_8888, true).scale(bmp.width/scale,bmp.height/scale,false)
+        val graybm = toGrayscale(newBmp)
+        val invertbm = invertColors(graybm!!)
+        val blurbm = blur(invertbm)
+
+        val result = ColorDodgeBlend(graybm,blurbm!!)
+
+        return result!!
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -318,6 +292,46 @@ class EditPhotoActivity : AppCompatActivity() {
         paint.colorFilter = f
         c.drawBitmap(bmpOriginal, 0f, 0f, paint)
         return bmpGrayscale
+    }
+
+    //link: https://stackoverflow.com/questions/9826273/photo-image-to-sketch-algorithm
+    private fun colordodge(in1: Int, in2: Int): Int {
+        val image = in2.toFloat()
+        val mask = in1.toFloat()
+        return (if (image == 255f) image else Math.min(255f, (mask.toLong() shl 8) / (255 - image))).toInt()
+    }
+
+    //link: https://stackoverflow.com/questions/9826273/photo-image-to-sketch-algorithm
+    fun ColorDodgeBlend(source: Bitmap, layer: Bitmap): Bitmap? {
+        val base = source.copy(Bitmap.Config.ARGB_8888, true)
+        val blend = layer.copy(Bitmap.Config.ARGB_8888, false)
+        val buffBase: IntBuffer = IntBuffer.allocate(base.width * base.height)
+        base.copyPixelsToBuffer(buffBase)
+        buffBase.rewind()
+        val buffBlend: IntBuffer = IntBuffer.allocate(blend.width * blend.height)
+        blend.copyPixelsToBuffer(buffBlend)
+        buffBlend.rewind()
+        val buffOut: IntBuffer = IntBuffer.allocate(base.width * base.height)
+        buffOut.rewind()
+        while (buffOut.position() < buffOut.limit()) {
+            val filterInt: Int = buffBlend.get()
+            val srcInt: Int = buffBase.get()
+            val redValueFilter = Color.red(filterInt)
+            val greenValueFilter = Color.green(filterInt)
+            val blueValueFilter = Color.blue(filterInt)
+            val redValueSrc = Color.red(srcInt)
+            val greenValueSrc = Color.green(srcInt)
+            val blueValueSrc = Color.blue(srcInt)
+            val redValueFinal: Int = colordodge(redValueFilter, redValueSrc)
+            val greenValueFinal: Int = colordodge(greenValueFilter, greenValueSrc)
+            val blueValueFinal: Int = colordodge(blueValueFilter, blueValueSrc)
+            val pixel = Color.argb(255, redValueFinal, greenValueFinal, blueValueFinal)
+            buffOut.put(pixel)
+        }
+        buffOut.rewind()
+        base.copyPixelsFromBuffer(buffOut)
+        blend.recycle()
+        return base
     }
 
     fun invertColors(bmpOriginal: Bitmap): Bitmap? {
@@ -412,6 +426,13 @@ class EditPhotoActivity : AppCompatActivity() {
         if (isCrop) {
             viewCrop.let {
                 bitmap = it.croppedImage
+                var scale = 1
+                val byteBitmap = bitmap!!.width * bitmap!!.height * 4
+                while (byteBitmap / scale / scale > 6000000)
+                {
+                    scale++
+                }
+                bitmap = bitmap!!.copy(Bitmap.Config.ARGB_8888, true).scale(bitmap!!.width/scale,bitmap!!.height/scale,false)
                 bindImage(binding.imageEdit, bitmap)
                 isCrop = false
             }
@@ -502,7 +523,7 @@ class EditPhotoActivity : AppCompatActivity() {
                 bitmap!!.width, bitmap!!
                 .height, bitmap!!.getConfig()
         )
-        viewDraw.setNewImage(alteredBitmap, bitmap, setColor(tempRed, tempGreen, tempBlue))
+        viewDraw.setNewImage(alteredBitmap, bitmap!!, setColor(tempRed, tempGreen, tempBlue))
         viewDraw.setNewColor(curColorDraw)
         viewDraw.setWeight(curWeightDraw)
         binding.drawEditor.drawEditorLayout.visibility = View.VISIBLE

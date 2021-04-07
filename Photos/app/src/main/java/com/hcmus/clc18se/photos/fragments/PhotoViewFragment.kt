@@ -87,7 +87,9 @@ class PhotoViewFragment : Fragment() {
                     Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show()
                     requireActivity().onBackPressed()
                 }
-                Toast.makeText(context, "Delete unsuccess", Toast.LENGTH_SHORT).show()
+                else {
+                    Toast.makeText(context, "Delete unsuccess", Toast.LENGTH_SHORT).show()
+                }
             }
 
             infoButton.setOnClickListener {
