@@ -67,8 +67,7 @@
 
         <activity
             android:name=".utils.VideoDialog"
-            android:label="@string/edit_title"
-            android:theme="@style/Theme.AppCompat.Dialog">
+            android:label="@string/edit_title">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
