@@ -19,6 +19,8 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.adapters.bindScaleImage
+import com.hcmus.clc18se.photos.databinding.ItemPhotoListBinding
+import com.hcmus.clc18se.photos.databinding.ItemVideoPagerBinding
 import com.hcmus.clc18se.photos.utils.*
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
@@ -117,8 +119,7 @@ data class MediaItem(
                 subScaleImageView: SubsamplingScaleImageView,
                 imageView: ImageView,
                 mediaItem: MediaItem?,
-                videoView: VideoView,
-                mediaController: MediaController,
+                videoView: ItemVideoPagerBinding,
                 debug: Boolean
         ) {
             // TODO: refactor kudasai, onii-chan :<
@@ -127,12 +128,14 @@ data class MediaItem(
                     bindScaleImage(subScaleImageView, it.uri, debug)
                     imageView.visibility = View.INVISIBLE
                     subScaleImageView.visibility = View.VISIBLE
-                    videoView.visibility = View.INVISIBLE
+                    videoView.imageFrame.visibility = View.INVISIBLE
+                    videoView.playIcon.visibility = View.INVISIBLE
                 } else if (it.isGif()) {
                     bindImage(imageView, mediaItem)
                     imageView.visibility = View.VISIBLE
                     subScaleImageView.visibility = View.INVISIBLE
-                    videoView.visibility = View.INVISIBLE
+                    videoView.imageFrame.visibility = View.INVISIBLE
+                    videoView.playIcon.visibility = View.INVISIBLE
                 } else if (it.isSVG()) {
                     try {
                         val inputStream = it.uri?.let { it1 -> context.contentResolver.openInputStream(it1) }
@@ -158,13 +161,14 @@ data class MediaItem(
 
                     imageView.visibility = View.INVISIBLE
                     subScaleImageView.visibility = View.VISIBLE
-                    videoView.visibility = View.INVISIBLE
+                    videoView.imageFrame.visibility = View.INVISIBLE
+                    videoView.playIcon.visibility = View.INVISIBLE
                 } else if (it.isVideo()){
                     imageView.visibility = View.INVISIBLE
                     subScaleImageView.visibility = View.INVISIBLE
-                    videoView.setVideoURI(it.uri)
-                    mediaController.setAnchorView(videoView)
-                    videoView.setMediaController(mediaController)
+                    videoView.imageFrame.visibility = View.VISIBLE
+                    videoView.playIcon.visibility = View.VISIBLE
+                    videoView.photo = it
                 }
             }
         }

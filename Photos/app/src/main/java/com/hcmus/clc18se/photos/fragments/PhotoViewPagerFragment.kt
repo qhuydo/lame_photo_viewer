@@ -1,12 +1,13 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.*
-import android.widget.MediaController
-import android.widget.Toast
+import android.widget.*
+import android.widget.RelativeLayout
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -14,19 +15,19 @@ import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
+import com.hcmus.clc18se.photos.utils.VideoDialog
+
 
 class PhotoViewPagerFragment : Fragment() {
 
     internal var mediaItem: MediaItem? = null
-
+    private var dialog:Dialog? = null
     private lateinit var binding: PhotoViewPagerPageBinding
     private var actionBar: ActionBar? = null
     internal var debug: Boolean = false
     internal var fullScreen: Boolean = false
 
     private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
-
-    private lateinit var mediaController:MediaController
 
 
     private val onImageClickListener = View.OnClickListener {
@@ -87,8 +88,6 @@ class PhotoViewPagerFragment : Fragment() {
             override fun onTileLoadError(e: Exception?) {}
         })
 
-        mediaController = MediaController(requireContext())
-
         if (savedInstanceState?.containsKey(BUNDLE_MEDIAITEM) == true) {
             mediaItem = savedInstanceState.getParcelable(BUNDLE_MEDIAITEM)
             fullScreen = savedInstanceState.getBoolean(BUNDLE_FULLSCREEN)
@@ -99,20 +98,26 @@ class PhotoViewPagerFragment : Fragment() {
                 binding.imageView,
                 binding.glideImageView,
                 mediaItem,
-                binding.videoView,
-                mediaController,
+                binding.videoViewImage,
                 debug
         )
+
+        binding.videoViewImage.playIcon.setOnClickListener{
+              val  intent = Intent(context,VideoDialog::class.java)
+              intent.putExtra("uri",mediaItem!!.requireUri())
+              startActivity(intent)
+        }
 
         binding.apply {
             imageView.setOnClickListener(onImageClickListener)
             glideImageView.setOnClickListener(onImageClickListener)
-            videoView.setOnPreparedListener(MediaPlayer.OnPreparedListener { mediaPlayer ->
-                // When video Screen change size.
-                mediaPlayer.setOnVideoSizeChangedListener { mp, width, height -> // Re-Set the videoView that acts as the anchor for the MediaController
-                    mediaController.setAnchorView(videoView)
-                }
-            })
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (dialog != null) {
+            dialog!!.dismiss()
         }
     }
 

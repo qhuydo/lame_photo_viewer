@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import kotlin.concurrent.thread
 
 
 class PhotoViewFragment : Fragment() {
@@ -71,9 +72,11 @@ class PhotoViewFragment : Fragment() {
     private fun setUpBottomButtons() {
         binding.bottomLayout.apply {
             editButton.setOnClickListener {
-                val intent = Intent(context, EditPhotoActivity::class.java)
-                intent.putExtra("uri", photos[currentPosition].requireUri())
-                startActivity(intent)
+                Thread {
+                    val intent = Intent(context, EditPhotoActivity::class.java)
+                    intent.putExtra("uri", photos[currentPosition].requireUri())
+                    startActivity(intent)
+                }
             }
 
             heartButton.setOnClickListener {

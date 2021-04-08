@@ -65,6 +65,15 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".utils.VideoDialog"
+            android:label="@string/edit_title"
+            android:theme="@style/Theme.AppCompat.Dialog">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
         <activity-alias
             android:name="RED"
             android:enabled="false"

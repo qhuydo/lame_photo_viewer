@@ -30,10 +30,10 @@
             android:visibility="invisible"
             tools:ignore="ContentDescription" />
 
-        <VideoView
-            android:id="@+id/video_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <include
+            android:id="@+id/video_view_image"
+            layout="@layout/item_video_pager"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

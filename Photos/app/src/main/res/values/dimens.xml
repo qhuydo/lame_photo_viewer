@@ -17,5 +17,6 @@
     <dimen name="photo_edit_filter_size">100dp</dimen>
     <dimen name="photo_edit_filter_margin_photo">10dp</dimen>
 
+    <dimen name="video_view_image">300dp</dimen>
     <dimen name="photo_list_item_margin">2dp</dimen>
 </resources>
