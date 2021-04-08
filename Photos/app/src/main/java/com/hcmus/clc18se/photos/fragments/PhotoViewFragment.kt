@@ -72,11 +72,9 @@ class PhotoViewFragment : Fragment() {
     private fun setUpBottomButtons() {
         binding.bottomLayout.apply {
             editButton.setOnClickListener {
-                Thread {
-                    val intent = Intent(context, EditPhotoActivity::class.java)
-                    intent.putExtra("uri", photos[currentPosition].requireUri())
-                    startActivity(intent)
-                }
+                val intent = Intent(context, EditPhotoActivity::class.java)
+                intent.putExtra("uri", photos[currentPosition].requireUri())
+                startActivity(intent)
             }
 
             heartButton.setOnClickListener {
