@@ -2,9 +2,11 @@ package com.hcmus.clc18se.photos.fragments
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.app.RecoverableSecurityException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -83,7 +85,27 @@ class PhotoViewFragment : Fragment() {
 
             nukeButton.setOnClickListener {
                 val resolver = requireContext().contentResolver
-                val result = resolver.delete(photos[currentPosition].requireUri(), null, null)
+                var result = 0
+                try {
+                    result = resolver.delete(photos[currentPosition].requireUri(), null, null)
+                }
+                catch (securityException: SecurityException) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        val recoverableSecurityException =
+                                securityException as? RecoverableSecurityException
+                                        ?: throw SecurityException()
+
+                        val intentSender = recoverableSecurityException.userAction.actionIntent.intentSender
+
+                        intentSender?.let {
+                            startIntentSenderForResult(intentSender, 0, null, 0, 0, 0, null)
+                        }
+                        result = 1
+                    } else {
+                        throw SecurityException()
+                    }
+                }
+
                 if (result > 0) {
                     Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show()
                     requireActivity().onBackPressed()
