@@ -22,6 +22,7 @@ import androidx.core.view.drawToBitmap
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
+import com.hcmus.clc18se.photos.utils.ConvolutionMatrix
 import com.hcmus.clc18se.photos.utils.DrawableImageView
 import com.hcmus.clc18se.photos.utils.svg.SingleMediaScanner
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -31,8 +32,6 @@ import ja.burhanrashid52.photoeditor.PhotoEditorView
 import ja.burhanrashid52.photoeditor.SaveSettings
 import kotlinx.coroutines.*
 import me.jfenn.colorpickerdialog.dialogs.ColorPickerDialog
-import yuku.ambilwarna.AmbilWarnaDialog
-import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener
 import java.io.*
 import java.nio.IntBuffer
 import java.text.SimpleDateFormat
@@ -304,6 +303,82 @@ class EditPhotoActivity : AppCompatActivity() {
         paint.colorFilter = f
         c.drawBitmap(bmpOriginal, 0f, 0f, paint)
         return bmpGrayscale
+    }
+
+    // link: https://xjaphx.wordpress.com/2011/06/22/image-processing-smooth-effect/
+    fun smooth(src: Bitmap?, value: Double): Bitmap? {
+        val convMatrix = ConvolutionMatrix(3)
+        convMatrix.setAll(1.0)
+        convMatrix.Matrix[1][1] = value
+        convMatrix.Factor = value + 8
+        convMatrix.Offset = 1.0
+        return ConvolutionMatrix.computeConvolution3x3(src, convMatrix)
+    }
+
+    // link: https://xjaphx.wordpress.com/2011/10/30/image-processing-snow-effect/
+    fun applySnowEffect(source: Bitmap): Bitmap? {
+        // get image size
+        val width = source.width
+        val height = source.height
+        val pixels = IntArray(width * height)
+        // get pixel array from source
+        source.getPixels(pixels, 0, width, 0, 0, width, height)
+        // random object
+        val random = Random()
+        var R: Int
+        var G: Int
+        var B: Int
+        var index = 0
+        var thresHold = 50
+        // iteration through pixels
+        for (y in 0 until height) {
+            for (x in 0 until width) {
+                // get current index in 2D-matrix
+                index = y * width + x
+                // get color
+                R = Color.red(pixels[index])
+                G = Color.green(pixels[index])
+                B = Color.blue(pixels[index])
+                // generate threshold
+                thresHold = random.nextInt(HIGHEST_COLOR_VALUE)
+                if (R > thresHold && G > thresHold && B > thresHold) {
+                    pixels[index] = Color.rgb(HIGHEST_COLOR_VALUE, HIGHEST_COLOR_VALUE, HIGHEST_COLOR_VALUE)
+                }
+            }
+        }
+        // output bitmap
+        val bmOut = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+        bmOut.setPixels(pixels, 0, width, 0, 0, width, height)
+        return bmOut
+    }
+
+    // link: https://xjaphx.wordpress.com/2011/10/30/image-processing-flea-noise-effect/
+    fun applyFleaEffect(source: Bitmap): Bitmap? {
+        // get image size
+        val width = source.width
+        val height = source.height
+        val pixels = IntArray(width * height)
+        // get pixel array from source
+        source.getPixels(pixels, 0, width, 0, 0, width, height)
+        // a random object
+        val random = Random()
+        var index = 0
+        // iteration through pixels
+        for (y in 0 until height) {
+            for (x in 0 until width) {
+                // get current index in 2D-matrix
+                index = y * width + x
+                // get random color
+                val randColor = Color.rgb(random.nextInt(HIGHEST_COLOR_VALUE),
+                        random.nextInt(HIGHEST_COLOR_VALUE), random.nextInt(HIGHEST_COLOR_VALUE))
+                // OR
+                pixels[index] = pixels[index] or randColor
+            }
+        }
+        // output bitmap
+        val bmOut = Bitmap.createBitmap(width, height, source.config)
+        bmOut.setPixels(pixels, 0, width, 0, 0, width, height)
+        return bmOut
     }
 
     //link: https://stackoverflow.com/questions/9826273/photo-image-to-sketch-algorithm
@@ -649,7 +724,6 @@ class EditPhotoActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onPickColorButtonClick(view: View) {
-
         ColorPickerDialog()
             .withColor(Color.WHITE) // the default / initial color
             .withListener { dialog, color ->
