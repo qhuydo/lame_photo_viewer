@@ -14,6 +14,7 @@ import com.afollestad.materialcab.createCab
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.databinding.PhotoListBinding
+import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.getColorAttribute
 import com.hcmus.clc18se.photos.utils.setPhotoListIcon
 import com.hcmus.clc18se.photos.utils.setPhotoListItemSizeOption
@@ -39,7 +40,7 @@ import timber.log.Timber
  */
 abstract class AbstractPhotoListFragment(
     private val menuRes: Int
-) : Fragment() {
+) : Fragment(), OnBackPressed {
 
     protected val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireActivity())
@@ -212,5 +213,12 @@ abstract class AbstractPhotoListFragment(
             Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
         }
         return true
+    }
+
+    override fun onBackPress(): Boolean {
+        mainCab?.let {
+            it.destroy()
+            return true
+        } ?: return false
     }
 }

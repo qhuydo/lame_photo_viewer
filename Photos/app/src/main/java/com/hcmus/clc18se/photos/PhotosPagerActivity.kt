@@ -1,9 +1,12 @@
 package com.hcmus.clc18se.photos
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,22 +21,24 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
     internal val binding by lazy { ActivityPhotosPagerBinding.inflate(layoutInflater) }
 
-    private val navHostFragment by lazy { supportFragmentManager.findFragmentById(R.id.navHostFragmentPager) as NavHostFragment }
+    override val navHostFragment by lazy { supportFragmentManager.findFragmentById(R.id.navHostFragmentPager) as NavHostFragment }
 
     private val navController by lazy { navHostFragment.navController }
 
-    private val drawerLayout by lazy { binding.drawerLayout }
+    override val drawerLayout by lazy { binding.drawerLayout }
 
     private var isFabRotate = false
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    override val appBarConfiguration by lazy {
+        AppBarConfiguration(
+                setOf(R.id.homeViewPagerFragment), drawerLayout
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        appBarConfiguration = AppBarConfiguration(
-                setOf(R.id.homeViewPagerFragment), drawerLayout
-        )
+
         Timber.d("On Create called")
         Timber.d("----------------")
 
@@ -42,6 +47,18 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
         setContentView(binding.root)
 
         setUpNavigationBar()
+
+        binding.navView.setNavigationItemSelectedListener { item ->
+            drawerLayout.closeDrawer(GravityCompat.START)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                when (item.itemId) {
+                    else -> NavigationUI.onNavDestinationSelected(
+                            item, navController
+                    ) || onOptionsItemSelected(item)
+                }
+            }, 300)
+        }
     }
 
     override fun addOnDestinationChangedListener() {
@@ -55,7 +72,8 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
             when (destination.id) {
                 R.id.photoViewFragment -> {
-                    val layoutParams = binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
+                    val layoutParams =
+                            binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
                     layoutParams.topMargin = 0
                 }
             }
@@ -101,7 +119,8 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
     override fun setAppbarVisibility(visibility: Boolean) {
         Timber.d("setAppbarVisibility(visibility: $visibility)")
-        val layoutParams = binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
+        val layoutParams =
+                binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
         if (visibility) {
             binding.apply {
                 topAppBar.appBarLayout.visibility = View.VISIBLE
@@ -131,7 +150,8 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
                 setAppBarHeight<CoordinatorLayout.LayoutParams>(
                         binding.topAppBar2.fragmentAppBarLayout,
-                        getAppBarSizeAttr(this@PhotosPagerActivity) ?: DEFAULT_APP_BAR_HEIGHT)
+                        getAppBarSizeAttr(this@PhotosPagerActivity) ?: DEFAULT_APP_BAR_HEIGHT
+                )
 
                 layoutParams.behavior = null
                 layoutParams.topMargin = getAppBarSizeAttr(this@PhotosPagerActivity) ?: 0
@@ -140,7 +160,10 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
                 mainCoordinatorLayout.invalidate()
 
                 setSupportActionBar(topAppBar2.fragmentToolBar)
-                topAppBar2.fragmentToolBar.setupWithNavController(navController, appBarConfiguration)
+                topAppBar2.fragmentToolBar.setupWithNavController(
+                        navController,
+                        appBarConfiguration
+                )
             }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -173,7 +196,8 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
     }
 
     override fun setNavHostFragmentTopMargin(pixelValue: Int) {
-        val layoutParams = binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
+        val layoutParams =
+                binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
         layoutParams.topMargin = pixelValue
     }
 

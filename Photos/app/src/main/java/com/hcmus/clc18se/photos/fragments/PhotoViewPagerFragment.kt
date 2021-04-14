@@ -1,13 +1,11 @@
 package com.hcmus.clc18se.photos.fragments
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.*
-import android.widget.RelativeLayout
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -17,11 +15,10 @@ import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 import com.hcmus.clc18se.photos.utils.VideoDialog
 
-
 class PhotoViewPagerFragment : Fragment() {
 
     internal var mediaItem: MediaItem? = null
-    private var dialog:Dialog? = null
+    private var dialog: Dialog? = null
     private lateinit var binding: PhotoViewPagerPageBinding
     private var actionBar: ActionBar? = null
     internal var debug: Boolean = false
@@ -56,7 +53,7 @@ class PhotoViewPagerFragment : Fragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = PhotoViewPagerPageBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
         return binding.root
@@ -102,10 +99,10 @@ class PhotoViewPagerFragment : Fragment() {
                 debug
         )
 
-        binding.videoViewImage.playIcon.setOnClickListener{
-              val  intent = Intent(context,VideoDialog::class.java)
-              intent.putExtra("uri",mediaItem!!.requireUri())
-              startActivity(intent)
+        binding.videoViewImage.playIcon.setOnClickListener {
+            val intent = Intent(context, VideoDialog::class.java)
+            intent.putExtra("uri", mediaItem!!.requireUri())
+            startActivity(intent)
         }
 
         binding.apply {

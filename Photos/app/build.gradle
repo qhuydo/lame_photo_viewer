@@ -69,6 +69,7 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     implementation 'de.psdev.licensesdialog:licensesdialog:2.1.0'
     implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
+    implementation 'me.jfenn.ColorPickerDialog:base:0.2.2'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0'
     implementation 'com.afollestad:material-cab:2.0.1'
     // Using JCenter
@@ -80,9 +81,12 @@ dependencies {
     // Crop image
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
     implementation 'com.caverock:androidsvg-aar:1.4'
-    implementation 'com.github.yukuku:ambilwarna:2.0.1'
+
     // Some image filter and add sticker image
     implementation 'ja.burhanrashid52:photoeditor:1.1.0'
+
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
+//    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
 
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$rootProject.testExtJunit"

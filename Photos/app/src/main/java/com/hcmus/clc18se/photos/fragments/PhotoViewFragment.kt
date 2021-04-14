@@ -1,6 +1,5 @@
 package com.hcmus.clc18se.photos.fragments
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.RecoverableSecurityException
 import android.content.Context
@@ -35,10 +34,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.concurrent.thread
-
 
 class PhotoViewFragment : Fragment() {
+
     private lateinit var viewModel: PhotosViewModel
 
     companion object {
@@ -57,6 +55,19 @@ class PhotoViewFragment : Fragment() {
     private var currentPosition = -1
 
     private var debug: Boolean = false
+
+    private val viewPagerCallback by lazy {
+        object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                currentPosition = position
+                super.onPageSelected(position)
+
+                (activity as AbstractPhotosActivity).supportActionBar?.title = photos[position].name
+                setEditButtonVisibility(photos[position].isEditable())
+                initFavouriteButtonState()
+            }
+        }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -78,7 +89,6 @@ class PhotoViewFragment : Fragment() {
 
     }
 
-    @SuppressLint("SetTextI18n")
     private fun setUpBottomButtons() {
         binding.bottomLayout.apply {
             editButton.setOnClickListener {
@@ -117,8 +127,7 @@ class PhotoViewFragment : Fragment() {
                 if (result > 0) {
                     Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show()
                     requireActivity().onBackPressed()
-                }
-                else {
+                } else {
                     Toast.makeText(context, "Delete unsuccess", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -129,19 +138,18 @@ class PhotoViewFragment : Fragment() {
                 dialog.setContentView(R.layout.dialog_info)
                 dialog.findViewById<TextView>(R.id.path).text = "Path: " + photos[currentPosition].requirePath(requireContext())
                 dialog.findViewById<TextView>(R.id.date_create).text = "Date create: " + photos[currentPosition].requireDateTaken()
-                dialog.findViewById<Button>(R.id.off_info_dialog) .setOnClickListener(View.OnClickListener { dialog.dismiss() })
+                dialog.findViewById<Button>(R.id.off_info_dialog).setOnClickListener(View.OnClickListener { dialog.dismiss() })
                 dialog.show()
             }
 
-            shareButton.setOnClickListener{
+            shareButton.setOnClickListener {
                 if (photos[currentPosition].isVideo()) {
                     val sendIntent = Intent()
                     sendIntent.action = Intent.ACTION_SEND
                     sendIntent.putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
                     sendIntent.type = "video/*"
                     startActivity(Intent.createChooser(sendIntent, "Send video via:"))
-                }
-                else{
+                } else {
                     val sendIntent = Intent()
                     sendIntent.action = Intent.ACTION_SEND
                     sendIntent.putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
@@ -162,7 +170,7 @@ class PhotoViewFragment : Fragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // TODO: clean this code
         (activity as AbstractPhotosActivity).setNavHostFragmentTopMargin(0)
 
@@ -182,31 +190,16 @@ class PhotoViewFragment : Fragment() {
 
         initFavouriteButtonState()
 
-
-        binding.horizontalViewPager.apply {
-            adapter = ScreenSlidePagerAdapter(this@PhotoViewFragment)
-
 //            val fullscreen = preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
 //            if (fullscreen) {
 //                val window = requireActivity().window
 //                window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 //            }
 
+        binding.horizontalViewPager.apply {
+            adapter = ScreenSlidePagerAdapter(this@PhotoViewFragment)
             setCurrentItem(viewModel.idx.value!!, false)
-
-            binding.horizontalViewPager.registerOnPageChangeCallback(object :
-                    ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    currentPosition = position
-                    super.onPageSelected(position)
-
-                    (activity as AbstractPhotosActivity).supportActionBar?.title = photos[position].name
-                    setEditButtonVisibility(photos[position].isEditable())
-                    initFavouriteButtonState()
-
-                }
-            })
-
+            registerOnPageChangeCallback(viewPagerCallback)
         }
 
         debug = preferences.getBoolean(getString(R.string.image_debugger_key), false)
@@ -258,6 +251,31 @@ class PhotoViewFragment : Fragment() {
         }
     }
 
+    internal fun setBottomToolbarVisibility(visibility: Boolean) {
+        if (visibility) {
+            binding.bottomLayout.layout.visibility = View.VISIBLE
+        } else {
+            binding.bottomLayout.layout.visibility = View.INVISIBLE
+        }
+    }
+
+    internal fun setEditButtonVisibility(visibility: Boolean?) {
+        binding.bottomLayout.apply {
+            editButton.visibility = if (visibility == false) View.GONE else View.VISIBLE
+            this.root.requestLayout()
+            this.root.invalidate()
+        }
+    }
+
+    override fun onDetach() {
+        binding.horizontalViewPager.unregisterOnPageChangeCallback(viewPagerCallback)
+
+        super.onDetach()
+        (activity as AbstractPhotosActivity).supportActionBar?.show()
+        activity?.window?.navigationBarColor = binding.navBarColor
+
+    }
+
     private inner class ScreenSlidePagerAdapter(fragment: Fragment) :
             FragmentStateAdapter(fragment) {
 
@@ -279,26 +297,5 @@ class PhotoViewFragment : Fragment() {
         }
     }
 
-    internal fun setBottomToolbarVisibility(visibility: Boolean) {
-        if (visibility) {
-            binding.bottomLayout.layout.visibility = View.VISIBLE
-        } else {
-            binding.bottomLayout.layout.visibility = View.INVISIBLE
-        }
-    }
-
-    internal fun setEditButtonVisibility(visibility: Boolean?) {
-        binding.bottomLayout.apply {
-            editButton.visibility = if (visibility == false) View.GONE else View.VISIBLE
-            this.root.requestLayout()
-            this.root.invalidate()
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        (activity as AbstractPhotosActivity).supportActionBar?.show()
-        activity?.window?.navigationBarColor = binding.navBarColor
-    }
 }
 

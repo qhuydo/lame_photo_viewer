@@ -4,9 +4,8 @@ import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.Checkable
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -65,8 +64,8 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
                 }
 
 
-                if (holder.itemView is MaterialCardView) {
-                    (holder.itemView as MaterialCardView).isChecked = selectedItems.contains(photo)
+                if (holder.itemView is Checkable) {
+                    (holder.itemView as Checkable).isChecked = selectedItems.contains(photo)
                 }
             }
         }
@@ -97,13 +96,7 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
                     photo = item
                 }
             }
-            if (selected) {
-                listBinding.root.background = ResourcesCompat.getDrawable(
-                        activity.resources,
-                        R.drawable.frame_border,
-                        activity.theme
-                )
-            }
+
             listBinding.executePendingBindings()
         }
 

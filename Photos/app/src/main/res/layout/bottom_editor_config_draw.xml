@@ -1,46 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
     <LinearLayout
         android:id="@+id/draw_config_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="false">
+
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:onClick="onPickColorButtonClick">
-            <ImageView
-                android:id="@+id/pickColor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/green_500"
-                android:src="@drawable/ic_outline_color_lens_24"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/pick_color"/>
-        </LinearLayout>
-        <LinearLayout
             android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical">
-            <androidx.appcompat.widget.AppCompatSeekBar
-                android:id="@+id/weight_seekbar"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:max="100"
-                android:progress="5"
-                />
+
+            <ImageButton
+                android:onClick="onPickColorButtonClick"
+                android:id="@+id/pickColor"
+                style="@style/Theme.Photos.OutlineButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foregroundTint="@color/green_500"
+                android:src="@drawable/ic_outline_color_lens_24" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/pick_weight"/>
+                android:text="@string/pick_color" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/weight_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:max="100"
+                android:progress="5" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pick_weight" />
         </LinearLayout>
     </LinearLayout>
 

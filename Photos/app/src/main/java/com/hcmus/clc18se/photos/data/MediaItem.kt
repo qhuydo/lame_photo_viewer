@@ -61,6 +61,7 @@ data class MediaItem(
         uri?.let {
             return it
         }
+
         val itemUri = ContentUris.withAppendedId(
                 MediaStore.Files.getContentUri("external"),
                 id)

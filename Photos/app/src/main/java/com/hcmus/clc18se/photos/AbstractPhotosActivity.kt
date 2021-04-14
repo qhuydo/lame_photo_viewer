@@ -9,10 +9,15 @@ import android.util.DisplayMetrics
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.preference.PreferenceManager
 import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.data.MediaProvider
 import com.hcmus.clc18se.photos.utils.ICON_COLOR
+import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
@@ -39,7 +44,12 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     private val colorResource by lazy { (application as PhotosApplication).colorResource }
 
     protected var bottomAppBarVisibility: Boolean = true
+
     protected var defaultSystemUiVisibility: Int = -1
+
+    abstract val appBarConfiguration: AppBarConfiguration
+
+    abstract val navHostFragment: NavHostFragment
 
     protected fun displayBottomBarPreference(): Boolean {
         return preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0") == "0"
@@ -96,9 +106,9 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     private fun setAppLocale(localeCode: String) {
         val displayMetrics: DisplayMetrics = resources.getDisplayMetrics()
         val configuration: Configuration = resources.getConfiguration()
-        configuration.setLocale(Locale(localeCode.toLowerCase()))
+        configuration.setLocale(Locale(localeCode.toLowerCase(Locale.ROOT)))
         resources.updateConfiguration(configuration, displayMetrics)
-        configuration.locale = Locale(localeCode.toLowerCase())
+        configuration.locale = Locale(localeCode.toLowerCase(Locale.ROOT))
         resources.updateConfiguration(configuration, displayMetrics)
     }
 
@@ -202,4 +212,20 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     abstract fun setNavHostFragmentTopMargin(pixelValue: Int)
 
     abstract fun getNavGraphResId(): Int
+
+    abstract val drawerLayout: DrawerLayout
+
+    override fun onBackPressed() {
+        // get the current fragment
+        val currentFragment = navHostFragment.childFragmentManager.fragments[0] as? OnBackPressed
+        val defaultBackPress = currentFragment?.onBackPress()?.not() ?: true
+
+        if (defaultBackPress) {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            } else {
+                super.onBackPressed()
+            }
+        }
+    }
 }

@@ -1,9 +1,14 @@
 package com.hcmus.clc18se.photos
 
+import android.app.ActivityManager
+import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -19,22 +24,23 @@ class PhotosActivity : AbstractPhotosActivity() {
 
     internal val binding by lazy { ActivityPhotosBinding.inflate(layoutInflater) }
 
-    private val navHostFragment by lazy { supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment }
+    override val navHostFragment: NavHostFragment by lazy { supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment }
 
     private val navController by lazy { navHostFragment.navController }
 
-    private val drawerLayout by lazy { binding.drawerLayout }
+    override val drawerLayout by lazy { binding.drawerLayout }
 
     private var isFabRotate = false
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    override val appBarConfiguration: AppBarConfiguration by lazy {
+        AppBarConfiguration(
+                setOf(R.id.page_photo, R.id.page_album, R.id.page_people), drawerLayout
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        appBarConfiguration = AppBarConfiguration(
-                setOf(R.id.page_photo, R.id.page_album, R.id.page_people), drawerLayout
-        )
         Timber.d("On Create called")
         Timber.d("----------------")
 
@@ -47,6 +53,18 @@ class PhotosActivity : AbstractPhotosActivity() {
         savedInstanceState?.let {
             bottomAppBarVisibility = it.getBoolean(BUNDLE_BOTTOM_APPBAR_VISIBILITY)
             setAppbarVisibility(bottomAppBarVisibility)
+        }
+
+        binding.navView.setNavigationItemSelectedListener { item ->
+            drawerLayout.closeDrawer(GravityCompat.START)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                when (item.itemId) {
+                    else -> NavigationUI.onNavDestinationSelected(
+                            item, navController
+                    ) || onOptionsItemSelected(item)
+                }
+            }, 300)
         }
     }
 
@@ -187,9 +205,7 @@ class PhotosActivity : AbstractPhotosActivity() {
         return NavigationUI.onNavDestinationSelected(
                 item,
                 navController
-        ) || super.onOptionsItemSelected(
-                item
-        )
+        ) || super.onOptionsItemSelected(item)
     }
 
     override fun onSupportNavigateUp(): Boolean {
