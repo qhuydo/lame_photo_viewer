@@ -58,6 +58,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
     private var uri: Uri? = null
     private var bitmap: Bitmap? = null
+    private lateinit var redSeekBar:SeekBar
+    private lateinit var greenSeekBar:SeekBar
+    private lateinit var blueSeekBar:SeekBar
 
     private var brightness: Int = 100
     private var tempRed: Int = 100
@@ -128,9 +131,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
 
         val brightSeekBar = binding.brightEditor.brightSeekBar
-        val redSeekBar = binding.colorEditor.editorRed
-        val greenSeekBar = binding.colorEditor.editorGreen
-        val blueSeekBar = binding.colorEditor.editorBlue
+        redSeekBar = binding.colorEditor.editorRed
+        greenSeekBar = binding.colorEditor.editorGreen
+        blueSeekBar = binding.colorEditor.editorBlue
         val weightSeekBar = binding.drawConfigEditor.weightSeekbar
 
         brightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -260,6 +263,9 @@ class EditPhotoActivity : AppCompatActivity() {
                             Color.argb(200, 0, 255, 0),
                             PorterDuff.Mode.SRC_OVER
                     )
+            redSeekBar.progress = 0
+            greenSeekBar.progress = 255
+            blueSeekBar.progress = 0
             binding.progressCircular.visibility = View.INVISIBLE
         }
     }
@@ -400,13 +406,8 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     fun setColor(progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter {
-        val progress = max(
-                max(abs(progressRed - 100), abs(progressGreen - 100)),
-                abs(progressBlue - 100)
-        )
-        val value = progress * 255 / 100
         return PorterDuffColorFilter(
-                Color.argb(value, progressRed, progressGreen, progressBlue),
+                Color.argb(200, progressRed, progressGreen, progressBlue),
                 PorterDuff.Mode.SRC_OVER
         )
     }
@@ -433,6 +434,7 @@ class EditPhotoActivity : AppCompatActivity() {
                     scale++
                 }
                 bitmap = bitmap!!.copy(Bitmap.Config.ARGB_8888, true).scale(bitmap!!.width/scale,bitmap!!.height/scale,false)
+                binding.imageEdit.colorFilter = null
                 bindImage(binding.imageEdit, bitmap)
                 isCrop = false
             }

@@ -11,7 +11,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+        android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
 
     <application
         android:name=".PhotosApplication"
@@ -47,6 +48,7 @@
             android:configChanges="uiMode"
             android:label="Lame Photo Viewer ViewPager"
             android:launchMode="singleTask"
+            android:requestLegacyExternalStorage="true"
             android:theme="@style/Theme.Photos.Indigo.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

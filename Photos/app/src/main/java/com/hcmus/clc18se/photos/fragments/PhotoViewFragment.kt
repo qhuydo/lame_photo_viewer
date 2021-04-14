@@ -6,8 +6,10 @@ import android.app.RecoverableSecurityException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +17,8 @@ import android.view.Window
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -36,6 +40,10 @@ import kotlin.concurrent.thread
 
 class PhotoViewFragment : Fragment() {
     private lateinit var viewModel: PhotosViewModel
+
+    companion object {
+        const val DELETE_CODE = 2021
+    }
 
     private val photos by lazy { viewModel.mediaItemList.value ?: listOf() }
 
@@ -142,6 +150,12 @@ class PhotoViewFragment : Fragment() {
                 }
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun deleteListUri(uris: List<Uri>){
+        val pendingIntent = MediaStore.createDeleteRequest(requireContext().contentResolver, uris)
+        startIntentSenderForResult(pendingIntent.intentSender, DELETE_CODE, null, 0, 0, 0,null)
     }
 
     override fun onCreateView(
