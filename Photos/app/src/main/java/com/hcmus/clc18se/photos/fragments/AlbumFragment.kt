@@ -71,7 +71,7 @@ class AlbumFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_album, container, false
         )
@@ -88,7 +88,6 @@ class AlbumFragment : Fragment() {
 
         binding.albumViewModel = this@AlbumFragment.albumViewModel
         val adapter = AlbumListAdapter(albumAdapterListener,
-                resources,
                 currentListItemView,
                 currentListItemSize)
 
@@ -222,7 +221,7 @@ class AlbumFragment : Fragment() {
     private fun refreshRecyclerView() {
         binding.apply {
             val adapter = AlbumListAdapter(albumAdapterListener,
-                    resources, currentListItemView, currentListItemSize)
+                    currentListItemView, currentListItemSize)
             val recyclerView = albumListLayout.albumListRecyclerView
             val albumList = albumListLayout.albumList
 

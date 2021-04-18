@@ -37,7 +37,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     val viewModel: AlbumViewModel by viewModels()
 
-    val mediaProvider: MediaProvider = MediaProvider(this)
+    val mediaProvider: MediaProvider = MediaProvider(application.applicationContext)
 
     internal val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 

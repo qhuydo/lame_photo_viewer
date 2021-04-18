@@ -14,6 +14,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
+// TODO: replace this?
 class MediaProvider(private val context: Context) {
 
     companion object {
@@ -21,11 +22,6 @@ class MediaProvider(private val context: Context) {
         private var privateAlbums: ArrayList<Album>? = null
         val albums: ArrayList<Album>?
             get() = privateAlbums
-
-        private var privateFavouriteMediaItems: ArrayList<MediaItem>? = null
-        val favouriteMediaItems: ArrayList<MediaItem>?
-            get() = privateFavouriteMediaItems
-
     }
 
     private var onAlbumLoaded: Boolean = false
@@ -189,7 +185,7 @@ class MediaProvider(private val context: Context) {
         return null
     }
 
-    fun loadFavouriteMediaItems() {
+    suspend fun loadFavouriteMediaItems() {
         scope.launch {
             Timber.d("Start loading FavouriteMediaItems")
             val startTime = System.currentTimeMillis()
@@ -204,9 +200,6 @@ class MediaProvider(private val context: Context) {
                 mediaItem?.let { favouriteMediaItems.add(it) }
                         ?: dataSource.removeFavouriteItems(favouriteItem)
             }
-
-            privateFavouriteMediaItems = favouriteMediaItems
-
             Timber.d("loadFavouriteMediaItems(): ${(System.currentTimeMillis() - startTime)} ms")
         }
     }

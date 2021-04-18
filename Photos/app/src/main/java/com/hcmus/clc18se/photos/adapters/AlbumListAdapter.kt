@@ -14,7 +14,6 @@ import com.hcmus.clc18se.photos.databinding.*
 
 class AlbumListAdapter(
         private val onClickListener: OnClickListener,
-        private val resources: Resources,
         private val adapterItemType: Int = ITEM_TYPE_GRID,
         private val adapterItemSize: Int = ITEM_SIZE_MEDIUM) :
         ListAdapter<Album, AlbumListAdapter.ViewHolder>(DiffCallBack()) {
@@ -37,20 +36,19 @@ class AlbumListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-            ViewHolder.from(parent, resources, viewType, adapterItemSize)
+            ViewHolder.from(parent, viewType, adapterItemSize)
 
     override fun getItemViewType(position: Int): Int {
         return adapterItemType
     }
 
     class ViewHolder(private val binding: ViewDataBinding,
-                     private val resources: Resources,
                      private val itemSize: Int = ITEM_SIZE_MEDIUM
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(album: Album) {
             when (binding) {
                 is ItemAlbumListBinding -> {
-                    setItemListSize(resources, binding.albumListItemImage, itemSize)
+                    setItemListSize(itemView.context.resources, binding.albumListItemImage, itemSize)
                     binding.album = album
                 }
                 is ItemAlbumListGridBinding -> binding.album = album
@@ -60,7 +58,6 @@ class AlbumListAdapter(
 
         companion object {
             fun from(parent: ViewGroup,
-                     resources: Resources,
                      viewType: Int,
                      itemSize: Int = ITEM_SIZE_MEDIUM): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
@@ -68,7 +65,7 @@ class AlbumListAdapter(
                     ITEM_TYPE_LIST -> ItemAlbumListBinding.inflate(layoutInflater)
                     else -> ItemAlbumListGridBinding.inflate(layoutInflater)
                 }
-                return ViewHolder(binding, resources, itemSize)
+                return ViewHolder(binding, itemSize)
             }
 
             fun setItemListSize(resources: Resources, item: ImageView, itemSize: Int) {

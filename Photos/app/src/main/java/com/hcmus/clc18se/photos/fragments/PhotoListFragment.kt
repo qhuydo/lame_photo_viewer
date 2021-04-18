@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -68,7 +67,7 @@ class PhotoListFragment : AbstractPhotoListFragment(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_photo_list, container, false
         )
@@ -86,7 +85,6 @@ class PhotoListFragment : AbstractPhotoListFragment(
         )!!.toInt()
 
         adapter = MediaItemListAdapter(
-                (requireActivity() as AppCompatActivity),
                 onClickListener,
                 currentListItemView,
                 currentListItemSize
@@ -134,7 +132,6 @@ class PhotoListFragment : AbstractPhotoListFragment(
     override fun refreshRecyclerView() {
         binding.apply {
             adapter = MediaItemListAdapter(
-                    (requireActivity() as AppCompatActivity),
                     onClickListener,
                     currentListItemView,
                     currentListItemSize
@@ -144,10 +141,9 @@ class PhotoListFragment : AbstractPhotoListFragment(
             val photoList = viewModel.mediaItemList.value
 
             recyclerView.adapter = adapter
-            (photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager).apply {
-                spanCount =
-                        getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
-            }
+            (photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager).spanCount =
+                    getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
+
 
             bindMediaListRecyclerView(recyclerView, photoList ?: listOf())
 

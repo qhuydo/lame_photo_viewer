@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ContentUris
 import android.database.ContentObserver
 import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -41,8 +42,9 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    // wtf is this?
     fun loadDataFromOtherViewModel(other: PhotosViewModel) {
-        _mediaItemList.value = other._mediaItemList.value
+        _mediaItemList.postValue(other._mediaItemList.value)
     }
 
     fun loadImages() {
@@ -51,12 +53,11 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
             _mediaItemList.postValue(images)
 
             if (contentObserver == null) {
-                val observer = object : ContentObserver(Handler()) {
+                val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
                     override fun onChange(selfChange: Boolean) {
                         loadImages()
                     }
                 }
-
                 getApplication<Application>().contentResolver.registerContentObserver(
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, observer
                 )

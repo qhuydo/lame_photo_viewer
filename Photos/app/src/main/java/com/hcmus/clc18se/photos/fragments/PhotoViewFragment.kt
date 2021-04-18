@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -48,7 +49,6 @@ class PhotoViewFragment : Fragment() {
     private val preferences by lazy { (requireActivity() as AbstractPhotosActivity).preferences }
 
     private val contentProvider by lazy { PhotosDatabase.getInstance(requireContext()).photosDatabaseDao }
-    // private val mediaProvider by lazy { (requireActivity() as AbstractPhotosActivity).mediaProvider }
 
     private lateinit var binding: FragmentPhotoViewBinding
 
@@ -72,7 +72,7 @@ class PhotoViewFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
-                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         )
         this.viewModel = viewModel
     }
@@ -106,14 +106,14 @@ class PhotoViewFragment : Fragment() {
                 var result = 0
                 try {
                     result = resolver.delete(photos[currentPosition].requireUri(), null, null)
-                }
-                catch (securityException: SecurityException) {
+                } catch (securityException: SecurityException) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         val recoverableSecurityException =
-                                securityException as? RecoverableSecurityException
-                                        ?: throw SecurityException()
+                            securityException as? RecoverableSecurityException
+                                ?: throw SecurityException()
 
-                        val intentSender = recoverableSecurityException.userAction.actionIntent.intentSender
+                        val intentSender =
+                            recoverableSecurityException.userAction.actionIntent.intentSender
 
                         intentSender?.let {
                             startIntentSenderForResult(intentSender, 0, null, 0, 0, 0, null)
@@ -160,16 +160,16 @@ class PhotoViewFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
-    fun deleteListUri(uris: List<Uri>){
-        val pendingIntent = MediaStore.createDeleteRequest(requireContext().contentResolver, uris)
-        startIntentSenderForResult(pendingIntent.intentSender, DELETE_CODE, null, 0, 0, 0,null)
-    }
+//    @RequiresApi(Build.VERSION_CODES.R)
+//    fun deleteListUri(uris: List<Uri>) {
+//        val pendingIntent = MediaStore.createDeleteRequest(requireContext().contentResolver, uris)
+//        startIntentSenderForResult(pendingIntent.intentSender, DELETE_CODE, null, 0, 0, 0, null)
+//    }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // TODO: clean this code
         (activity as AbstractPhotosActivity).setNavHostFragmentTopMargin(0)
@@ -183,7 +183,8 @@ class PhotoViewFragment : Fragment() {
         }
 
         setUpBottomButtons()
-        (activity as AbstractPhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
+        (activity as AbstractPhotosActivity).supportActionBar?.title =
+            photos[viewModel.idx.value!!].name
 
         setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
         currentPosition = viewModel.idx.value!!
@@ -241,7 +242,7 @@ class PhotoViewFragment : Fragment() {
 
 
     private fun initFavouriteButtonState() {
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch {
             val mediaItem = viewModel.mediaItemList.value!![currentPosition]
             val isFavouriteItem = contentProvider.hasFavouriteItem(mediaItem.id)
 
@@ -277,9 +278,10 @@ class PhotoViewFragment : Fragment() {
     }
 
     private inner class ScreenSlidePagerAdapter(fragment: Fragment) :
-            FragmentStateAdapter(fragment) {
+        FragmentStateAdapter(fragment) {
 
-        val fullscreen = preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
+        val fullscreen =
+            preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
 
         override fun getItemCount(): Int {
             return photos.size

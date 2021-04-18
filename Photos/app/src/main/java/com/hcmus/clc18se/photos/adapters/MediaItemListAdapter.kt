@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Checkable
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +14,7 @@ import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.ItemPhotoListBinding
 import com.hcmus.clc18se.photos.databinding.ItemPhotoListGridBinding
 
-class MediaItemListAdapter(private val activity: AppCompatActivity,
-                           private val onClickListener: OnClickListener,
+class MediaItemListAdapter(private val onClickListener: OnClickListener,
                            private val adapterViewType: Int = ITEM_TYPE_GRID,
                            private val itemViewSize: Int = ITEM_SIZE_MEDIUM) :
         ListAdapter<MediaItem, RecyclerView.ViewHolder>(MediaItem.DiffCallBack) {
@@ -72,7 +70,7 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return ViewHolder.from(parent, viewType, activity, itemViewSize)
+        return ViewHolder.from(parent, viewType, itemViewSize)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -80,7 +78,6 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
     }
 
     class ViewHolder(private val listBinding: ViewDataBinding,
-                     private val activity: AppCompatActivity,
                      private val itemViewSize: Int = ITEM_SIZE_MEDIUM) :
             RecyclerView.ViewHolder(listBinding.root) {
 
@@ -89,7 +86,7 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
         fun bind(item: MediaItem) {
             when (listBinding) {
                 is ItemPhotoListBinding -> listBinding.apply {
-                    setItemListSize(activity.resources, imageFrame, itemViewSize)
+                    setItemListSize(itemView.context.resources, imageFrame, itemViewSize)
                     photo = item
                 }
                 is ItemPhotoListGridBinding -> listBinding.apply {
@@ -103,17 +100,14 @@ class MediaItemListAdapter(private val activity: AppCompatActivity,
         companion object {
             fun from(parent: ViewGroup,
                      viewType: Int,
-                     activity: AppCompatActivity,
                      itemViewSize: Int = ITEM_SIZE_MEDIUM): ViewHolder {
                 return when (viewType) {
                     ITEM_TYPE_LIST -> ViewHolder(
                             ItemPhotoListBinding.inflate(LayoutInflater.from(parent.context)),
-                            activity,
                             itemViewSize
                     )
                     else -> ViewHolder(
                             ItemPhotoListGridBinding.inflate(LayoutInflater.from(parent.context)),
-                            activity,
                             itemViewSize
                     )
                 }

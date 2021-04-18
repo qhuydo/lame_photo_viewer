@@ -3,7 +3,6 @@ package com.hcmus.clc18se.photos.fragments
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -31,12 +30,7 @@ class PhotosFragment : AbstractPhotoListFragment(
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-//        val viewModel: PhotosViewModel by navGraphViewModels(
-//                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
-//        )
-//        this.viewModel = viewModel
         viewModel.loadImages()
-
     }
 
     override val onClickListener = object : MediaItemListAdapter.OnClickListener {
@@ -74,7 +68,7 @@ class PhotosFragment : AbstractPhotoListFragment(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_photos, container, false
         )
@@ -89,8 +83,7 @@ class PhotosFragment : AbstractPhotoListFragment(
 
         setHasOptionsMenu(true)
 
-        adapter = MediaItemListAdapter((requireActivity() as AppCompatActivity),
-                onClickListener,
+        adapter = MediaItemListAdapter(onClickListener,
                 currentListItemView,
                 currentListItemSize)
 
@@ -128,8 +121,7 @@ class PhotosFragment : AbstractPhotoListFragment(
 
     override fun refreshRecyclerView() {
         binding.apply {
-            adapter = MediaItemListAdapter((requireActivity() as AppCompatActivity),
-                    onClickListener,
+            adapter = MediaItemListAdapter(onClickListener,
                     currentListItemView,
                     currentListItemSize)
 
