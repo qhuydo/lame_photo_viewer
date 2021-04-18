@@ -129,6 +129,7 @@
             android:layout_below="@+id/saveImage"
             android:layout_alignParentEnd="true"
             android:contentDescription="@string/undo"
+            android:onClick="undoImage"
             android:src="@drawable/ic_outline_undo_24" />
     </RelativeLayout>
 </layout>

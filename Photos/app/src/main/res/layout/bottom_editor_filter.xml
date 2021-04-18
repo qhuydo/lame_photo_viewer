@@ -82,18 +82,39 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:onClick="snowImage">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"
                     android:layout_height="@dimen/photo_edit_filter_size"
-                    android:src="@mipmap/misty_foreground" />
+                    android:src="@mipmap/snow_foreground" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/misty" />
+                    android:text="@string/snow" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
+                android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
+                android:orientation="vertical"
+                android:onClick="smoothImage">
+
+                <ImageView
+                    android:layout_width="@dimen/photo_edit_filter_size"
+                    android:layout_height="@dimen/photo_edit_filter_size"
+                    android:src="@mipmap/smooth_foreground" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/smooth" />
             </LinearLayout>
 
             <LinearLayout
@@ -121,18 +142,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:onClick="fleaImage">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"
                     android:layout_height="@dimen/photo_edit_filter_size"
-                    android:src="@mipmap/morning_foreground" />
+                    android:src="@mipmap/flea_foreground" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/lighten" />
+                    android:text="@string/flea" />
             </LinearLayout>
         </LinearLayout>
     </HorizontalScrollView>
