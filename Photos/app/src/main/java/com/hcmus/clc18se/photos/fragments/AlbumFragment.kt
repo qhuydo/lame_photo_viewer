@@ -71,6 +71,7 @@ class AlbumFragment : Fragment() {
         }
     }
 
+    // TODO: refactor this
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_album, container, false
@@ -87,10 +88,10 @@ class AlbumFragment : Fragment() {
         binding.lifecycleOwner = this@AlbumFragment
 
         binding.albumViewModel = this@AlbumFragment.albumViewModel
+
         val adapter = AlbumListAdapter(albumAdapterListener,
                 currentListItemView,
                 currentListItemSize)
-
 
         albumViewModel.onAlbumLoaded.observe(viewLifecycleOwner, {
             if (it == true) {
@@ -137,6 +138,15 @@ class AlbumFragment : Fragment() {
             }
         }
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.favorites.setOnClickListener {
+            findNavController().navigate(
+                    AlbumFragmentDirections.actionPageAlbumToFavouriteAlbumFragment()
+            )
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/favorites"
                     style="@style/Theme.Photos.OutlineButton"
                     android:layout_width="0dp"
@@ -50,7 +50,7 @@
                     app:barrierDirection="bottom"
                     app:constraint_referenced_ids="favorites, custom_album" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/custom_album"
                     style="@style/Theme.Photos.OutlineButton"
                     android:layout_width="0dp"

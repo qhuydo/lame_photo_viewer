@@ -6,7 +6,7 @@
     <group android:id="@+id/photo_extra_group">
 
         <item
-            android:id="@+id/page_favourites"
+            android:id="@+id/favouriteAlbumFragment"
             android:icon="@drawable/ic_outline_favorite_border_24"
             android:title="@string/favorites_title" />
 

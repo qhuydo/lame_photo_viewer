@@ -21,9 +21,11 @@ import com.hcmus.clc18se.photos.data.MediaItem
 import timber.log.Timber
 
 @BindingAdapter("mediaListItem")
-fun bindMediaListRecyclerView(recyclerView: RecyclerView, data: List<MediaItem>) {
-    val adapter = recyclerView.adapter as MediaItemListAdapter
-    adapter.submitList(data)
+fun bindMediaListRecyclerView(recyclerView: RecyclerView, data: List<MediaItem>?) {
+    data?.let {
+        val adapter = recyclerView.adapter as? MediaItemListAdapter
+        adapter?.submitList(data)
+    }
 }
 
 @BindingAdapter("albumListItem")

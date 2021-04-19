@@ -43,8 +43,11 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     // wtf is this?
-    fun loadDataFromOtherViewModel(other: PhotosViewModel) {
-        _mediaItemList.postValue(other._mediaItemList.value)
+    fun loadDataFromOtherViewModel(other: AndroidViewModel) {
+        when (other) {
+            is PhotosViewModel -> _mediaItemList.value = other._mediaItemList.value
+            is FavouriteAlbumViewModel -> _mediaItemList.value = other.mediaItems.value
+        }
     }
 
     fun loadImages() {

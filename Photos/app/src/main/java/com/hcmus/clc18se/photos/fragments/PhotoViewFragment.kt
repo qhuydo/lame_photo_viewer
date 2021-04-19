@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -29,6 +30,8 @@ import com.hcmus.clc18se.photos.EditPhotoActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
+import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
+import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +52,12 @@ class PhotoViewFragment : Fragment() {
     private val preferences by lazy { (requireActivity() as AbstractPhotosActivity).preferences }
 
     private val contentProvider by lazy { PhotosDatabase.getInstance(requireContext()).photosDatabaseDao }
+
+    private val favouriteAlbumViewModel: FavouriteAlbumViewModel by activityViewModels {
+        FavouriteAlbumViewModelFactory(
+                requireActivity().application, contentProvider
+        )
+    }
 
     private lateinit var binding: FragmentPhotoViewBinding
 
@@ -72,7 +81,7 @@ class PhotoViewFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
-            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         )
         this.viewModel = viewModel
     }
@@ -89,76 +98,76 @@ class PhotoViewFragment : Fragment() {
 
     }
 
-    private fun setUpBottomButtons() {
-        binding.bottomLayout.apply {
-            editButton.setOnClickListener {
-                val intent = Intent(context, EditPhotoActivity::class.java)
-                intent.putExtra("uri", photos[currentPosition].requireUri())
-                startActivity(intent)
-            }
+    private fun setUpBottomButtons() = binding.bottomLayout.apply {
+        editButton.setOnClickListener {
+            val intent = Intent(context, EditPhotoActivity::class.java)
+            intent.putExtra("uri", photos[currentPosition].requireUri())
+            startActivity(intent)
+        }
 
-            heartButton.setOnClickListener {
-                toggleFavouriteButton()
-            }
+        heartButton.setOnClickListener {
+            toggleFavouriteButton()
+        }
 
-            nukeButton.setOnClickListener {
-                val resolver = requireContext().contentResolver
-                var result = 0
-                try {
-                    result = resolver.delete(photos[currentPosition].requireUri(), null, null)
-                } catch (securityException: SecurityException) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        val recoverableSecurityException =
+        nukeButton.setOnClickListener {
+            val resolver = requireContext().contentResolver
+            var result = 0
+            try {
+                result = resolver.delete(photos[currentPosition].requireUri(), null, null)
+            } catch (securityException: SecurityException) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val recoverableSecurityException =
                             securityException as? RecoverableSecurityException
-                                ?: throw SecurityException()
+                                    ?: throw SecurityException()
 
-                        val intentSender =
+                    val intentSender =
                             recoverableSecurityException.userAction.actionIntent.intentSender
 
-                        intentSender?.let {
-                            startIntentSenderForResult(intentSender, 0, null, 0, 0, 0, null)
-                        }
-                        result = 1
-                    } else {
-                        throw SecurityException()
+                    intentSender?.let {
+                        startIntentSenderForResult(intentSender, 0, null, 0, 0, 0, null)
                     }
-                }
-
-                if (result > 0) {
-                    Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show()
-                    requireActivity().onBackPressed()
+                    result = 1
                 } else {
-                    Toast.makeText(context, "Delete unsuccess", Toast.LENGTH_SHORT).show()
+                    throw SecurityException()
                 }
             }
 
-            infoButton.setOnClickListener {
-                val dialog = Dialog(requireContext())
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                dialog.setContentView(R.layout.dialog_info)
-                dialog.findViewById<TextView>(R.id.path).text = "Path: " + photos[currentPosition].requirePath(requireContext())
-                dialog.findViewById<TextView>(R.id.date_create).text = "Date create: " + photos[currentPosition].requireDateTaken()
-                dialog.findViewById<Button>(R.id.off_info_dialog).setOnClickListener(View.OnClickListener { dialog.dismiss() })
-                dialog.show()
+            if (result > 0) {
+                Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show()
+                favouriteAlbumViewModel.requestReloadingData()
+                requireActivity().onBackPressed()
+            } else {
+                Toast.makeText(context, "Delete unsuccess", Toast.LENGTH_SHORT).show()
             }
+        }
 
-            shareButton.setOnClickListener {
-                if (photos[currentPosition].isVideo()) {
-                    val sendIntent = Intent()
-                    sendIntent.action = Intent.ACTION_SEND
-                    sendIntent.putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
-                    sendIntent.type = "video/*"
-                    startActivity(Intent.createChooser(sendIntent, "Send video via:"))
-                } else {
-                    val sendIntent = Intent()
-                    sendIntent.action = Intent.ACTION_SEND
-                    sendIntent.putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
-                    sendIntent.type = "image/*"
-                    startActivity(Intent.createChooser(sendIntent, "Send image via:"))
-                }
+        infoButton.setOnClickListener {
+            val dialog = Dialog(requireContext())
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.dialog_info)
+            dialog.findViewById<TextView>(R.id.path).text = "Path: " + photos[currentPosition].requirePath(requireContext())
+            dialog.findViewById<TextView>(R.id.date_create).text = "Date create: " + photos[currentPosition].requireDateTaken()
+            dialog.findViewById<Button>(R.id.off_info_dialog).setOnClickListener(View.OnClickListener { dialog.dismiss() })
+            dialog.show()
+        }
+
+        shareButton.setOnClickListener {
+            if (photos[currentPosition].isVideo()) {
+                val sendIntent = Intent()
+                sendIntent.action = Intent.ACTION_SEND
+                sendIntent.putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
+                sendIntent.type = "video/*"
+                startActivity(Intent.createChooser(sendIntent, "Send video via:"))
+            } else {
+                val sendIntent = Intent()
+                sendIntent.action = Intent.ACTION_SEND
+                sendIntent.putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
+                sendIntent.type = "image/*"
+                startActivity(Intent.createChooser(sendIntent, "Send image via:"))
             }
         }
     }
+
 
 //    @RequiresApi(Build.VERSION_CODES.R)
 //    fun deleteListUri(uris: List<Uri>) {
@@ -167,9 +176,9 @@ class PhotoViewFragment : Fragment() {
 //    }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         // TODO: clean this code
         (activity as AbstractPhotosActivity).setNavHostFragmentTopMargin(0)
@@ -183,8 +192,7 @@ class PhotoViewFragment : Fragment() {
         }
 
         setUpBottomButtons()
-        (activity as AbstractPhotosActivity).supportActionBar?.title =
-            photos[viewModel.idx.value!!].name
+        (activity as AbstractPhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
 
         setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
         currentPosition = viewModel.idx.value!!
@@ -210,6 +218,7 @@ class PhotoViewFragment : Fragment() {
     }
 
     private fun toggleFavouriteButton() {
+
         CoroutineScope(Dispatchers.IO).launch {
             val mediaItem = viewModel.mediaItemList.value!![currentPosition]
             val isFavouriteItem = contentProvider.hasFavouriteItem(mediaItem.id)
@@ -224,6 +233,7 @@ class PhotoViewFragment : Fragment() {
 
             withContext(Dispatchers.Main) {
                 changeFavouriteButtonState(!isFavouriteItem)
+                favouriteAlbumViewModel.requestReloadingData()
             }
         }
 
@@ -278,10 +288,10 @@ class PhotoViewFragment : Fragment() {
     }
 
     private inner class ScreenSlidePagerAdapter(fragment: Fragment) :
-        FragmentStateAdapter(fragment) {
+            FragmentStateAdapter(fragment) {
 
         val fullscreen =
-            preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
+                preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
 
         override fun getItemCount(): Int {
             return photos.size

@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_page_album_to_photoListFragment"
             app:destination="@id/photoListFragment" />
+        <action
+            android:id="@+id/action_page_album_to_favouriteAlbumFragment2"
+            app:destination="@id/favouriteAlbumFragment" />
     </fragment>
 
     <fragment
@@ -76,4 +79,14 @@
         android:name="com.hcmus.clc18se.photos.fragments.PhotoViewFragment"
         android:label=""
         tools:layout="@layout/fragment_photo_view" />
+
+    <fragment
+        android:id="@+id/favouriteAlbumFragment"
+        android:name="com.hcmus.clc18se.photos.fragments.FavouriteAlbumFragment"
+        android:label="FavouriteAlbumFragment" >
+        <action
+            android:id="@+id/action_favouriteAlbumFragment_to_photoViewFragment"
+            app:destination="@id/photoViewFragment" />
+    </fragment>
+
 </navigation>
