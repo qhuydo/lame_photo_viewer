@@ -116,7 +116,7 @@ class EditPhotoActivity : AppCompatActivity() {
                         false
                 )
             }
-
+            addToQueue(bitmap!!,binding.imageEdit.colorFilter)
             bindImage(binding.imageEdit, uri)
         }
 
@@ -239,17 +239,21 @@ class EditPhotoActivity : AppCompatActivity() {
                     .height, bitmap!!.getConfig()
             )
             viewDraw.setNewImage(alteredBitmap, bitmap!!, queue.last.colorFilter)
+            if (queue.size > 1)
+                queue.removeLast()
         }
         if (isAddIcon){
             viewAddIcon.getSource().setImageBitmap(queue.last.bitmap);
             viewAddIcon.getSource().colorFilter = queue.last.colorFilter
-            queue.removeLast()
+            if (queue.size > 1)
+                queue.removeLast()
         }
         if (!isDraw && !isAddIcon){
             binding.imageEdit.setImageBitmap(queue.last.bitmap)
             binding.imageEdit.colorFilter = queue.last.colorFilter
             binding.progressCircular.visibility = View.INVISIBLE
-            queue.removeLast()
+            if (queue.size > 1)
+                queue.removeLast()
         }
 
     }    
@@ -651,7 +655,7 @@ class EditPhotoActivity : AppCompatActivity() {
                 ) {
                     handlingBitmap()
                     setBarVisibility(item.itemId)
-
+                    addToQueue(bitmap!!,binding.imageEdit.colorFilter)
                     cur_item_id = item.itemId
                     return@OnNavigationItemSelectedListener true
                 }

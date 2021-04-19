@@ -76,4 +76,13 @@
             android:id="@+id/action_favouriteAlbumFragment_to_photoViewFragment"
             app:destination="@id/photoViewFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/secret_photos"
+        android:name="com.hcmus.clc18se.photos.fragments.SecretPhotoFragment"
+        android:label="@string/secret_photos_title" >
+        <action
+            android:id="@+id/action_SecretPhotoFragment_to_photoViewFragment"
+            app:destination="@id/photoViewFragment" />
+    </fragment>
 </navigation>

@@ -73,7 +73,7 @@ class PhotosActivity : AbstractPhotosActivity() {
             val newState = destination.id in arrayOf(
                     R.id.page_photo,
                     R.id.page_people,
-                    R.id.page_album
+                    R.id.page_album,
             )
 
             bottomAppBarVisibility = newState

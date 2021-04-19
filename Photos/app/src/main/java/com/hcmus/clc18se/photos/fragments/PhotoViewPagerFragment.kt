@@ -1,12 +1,12 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.app.Dialog
-import android.content.ActivityNotFoundException
-import android.content.Intent
+import android.content.*
 import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.ActionBar
+import androidx.core.net.toFile
 import androidx.fragment.app.Fragment
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
@@ -14,6 +14,8 @@ import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 import com.hcmus.clc18se.photos.utils.VideoDialog
+import java.io.*
+import java.nio.file.StandardCopyOption.*
 
 class PhotoViewPagerFragment : Fragment() {
 
@@ -133,6 +135,10 @@ class PhotoViewPagerFragment : Fragment() {
                 setAs()
                 true
             }
+            R.id.action_move_to_secret_album -> {
+                secret()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -157,6 +163,44 @@ class PhotoViewPagerFragment : Fragment() {
             Toast.makeText(requireContext(), "No App found", Toast.LENGTH_SHORT).show()
             anfe.printStackTrace()
         }
+    }
+
+    private fun secret(){
+        val cw = ContextWrapper(requireContext().applicationContext)
+        val directory = cw.getDir("images", Context.MODE_PRIVATE)
+        val fileDest = File(directory, mediaItem!!.name)
+        try {
+            val outputStream = FileOutputStream(fileDest)
+            val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
+            inputStream!!.copyTo(outputStream)
+            inputStream.close()
+            outputStream.close()
+        }
+        catch (e:java.lang.Exception)
+        {
+            Toast.makeText(context,"Move file unsuccess",Toast.LENGTH_SHORT).show()
+        }
+
+//        // delete old file
+//        val resolver = requireContext().contentResolver
+//        try {
+//            result = resolver.delete(mediaItem!!.requireUri(), null, null)
+//        }
+//        catch (securityException: SecurityException) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                val recoverableSecurityException =
+//                        securityException as? RecoverableSecurityException
+//                                ?: throw SecurityException()
+//
+//                val intentSender = recoverableSecurityException.userAction.actionIntent.intentSender
+//
+//                intentSender?.let {
+//                    startIntentSenderForResult(intentSender, 0, null, 0, 0, 0, null)
+//                }
+//            } else {
+//                throw SecurityException()
+//            }
+//        }
     }
 
     private fun openWith() {
