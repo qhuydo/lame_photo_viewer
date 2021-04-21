@@ -24,7 +24,7 @@ import timber.log.Timber
 fun bindMediaListRecyclerView(recyclerView: RecyclerView, data: List<MediaItem>?) {
     data?.let {
         val adapter = recyclerView.adapter as? MediaItemListAdapter
-        adapter?.submitList(data)
+        adapter?.filterAndSubmitList(data)
     }
 }
 

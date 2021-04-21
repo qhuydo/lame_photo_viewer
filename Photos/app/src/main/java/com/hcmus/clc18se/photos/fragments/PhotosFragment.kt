@@ -45,7 +45,7 @@ class PhotosFragment : AbstractPhotoListFragment(
         viewModel.loadImages()
     }
 
-    override val onClickListener = object : MediaItemListAdapter.OnClickListener {
+    override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
         override fun onClick(mediaItem: MediaItem) {
 
             val viewModel: PhotosViewModel by navGraphViewModels(
@@ -67,6 +67,45 @@ class PhotosFragment : AbstractPhotoListFragment(
 
         override fun onSelectionChange() {
             invalidateCab()
+        }
+
+        override suspend fun onGroupListItem(items: List<MediaItem>): List<AdapterItem> {
+             return super.onGroupListItem(items)
+//            val adapterItems = mutableListOf<AdapterItem>()
+//            if (items.isEmpty()) {
+//                return emptyList()
+//            }
+//
+//            val dateFormat = SimpleDateFormat("MMM-yyyy", Locale.getDefault())
+//            var headerItem =
+//                    items.first().requireDateTaken()?.let {
+//                        AdapterItem.AdapterItemHeader(
+//                                it.time,
+//                                dateFormat.format(it.time)
+//                        )
+//                    } ?: return super.onGroupListItem(items)
+//            var headerTimeStamp = items.first().requireDateTaken()?.month to items.first().requireDateTaken()?.year
+//
+//            items.forEachIndexed { index, mediaItem ->
+//                if (index == 0) {
+//                    adapterItems.add(headerItem)
+//                }
+//                val date = mediaItem.requireDateTaken()
+//                date?.let {
+//                    val itemTimeStamp = it.month to it.year
+//                    if (itemTimeStamp != headerTimeStamp) {
+//                        headerTimeStamp = itemTimeStamp
+//                        headerItem = AdapterItem.AdapterItemHeader(
+//                                date.time,
+//                                dateFormat.format(it.time)
+//                        )
+//                        adapterItems.add(headerItem)
+//                    }
+//                } ?: return adapterItems + items.subList(index, items.lastIndex).map { AdapterItem.AdapterMediaItem(it) }
+//                adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
+//            }
+//
+//            return adapterItems
         }
     }
 

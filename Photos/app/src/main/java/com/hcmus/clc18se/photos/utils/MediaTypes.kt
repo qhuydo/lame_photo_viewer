@@ -18,7 +18,7 @@ const val TYPE_GIF = 16
 val svgMimeTypes = arrayOf("image/svg+xml")
 
 //val imageExtensions = arrayOf("jpg", "png", "jpe", "jpeg", "bmp")
-val imageMimeTypes = arrayOf("image/*", "image/jpeg", "image/jpg", "image/png", "image/bmp")
+val imageMimeTypes = arrayOf("image/*", "image/jpeg", "image/jpg", "image/png", "image/bmp", "image/webp")
 
 //  arrayOf("mp4", "mkv", "webm", "avi")
 val videoExtensions = arrayOf("mp4", "mkv", "webm", "avi")

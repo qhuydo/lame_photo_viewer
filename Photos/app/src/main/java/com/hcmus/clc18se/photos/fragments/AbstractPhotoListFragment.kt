@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.afollestad.materialcab.attached.AttachedCab
@@ -53,7 +52,7 @@ abstract class AbstractPhotoListFragment(
     protected var currentListItemSize: Int = MediaItemListAdapter.ITEM_SIZE_MEDIUM
 
     // On click listener object used by MediaItemListAdapter
-    abstract val onClickListener: MediaItemListAdapter.OnClickListener
+    abstract val actionCallbacks: MediaItemListAdapter.ActionCallbacks
 
     // Used in refreshRecyclerView()
     // Must be init in onCreateView() from the inherit class
