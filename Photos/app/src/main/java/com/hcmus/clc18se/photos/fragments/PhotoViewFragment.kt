@@ -33,7 +33,7 @@ import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
-import kotlinx.coroutines.CoroutineScope
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -82,7 +82,12 @@ class PhotoViewFragment : Fragment() {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
                 (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
-        )
+        ) {
+            PhotosViewModelFactory(
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            )
+        }
         this.viewModel = viewModel
     }
 

@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.hcmus.clc18se.photos.data.MediaItem
+import com.hcmus.clc18se.photos.database.PhotosDatabaseDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,7 +19,9 @@ import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class PhotosViewModel(application: Application) : AndroidViewModel(application) {
+class PhotosViewModel(application: Application,
+                      private val database: PhotosDatabaseDao
+) : AndroidViewModel(application) {
 
     private var _mediaItemList = MutableLiveData<List<MediaItem>>()
     val mediaItemList: LiveData<List<MediaItem>>
@@ -29,7 +32,7 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
         get() = _idx
 
     init {
-        _mediaItemList.value = mutableListOf()
+        loadImages()
     }
 
     private var contentObserver: ContentObserver? = null
@@ -151,5 +154,18 @@ class PhotosViewModel(application: Application) : AndroidViewModel(application) 
         contentObserver?.let {
             getApplication<Application>().contentResolver.unregisterContentObserver(it)
         }
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+class PhotosViewModelFactory(
+        private val application: Application,
+        private val database: PhotosDatabaseDao
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(PhotosViewModel::class.java)) {
+            return PhotosViewModel(application, database) as T
+        }
+        throw Exception()
     }
 }

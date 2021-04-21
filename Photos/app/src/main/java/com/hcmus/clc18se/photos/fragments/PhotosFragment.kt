@@ -15,17 +15,24 @@ import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.data.MediaItem
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotosBinding
 import com.hcmus.clc18se.photos.utils.SpaceItemDecoration
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 
 class PhotosFragment : AbstractPhotoListFragment(
         R.menu.photos_menu
 ) {
 
     private lateinit var binding: FragmentPhotosBinding
-    private val viewModel: PhotosViewModel by activityViewModels()
+    private val viewModel: PhotosViewModel by activityViewModels() {
+        PhotosViewModelFactory(
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+        )
+    }
     //private lateinit var viewModel: PhotosViewModel
 
     override fun onAttach(context: Context) {
@@ -38,7 +45,12 @@ class PhotosFragment : AbstractPhotoListFragment(
 
             val viewModel: PhotosViewModel by navGraphViewModels(
                     (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
-            )
+            ) {
+                PhotosViewModelFactory(
+                        requireActivity().application,
+                        PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                )
+            }
             viewModel.loadDataFromOtherViewModel(this@PhotosFragment.viewModel)
 
             val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1

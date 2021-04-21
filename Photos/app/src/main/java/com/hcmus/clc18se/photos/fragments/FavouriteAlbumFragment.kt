@@ -21,6 +21,7 @@ import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 
 class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
@@ -70,7 +71,12 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
 
         val photosViewModel: PhotosViewModel by navGraphViewModels(
                 (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
-        )
+        ) {
+            PhotosViewModelFactory(
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            )
+        }
         this.photosViewModel = photosViewModel
 
         currentListItemView = preferences.getString(

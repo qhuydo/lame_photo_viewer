@@ -16,10 +16,12 @@ import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.data.MediaItem
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoListBinding
 import com.hcmus.clc18se.photos.utils.SpaceItemDecoration
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 
 class PhotoListFragment : AbstractPhotoListFragment(
         R.menu.photo_list_menu
@@ -49,7 +51,12 @@ class PhotoListFragment : AbstractPhotoListFragment(
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
                 (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
-        )
+        ) {
+            PhotosViewModelFactory(
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            )
+        }
         this.viewModel = viewModel
     }
 

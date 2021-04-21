@@ -17,12 +17,14 @@ import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
 import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.data.MediaProvider
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentAlbumBinding
 import com.hcmus.clc18se.photos.utils.getSpanCountForAlbumList
 import com.hcmus.clc18se.photos.utils.setAlbumListIcon
 import com.hcmus.clc18se.photos.utils.setAlbumListItemSizeOption
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import timber.log.Timber
 import java.util.ArrayList
 
@@ -44,8 +46,13 @@ class AlbumFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
-                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
-        )
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId(),
+        ) {
+            PhotosViewModelFactory(
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            )
+        }
         photosViewModel = viewModel
     }
 
@@ -144,7 +151,7 @@ class AlbumFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.favorites.setOnClickListener {
             findNavController().navigate(
-                    AlbumFragmentDirections.actionPageAlbumToFavouriteAlbumFragment2()
+                    AlbumFragmentDirections.actionPageAlbumToFavouriteAlbumFragment()
             )
         }
     }
