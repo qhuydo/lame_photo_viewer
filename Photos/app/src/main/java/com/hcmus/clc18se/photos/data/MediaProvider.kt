@@ -14,7 +14,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-// TODO: replace this?
+// TODO: deprecate this?
+@Deprecated("Memory leak")
 class MediaProvider(private val context: Context) {
 
     companion object {
@@ -134,6 +135,7 @@ class MediaProvider(private val context: Context) {
 
     }
 
+    // TODO: refactor me
     private suspend fun loadMediaItemFromId(id: Long): MediaItem? {
 
         val columnUri = MediaStore.Files.getContentUri("external")

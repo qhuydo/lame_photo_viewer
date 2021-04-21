@@ -81,14 +81,9 @@ fun bindImage(imgView: ImageView, bitmap: Bitmap?) {
 
 
 @BindingAdapter("imageFromMediaItem")
-fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {
-
-    // TODO: onii-chan, refactor me!!! UwU
-    mediaItem?.let {
-        val requestOptions = RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-
-        if (mediaItem.isSVG()) {
+fun bindImage(imgView: ImageView, mediaItem: MediaItem?) = mediaItem?.let {
+    when {
+        mediaItem.isSVG() -> {
             Glide.with(imgView.context)
                     .`as`(PictureDrawable::class.java)
                     .listener(SvgSoftwareLayerSetter())
@@ -97,10 +92,9 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imgView)
 
-        } else if (mediaItem.isVideo()) {
+        }
+        mediaItem.isVideo() -> {
 
-            // val path = getRealPathFromURI(imgView.context, mediaItem.requireUri())
-            // val path = mediaItem.requirePath(imgView.context)
             Timber.d("Load video thumbnail from Glide ")
             Timber.d("Uri ${mediaItem.requireUri()}")
             Timber.d("Path ${mediaItem.requirePath(imgView.context)}")
@@ -111,7 +105,8 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {
                     .load(mediaItem.requireUri())
                     .transition(BitmapTransitionOptions.withCrossFade())
                     .into(imgView)
-        } else {
+        }
+        else -> {
             Glide.with(imgView.context)
                     .load(mediaItem.requireUri())
                     //.apply(requestOptions)
@@ -120,6 +115,7 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) {
         }
     }
 }
+
 
 //@BindingAdapter("subSamplingScaleImageViewFromUri")
 fun bindScaleImage(imgView: SubsamplingScaleImageView, imgUri: Uri?, debug: Boolean = false) {
