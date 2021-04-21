@@ -9,7 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
@@ -33,7 +33,7 @@ class PhotoListFragment : AbstractPhotoListFragment(
 
     private lateinit var viewModel: PhotosViewModel
 
-    override val onClickListener = object : MediaItemListAdapter.OnClickListener {
+    override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
         override fun onClick(mediaItem: MediaItem) {
             val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
             viewModel.setCurrentItemView(idx)
@@ -92,7 +92,7 @@ class PhotoListFragment : AbstractPhotoListFragment(
         )!!.toInt()
 
         adapter = MediaItemListAdapter(
-                onClickListener,
+                actionCallbacks,
                 currentListItemView,
                 currentListItemSize
         )
@@ -108,7 +108,7 @@ class PhotoListFragment : AbstractPhotoListFragment(
                         SpaceItemDecoration(resources.getDimension(R.dimen.photo_list_item_margin).toInt())
                 )
 
-                (photoListRecyclerView.layoutManager as GridLayoutManager).apply {
+                (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
                     spanCount = getSpanCountForPhotoList(
                             resources,
                             currentListItemView,
@@ -125,7 +125,7 @@ class PhotoListFragment : AbstractPhotoListFragment(
         }
 
         viewModel.mediaItemList.observe(requireActivity(), { images ->
-            adapter.submitList(images)
+            adapter.filterAndSubmitList(images)
         })
 
         // viewModel.loadImages()
@@ -139,7 +139,7 @@ class PhotoListFragment : AbstractPhotoListFragment(
     override fun refreshRecyclerView() {
         binding.apply {
             adapter = MediaItemListAdapter(
-                    onClickListener,
+                    actionCallbacks,
                     currentListItemView,
                     currentListItemSize
             )
@@ -148,7 +148,7 @@ class PhotoListFragment : AbstractPhotoListFragment(
             val photoList = viewModel.mediaItemList.value
 
             recyclerView.adapter = adapter
-            (photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager).spanCount =
+            (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.spanCount =
                     getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
 
 

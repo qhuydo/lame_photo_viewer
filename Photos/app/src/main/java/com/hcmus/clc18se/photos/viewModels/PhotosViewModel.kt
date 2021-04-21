@@ -172,7 +172,7 @@ class PhotosViewModel(application: Application,
                 arrayOf(MediaStore.MediaColumns._ID,
                         MediaStore.Files.FileColumns.DATA,
                         MediaStore.MediaColumns.DISPLAY_NAME,
-                        MediaStore.MediaColumns.DATE_TAKEN,
+                        MediaStore.MediaColumns.DATE_ADDED,
                         MediaStore.MediaColumns.MIME_TYPE,
                         MediaStore.MediaColumns.DATE_MODIFIED,
                         MediaStore.Images.ImageColumns.ORIENTATION
@@ -182,7 +182,7 @@ class PhotosViewModel(application: Application,
                         MediaStore.MediaColumns._ID,
                         MediaStore.Files.FileColumns.DATA,
                         MediaStore.MediaColumns.DISPLAY_NAME,
-                        MediaStore.MediaColumns.DATE_TAKEN,
+                        MediaStore.MediaColumns.DATE_ADDED,
                         MediaStore.MediaColumns.MIME_TYPE,
                         MediaStore.MediaColumns.DATE_MODIFIED,
                 )
@@ -191,9 +191,10 @@ class PhotosViewModel(application: Application,
                     " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}"
             // val selection = MediaStore.Images.Media.DATE_ADDED
             val selectionArgs: Array<String>? = null
-            val sortOrder = "${MediaStore.MediaColumns.DATE_TAKEN} DESC"
+            val sortOrder = "${MediaStore.MediaColumns.DATE_ADDED} DESC"
 
             val columnUri = MediaStore.Files.getContentUri("external")
+            //val columnUri = MediaStore.Images.Media.INTERNAL_CONTENT_URI
 
             getApplication<Application>().contentResolver.query(
                     columnUri,
@@ -204,7 +205,7 @@ class PhotosViewModel(application: Application,
             )?.use { cursor ->
 
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val dateModifiedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_TAKEN)
+                val dateModifiedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
                 val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
                 val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
                 val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)

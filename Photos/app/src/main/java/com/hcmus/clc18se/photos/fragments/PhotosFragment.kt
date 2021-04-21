@@ -7,11 +7,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.MainActivity
 import com.hcmus.clc18se.photos.R
+import com.hcmus.clc18se.photos.adapters.AdapterItem
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.data.MediaItem
@@ -21,6 +22,10 @@ import com.hcmus.clc18se.photos.utils.SpaceItemDecoration
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.time.days
 
 class PhotosFragment : AbstractPhotoListFragment(
         R.menu.photos_menu
@@ -95,7 +100,7 @@ class PhotosFragment : AbstractPhotoListFragment(
 
         setHasOptionsMenu(true)
 
-        adapter = MediaItemListAdapter(onClickListener,
+        adapter = MediaItemListAdapter(actionCallbacks,
                 currentListItemView,
                 currentListItemSize)
 
@@ -113,7 +118,7 @@ class PhotosFragment : AbstractPhotoListFragment(
                         SpaceItemDecoration(resources.getDimension(R.dimen.photo_list_item_margin).toInt())
                 )
 
-                (photoListRecyclerView.layoutManager as GridLayoutManager).apply {
+                (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
                     spanCount = getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
                 }
 
@@ -125,7 +130,7 @@ class PhotosFragment : AbstractPhotoListFragment(
         }
 
         viewModel.mediaItemList.observe(requireActivity(), { images ->
-            adapter.submitList(images)
+            adapter.filterAndSubmitList(images)
         })
 
         return binding.root
@@ -133,7 +138,7 @@ class PhotosFragment : AbstractPhotoListFragment(
 
     override fun refreshRecyclerView() {
         binding.apply {
-            adapter = MediaItemListAdapter(onClickListener,
+            adapter = MediaItemListAdapter(actionCallbacks,
                     currentListItemView,
                     currentListItemSize)
 
@@ -141,7 +146,7 @@ class PhotosFragment : AbstractPhotoListFragment(
             val photoList = viewModel.mediaItemList.value
 
             recyclerView.adapter = adapter
-            (photoListLayout.photoListRecyclerView.layoutManager as GridLayoutManager).apply {
+            (photoListLayout.photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
                 spanCount = getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
             }
 

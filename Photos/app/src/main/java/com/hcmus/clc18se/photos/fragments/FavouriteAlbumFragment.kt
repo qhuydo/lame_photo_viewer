@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
@@ -39,7 +39,7 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
 
     private lateinit var photosViewModel: PhotosViewModel
 
-    override val onClickListener = object : MediaItemListAdapter.OnClickListener {
+    override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
         override fun onClick(mediaItem: MediaItem) {
             photosViewModel.loadDataFromOtherViewModel(viewModel)
 
@@ -90,7 +90,7 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
         )!!.toInt()
 
         adapter = MediaItemListAdapter(
-                onClickListener,
+                actionCallbacks,
                 currentListItemView,
                 currentListItemSize
         )
@@ -104,7 +104,7 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
                     SpaceItemDecoration(resources.getDimension(R.dimen.photo_list_item_margin).toInt())
             )
 
-            (photoListRecyclerView.layoutManager as GridLayoutManager).apply {
+            (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
                 spanCount = getSpanCountForPhotoList(
                         resources,
                         currentListItemView,
@@ -125,7 +125,7 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
 
     private fun initObservers() {
         viewModel.mediaItems.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+            adapter.filterAndSubmitList(it)
         }
 
         viewModel.reloadDataRequest.observe(viewLifecycleOwner) {
@@ -145,11 +145,11 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
             val photoList = viewModel.mediaItems.value
 
             recyclerView.adapter = MediaItemListAdapter(
-                    onClickListener,
+                    actionCallbacks,
                     currentListItemView,
                     currentListItemSize
             )
-            (photoListRecyclerView.layoutManager as? GridLayoutManager)?.spanCount =
+            (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.spanCount =
                     getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
 
             bindMediaListRecyclerView(recyclerView, photoList)

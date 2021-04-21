@@ -16,15 +16,15 @@
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorSurface"
         android:layout_margin="4dp"
+        android:background="?colorSurface"
         android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photo_list_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
             app:mediaListItem="@{photoList}"
             app:spanCount="@integer/span_count_photo_grid_big"
             tools:itemCount="16"

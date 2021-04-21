@@ -19,6 +19,7 @@ class AlbumListAdapter(
         ListAdapter<Album, AlbumListAdapter.ViewHolder>(DiffCallBack()) {
 
     companion object {
+        // TODO: change constants value to layout id
         const val ITEM_TYPE_LIST = 0
         const val ITEM_TYPE_GRID = 1
 
