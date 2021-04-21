@@ -31,7 +31,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 app:cornerSize="10%"
-                app:imageFromMediaItem="@{photo}"
+                imageFromMediaItem="@{photo}"
                 tools:ignore="ContentDescription"
                 tools:src="@tools:sample/backgrounds/scenic" />
 

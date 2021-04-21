@@ -1,10 +1,10 @@
 package com.hcmus.clc18se.photos
 
-import android.app.ActivityManager
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Parcelable
 import android.view.MenuItem
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -38,8 +38,35 @@ class PhotosActivity : AbstractPhotosActivity() {
         )
     }
 
+    private fun handleSendImage(intent: Intent){
+        val sendingIntent = Intent(this, ViewPhotoActivity::class.java)
+        sendingIntent.putExtra(Intent.EXTRA_STREAM, intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM))
+        startActivity(sendingIntent)
+    }
+
+    private fun handleViewImage(intent: Intent){
+        val sendingIntent = Intent(this, ViewPhotoActivity::class.java)
+        sendingIntent.putExtra("uri", intent.data)
+        startActivity(sendingIntent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        when(intent?.action) {
+            Intent.ACTION_SEND -> {
+                Timber.d("Send")
+                if (intent.type?.startsWith("image/") == true) {
+                    handleSendImage(intent) // Handle single image being sent
+                }
+            }
+            Intent.ACTION_VIEW -> {
+                Timber.d("Send")
+                if (intent.type?.startsWith("image/") == true) {
+                    handleViewImage(intent) // Handle single image being sent
+                }
+            }
+        }
 
         Timber.d("On Create called")
         Timber.d("----------------")
@@ -66,6 +93,8 @@ class PhotosActivity : AbstractPhotosActivity() {
                 }
             }, 300)
         }
+
+
     }
 
     override fun addOnDestinationChangedListener() {

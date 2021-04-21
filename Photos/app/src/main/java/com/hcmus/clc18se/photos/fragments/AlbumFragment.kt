@@ -144,7 +144,7 @@ class AlbumFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.favorites.setOnClickListener {
             findNavController().navigate(
-                    AlbumFragmentDirections.actionPageAlbumToFavouriteAlbumFragment()
+                    AlbumFragmentDirections.actionPageAlbumToFavouriteAlbumFragment2()
             )
         }
     }
