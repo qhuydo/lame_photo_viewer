@@ -115,9 +115,11 @@ class EditPhotoActivity : AppCompatActivity() {
                         bitmap!!.height / scale,
                         false
                 )
+                withContext(Dispatchers.Main){
+                    addToQueue(bitmap!!,binding.imageEdit.colorFilter)
+                    bindImage(binding.imageEdit, uri)
+                }
             }
-            addToQueue(bitmap!!,binding.imageEdit.colorFilter)
-            bindImage(binding.imageEdit, uri)
         }
 
         viewCrop = binding.cropEditor.cropImageView

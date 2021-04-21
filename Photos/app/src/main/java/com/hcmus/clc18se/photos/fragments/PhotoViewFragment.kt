@@ -1,14 +1,11 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.app.Activity
 import android.app.Dialog
-import android.app.RecoverableSecurityException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +13,9 @@ import android.view.Window
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.documentfile.provider.DocumentFile
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -37,15 +35,10 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class PhotoViewFragment : Fragment() {
 
     private lateinit var viewModel: PhotosViewModel
-
-    companion object {
-        const val DELETE_CODE = 2021
-    }
 
     private val photos by lazy { viewModel.mediaItemList.value ?: listOf() }
 
@@ -91,8 +84,17 @@ class PhotoViewFragment : Fragment() {
         this.viewModel = viewModel
     }
 
+    private lateinit var resultLauncher: ActivityResultLauncher<IntentSenderRequest>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        resultLauncher = registerForActivityResult(
+                ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                viewModel.deletePendingImage()
+            }
+        }
 
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
             duration = 300L
@@ -115,35 +117,7 @@ class PhotoViewFragment : Fragment() {
         }
 
         nukeButton.setOnClickListener {
-            val resolver = requireContext().contentResolver
-            var result = 0
-            try {
-                result = resolver.delete(photos[currentPosition].requireUri(), null, null)
-            } catch (securityException: SecurityException) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val recoverableSecurityException =
-                            securityException as? RecoverableSecurityException
-                                    ?: throw SecurityException()
-
-                    val intentSender =
-                            recoverableSecurityException.userAction.actionIntent.intentSender
-
-                    intentSender?.let {
-                        startIntentSenderForResult(intentSender, 0, null, 0, 0, 0, null)
-                    }
-                    result = 1
-                } else {
-                    throw SecurityException()
-                }
-            }
-
-            if (result > 0) {
-                Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show()
-                favouriteAlbumViewModel.requestReloadingData()
-                requireActivity().onBackPressed()
-            } else {
-                Toast.makeText(context, "Delete unsuccess", Toast.LENGTH_SHORT).show()
-            }
+            viewModel.deleteImage(viewModel.mediaItemList.value!![currentPosition])
         }
 
         infoButton.setOnClickListener {
@@ -157,28 +131,25 @@ class PhotoViewFragment : Fragment() {
         }
 
         shareButton.setOnClickListener {
+
             if (photos[currentPosition].isVideo()) {
-                val sendIntent = Intent()
-                sendIntent.action = Intent.ACTION_SEND
-                sendIntent.putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
-                sendIntent.type = "video/*"
+                val sendIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
+                    type = "video/*"
+                }
                 startActivity(Intent.createChooser(sendIntent, "Send video via:"))
             } else {
-                val sendIntent = Intent()
-                sendIntent.action = Intent.ACTION_SEND
-                sendIntent.putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
-                sendIntent.type = "image/*"
+                val sendIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
+                    type = "image/*"
+                }
                 startActivity(Intent.createChooser(sendIntent, "Send image via:"))
             }
         }
     }
 
-
-//    @RequiresApi(Build.VERSION_CODES.R)
-//    fun deleteListUri(uris: List<Uri>) {
-//        val pendingIntent = MediaStore.createDeleteRequest(requireContext().contentResolver, uris)
-//        startIntentSenderForResult(pendingIntent.intentSender, DELETE_CODE, null, 0, 0, 0, null)
-//    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -204,12 +175,6 @@ class PhotoViewFragment : Fragment() {
 
         initFavouriteButtonState()
 
-//            val fullscreen = preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
-//            if (fullscreen) {
-//                val window = requireActivity().window
-//                window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-//            }
-
         binding.horizontalViewPager.apply {
             adapter = ScreenSlidePagerAdapter(this@PhotoViewFragment)
             setCurrentItem(viewModel.idx.value!!, false)
@@ -218,31 +183,48 @@ class PhotoViewFragment : Fragment() {
 
         debug = preferences.getBoolean(getString(R.string.image_debugger_key), false)
 
-        activity?.window?.navigationBarColor = Color.BLACK
+        requireActivity().window?.navigationBarColor = Color.BLACK
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initObservers()
+    }
+
     private fun toggleFavouriteButton() {
+        viewModel.changeFavouriteState(currentPosition)
+    }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val mediaItem = viewModel.mediaItemList.value!![currentPosition]
-            val isFavouriteItem = contentProvider.hasFavouriteItem(mediaItem.id)
-
-            if (isFavouriteItem) {
-                Timber.d("MediaItem ID{${mediaItem.id}} was removed from favourites")
-                contentProvider.removeFavouriteItems(mediaItem.toFavouriteItem())
-            } else {
-                Timber.d("MediaItem ID{${mediaItem.id}} was added to favourites")
-                contentProvider.addFavouriteItems(mediaItem.toFavouriteItem())
-            }
-
-            withContext(Dispatchers.Main) {
-                changeFavouriteButtonState(!isFavouriteItem)
+    private fun initObservers() {
+        viewModel.itemFavouriteStateChanged.observe(viewLifecycleOwner) { newState ->
+            if (newState != null) {
+                changeFavouriteButtonState(newState)
                 favouriteAlbumViewModel.requestReloadingData()
+                viewModel.finishChangingFavouriteItemState()
             }
         }
 
+        viewModel.permissionNeededForDelete.observe(viewLifecycleOwner) { intentSender ->
+            intentSender?.let {
+                val intentSenderRequest = IntentSenderRequest.Builder(intentSender).build()
+                resultLauncher.launch(intentSenderRequest)
+            }
+        }
+
+        viewModel.deleteSucceed.observe(viewLifecycleOwner) { deleteResult ->
+            if (deleteResult == true) {
+                favouriteAlbumViewModel.requestReloadingData()
+                requireActivity().onBackPressed()
+            } else if (deleteResult == false) {
+                Toast.makeText(requireContext(), "Failed to remove item", Toast.LENGTH_SHORT).show()
+            }
+            if (deleteResult != null) {
+                viewModel.finishPerformingDelete()
+            }
+        }
     }
+
 
     private fun changeFavouriteButtonState(isFavourite: Boolean) {
         val resId = if (isFavourite) {
@@ -254,7 +236,6 @@ class PhotoViewFragment : Fragment() {
         // val drawable = ResourcesCompat.getDrawable(resources, resId, requireContext().theme)
         binding.bottomLayout.heartButton.setImageResource(resId)
     }
-
 
     private fun initFavouriteButtonState() {
         lifecycleScope.launch {
@@ -284,9 +265,10 @@ class PhotoViewFragment : Fragment() {
     }
 
     override fun onDetach() {
-        binding.horizontalViewPager.unregisterOnPageChangeCallback(viewPagerCallback)
-
         super.onDetach()
+
+        binding.horizontalViewPager.unregisterOnPageChangeCallback(viewPagerCallback)
+        resultLauncher.unregister()
         (activity as AbstractPhotosActivity).supportActionBar?.show()
         activity?.window?.navigationBarColor = binding.navBarColor
 
@@ -313,6 +295,4 @@ class PhotoViewFragment : Fragment() {
             return fragment
         }
     }
-
 }
-
