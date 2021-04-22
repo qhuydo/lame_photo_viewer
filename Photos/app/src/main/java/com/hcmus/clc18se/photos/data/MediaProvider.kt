@@ -11,6 +11,7 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -61,6 +62,7 @@ class MediaProvider(private val context: Context) {
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.MediaColumns.DISPLAY_NAME,
                 MediaStore.MediaColumns.MIME_TYPE,
+                MediaStore.MediaColumns.DATE_ADDED,
                 MediaStore.MediaColumns.BUCKET_ID,
                 MediaStore.MediaColumns.BUCKET_DISPLAY_NAME,
                 BaseColumns._ID,
@@ -68,7 +70,7 @@ class MediaProvider(private val context: Context) {
 
         val selectionArgs: Array<String>? = null
 
-        val sortOrder = MediaStore.Files.FileColumns.DATE_ADDED
+        val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED}"
 
         val folderMap = HashMap<String, Album>()
 
@@ -88,17 +90,20 @@ class MediaProvider(private val context: Context) {
                 var id: Long
                 var mimeType: String
                 var name: String
+                var dateAdded: Date
 
                 val idColumn = cursor.getColumnIndex(BaseColumns._ID)
                 val nameColumn = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
                 val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
                 val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
+                val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
 
                 while (cursor.moveToNext()) {
                     path = cursor.getString(pathColumn)
                     id = cursor.getLong(idColumn)
                     mimeType = cursor.getString(mimeTypeColumn)
                     name = cursor.getString(nameColumn)
+                    dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateAddedColumn)))
 
                     val mediaItem = MediaItem.getInstance(id, name, null, mimeType, path)
 

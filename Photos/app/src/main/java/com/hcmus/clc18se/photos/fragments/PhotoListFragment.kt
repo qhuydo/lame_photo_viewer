@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
@@ -95,7 +96,9 @@ class PhotoListFragment : AbstractPhotoListFragment(
                 actionCallbacks,
                 currentListItemView,
                 currentListItemSize
-        )
+        ).apply {
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        }
 
         binding.apply {
             lifecycleOwner = this@PhotoListFragment
@@ -142,7 +145,9 @@ class PhotoListFragment : AbstractPhotoListFragment(
                     actionCallbacks,
                     currentListItemView,
                     currentListItemSize
-            )
+            ).apply {
+                stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            }
 
             val recyclerView = photoListLayout.photoListRecyclerView
             val photoList = viewModel.mediaItemList.value

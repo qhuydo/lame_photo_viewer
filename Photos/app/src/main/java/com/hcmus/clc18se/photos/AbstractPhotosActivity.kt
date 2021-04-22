@@ -16,9 +16,12 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.preference.PreferenceManager
 import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.data.MediaProvider
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.utils.ICON_COLOR
 import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
 import java.util.*
@@ -35,7 +38,11 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     }
 
-    val viewModel: AlbumViewModel by viewModels()
+    val albumViewModel: AlbumViewModel by viewModels()
+
+    val photosViewModel: PhotosViewModel by viewModels {
+        PhotosViewModelFactory(application, PhotosDatabase.getInstance(this).photosDatabaseDao)
+    }
 
     val mediaProvider: MediaProvider by lazy { MediaProvider(application.applicationContext) }
 
@@ -67,7 +74,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     private val mediaItemCallback = object : MediaProvider.MediaProviderCallBack {
         override fun onMediaLoaded(albums: ArrayList<Album>?) {
-            viewModel.notifyAlbumLoaded()
+            albumViewModel.notifyAlbumLoaded()
         }
 
         override fun onHasNoPermission() {
@@ -84,6 +91,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        photosViewModel.loadImages()
         mediaProvider.loadAlbum(mediaItemCallback)
         colorResource.configColor(this)
         colorResource.configTheme()

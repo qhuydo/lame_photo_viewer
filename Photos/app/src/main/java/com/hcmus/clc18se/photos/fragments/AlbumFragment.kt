@@ -68,7 +68,7 @@ class AlbumFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Timber.d("ALBUM viewModel ${(requireActivity() as AbstractPhotosActivity).viewModel === albumViewModel}")
+        Timber.d("ALBUM viewModel ${(requireActivity() as AbstractPhotosActivity).albumViewModel === albumViewModel}")
 
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
             duration = 300L

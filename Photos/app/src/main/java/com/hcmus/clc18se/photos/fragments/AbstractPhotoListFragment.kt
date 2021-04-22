@@ -185,7 +185,7 @@ abstract class AbstractPhotoListFragment(
                 onSelection { onCabItemSelected(it) }
                 onDestroy {
                     adapter.finishSelection()
-                    // mainCab = null
+                    mainCab = null
                     true
                 }
             }

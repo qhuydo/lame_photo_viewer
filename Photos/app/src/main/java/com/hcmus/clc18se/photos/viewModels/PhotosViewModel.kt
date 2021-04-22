@@ -40,7 +40,8 @@ class PhotosViewModel(application: Application,
         get() = _deleteSucceed
 
     init {
-        loadImages()
+        _mediaItemList.value = mutableListOf()
+        // loadImages()
     }
 
     private var contentObserver: ContentObserver? = null
@@ -64,7 +65,9 @@ class PhotosViewModel(application: Application,
     fun loadImages() {
         viewModelScope.launch {
             val images = queryMediaItems()
-            _mediaItemList.postValue(images)
+            withContext(Dispatchers.Main) {
+                _mediaItemList.value = images
+            }
 
             if (contentObserver == null) {
                 val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
@@ -75,6 +78,10 @@ class PhotosViewModel(application: Application,
                 getApplication<Application>().contentResolver.registerContentObserver(
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, observer
                 )
+                getApplication<Application>().contentResolver.registerContentObserver(
+                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, observer
+                )
+
                 contentObserver = observer
             }
         }

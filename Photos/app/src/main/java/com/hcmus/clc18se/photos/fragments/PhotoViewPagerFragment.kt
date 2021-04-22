@@ -28,7 +28,6 @@ class PhotoViewPagerFragment : Fragment() {
 
     private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
 
-
     private val onImageClickListener = View.OnClickListener {
         val window = requireActivity().window
 
@@ -165,7 +164,7 @@ class PhotoViewPagerFragment : Fragment() {
         }
     }
 
-    private fun secret(){
+    private fun secret() {
         val cw = ContextWrapper(requireContext().applicationContext)
         val directory = cw.getDir("images", Context.MODE_PRIVATE)
         val fileDest = File(directory, mediaItem!!.name)
@@ -175,10 +174,8 @@ class PhotoViewPagerFragment : Fragment() {
             inputStream!!.copyTo(outputStream)
             inputStream.close()
             outputStream.close()
-        }
-        catch (e:java.lang.Exception)
-        {
-            Toast.makeText(context,"Move file unsuccess",Toast.LENGTH_SHORT).show()
+        } catch (e: java.lang.Exception) {
+            Toast.makeText(context, "Move file unsuccess", Toast.LENGTH_SHORT).show()
         }
 
 //        // delete old file
