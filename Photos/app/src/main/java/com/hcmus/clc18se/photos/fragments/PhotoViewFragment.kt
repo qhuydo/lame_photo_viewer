@@ -54,8 +54,8 @@ class PhotoViewFragment : Fragment() {
         )
     }
 
-    companion object{
-        const val PLACES_API_KEY = "AIzaSyAmbkVMEG6hFH2lSdsQi2bRNGWTYKtuiTM"
+    companion object {
+        const val PLACES_API_KEY = BuildConfig.PLACES_API_KEY
     }
     private lateinit var binding: FragmentPhotoViewBinding
 

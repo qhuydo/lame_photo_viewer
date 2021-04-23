@@ -14,6 +14,7 @@ import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
@@ -40,12 +41,13 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 
-
+// TODO: refactor me
 class EditPhotoActivity : AppCompatActivity() {
 
     companion object {
         const val HIGHEST_COLOR_VALUE = 255
-        const val LOWEST_COLOR_VALUE = 0
+
+        // const val LOWEST_COLOR_VALUE = 0
         const val BLUR_RADIUS = 25f
         const val PICK_IMAGE_INTENT = 2000
     }
@@ -53,11 +55,11 @@ class EditPhotoActivity : AppCompatActivity() {
     protected val colorResource by lazy { (application as PhotosApplication).colorResource }
 
     private val binding by lazy { ActivityEditPhotoBinding.inflate(layoutInflater) }
-    private var cur_item_id = 0
-    private val bottomAppBarItemKey: String = "curItemId"
+    private var curItemId = 0
+    // private val bottomAppBarItemKey: String = "curItemId"
 
-    private var uri: Uri? = null
-    private var bitmap: Bitmap? = null
+    private lateinit var uri: Uri
+    private lateinit var bitmap: Bitmap
     private lateinit var redSeekBar: SeekBar
     private lateinit var greenSeekBar: SeekBar
     private lateinit var blueSeekBar: SeekBar
@@ -80,14 +82,14 @@ class EditPhotoActivity : AppCompatActivity() {
     private var curWeightDraw: Int = 5
 
     // use in draw in picture
-    var downx: Float = 0f
-    var downy = 0f
-    var upx = 0f
-    var upy = 0f
-    var alteredBitmap: Bitmap? = null
-    var canvas: Canvas? = null
-    var paint: Paint? = null
-    var matrix: Matrix? = null
+    // var downx: Float = 0f
+    // var downy = 0f
+    // var upx = 0f
+    // var upy = 0f
+    private lateinit var alteredBitmap: Bitmap
+    // var canvas: Canvas? = null
+    // var paint: Paint? = null
+    // var matrix: Matrix? = null
 
     // a task that runs in background
     private val job = Job()
@@ -101,22 +103,24 @@ class EditPhotoActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (intent.hasExtra("uri")) {
-            uri = intent.getParcelableExtra("uri")
+            uri = intent.getParcelableExtra("uri")!!
 
             CoroutineScope(Dispatchers.IO).launch {
-                bitmap = getBitMapFromUri(uri!!)
+                bitmap = getBitMapFromUri(uri)
                 var scale = 1
-                val byteBitmap = bitmap!!.width * bitmap!!.height * 4
+                val byteBitmap = bitmap.width * bitmap.height * 4
                 while (byteBitmap / scale / scale > 6000000) {
                     scale++
                 }
-                bitmap = bitmap!!.copy(Bitmap.Config.ARGB_8888, true).scale(
-                        bitmap!!.width / scale,
-                        bitmap!!.height / scale,
-                        false
+
+                bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true).scale(
+                    bitmap.width / scale,
+                    bitmap.height / scale,
+                    false
                 )
-                withContext(Dispatchers.Main){
-                    addToQueue(bitmap!!,binding.imageEdit.colorFilter)
+
+                withContext(Dispatchers.Main) {
+                    addToQueue(bitmap, binding.imageEdit.colorFilter)
                     bindImage(binding.imageEdit, uri)
                 }
             }
@@ -127,8 +131,8 @@ class EditPhotoActivity : AppCompatActivity() {
         viewAddIcon = binding.addIconEditor.addIconImageView
 
         photoEditor = PhotoEditor.Builder(this, viewAddIcon)
-                .setPinchTextScalable(true)
-                .build()
+            .setPinchTextScalable(true)
+            .build()
 
         val bottomNavigation = binding.bottomEdit
         bottomNavigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
@@ -143,9 +147,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         brightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
             ) {
                 brightness = brightSeekBar.progress
                 tempRed = brightness
@@ -164,9 +168,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         redSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
             ) {
                 tempRed = redSeekBar.progress
                 binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
@@ -178,9 +182,9 @@ class EditPhotoActivity : AppCompatActivity() {
         })
         greenSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
             ) {
                 tempGreen = greenSeekBar.progress
                 binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
@@ -192,9 +196,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         blueSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
             ) {
                 tempBlue = blueSeekBar.progress
                 binding.imageEdit.colorFilter = setColor(tempRed, tempGreen, tempBlue)
@@ -206,9 +210,9 @@ class EditPhotoActivity : AppCompatActivity() {
         })
         weightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
             ) {
                 curWeightDraw = weightSeekBar.progress
                 viewDraw.setWeight(curWeightDraw)
@@ -226,98 +230,105 @@ class EditPhotoActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    fun addToQueue(bitmap: Bitmap,colorFilter: ColorFilter?){
+    private fun addToQueue(bitmap: Bitmap, colorFilter: ColorFilter?) {
         while (queue.size > 4)
             queue.poll()
-        queue.add(UndoPhoto(bitmap,colorFilter))
+        queue.add(UndoPhoto(bitmap, colorFilter))
     }
 
-    fun getFromQueue(){
-        if (queue.size == 0)
+    private fun getFromQueue() {
+        if (queue.size == 0) {
             return
-        if (isDraw){
-            alteredBitmap = Bitmap.createBitmap(
-                    bitmap!!.width, bitmap!!
-                    .height, bitmap!!.getConfig()
-            )
-            viewDraw.setNewImage(alteredBitmap, bitmap!!, queue.last.colorFilter)
-            if (queue.size > 1)
-                queue.removeLast()
         }
-        if (isAddIcon){
-            viewAddIcon.getSource().setImageBitmap(queue.last.bitmap);
-            viewAddIcon.getSource().colorFilter = queue.last.colorFilter
-            if (queue.size > 1)
+
+        if (isDraw) {
+            alteredBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
+            viewDraw.setNewImage(alteredBitmap, bitmap, queue.last.colorFilter)
+
+            if (queue.size > 1) {
                 queue.removeLast()
+            }
         }
-        if (!isDraw && !isAddIcon){
+
+        if (isAddIcon) {
+            viewAddIcon.source.setImageBitmap(queue.last.bitmap)
+            viewAddIcon.source.colorFilter = queue.last.colorFilter
+
+            if (queue.size > 1) {
+                queue.removeLast()
+            }
+        }
+
+        if (!isDraw && !isAddIcon) {
             binding.imageEdit.setImageBitmap(queue.last.bitmap)
             binding.imageEdit.colorFilter = queue.last.colorFilter
             binding.progressCircular.visibility = View.INVISIBLE
-            if (queue.size > 1)
+            if (queue.size > 1) {
                 queue.removeLast()
+            }
         }
 
-    }    
+    }
 
     @Suppress("UNUSED_PARAMETER")
     fun pencilImage(view: View) {
-        bitmap?.let {
-            binding.progressCircular.visibility = View.VISIBLE
-            scope.launch {
-                addToQueue(bitmap!!,binding.imageEdit.colorFilter)
-                bitmap = toPencilImage(it)
-                withContext(Dispatchers.Main) {
-                    bindImage(binding.imageEdit, bitmap)
-                    binding.progressCircular.visibility = View.INVISIBLE
-                }
+        binding.progressCircular.visibility = View.VISIBLE
+
+        scope.launch {
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
+            bitmap = toPencilImage(bitmap)
+            withContext(Dispatchers.Main) {
+                bindImage(binding.imageEdit, bitmap)
+                binding.progressCircular.visibility = View.INVISIBLE
             }
         }
+
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun snowImage(view: View) {
-        bitmap?.let {
-            binding.progressCircular.visibility = View.VISIBLE
-            scope.launch {
-                addToQueue(bitmap!!,binding.imageEdit.colorFilter)
-                bitmap = applySnowEffect(it)
-                withContext(Dispatchers.Main) {
-                    bindImage(binding.imageEdit, bitmap)
-                    binding.progressCircular.visibility = View.INVISIBLE
-                }
+        binding.progressCircular.visibility = View.VISIBLE
+
+        scope.launch {
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
+            bitmap = applySnowEffect(bitmap)
+            withContext(Dispatchers.Main) {
+                bindImage(binding.imageEdit, bitmap)
+                binding.progressCircular.visibility = View.INVISIBLE
             }
         }
+
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun fleaImage(view: View) {
-        bitmap?.let {
-            binding.progressCircular.visibility = View.VISIBLE
-            scope.launch {
-                addToQueue(bitmap!!,binding.imageEdit.colorFilter)
-                bitmap = applyFleaEffect(it)
-                withContext(Dispatchers.Main) {
-                    bindImage(binding.imageEdit, bitmap)
-                    binding.progressCircular.visibility = View.INVISIBLE
-                }
+
+        binding.progressCircular.visibility = View.VISIBLE
+        scope.launch {
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
+            bitmap = applyFleaEffect(bitmap)
+
+            withContext(Dispatchers.Main) {
+                bindImage(binding.imageEdit, bitmap)
+                binding.progressCircular.visibility = View.INVISIBLE
             }
         }
+
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun smoothImage(view: View) {
-        bitmap?.let {
-            binding.progressCircular.visibility = View.VISIBLE
-            scope.launch {
-                addToQueue(bitmap!!,binding.imageEdit.colorFilter)
-                bitmap = smooth(it,2.0)
-                withContext(Dispatchers.Main) {
-                    bindImage(binding.imageEdit, bitmap)
-                    binding.progressCircular.visibility = View.INVISIBLE
-                }
+        binding.progressCircular.visibility = View.VISIBLE
+        scope.launch {
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
+            bitmap = smooth(bitmap, 2.0)
+
+            withContext(Dispatchers.Main) {
+                bindImage(binding.imageEdit, bitmap)
+                binding.progressCircular.visibility = View.INVISIBLE
             }
         }
+
     }
 
     private fun toPencilImage(bmp: Bitmap): Bitmap {
@@ -329,61 +340,64 @@ class EditPhotoActivity : AppCompatActivity() {
         }
 
         val newBmp = bmp.copy(Bitmap.Config.ARGB_8888, true).scale(
-                bmp.width / scale,
-                bmp.height / scale,
-                false
+            bmp.width / scale,
+            bmp.height / scale,
+            false
         )
-        val graybm = toGrayscale(newBmp)
-        val invertbm = invertColors(graybm!!)
-        val blurbm = blur(invertbm)
 
-        val result = ColorDodgeBlend(graybm, blurbm!!)
+        val grayBm = toGrayscale(newBmp)
+        val invertBm = invertColors(grayBm)
+        val blurBm = blur(invertBm)
 
-        return result!!
+        val result = colorDodgeBlend(grayBm, blurBm)
+
+        return result
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun coloriseImage(view: View) {
-        bitmap?.let {
-            addToQueue(bitmap!!,binding.imageEdit.colorFilter)
-            binding.progressCircular.visibility = View.VISIBLE
-            binding.imageEdit.colorFilter =
-                    PorterDuffColorFilter(
-                            Color.argb(200, 0, 255, 0),
-                            PorterDuff.Mode.SRC_OVER
-                    )
-            redSeekBar.progress = 0
-            greenSeekBar.progress = 255
-            blueSeekBar.progress = 0
-            binding.progressCircular.visibility = View.INVISIBLE
-        }
+    fun colorizeImage(view: View) {
+
+        addToQueue(bitmap, binding.imageEdit.colorFilter)
+        binding.progressCircular.visibility = View.VISIBLE
+        binding.imageEdit.colorFilter =
+            PorterDuffColorFilter(
+                Color.argb(200, 0, 255, 0),
+                PorterDuff.Mode.SRC_OVER
+            )
+
+        redSeekBar.progress = 0
+        greenSeekBar.progress = 255
+        blueSeekBar.progress = 0
+        binding.progressCircular.visibility = View.INVISIBLE
+
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun grayImage(view: View) {
-        bitmap?.let {
-            binding.progressCircular.visibility = View.VISIBLE
-            scope.launch {
-                addToQueue(bitmap!!,binding.imageEdit.colorFilter)
-                bitmap = toGrayscale(it)
-                withContext(Dispatchers.Main) {
-                    bindImage(binding.imageEdit, bitmap)
-                    binding.progressCircular.visibility = View.INVISIBLE
-                }
+
+        binding.progressCircular.visibility = View.VISIBLE
+        scope.launch {
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
+            bitmap = toGrayscale(bitmap)
+            withContext(Dispatchers.Main) {
+                bindImage(binding.imageEdit, bitmap)
+                binding.progressCircular.visibility = View.INVISIBLE
             }
         }
+
     }
 
-    private fun toGrayscale(bmpOriginal: Bitmap): Bitmap? {
-        val width: Int
-        val height: Int
-        height = bmpOriginal.height
-        width = bmpOriginal.width
+    private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
+        val height: Int = bmpOriginal.height
+        val width: Int = bmpOriginal.width
+
         val bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val c = Canvas(bmpGrayscale)
         val paint = Paint()
+
         val cm = ColorMatrix()
         cm.setSaturation(0f)
+
         val f = ColorMatrixColorFilter(cm)
         paint.colorFilter = f
         c.drawBitmap(bmpOriginal, 0f, 0f, paint)
@@ -391,143 +405,166 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     // link: https://xjaphx.wordpress.com/2011/06/22/image-processing-smooth-effect/
-    fun smooth(src: Bitmap?, value: Double): Bitmap? {
-        val convMatrix = ConvolutionMatrix(3)
-        convMatrix.setAll(1.0)
-        convMatrix.Matrix[1][1] = value
-        convMatrix.Factor = value + 8
-        convMatrix.Offset = 1.0
-        return ConvolutionMatrix.computeConvolution3x3(src, convMatrix)
+    private fun smooth(src: Bitmap, value: Double): Bitmap {
+        val convolutionMatrix = ConvolutionMatrix(3).apply {
+            setAll(1.0)
+            Matrix[1][1] = value
+            Factor = value + 8
+            Offset = 1.0
+        }
+
+        return ConvolutionMatrix.computeConvolution3x3(src, convolutionMatrix)
     }
 
     // link: https://xjaphx.wordpress.com/2011/10/30/image-processing-snow-effect/
-    fun applySnowEffect(source: Bitmap): Bitmap? {
+    private fun applySnowEffect(source: Bitmap): Bitmap {
+
         // get image size
         val width = source.width
         val height = source.height
         val pixels = IntArray(width * height)
+
         // get pixel array from source
         source.getPixels(pixels, 0, width, 0, 0, width, height)
+
         // random object
         val random = Random()
-        var R: Int
-        var G: Int
-        var B: Int
-        var index = 0
-        var thresHold = 50
+
         // iteration through pixels
         for (y in 0 until height) {
             for (x in 0 until width) {
                 // get current index in 2D-matrix
-                index = y * width + x
+                val index = y * width + x
+
                 // get color
-                R = Color.red(pixels[index])
-                G = Color.green(pixels[index])
-                B = Color.blue(pixels[index])
+                val r = Color.red(pixels[index])
+                val g = Color.green(pixels[index])
+                val b = Color.blue(pixels[index])
+
                 // generate threshold
-                thresHold = random.nextInt(HIGHEST_COLOR_VALUE)
-                if (R > thresHold && G > thresHold && B > thresHold) {
-                    pixels[index] = Color.rgb(HIGHEST_COLOR_VALUE, HIGHEST_COLOR_VALUE, HIGHEST_COLOR_VALUE)
+                val threshold = random.nextInt(HIGHEST_COLOR_VALUE)
+                if (r > threshold && g > threshold && b > threshold) {
+                    pixels[index] =
+                        Color.rgb(HIGHEST_COLOR_VALUE, HIGHEST_COLOR_VALUE, HIGHEST_COLOR_VALUE)
                 }
             }
         }
+
         // output bitmap
-        val bmOut = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
-        bmOut.setPixels(pixels, 0, width, 0, 0, width, height)
-        return bmOut
+        return Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565).apply {
+            setPixels(pixels, 0, width, 0, 0, width, height)
+        }
     }
 
     // link: https://xjaphx.wordpress.com/2011/10/30/image-processing-flea-noise-effect/
-    fun applyFleaEffect(source: Bitmap): Bitmap? {
+    private fun applyFleaEffect(source: Bitmap): Bitmap {
         // get image size
         val width = source.width
         val height = source.height
         val pixels = IntArray(width * height)
+
         // get pixel array from source
         source.getPixels(pixels, 0, width, 0, 0, width, height)
+
         // a random object
         val random = Random()
-        var index = 0
+
         // iteration through pixels
         for (y in 0 until height) {
             for (x in 0 until width) {
                 // get current index in 2D-matrix
-                index = y * width + x
+                val index = y * width + x
                 // get random color
-                val randColor = Color.rgb(random.nextInt(HIGHEST_COLOR_VALUE),
-                        random.nextInt(HIGHEST_COLOR_VALUE), random.nextInt(HIGHEST_COLOR_VALUE))
+                val randColor = Color.rgb(
+                    random.nextInt(HIGHEST_COLOR_VALUE),
+                    random.nextInt(HIGHEST_COLOR_VALUE), random.nextInt(HIGHEST_COLOR_VALUE)
+                )
                 // OR
                 pixels[index] = pixels[index] or randColor
             }
         }
+
         // output bitmap
-        val bmOut = Bitmap.createBitmap(width, height, source.config)
-        bmOut.setPixels(pixels, 0, width, 0, 0, width, height)
-        return bmOut
+        return Bitmap.createBitmap(width, height, source.config).apply {
+            setPixels(pixels, 0, width, 0, 0, width, height)
+        }
     }
 
     //link: https://stackoverflow.com/questions/9826273/photo-image-to-sketch-algorithm
-    private fun colordodge(in1: Int, in2: Int): Int {
+    private fun colorDodge(in1: Int, in2: Int): Int {
         val image = in2.toFloat()
         val mask = in1.toFloat()
-        return (if (image == 255f) image else Math.min(
-                255f,
-                (mask.toLong() shl 8) / (255 - image)
-        )).toInt()
+        return (if (image == 255f) image else 255f.coerceAtMost((mask.toLong() shl 8) / (255 - image))).toInt()
     }
 
     //link: https://stackoverflow.com/questions/9826273/photo-image-to-sketch-algorithm
-    fun ColorDodgeBlend(source: Bitmap, layer: Bitmap): Bitmap? {
+    private fun colorDodgeBlend(source: Bitmap, layer: Bitmap): Bitmap {
+
         val base = source.copy(Bitmap.Config.ARGB_8888, true)
         val blend = layer.copy(Bitmap.Config.ARGB_8888, false)
-        val buffBase: IntBuffer = IntBuffer.allocate(base.width * base.height)
-        base.copyPixelsToBuffer(buffBase)
-        buffBase.rewind()
-        val buffBlend: IntBuffer = IntBuffer.allocate(blend.width * blend.height)
-        blend.copyPixelsToBuffer(buffBlend)
-        buffBlend.rewind()
-        val buffOut: IntBuffer = IntBuffer.allocate(base.width * base.height)
-        buffOut.rewind()
+
+        val buffBase: IntBuffer = IntBuffer.allocate(base.width * base.height).apply {
+            base.copyPixelsToBuffer(this)
+            rewind()
+        }
+
+        val buffBlend: IntBuffer = IntBuffer.allocate(blend.width * blend.height).apply {
+            blend.copyPixelsToBuffer(this)
+            rewind()
+        }
+
+        val buffOut: IntBuffer = IntBuffer.allocate(base.width * base.height).apply {
+            rewind()
+        }
+
         while (buffOut.position() < buffOut.limit()) {
+
             val filterInt: Int = buffBlend.get()
             val srcInt: Int = buffBase.get()
+
             val redValueFilter = Color.red(filterInt)
             val greenValueFilter = Color.green(filterInt)
             val blueValueFilter = Color.blue(filterInt)
+
             val redValueSrc = Color.red(srcInt)
             val greenValueSrc = Color.green(srcInt)
             val blueValueSrc = Color.blue(srcInt)
-            val redValueFinal: Int = colordodge(redValueFilter, redValueSrc)
-            val greenValueFinal: Int = colordodge(greenValueFilter, greenValueSrc)
-            val blueValueFinal: Int = colordodge(blueValueFilter, blueValueSrc)
+
+            val redValueFinal: Int = colorDodge(redValueFilter, redValueSrc)
+            val greenValueFinal: Int = colorDodge(greenValueFilter, greenValueSrc)
+            val blueValueFinal: Int = colorDodge(blueValueFilter, blueValueSrc)
+
             val pixel = Color.argb(255, redValueFinal, greenValueFinal, blueValueFinal)
+
             buffOut.put(pixel)
         }
+
         buffOut.rewind()
         base.copyPixelsFromBuffer(buffOut)
         blend.recycle()
+
         return base
     }
 
-    fun invertColors(bmpOriginal: Bitmap): Bitmap? {
+    private fun invertColors(bmpOriginal: Bitmap): Bitmap {
         val bitmap = Bitmap.createBitmap(
-                bmpOriginal.width,
-                bmpOriginal.height,
-                Bitmap.Config.ARGB_8888
+            bmpOriginal.width,
+            bmpOriginal.height,
+            Bitmap.Config.ARGB_8888
         )
 
         val matrixInvert = ColorMatrix(
-                floatArrayOf(
-                        -1.0f, 0.0f, 0.0f, 0.0f, 255.0f,
-                        0.0f, -1.0f, 0.0f, 0.0f, 255.0f,
-                        0.0f, 0.0f, -1.0f, 0.0f, 255.0f,
-                        0.0f, 0.0f, 0.0f, 1.0f, 0.0f
-                )
+            floatArrayOf(
+                -1.0f, 0.0f, 0.0f, 0.0f, 255.0f,
+                0.0f, -1.0f, 0.0f, 0.0f, 255.0f,
+                0.0f, 0.0f, -1.0f, 0.0f, 255.0f,
+                0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+            )
         )
 
-
-        val paint = Paint()
-        paint.colorFilter = ColorMatrixColorFilter(matrixInvert)
+        val paint = Paint().apply {
+            colorFilter = ColorMatrixColorFilter(matrixInvert)
+        }
 
         Canvas(bitmap).drawBitmap(bmpOriginal, 0f, 0f, paint)
         return bitmap
@@ -535,31 +572,34 @@ class EditPhotoActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun blurImage(view: View) {
-        bitmap?.let {
-            binding.progressCircular.visibility = View.VISIBLE
-            scope.launch {
-                addToQueue(bitmap!!,binding.imageEdit.colorFilter)
-                bitmap = blur(it)
-                withContext(Dispatchers.Main) {
-                    bindImage(binding.imageEdit, bitmap)
-                    binding.progressCircular.visibility = View.INVISIBLE
-                }
+
+        binding.progressCircular.visibility = View.VISIBLE
+        scope.launch {
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
+            bitmap = blur(bitmap)
+            withContext(Dispatchers.Main) {
+                bindImage(binding.imageEdit, bitmap)
+                binding.progressCircular.visibility = View.INVISIBLE
             }
         }
+
     }
 
-    private fun blur(image: Bitmap?): Bitmap? {
-        if (null == image) return null
+    private fun blur(image: Bitmap): Bitmap {
+
         val outputBitmap = Bitmap.createBitmap(image)
         val renderScript = RenderScript.create(this)
+
         val tmpIn = Allocation.createFromBitmap(renderScript, image)
         val tmpOut = Allocation.createFromBitmap(renderScript, outputBitmap)
 
-        //Intrinsic Gausian blur filter
-        val theIntrinsic = ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript))
-        theIntrinsic.setRadius(BLUR_RADIUS)
-        theIntrinsic.setInput(tmpIn)
-        theIntrinsic.forEach(tmpOut)
+        //Intrinsic Gaussian blur filter
+        ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript)).apply {
+            setRadius(BLUR_RADIUS)
+            setInput(tmpIn)
+            forEach(tmpOut)
+        }
+
         tmpOut.copyTo(outputBitmap)
         return outputBitmap
     }
@@ -576,59 +616,62 @@ class EditPhotoActivity : AppCompatActivity() {
 
     fun setColor(progressRed: Int, progressGreen: Int, progressBlue: Int): PorterDuffColorFilter {
         val progress = max(
-                max(abs(progressRed - 100), abs(progressGreen - 100)),
-                abs(progressBlue - 100)
+            max(abs(progressRed - 100), abs(progressGreen - 100)),
+            abs(progressBlue - 100)
         )
         val value = progress * 255 / 100
         return PorterDuffColorFilter(
-                Color.argb(value, progressRed, progressGreen, progressBlue),
-                PorterDuff.Mode.SRC_OVER
+            Color.argb(value, progressRed, progressGreen, progressBlue),
+            PorterDuff.Mode.SRC_OVER
         )
     }
 
     private fun getBitMapFromUri(uri: Uri): Bitmap {
-        val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
-        return bitmap
+        return MediaStore.Images.Media.getBitmap(contentResolver, uri)
     }
 
     private fun createFileToSave(): File {
-        val timeStamp = SimpleDateFormat("yyyyddMM_HHmmss", Locale.CHINA).format(Date())
+        val timeStamp = SimpleDateFormat("yyyy_dd_MM_HH_mm_ss", Locale.ROOT).format(Date())
         val file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        //TODO: fix the file extension
         return File(file.path, "$timeStamp.jpg")
     }
 
     private fun handlingBitmap(): Boolean {
         if (isCrop) {
+
             viewCrop.let {
                 bitmap = it.croppedImage
                 var scale = 1
-                val byteBitmap = bitmap!!.width * bitmap!!.height * 4
+                val byteBitmap = bitmap.width * bitmap.height * 4
                 while (byteBitmap / scale / scale > 6000000) {
                     scale++
                 }
-                bitmap = bitmap!!.copy(Bitmap.Config.ARGB_8888, true).scale(
-                        bitmap!!.width / scale,
-                        bitmap!!.height / scale,
-                        false
+                bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true).scale(
+                    bitmap.width / scale,
+                    bitmap.height / scale,
+                    false
                 )
                 binding.imageEdit.colorFilter = null
                 bindImage(binding.imageEdit, bitmap)
             }
             return true
         }
+
         if (isDraw) {
             viewDraw.let {
-                bitmap = it.drawable.toBitmap(bitmap!!.width, bitmap!!.height, bitmap!!.config)
+                bitmap = it.drawable.toBitmap(bitmap.width, bitmap.height, bitmap.config)
                 bindImage(binding.imageEdit, bitmap)
             }
             return true
         }
+
         if (isAddIcon) {
             viewAddIcon.let {
                 val saveSettings = SaveSettings.Builder()
-                        .setClearViewsEnabled(false)
-                        .setTransparencyEnabled(true)
-                        .build()
+                    .setClearViewsEnabled(false)
+                    .setTransparencyEnabled(true)
+                    .build()
                 photoEditor.saveAsBitmap(saveSettings, object : OnSaveBitmap {
                     override fun onBitmapReady(saveBitmap: Bitmap) {
                         bitmap = saveBitmap
@@ -646,29 +689,30 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     private val onNavigationItemSelectedListener =
-            BottomNavigationView.OnNavigationItemSelectedListener { item ->
-                if (item.itemId in listOf(
-                                R.id.bright,
-                                R.id.filter,
-                                R.id.add_icon,
-                                R.id.crop,
-                                R.id.change_color
-                        )
-                ) {
-                    handlingBitmap()
-                    setBarVisibility(item.itemId)
-                    addToQueue(bitmap!!,binding.imageEdit.colorFilter)
-                    cur_item_id = item.itemId
-                    return@OnNavigationItemSelectedListener true
-                }
-                false
+        BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            if (item.itemId in listOf(
+                    R.id.bright,
+                    R.id.filter,
+                    R.id.add_icon,
+                    R.id.crop,
+                    R.id.change_color
+                )
+            ) {
+                handlingBitmap()
+                setBarVisibility(item.itemId)
+                addToQueue(bitmap, binding.imageEdit.colorFilter)
+                curItemId = item.itemId
+                return@OnNavigationItemSelectedListener true
             }
+            false
+        }
 
     private fun setBarVisibility(itemId: Int) {
         binding.apply {
             isCrop = false
             isAddIcon = false
             isDraw = false
+
             fragmentContainerEditPhoto.visibility = View.VISIBLE
             brightEditor.brightEditorLayout.visibility = View.GONE
             filterEditor.visibility = View.GONE
@@ -680,8 +724,11 @@ class EditPhotoActivity : AppCompatActivity() {
             addIconEditor.addIconEditorLayout.visibility = View.GONE
             addIconConfigEditor.addIconConfigLayout.visibility = View.GONE
             binding.saveImage.visibility = View.VISIBLE
+
         }
+
         when (itemId) {
+
             R.id.bright -> binding.brightEditor.brightEditorLayout.visibility = View.VISIBLE
             R.id.filter -> binding.filterEditor.visibility = View.VISIBLE
             R.id.add_icon -> binding.addEditor.visibility = View.VISIBLE
@@ -695,25 +742,32 @@ class EditPhotoActivity : AppCompatActivity() {
         }
     }
 
-    fun undoImage(view: View){
+    @Suppress("UNUSED_PARAMETER")
+    fun undoImage(view: View) {
         getFromQueue()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onDrawMode(view: View) {
-        binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
-        binding.addEditor.visibility = View.GONE
-        binding.drawConfigEditor.drawConfigLayout.visibility = View.VISIBLE
-        alteredBitmap = Bitmap.createBitmap(
-                bitmap!!.width, bitmap!!
-                .height, bitmap!!.getConfig()
-        )
-        viewDraw.setNewImage(alteredBitmap, bitmap!!, setColor(tempRed, tempGreen, tempBlue))
-        viewDraw.setNewColor(curColorDraw)
-        viewDraw.setWeight(curWeightDraw)
+        binding.apply {
+            fragmentContainerEditPhoto.visibility = View.INVISIBLE
+            addEditor.visibility = View.GONE
+            drawConfigEditor.drawConfigLayout.visibility = View.VISIBLE
+        }
+
+        alteredBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
+
+        viewDraw.apply {
+            setNewImage(alteredBitmap, bitmap, setColor(tempRed, tempGreen, tempBlue))
+            setNewColor(curColorDraw)
+            setWeight(curWeightDraw)
+        }
+
         binding.drawEditor.drawEditorLayout.visibility = View.VISIBLE
         isDraw = true
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onAddIconMode(view: View) {
         binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
         binding.addEditor.visibility = View.GONE
@@ -724,49 +778,62 @@ class EditPhotoActivity : AppCompatActivity() {
         binding.saveImage.visibility = View.INVISIBLE
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun pickEmoji(view: View) {
+
         val gridView = GridView(this)
         val emojis = PhotoEditor.getEmojis(applicationContext)
-        val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
-        builder.setView(gridView)
-        gridView.adapter = ArrayAdapter<Any?>(
-                this,
-                android.R.layout.simple_list_item_1,
-                emojis as List<Any?>
+
+        val builder = AlertDialog.Builder(this).apply {
+            setView(gridView)
+        }
+
+        gridView.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            emojis
         )
+
         gridView.numColumns = 5
-        var dialog: android.app.AlertDialog? = null
-        gridView.onItemClickListener =
-                AdapterView.OnItemClickListener { parent, view, position, id ->
-                    photoEditor.addEmoji(emojis.get(position))
-                    isAddIcon = true
-                    dialog!!.dismiss()
-                }
+        var dialog: AlertDialog? = null
+
+        gridView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            photoEditor.addEmoji(emojis.get(position))
+            isAddIcon = true
+            dialog!!.dismiss()
+        }
+
         dialog = builder.create()
         dialog.show()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onSaveImageButtonClick(view: View) {
         val fileSave = createFileToSave()
         var contentValues: ContentValues? = null
         var imageUri: Uri? = null
         val check = handlingBitmap()
-        var bitmap2: Bitmap = bitmap!!
-        val exifDateFormatter = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US)
-        if (!check)
+        var bitmap2: Bitmap = bitmap
+
+        val exifDateFormatter = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ROOT)
+
+        if (!check) {
             bitmap2 = binding.imageEdit.drawToBitmap()
+        }
+
         try {
-            var stream: OutputStream? = null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val resolver = baseContext.getContentResolver()
+
+                val resolver = contentResolver
                 val date = System.currentTimeMillis()
+
                 contentValues = ContentValues().apply {
                     put(MediaStore.Images.ImageColumns.DISPLAY_NAME, fileSave.name)
                     put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
                     put(MediaStore.MediaColumns.DATE_ADDED, date)
                     put(MediaStore.MediaColumns.DATE_TAKEN, date)
                     put(MediaStore.MediaColumns.DATE_MODIFIED, date)
-                    put(MediaStore.MediaColumns.SIZE, bitmap2!!.byteCount)
+                    put(MediaStore.MediaColumns.SIZE, bitmap2.byteCount)
                     put(MediaStore.MediaColumns.WIDTH, bitmap2.width)
                     put(MediaStore.MediaColumns.HEIGHT, bitmap2.height)
                     put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
@@ -774,57 +841,63 @@ class EditPhotoActivity : AppCompatActivity() {
                 }
 
                 imageUri = resolver.insert(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        contentValues
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    contentValues
                 )
-                baseContext.contentResolver.openOutputStream(imageUri!!, "w").use {
+                contentResolver.openOutputStream(imageUri!!, "w").use {
                     bitmap2.compress(Bitmap.CompressFormat.JPEG, 100, it)
                 }
+
             } else {
-                stream = FileOutputStream(fileSave)
-                bitmap2!!.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                stream.flush()
-                stream.close()
+                FileOutputStream(fileSave).use { stream ->
+                    bitmap2.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                }
             }
         } catch (e: IOException) {
+            // TODO: extract string
             Toast.makeText(this, "Failed to save Image", Toast.LENGTH_LONG).show()
             return
         }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            contentValues!!.clear()
-            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-            baseContext.contentResolver.update(imageUri!!, contentValues, null, null)
+            contentValues?.clear()
+            contentValues?.put(MediaStore.Images.Media.IS_PENDING, 0)
+
+            contentResolver.update(imageUri!!, contentValues, null, null)
+
             // Add exif data
             contentResolver.openFileDescriptor(imageUri, "rw")?.use {
                 // set Exif attribute so MediaStore.Images.Media.DATE_TAKEN will be set
                 ExifInterface(it.fileDescriptor)
-                        .apply {
-                            setAttribute(
-                                    ExifInterface.TAG_DATETIME_ORIGINAL,
-                                    exifDateFormatter.format(Date())
-                            )
-                            saveAttributes()
-                        }
+                    .apply {
+                        setAttribute(
+                            ExifInterface.TAG_DATETIME_ORIGINAL,
+                            exifDateFormatter.format(Date())
+                        )
+                        saveAttributes()
+                    }
             }
         }
         SingleMediaScanner(this, fileSave)
+
+        // TODO: extract string
         Toast.makeText(this, "Image Saved Successfully", Toast.LENGTH_LONG).show()
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun onPickColorButtonClick(view: View) {
         ColorPickerDialog()
-                .withColor(Color.WHITE) // the default / initial color
-                .withListener { dialog, color ->
-                    // a color has been picked; use it
-                    curColorDraw = color
-                    binding.drawConfigEditor.pickColor.setBackgroundColor(curColorDraw)
-                    viewDraw.setNewColor(curColorDraw)
-                }
-                .withTheme(R.style.ColorPickerDialog)
-                .withPresets(*resources.getIntArray(R.array.color_choices))
-                .withAlphaEnabled(true)
-                .show(supportFragmentManager, "colorPicker")
+            .withColor(Color.WHITE) // the default / initial color
+            .withListener { _, color ->
+                // a color has been picked; use it
+                curColorDraw = color
+                binding.drawConfigEditor.pickColor.setBackgroundColor(curColorDraw)
+                viewDraw.setNewColor(curColorDraw)
+            }
+            .withTheme(R.style.ColorPickerDialog)
+            .withPresets(*resources.getIntArray(R.array.color_choices))
+            .withAlphaEnabled(true)
+            .show(supportFragmentManager, "colorPicker")
 
 //        val colorPicker = AmbilWarnaDialog(this, curColorDraw, object : OnAmbilWarnaListener {
 //            override fun onCancel(dialog: AmbilWarnaDialog) {}
@@ -835,10 +908,11 @@ class EditPhotoActivity : AppCompatActivity() {
 //        colorPicker.show()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun pickImageFromPhone(view: View) {
         val intent = Intent(
-                Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         )
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_INTENT)
     }
