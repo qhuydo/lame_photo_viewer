@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,7 @@ import com.hcmus.clc18se.photos.EditPhotoActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
+import com.hcmus.clc18se.photos.utils.GPSImage
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
@@ -52,6 +54,9 @@ class PhotoViewFragment : Fragment() {
         )
     }
 
+    companion object{
+        const val PLACES_API_KEY = "AIzaSyAmbkVMEG6hFH2lSdsQi2bRNGWTYKtuiTM"
+    }
     private lateinit var binding: FragmentPhotoViewBinding
 
     private var currentPosition = -1
@@ -126,6 +131,16 @@ class PhotoViewFragment : Fragment() {
             dialog.setContentView(R.layout.dialog_info)
             dialog.findViewById<TextView>(R.id.path).text = "Path: " + photos[currentPosition].requirePath(requireContext())
             dialog.findViewById<TextView>(R.id.date_create).text = "Date create: " + photos[currentPosition].requireDateTaken()
+            val gpsImage = GPSImage(photos[currentPosition].requirePath(requireContext()))
+            val latitude = gpsImage.Latitude
+            val longtitude = gpsImage.Longitude
+            if (latitude != null && longtitude != null) {
+                val geocoder = Geocoder(context)
+                val list = geocoder.getFromLocation(latitude,longtitude,1)
+                if (list[0].getAddressLine(0) != null) {
+                    dialog.findViewById<TextView>(R.id.name_place).text = "Place: " + list[0].getAddressLine(0)
+                }
+            }
             dialog.findViewById<Button>(R.id.off_info_dialog).setOnClickListener(View.OnClickListener { dialog.dismiss() })
             dialog.show()
         }
