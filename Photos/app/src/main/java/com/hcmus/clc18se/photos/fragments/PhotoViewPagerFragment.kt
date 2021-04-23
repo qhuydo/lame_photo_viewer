@@ -1,12 +1,13 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.*
 import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.ActionBar
-import androidx.core.net.toFile
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
@@ -15,7 +16,7 @@ import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 import com.hcmus.clc18se.photos.utils.VideoDialog
 import java.io.*
-import java.nio.file.StandardCopyOption.*
+
 
 class PhotoViewPagerFragment : Fragment() {
 
@@ -51,9 +52,9 @@ class PhotoViewPagerFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         binding = PhotoViewPagerPageBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
@@ -65,7 +66,7 @@ class PhotoViewPagerFragment : Fragment() {
         actionBar = (activity as AbstractPhotosActivity).supportActionBar
 
         binding.imageView.setOnImageEventListener(object :
-                SubsamplingScaleImageView.OnImageEventListener {
+            SubsamplingScaleImageView.OnImageEventListener {
 
             override fun onImageLoadError(e: Exception?) {
                 binding.progressCircular.visibility = View.GONE
@@ -92,12 +93,12 @@ class PhotoViewPagerFragment : Fragment() {
         }
 
         MediaItem.bindMediaItemToImageDrawable(
-                requireContext(),
-                binding.imageView,
-                binding.glideImageView,
-                mediaItem,
-                binding.videoViewImage,
-                debug
+            requireContext(),
+            binding.imageView,
+            binding.glideImageView,
+            mediaItem,
+            binding.videoViewImage,
+            debug
         )
 
         binding.videoViewImage.playIcon.setOnClickListener {
@@ -136,6 +137,12 @@ class PhotoViewPagerFragment : Fragment() {
             }
             R.id.action_move_to_secret_album -> {
                 secret()
+                true
+            }
+            R.id.action_copy -> {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                startActivityForResult(Intent.createChooser(intent, "Choose directory"), COPY_FILE)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -221,8 +228,30 @@ class PhotoViewPagerFragment : Fragment() {
         actionBar?.show()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == COPY_FILE) {
+            data?.let {
+                val cw = ContextWrapper(requireContext().applicationContext)
+                val treeUri = data.data
+                val fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)?.createFile(mediaItem!!.mimeType!!,mediaItem!!.name)
+                try {
+                    val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
+                    val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
+                    inputStream!!.copyTo(outputStream!!)
+                    inputStream.close()
+                    outputStream.close()
+                    Toast.makeText(context, "Copy file success", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Copy file unsuccessful", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
     companion object {
         private const val BUNDLE_MEDIAITEM = "uri"
         private const val BUNDLE_FULLSCREEN = "fullscreen"
+        private const val COPY_FILE = 2345
     }
 }
