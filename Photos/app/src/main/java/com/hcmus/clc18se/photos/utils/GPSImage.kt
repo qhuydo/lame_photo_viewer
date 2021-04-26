@@ -1,8 +1,11 @@
 package com.hcmus.clc18se.photos.utils
 
+import android.content.Context
 import android.media.ExifInterface
+import android.net.Uri
+import android.os.Build
 
-class GPSImage internal constructor(filepath: String?) {
+class GPSImage internal constructor(filepath: String?, uri: Uri?, context: Context){
     // your Final lat Long Values
     public var Latitude: Double? = null
     public var Longitude: Double? = null
@@ -36,26 +39,37 @@ class GPSImage internal constructor(filepath: String?) {
     val longitudeE6: Int
         get() = Longitude!!.toInt()
 
+
     init {
-        val exif = ExifInterface(filepath!!)
-        val LATITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE)
-        val LATITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF)
-        val LONGITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)
-        val LONGITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF)
-        if (LATITUDE != null
-                && LATITUDE_REF != null
-                && LONGITUDE != null
-                && LONGITUDE_REF != null) {
-            Latitude = if (LATITUDE_REF == "N") {
-                convertToDegree(LATITUDE)
-            } else {
-                0 - convertToDegree(LATITUDE)
+        try {
+            var exif: ExifInterface? = null
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                exif = ExifInterface(context.getContentResolver().openInputStream(uri!!)!!)
+            else
+                exif = ExifInterface(filepath!!)
+            val LATITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE)
+            val LATITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF)
+            val LONGITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)
+            val LONGITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF)
+            if (LATITUDE != null
+                    && LATITUDE_REF != null
+                    && LONGITUDE != null
+                    && LONGITUDE_REF != null) {
+                Latitude = if (LATITUDE_REF == "N") {
+                    convertToDegree(LATITUDE)
+                } else {
+                    0 - convertToDegree(LATITUDE)
+                }
+                Longitude = if (LONGITUDE_REF == "E") {
+                    convertToDegree(LONGITUDE)
+                } else {
+                    0 - convertToDegree(LONGITUDE)
+                }
             }
-            Longitude = if (LONGITUDE_REF == "E") {
-                convertToDegree(LONGITUDE)
-            } else {
-                0 - convertToDegree(LONGITUDE)
-            }
+        }
+        catch (e:Exception)
+        {
+
         }
     }
 }

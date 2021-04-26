@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
@@ -25,6 +26,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
+import com.hcmus.clc18se.photos.BuildConfig
 import com.hcmus.clc18se.photos.EditPhotoActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.database.PhotosDatabase
@@ -37,6 +39,8 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
+
 
 class PhotoViewFragment : Fragment() {
 
@@ -50,7 +54,7 @@ class PhotoViewFragment : Fragment() {
 
     private val favouriteAlbumViewModel: FavouriteAlbumViewModel by activityViewModels {
         FavouriteAlbumViewModelFactory(
-                requireActivity().application, contentProvider
+            requireActivity().application, contentProvider
         )
     }
 
@@ -79,11 +83,11 @@ class PhotoViewFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
-                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
             PhotosViewModelFactory(
-                    requireActivity().application,
-                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
             )
         }
         this.viewModel = viewModel
@@ -95,7 +99,8 @@ class PhotoViewFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         resultLauncher = registerForActivityResult(
-                ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 viewModel.deletePendingImage()
             }
@@ -107,9 +112,9 @@ class PhotoViewFragment : Fragment() {
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
             duration = 300L
         }
-
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setUpBottomButtons() = binding.bottomLayout.apply {
         editButton.setOnClickListener {
             val intent = Intent(context, EditPhotoActivity::class.java)
@@ -129,19 +134,31 @@ class PhotoViewFragment : Fragment() {
             val dialog = Dialog(requireContext())
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.dialog_info)
-            dialog.findViewById<TextView>(R.id.path).text = "Path: " + photos[currentPosition].requirePath(requireContext())
-            dialog.findViewById<TextView>(R.id.date_create).text = "Date create: " + photos[currentPosition].requireDateTaken()
-            val gpsImage = GPSImage(photos[currentPosition].requirePath(requireContext()))
+            dialog.findViewById<TextView>(R.id.path).text =
+                "Path: " + photos[currentPosition].requirePath(
+                    requireContext()
+                )
+            dialog.findViewById<TextView>(R.id.date_create).text =
+                "Date create: " + photos[currentPosition].requireDateTaken()
+            val gpsImage = GPSImage(
+                photos[currentPosition].requirePath(requireContext()),
+                photos[currentPosition].requireUri(),
+                requireContext()
+            )
             val latitude = gpsImage.Latitude
             val longtitude = gpsImage.Longitude
             if (latitude != null && longtitude != null) {
                 val geocoder = Geocoder(context)
-                val list = geocoder.getFromLocation(latitude,longtitude,1)
+                val list = geocoder.getFromLocation(latitude, longtitude, 1)
                 if (list[0].getAddressLine(0) != null) {
-                    dialog.findViewById<TextView>(R.id.name_place).text = "Place: " + list[0].getAddressLine(0)
+                    dialog.findViewById<TextView>(R.id.name_place).text =
+                        "Place: " + list[0].getAddressLine(
+                            0
+                        )
                 }
             }
-            dialog.findViewById<Button>(R.id.off_info_dialog).setOnClickListener(View.OnClickListener { dialog.dismiss() })
+            dialog.findViewById<Button>(R.id.off_info_dialog)
+                .setOnClickListener(View.OnClickListener { dialog.dismiss() })
             dialog.show()
         }
 
@@ -167,9 +184,9 @@ class PhotoViewFragment : Fragment() {
 
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // TODO: clean this code
         (activity as AbstractPhotosActivity).setNavHostFragmentTopMargin(0)
@@ -183,7 +200,8 @@ class PhotoViewFragment : Fragment() {
         }
 
         setUpBottomButtons()
-        (activity as AbstractPhotosActivity).supportActionBar?.title = photos[viewModel.idx.value!!].name
+        (activity as AbstractPhotosActivity).supportActionBar?.title =
+            photos[viewModel.idx.value!!].name
 
         setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
         currentPosition = viewModel.idx.value!!
@@ -290,10 +308,10 @@ class PhotoViewFragment : Fragment() {
     }
 
     private inner class ScreenSlidePagerAdapter(fragment: Fragment) :
-            FragmentStateAdapter(fragment) {
+        FragmentStateAdapter(fragment) {
 
         val fullscreen =
-                preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
+            preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
 
         override fun getItemCount(): Int {
             return photos.size
