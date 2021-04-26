@@ -1,12 +1,14 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.Manifest
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.location.Geocoder
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +19,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -35,6 +38,7 @@ import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
 import com.hcmus.clc18se.photos.utils.GPSImage
+import com.hcmus.clc18se.photos.utils.GPSImage.Companion.getAddressFromGPSImage
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
@@ -42,7 +46,9 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
+// TODO: create a viewmodel for this
 class PhotoViewFragment : Fragment() {
 
     private lateinit var viewModel: PhotosViewModel
@@ -61,6 +67,7 @@ class PhotoViewFragment : Fragment() {
 
     companion object {
         const val PLACES_API_KEY = BuildConfig.PLACES_API_KEY
+        const val ACCESS_MEDIA_LOCATION_REQUEST_CODE = 0x2704
     }
 
     private lateinit var binding: FragmentPhotoViewBinding
@@ -97,7 +104,7 @@ class PhotoViewFragment : Fragment() {
     }
 
     private lateinit var resultLauncher: ActivityResultLauncher<IntentSenderRequest>
-
+    private lateinit var accessMediaLocationResultLauncher: ActivityResultLauncher<String>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -107,6 +114,17 @@ class PhotoViewFragment : Fragment() {
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 viewModel.deletePendingImage()
             }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            accessMediaLocationResultLauncher = registerForActivityResult(
+                    ActivityResultContracts.RequestPermission(),
+            ) {
+                if (it) {
+                    getMediaItemAddressCallback()
+                }
+            }
+
         }
 
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
@@ -133,35 +151,7 @@ class PhotoViewFragment : Fragment() {
         }
 
         infoButton.setOnClickListener {
-            val dialog = Dialog(requireContext())
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setContentView(R.layout.dialog_info)
-            dialog.findViewById<TextView>(R.id.path).text =
-                "Path: " + photos[currentPosition].requirePath(
-                    requireContext()
-                )
-            dialog.findViewById<TextView>(R.id.date_create).text =
-                "Date create: " + photos[currentPosition].requireDateTaken()
-            val gpsImage = GPSImage(
-                photos[currentPosition].requirePath(requireContext()),
-                photos[currentPosition].requireUri(),
-                requireContext()
-            )
-            val latitude = gpsImage.Latitude
-            val longtitude = gpsImage.Longitude
-            if (latitude != null && longtitude != null) {
-                val geocoder = Geocoder(context)
-                val list = geocoder.getFromLocation(latitude, longtitude, 1)
-                if (list[0].getAddressLine(0) != null) {
-                    dialog.findViewById<TextView>(R.id.name_place).text =
-                        "Place: " + list[0].getAddressLine(
-                            0
-                        )
-                }
-            }
-            dialog.findViewById<Button>(R.id.off_info_dialog)
-                .setOnClickListener(View.OnClickListener { dialog.dismiss() })
-            dialog.show()
+            displayInfoDialog()
         }
 
         shareButton.setOnClickListener {
@@ -184,6 +174,64 @@ class PhotoViewFragment : Fragment() {
         }
     }
 
+    private fun displayInfoDialog() {
+        dialog = Dialog(requireContext()).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(R.layout.dialog_info)
+
+            val path = photos[currentPosition].requirePath(requireContext())
+            findViewById<TextView>(R.id.path).text = resources.getString(R.string.path, path)
+
+            val dateCreated = photos[currentPosition].requireDateTaken()
+            findViewById<TextView>(R.id.date_create).text = resources.getString(R.string.date_created, dateCreated)
+        }
+
+        val address: String? = getMediaItemAddress()
+        address?.let {
+            Timber.d(it)
+            dialog?.findViewById<TextView>(R.id.name_place)?.text = resources.getString(R.string.location, it)
+        }
+
+        dialog?.findViewById<Button>(R.id.off_info_dialog)?.setOnClickListener {
+            dialog?.dismiss()
+            dialog = null
+        }
+        dialog?.show()
+    }
+
+    private fun getMediaItemAddress(): String? {
+        var address: String? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+            Timber.d("ACCESS_MEDIA_LOCATION is a dangerous, request it at runtime ")
+            accessMediaLocationResultLauncher.launch(Manifest.permission.ACCESS_MEDIA_LOCATION)
+        } else {
+            val path = photos[currentPosition].requirePath(requireContext())
+            path?.let {
+                val gpsImage = GPSImage(it)
+                address = getAddressFromGPSImage(gpsImage, requireContext())
+            }
+        }
+        return address
+    }
+
+    // sorry every one for this but i will fix this mess soon :<
+    private var dialog: Dialog? = null
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun getMediaItemAddressCallback() {
+
+        val uri = MediaStore.setRequireOriginal(photos[currentPosition].requireUri())
+        requireContext().contentResolver.openInputStream(uri).use { inputStream ->
+            inputStream?.let {
+                val gpsImage = GPSImage(it)
+                val address = getAddressFromGPSImage(gpsImage, requireContext())
+                address?.let {
+                    dialog?.findViewById<TextView>(R.id.name_place)?.text = resources.getString(R.string.location, address)
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -308,6 +356,9 @@ class PhotoViewFragment : Fragment() {
 
         binding.horizontalViewPager.unregisterOnPageChangeCallback(viewPagerCallback)
         resultLauncher.unregister()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            accessMediaLocationResultLauncher.unregister()
+        }
         (activity as? AppCompatActivity)?.supportActionBar?.show()
         activity?.window?.navigationBarColor = binding.navBarColor
 
