@@ -71,4 +71,8 @@
     <string name="pick_weight">ブラシの厚さ</string>
     <string name="add_on_image">追加…</string>
     <string name="full_screen_view_image">全画面表示モードで写真を表示</string>
+    <string name="snow">雪</string>
+    <string name="path">パス：%1$s</string>
+    <string name="date_created">作成日：%1$s</string>
+    <string name="location">位置：%1$s</string>
 </resources>

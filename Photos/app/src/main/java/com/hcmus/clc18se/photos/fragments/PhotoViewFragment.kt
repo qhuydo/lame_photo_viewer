@@ -1,6 +1,5 @@
 package com.hcmus.clc18se.photos.fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
@@ -18,8 +17,11 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -29,6 +31,7 @@ import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.BuildConfig
 import com.hcmus.clc18se.photos.EditPhotoActivity
 import com.hcmus.clc18se.photos.R
+import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
 import com.hcmus.clc18se.photos.utils.GPSImage
@@ -39,14 +42,12 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
-
 
 class PhotoViewFragment : Fragment() {
 
     private lateinit var viewModel: PhotosViewModel
 
-    private val photos by lazy { viewModel.mediaItemList.value ?: listOf() }
+    private lateinit var photos: List<MediaItem>
 
     private val preferences by lazy { (requireActivity() as AbstractPhotosActivity).preferences }
 
@@ -54,13 +55,14 @@ class PhotoViewFragment : Fragment() {
 
     private val favouriteAlbumViewModel: FavouriteAlbumViewModel by activityViewModels {
         FavouriteAlbumViewModelFactory(
-            requireActivity().application, contentProvider
+                requireActivity().application, contentProvider
         )
     }
 
     companion object {
         const val PLACES_API_KEY = BuildConfig.PLACES_API_KEY
     }
+
     private lateinit var binding: FragmentPhotoViewBinding
 
     private var currentPosition = -1
@@ -73,7 +75,7 @@ class PhotoViewFragment : Fragment() {
                 currentPosition = position
                 super.onPageSelected(position)
 
-                (activity as AbstractPhotosActivity).supportActionBar?.title = photos[position].name
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = photos[position].name
                 setEditButtonVisibility(photos[position].isEditable())
                 initFavouriteButtonState()
             }
@@ -83,13 +85,14 @@ class PhotoViewFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
-            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
             PhotosViewModelFactory(
-                requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
             )
         }
+        this.photos = viewModel.mediaItemList.value ?: listOf()
         this.viewModel = viewModel
     }
 
@@ -99,7 +102,7 @@ class PhotoViewFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         resultLauncher = registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult()
+                ActivityResultContracts.StartIntentSenderForResult()
         ) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 viewModel.deletePendingImage()
@@ -114,7 +117,6 @@ class PhotoViewFragment : Fragment() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun setUpBottomButtons() = binding.bottomLayout.apply {
         editButton.setOnClickListener {
             val intent = Intent(context, EditPhotoActivity::class.java)
@@ -184,9 +186,9 @@ class PhotoViewFragment : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         // TODO: clean this code
         (activity as AbstractPhotosActivity).setNavHostFragmentTopMargin(0)
@@ -200,8 +202,7 @@ class PhotoViewFragment : Fragment() {
         }
 
         setUpBottomButtons()
-        (activity as AbstractPhotosActivity).supportActionBar?.title =
-            photos[viewModel.idx.value!!].name
+        (activity as? AppCompatActivity)?.supportActionBar?.title = photos[viewModel.idx.value!!].name
 
         setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
         currentPosition = viewModel.idx.value!!
@@ -209,7 +210,7 @@ class PhotoViewFragment : Fragment() {
         initFavouriteButtonState()
 
         binding.horizontalViewPager.apply {
-            adapter = ScreenSlidePagerAdapter(this@PhotoViewFragment)
+            adapter = ScreenSlidePagerAdapter(childFragmentManager, lifecycle)
             setCurrentItem(viewModel.idx.value!!, false)
             registerOnPageChangeCallback(viewPagerCallback)
         }
@@ -245,10 +246,17 @@ class PhotoViewFragment : Fragment() {
             }
         }
 
+        viewModel.mediaItemList.observe(viewLifecycleOwner) {
+            if (it != null) {
+                photos = it
+            }
+        }
+
         viewModel.deleteSucceed.observe(viewLifecycleOwner) { deleteResult ->
             if (deleteResult == true) {
                 favouriteAlbumViewModel.requestReloadingData()
-                requireActivity().onBackPressed()
+                binding.horizontalViewPager.adapter?.notifyItemRemoved(currentPosition)
+
             } else if (deleteResult == false) {
                 Toast.makeText(requireContext(), "Failed to remove item", Toast.LENGTH_SHORT).show()
             }
@@ -258,7 +266,6 @@ class PhotoViewFragment : Fragment() {
         }
     }
 
-
     private fun changeFavouriteButtonState(isFavourite: Boolean) {
         val resId = if (isFavourite) {
             R.drawable.ic_baseline_favorite_24
@@ -266,7 +273,6 @@ class PhotoViewFragment : Fragment() {
             R.drawable.ic_outline_favorite_border_24
         }
 
-        // val drawable = ResourcesCompat.getDrawable(resources, resId, requireContext().theme)
         binding.bottomLayout.heartButton.setImageResource(resId)
     }
 
@@ -302,16 +308,23 @@ class PhotoViewFragment : Fragment() {
 
         binding.horizontalViewPager.unregisterOnPageChangeCallback(viewPagerCallback)
         resultLauncher.unregister()
-        (activity as AbstractPhotosActivity).supportActionBar?.show()
+        (activity as? AppCompatActivity)?.supportActionBar?.show()
         activity?.window?.navigationBarColor = binding.navBarColor
 
     }
 
-    private inner class ScreenSlidePagerAdapter(fragment: Fragment) :
-        FragmentStateAdapter(fragment) {
+    private inner class ScreenSlidePagerAdapter(
+            fragmentManager: FragmentManager,
+            lifecycle: Lifecycle
+    ) :
+            FragmentStateAdapter(fragmentManager, lifecycle) {
 
         val fullscreen =
-            preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
+                preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
+
+        override fun getItemId(position: Int): Long {
+            return photos[position].id
+        }
 
         override fun getItemCount(): Int {
             return photos.size

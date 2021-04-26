@@ -89,10 +89,13 @@
     <string name="add_on_image">Add</string>
     <string name="full_screen_view_image">View image in fullscreen</string>
     <string name="add_from_phone">Add from phone</string>
-    <string name="emojis">Emojis</string>
-    <string name="ok">Ok</string>
+    <string name="emojis">Emoji</string>
+    <string name="ok" translatable="false">@android:string/ok</string>
     <string name="snow">Snow</string>
-    <string name="smooth">Smooth</string>
-    <string name="flea">Flea</string>
+    <string name="smooth" translatable="false">Smooth</string>
+    <string name="flea" translatable="false">Flea</string>
+    <string name="path">Path: %1$s</string>
+    <string name="date_created">Date created: %1$s</string>
+    <string name="location">Location: %1$s</string>
 
 </resources>

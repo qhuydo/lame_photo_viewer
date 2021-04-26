@@ -140,7 +140,14 @@ class PhotosViewModel(application: Application,
                 )
                 Timber.d("Delete result - $result columns affected")
 
-                _deleteSucceed.postValue(result > 0)
+                if (result > 0) {
+                    withContext(Dispatchers.Main) {
+                        _mediaItemList.value = _mediaItemList.value?.toMutableList()?.apply {
+                            remove(item)
+                        }
+                        _deleteSucceed.value = true
+                    }
+                }
 
             } catch (securityException: SecurityException) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
