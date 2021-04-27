@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
+import androidx.room.Entity
 import com.caverock.androidsvg.SVG
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView

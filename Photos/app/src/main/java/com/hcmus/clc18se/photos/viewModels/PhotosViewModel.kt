@@ -39,6 +39,10 @@ class PhotosViewModel(application: Application,
     val deleteSucceed: LiveData<Boolean?>
         get() = _deleteSucceed
 
+    private var _navigateToImageView = MutableLiveData<MediaItem?>(null)
+    val navigateToImageView: LiveData<MediaItem?>
+        get() = _navigateToImageView
+
     init {
         _mediaItemList.value = mutableListOf()
         // loadImages()
@@ -49,7 +53,7 @@ class PhotosViewModel(application: Application,
     fun setCurrentItemView(newIdx: Int) {
         _mediaItemList.value?.let {
             if (newIdx in it.indices) {
-                _idx.value = newIdx
+                _idx.postValue(newIdx)
             }
         }
     }
@@ -253,6 +257,14 @@ class PhotosViewModel(application: Application,
         contentObserver?.let {
             getApplication<Application>().contentResolver.unregisterContentObserver(it)
         }
+    }
+
+    fun startNavigatingToImageView(item: MediaItem) {
+        _navigateToImageView.postValue(item)
+    }
+
+    fun doneNavigatingToImageView() {
+        _navigateToImageView.value = null
     }
 }
 

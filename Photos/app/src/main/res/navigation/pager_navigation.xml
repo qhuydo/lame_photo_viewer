@@ -83,7 +83,8 @@
     <fragment
         android:id="@+id/favouriteAlbumFragment"
         android:name="com.hcmus.clc18se.photos.fragments.FavouriteAlbumFragment"
-        android:label="FavouriteAlbumFragment" >
+        android:label="FavouriteAlbumFragment"
+        tools:layout="@layout/fragment_favourite_album">
         <action
             android:id="@+id/action_favouriteAlbumFragment_to_photoViewFragment"
             app:destination="@id/photoViewFragment" />
@@ -92,7 +93,8 @@
     <fragment
         android:id="@+id/secret_photos"
         android:name="com.hcmus.clc18se.photos.fragments.SecretPhotoFragment"
-        android:label="@string/secret_photos_title" >
+        android:label="@string/secret_photos_title"
+        tools:layout="@layout/fragment_secret_photo">
         <action
             android:id="@+id/action_SecretPhotoFragment_to_photoViewFragment"
             app:destination="@id/photoViewFragment" />

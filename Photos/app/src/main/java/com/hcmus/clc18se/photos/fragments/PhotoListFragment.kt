@@ -24,9 +24,7 @@ import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 
-class PhotoListFragment : AbstractPhotoListFragment(
-        R.menu.photo_list_menu
-) {
+class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
     private lateinit var binding: FragmentPhotoListBinding
 
@@ -36,11 +34,7 @@ class PhotoListFragment : AbstractPhotoListFragment(
 
     override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
         override fun onClick(mediaItem: MediaItem) {
-            val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
-            viewModel.setCurrentItemView(idx)
-            this@PhotoListFragment.findNavController().navigate(
-                    PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
-            )
+            viewModel.startNavigatingToImageView(mediaItem)
         }
 
         override fun onSelectionChange() {
@@ -127,9 +121,21 @@ class PhotoListFragment : AbstractPhotoListFragment(
 
         }
 
-        viewModel.mediaItemList.observe(requireActivity(), { images ->
+        viewModel.mediaItemList.observe(viewLifecycleOwner) { images ->
             adapter.filterAndSubmitList(images)
-        })
+        }
+
+        viewModel.navigateToImageView.observe(viewLifecycleOwner) { mediaItem ->
+            if (mediaItem != null) {
+                val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
+                viewModel.setCurrentItemView(idx)
+                this@PhotoListFragment.findNavController().navigate(
+                        PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
+                )
+                viewModel.doneNavigatingToImageView()
+            }
+
+        }
 
         // viewModel.loadImages()
 

@@ -41,14 +41,7 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
 
     override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
         override fun onClick(mediaItem: MediaItem) {
-            photosViewModel.loadDataFromOtherViewModel(viewModel)
-
-            val idx = viewModel.mediaItems.value?.indexOf(mediaItem) ?: -1
-
-            photosViewModel.setCurrentItemView(idx)
-            this@FavouriteAlbumFragment.findNavController().navigate(
-                    FavouriteAlbumFragmentDirections.actionFavouriteAlbumFragmentToPhotoViewFragment()
-            )
+            photosViewModel.startNavigatingToImageView(mediaItem)
         }
 
         override fun onSelectionChange() {
@@ -133,6 +126,22 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
                 viewModel.loadData()
                 viewModel.doneRequestingLoadData()
             }
+        }
+
+        photosViewModel.navigateToImageView.observe(viewLifecycleOwner) { mediaItem ->
+            if (mediaItem != null) {
+                photosViewModel.loadDataFromOtherViewModel(viewModel)
+
+                val idx = viewModel.mediaItems.value?.indexOf(mediaItem) ?: -1
+
+                photosViewModel.setCurrentItemView(idx)
+                this@FavouriteAlbumFragment.findNavController().navigate(
+                        FavouriteAlbumFragmentDirections.actionFavouriteAlbumFragmentToPhotoViewFragment()
+                )
+
+                photosViewModel.doneNavigatingToImageView()
+            }
+
         }
     }
 

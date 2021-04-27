@@ -39,7 +39,7 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun startNavigatingToPhotoList(album: Album) {
-        _navigateToPhotoList.value = album
+        _navigateToPhotoList.postValue(album)
     }
 
     fun doneNavigatingToPhotoList() {

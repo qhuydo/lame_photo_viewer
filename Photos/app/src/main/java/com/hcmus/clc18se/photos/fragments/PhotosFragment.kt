@@ -29,9 +29,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.time.days
 
-class PhotosFragment : AbstractPhotoListFragment(
-        R.menu.photos_menu
-) {
+class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
     private lateinit var binding: FragmentPhotosBinding
     private val viewModel: PhotosViewModel by activityViewModels {
@@ -44,22 +42,7 @@ class PhotosFragment : AbstractPhotoListFragment(
 
     override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
         override fun onClick(mediaItem: MediaItem) {
-
-            val viewModel: PhotosViewModel by navGraphViewModels(
-                    (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
-            ) {
-                PhotosViewModelFactory(
-                        requireActivity().application,
-                        PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
-                )
-            }
-            viewModel.loadDataFromOtherViewModel(this@PhotosFragment.viewModel)
-
-            val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
-            viewModel.setCurrentItemView(idx)
-            this@PhotosFragment.findNavController().navigate(
-                    PhotosFragmentDirections.actionPagePhotoToPhotoViewFragment()
-            )
+            viewModel.startNavigatingToImageView(mediaItem)
         }
 
         override fun onSelectionChange() {
@@ -98,7 +81,8 @@ class PhotosFragment : AbstractPhotoListFragment(
                         )
                         adapterItems.add(headerItem)
                     }
-                } ?: return adapterItems + items.subList(index, items.lastIndex).map { AdapterItem.AdapterMediaItem(it) }
+                }
+                        ?: return adapterItems + items.subList(index, items.lastIndex).map { AdapterItem.AdapterMediaItem(it) }
                 adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
             }
 
@@ -166,12 +150,33 @@ class PhotosFragment : AbstractPhotoListFragment(
             }
         }
 
-        viewModel.mediaItemList.observe(requireActivity(), { images ->
+        viewModel.mediaItemList.observe(viewLifecycleOwner) { images ->
             if (images != null) {
                 Timber.d("viewModel.mediaItemList")
                 adapter.filterAndSubmitList(images)
             }
-        })
+        }
+
+        viewModel.navigateToImageView.observe(viewLifecycleOwner) { mediaItem ->
+            if (mediaItem != null) {
+                val viewModel: PhotosViewModel by navGraphViewModels(
+                        (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+                ) {
+                    PhotosViewModelFactory(
+                            requireActivity().application,
+                            PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                    )
+                }
+                viewModel.loadDataFromOtherViewModel(this@PhotosFragment.viewModel)
+
+                val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
+                viewModel.setCurrentItemView(idx)
+                this@PhotosFragment.findNavController().navigate(
+                        PhotosFragmentDirections.actionPagePhotoToPhotoViewFragment()
+                )
+                this@PhotosFragment.viewModel.doneNavigatingToImageView()
+            }
+        }
 
         return binding.root
     }
