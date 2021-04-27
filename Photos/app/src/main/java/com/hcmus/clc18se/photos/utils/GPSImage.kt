@@ -2,10 +2,10 @@ package com.hcmus.clc18se.photos.utils
 
 import android.content.Context
 import android.location.Geocoder
+import android.media.ExifInterface
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.exifinterface.media.ExifInterface
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream

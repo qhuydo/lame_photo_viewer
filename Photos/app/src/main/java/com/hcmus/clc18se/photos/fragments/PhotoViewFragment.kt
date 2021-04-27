@@ -48,7 +48,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-// TODO: create a viewmodel for this
+// TODO: create a view model for this
 class PhotoViewFragment : Fragment() {
 
     private lateinit var viewModel: PhotosViewModel
@@ -63,11 +63,6 @@ class PhotoViewFragment : Fragment() {
         FavouriteAlbumViewModelFactory(
                 requireActivity().application, contentProvider
         )
-    }
-
-    companion object {
-        const val PLACES_API_KEY = BuildConfig.PLACES_API_KEY
-        const val ACCESS_MEDIA_LOCATION_REQUEST_CODE = 0x2704
     }
 
     private lateinit var binding: FragmentPhotoViewBinding
@@ -367,8 +362,7 @@ class PhotoViewFragment : Fragment() {
     private inner class ScreenSlidePagerAdapter(
             fragmentManager: FragmentManager,
             lifecycle: Lifecycle
-    ) :
-            FragmentStateAdapter(fragmentManager, lifecycle) {
+    ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
         val fullscreen =
                 preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
@@ -379,6 +373,10 @@ class PhotoViewFragment : Fragment() {
 
         override fun getItemCount(): Int {
             return photos.size
+        }
+
+        override fun containsItem(itemId: Long): Boolean {
+            return photos.any { item -> item.id == itemId }
         }
 
         override fun createFragment(position: Int): Fragment {
