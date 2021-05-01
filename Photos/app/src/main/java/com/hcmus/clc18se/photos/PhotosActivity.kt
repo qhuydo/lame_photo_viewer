@@ -39,13 +39,13 @@ class PhotosActivity : AbstractPhotosActivity() {
         )
     }
 
-    private fun handleSendImage(intent: Intent){
+    private fun handleSendImage(intent: Intent) {
         val sendingIntent = Intent(this, ViewPhotoActivity::class.java)
         sendingIntent.putExtra(Intent.EXTRA_STREAM, intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM))
         startActivity(sendingIntent)
     }
 
-    private fun handleViewImage(intent: Intent){
+    private fun handleViewImage(intent: Intent) {
         val sendingIntent = Intent(this, ViewPhotoActivity::class.java)
         sendingIntent.putExtra("uri", intent.data)
         startActivity(sendingIntent)
@@ -54,7 +54,7 @@ class PhotosActivity : AbstractPhotosActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        when(intent?.action) {
+        when (intent?.action) {
             Intent.ACTION_SEND -> {
                 Timber.d("Send")
                 if (intent.type?.startsWith("image/") == true) {
@@ -123,6 +123,7 @@ class PhotosActivity : AbstractPhotosActivity() {
             isFabRotate = ViewAnimation.rotateFab(binding.fab, !isFabRotate)
             ViewAnimation.showOut(binding.fabAddPicture)
             ViewAnimation.showOut(binding.fabAddVideo)
+            ViewAnimation.showOut(binding.fabAddAlbum)
         }
 
     }
@@ -131,17 +132,16 @@ class PhotosActivity : AbstractPhotosActivity() {
         binding.navView.setupWithNavController(navController)
         binding.bottomNav.setupWithNavController(navController)
 
-        ViewAnimation.init(binding.fabAddPicture)
-        ViewAnimation.init(binding.fabAddVideo)
+        val fabs = listOf(binding.fabAddPicture, binding.fabAddVideo, binding.fabAddAlbum)
+
+        fabs.forEach { ViewAnimation.init(it) }
 
         binding.fab.setOnClickListener {
             isFabRotate = ViewAnimation.rotateFab(it, !isFabRotate)
             if (isFabRotate) {
-                ViewAnimation.showIn(binding.fabAddPicture)
-                ViewAnimation.showIn(binding.fabAddVideo)
+                fabs.forEach { ViewAnimation.showIn(it) }
             } else {
-                ViewAnimation.showOut(binding.fabAddPicture)
-                ViewAnimation.showOut(binding.fabAddVideo)
+                fabs.forEach { ViewAnimation.showOut(it) }
             }
         }
         addOnDestinationChangedListener()

@@ -1,12 +1,12 @@
 package com.hcmus.clc18se.photos.data
 
 import android.Manifest
+import android.content.ContentResolver
 import android.content.Context
 import android.content.pm.PackageManager
 import android.provider.BaseColumns
 import android.provider.MediaStore
 import androidx.core.content.ContextCompat
-import com.hcmus.clc18se.photos.database.PhotosDatabase
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.io.File
@@ -55,9 +55,7 @@ class MediaProvider(private val context: Context) {
         val columnUri = MediaStore.Files.getContentUri("external")
 
         // Return only video and image metadata.
-        val selection = "${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
-                " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}"
-
+        val selection = DEFAULT_MEDIA_ITEM_SELECTION
         val projection = arrayOf(
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.MediaColumns.DISPLAY_NAME,
@@ -67,11 +65,8 @@ class MediaProvider(private val context: Context) {
                 MediaStore.MediaColumns.BUCKET_DISPLAY_NAME,
                 BaseColumns._ID,
         )
-
-        val selectionArgs: Array<String>? = null
-
-        val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED}"
-
+        val selectionArgs: Array<String>? = DEFAULT_MEDIA_ITEM_SELECTION_ARGS
+        val sortOrder = MediaStore.Files.FileColumns.DATE_ADDED
         val folderMap = HashMap<String, Album>()
 
         scope.launch {
@@ -140,74 +135,56 @@ class MediaProvider(private val context: Context) {
 
     }
 
-    // TODO: refactor me
-    private suspend fun loadMediaItemFromId(id: Long): MediaItem? {
+}
 
-        val columnUri = MediaStore.Files.getContentUri("external")
+val DEFAULT_MEDIA_ITEM_PROJECTION = arrayOf(
+        MediaStore.Files.FileColumns.DATA,
+        MediaStore.MediaColumns.DISPLAY_NAME,
+        MediaStore.MediaColumns.MIME_TYPE,
+        MediaStore.MediaColumns.BUCKET_ID,
+        MediaStore.MediaColumns.BUCKET_DISPLAY_NAME,
+        BaseColumns._ID,
+)
+val DEFAULT_MEDIA_ITEM_SELECTION_ARGS: Array<String>? = null
+const val DEFAULT_MEDIA_ITEM_SELECTION = "(${MediaStore.Files.FileColumns.MEDIA_TYPE}" +
+        "=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
+        " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO})" +
+        " AND ${BaseColumns._ID}"
 
-        // Return only video and image metadata.
-        val selection = "(${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
-                " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO})" +
-                " AND ${BaseColumns._ID}=${id}"
+fun ContentResolver.loadMediaItemFromId(itemId: Long): MediaItem? {
+    val columnUri = MediaStore.Files.getContentUri("external")
 
-        val projection = arrayOf(
-                MediaStore.Files.FileColumns.DATA,
-                MediaStore.MediaColumns.DISPLAY_NAME,
-                MediaStore.MediaColumns.MIME_TYPE,
-                MediaStore.MediaColumns.BUCKET_ID,
-                MediaStore.MediaColumns.BUCKET_DISPLAY_NAME,
-                BaseColumns._ID,
-        )
+    // Return only video and image metadata.
+    val selection = "$DEFAULT_MEDIA_ITEM_SELECTION=$itemId"
+    val projection = DEFAULT_MEDIA_ITEM_PROJECTION
+    val selectionArgs: Array<String>? = DEFAULT_MEDIA_ITEM_SELECTION_ARGS
 
-        val selectionArgs: Array<String>? = null
+    query(columnUri,
+            projection,
+            selection,
+            selectionArgs,
+            null
+    )?.use { cursor ->
 
-        context.contentResolver.query(
-                columnUri,
-                projection,
-                selection,
-                selectionArgs,
-                null
-        )?.use { cursor ->
+        val path: String
+        val id: Long
+        val mimeType: String
+        val name: String
 
-            val path: String
-            val id: Long
-            val mimeType: String
-            val name: String
+        val idColumn = cursor.getColumnIndex(BaseColumns._ID)
+        val nameColumn = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+        val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+        val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
 
-            val idColumn = cursor.getColumnIndex(BaseColumns._ID)
-            val nameColumn = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
-            val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
-            val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
+        if (cursor.moveToNext()) {
+            path = cursor.getString(pathColumn)
+            id = cursor.getLong(idColumn)
+            mimeType = cursor.getString(mimeTypeColumn)
+            name = cursor.getString(nameColumn)
 
-            if (cursor.moveToNext()) {
-                path = cursor.getString(pathColumn)
-                id = cursor.getLong(idColumn)
-                mimeType = cursor.getString(mimeTypeColumn)
-                name = cursor.getString(nameColumn)
-
-                return MediaItem.getInstance(id, name, null, mimeType, path)
-            }
-
+            return MediaItem.getInstance(id, name, null, mimeType, path)
         }
-        return null
+
     }
-
-    suspend fun loadFavouriteMediaItems() {
-        scope.launch {
-            Timber.d("Start loading FavouriteMediaItems")
-            val startTime = System.currentTimeMillis()
-
-            val dataSource = PhotosDatabase.getInstance(context).photosDatabaseDao
-            val favourites = dataSource.getAllFavouriteItems()
-
-            val favouriteMediaItems = ArrayList<MediaItem>()
-
-            for (favouriteItem in favourites) {
-                val mediaItem = loadMediaItemFromId(favouriteItem.id)
-                mediaItem?.let { favouriteMediaItems.add(it) }
-                        ?: dataSource.removeFavouriteItems(favouriteItem)
-            }
-            Timber.d("loadFavouriteMediaItems(): ${(System.currentTimeMillis() - startTime)} ms")
-        }
-    }
+    return null
 }

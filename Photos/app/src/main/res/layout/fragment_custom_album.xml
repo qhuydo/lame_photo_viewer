@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="customAlbumViewModel"
+            type="com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/top_app_bar2"
+            layout="@layout/top_app_bar" />
+
+        <include
+            android:id="@+id/album_list_layout"
+            layout="@layout/album_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:albumList="@{customAlbumViewModel.albums}"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintTop_toBottomOf="@id/barrier" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>

@@ -13,10 +13,10 @@ import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.databinding.*
 
 class AlbumListAdapter(
-        private val onClickListener: OnClickListener,
         private val adapterItemType: Int = ITEM_TYPE_GRID,
-        private val adapterItemSize: Int = ITEM_SIZE_MEDIUM) :
-        ListAdapter<Album, AlbumListAdapter.ViewHolder>(Album.DiffCallBack()) {
+        private val adapterItemSize: Int = ITEM_SIZE_MEDIUM,
+        private val onClickListener: OnClickListener
+) : ListAdapter<Album, AlbumListAdapter.ViewHolder>(Album.DiffCallBack()) {
 
     companion object {
         // TODO: change constants value to layout id

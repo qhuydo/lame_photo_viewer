@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
@@ -18,7 +19,7 @@ import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentFavouriteAlbumBinding
-import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
+import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
@@ -73,21 +74,16 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
         }
         this.photosViewModel = photosViewModel
 
-        currentListItemView = preferences.getString(
-                getString(R.string.photo_list_view_type_key),
-                MediaItemListAdapter.ITEM_TYPE_LIST.toString()
-        )!!.toInt()
-
-        currentListItemSize = preferences.getString(
-                getString(R.string.photo_list_item_size_key),
-                "0"
-        )!!.toInt()
+        currentListItemView = requireContext().currentPhotoListItemView(preferences)
+        currentListItemSize = requireContext().currentPhotoListItemSize(preferences)
 
         adapter = MediaItemListAdapter(
                 actionCallbacks,
                 currentListItemView,
                 currentListItemSize
-        )
+        ).apply {
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        }
 
         binding.apply {
             lifecycleOwner = this@FavouriteAlbumFragment
@@ -154,7 +150,10 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
                     actionCallbacks,
                     currentListItemView,
                     currentListItemSize
-            )
+            ).apply {
+                stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            }
+
             (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.spanCount =
                     getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
 

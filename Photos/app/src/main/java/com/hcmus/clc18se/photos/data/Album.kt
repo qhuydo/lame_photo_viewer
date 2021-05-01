@@ -10,10 +10,17 @@ import java.io.File
 data class Album(
         val path: String,
         val mediaItems: MutableList<MediaItem>,
+        private var name: String? = null,
         private var thumbnailUri: Uri? = null
 ): Parcelable {
+
     fun getName(): String? {
-        return File(path).name
+        if (name == null) {
+            if (path.isNotEmpty()) {
+                name = File(path).name
+            }
+        }
+        return name
     }
 
     fun getRandomMediaItem(): MediaItem? {

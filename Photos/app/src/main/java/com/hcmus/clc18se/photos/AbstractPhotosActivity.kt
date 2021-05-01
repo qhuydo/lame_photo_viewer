@@ -43,7 +43,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         PhotosViewModelFactory(application, PhotosDatabase.getInstance(this).photosDatabaseDao)
     }
 
-    private val mediaProvider: MediaProvider by lazy { MediaProvider(application.applicationContext) }
+    internal val mediaProvider: MediaProvider by lazy { MediaProvider(application.applicationContext) }
 
     internal val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 

@@ -64,12 +64,10 @@
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_picture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                style="@style/fab_small"
                 android:onClick="fabAddPicture"
                 android:src="@drawable/ic_baseline_add_a_photo_24"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 app:hideOnScroll="true"
                 app:layout_anchor="@id/fab"
                 app:layout_anchorGravity="top|center"
@@ -81,12 +79,10 @@
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                style="@style/fab_small"
                 android:onClick="fabAddVideo"
                 android:src="@drawable/ic_outline_video_call_24"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 app:hideOnScroll="true"
                 app:layout_anchor="@id/fab_add_picture"
                 app:layout_anchorGravity="top|center"
@@ -95,6 +91,21 @@
                 app:useCompatPadding="true"
                 tools:ignore="ContentDescription,OnClick"
                 tools:translationY="-20dp" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_add_album"
+                style="@style/fab_small"
+                android:src="@drawable/ic_outline_library_add_24"
+                app:fabSize="normal"
+                app:hideOnScroll="true"
+                app:layout_anchor="@id/fab_add_video"
+                app:layout_anchorGravity="top|center"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:rippleColor="@color/white"
+                app:useCompatPadding="true"
+                tools:ignore="ContentDescription,OnClick"
+                tools:translationY="-20dp" />
+
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

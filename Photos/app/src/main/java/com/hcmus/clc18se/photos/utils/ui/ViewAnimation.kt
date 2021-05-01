@@ -23,7 +23,7 @@ object ViewAnimation {
         v.translationY = v.height.toFloat()
         v.animate()
             .setDuration(200)
-            .translationY(-20f)
+            .translationY(-32f)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)

@@ -39,9 +39,6 @@
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_picture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:onClick="fabAddPicture"
                 android:src="@drawable/ic_baseline_add_a_photo_24"
                 app:fabSize="mini"
@@ -51,13 +48,11 @@
                 app:rippleColor="@color/white"
                 app:useCompatPadding="true"
                 tools:ignore="ContentDescription"
-                tools:translationY="-20dp" />
+                tools:translationY="-20dp"
+                style="@style/fab_small" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:onClick="fabAddVideo"
                 android:src="@drawable/ic_outline_video_call_24"
                 app:fabSize="mini"
@@ -67,7 +62,8 @@
                 app:rippleColor="@color/white"
                 app:useCompatPadding="true"
                 tools:ignore="ContentDescription"
-                tools:translationY="-20dp" />
+                tools:translationY="-20dp"
+                style="@style/fab_small" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

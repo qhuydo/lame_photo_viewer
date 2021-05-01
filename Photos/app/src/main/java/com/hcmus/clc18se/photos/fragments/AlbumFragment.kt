@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -18,11 +17,11 @@ import com.hcmus.clc18se.photos.PhotosPagerActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
+import com.hcmus.clc18se.photos.data.Album
+import com.hcmus.clc18se.photos.data.MediaProvider
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentAlbumBinding
-import com.hcmus.clc18se.photos.utils.getSpanCountForAlbumList
-import com.hcmus.clc18se.photos.utils.setAlbumListIcon
-import com.hcmus.clc18se.photos.utils.setAlbumListItemSizeOption
+import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
@@ -41,6 +40,8 @@ class AlbumFragment : BaseFragment() {
     private val albumViewModel: AlbumViewModel by activityViewModels()
 
     private lateinit var photosViewModel: PhotosViewModel
+
+    private lateinit var adapter: AlbumListAdapter
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -75,28 +76,40 @@ class AlbumFragment : BaseFragment() {
         }
     }
 
-    // TODO: refactor this
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_album, container, false
         )
 
-        currentListItemView = preferences.getString(getString(R.string.album_list_view_type_key),
-                AlbumListAdapter.ITEM_TYPE_LIST.toString())!!.toInt()
-
-        currentListItemSize = preferences.getString(getString(R.string.album_list_item_size_key),
-                "0")!!.toInt()
+        currentListItemView = requireContext().currentAlbumListItemView(preferences)
+        currentListItemSize = requireContext().currentAlbumListItemSize(preferences)
 
         setHasOptionsMenu(true)
 
         binding.lifecycleOwner = this@AlbumFragment
-
         binding.albumViewModel = this@AlbumFragment.albumViewModel
 
-        val adapter = AlbumListAdapter(albumAdapterListener,
+        adapter = AlbumListAdapter(
                 currentListItemView,
-                currentListItemSize)
+                currentListItemSize,
+                albumAdapterListener
+        )
 
+        binding.albumListLayout.apply {
+
+            albumListRecyclerView.adapter = adapter
+
+            val layoutManager = albumListRecyclerView.layoutManager as? GridLayoutManager
+            layoutManager?.spanCount = getSpanCountForAlbumList(resources,
+                    currentListItemView,
+                    currentListItemSize)
+        }
+
+        initObservers()
+        return binding.root
+    }
+
+    private fun initObservers() {
         albumViewModel.onAlbumLoaded.observe(viewLifecycleOwner, {
             if (it == true) {
                 binding.progressCircular.visibility = View.INVISIBLE
@@ -117,31 +130,6 @@ class AlbumFragment : BaseFragment() {
                 albumViewModel.doneNavigatingToPhotoList()
             }
         })
-
-        // TODO: clean this mess
-        binding.apply {
-
-            albumListLayout.albumListRecyclerView.adapter = adapter
-            albumListLayout.albumList = this@AlbumFragment.albumViewModel.albumList.value
-
-            val layoutManager = albumListLayout.albumListRecyclerView.layoutManager as GridLayoutManager
-            layoutManager.spanCount = getSpanCountForAlbumList(
-                    resources, currentListItemView, currentListItemSize)
-
-//            swipeRefreshLayout.setOnRefreshListener {
-//                (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
-//                    override fun onMediaLoaded(albums: ArrayList<Album>?) {
-//                        this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
-//                        swipeRefreshLayout.isRefreshing = false
-//                    }
-//
-//                    override fun onHasNoPermission() {
-//                        (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
-//                    }
-//                })
-//            }
-        }
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -195,16 +183,16 @@ class AlbumFragment : BaseFragment() {
 
     private fun onRefreshAlbumList(): Boolean {
 //        binding.swipeRefreshLayout.isRefreshing = true
-//        (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
-//            override fun onMediaLoaded(albums: ArrayList<Album>?) {
-//                this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
-//                binding.swipeRefreshLayout.isRefreshing = false
-//            }
-//
-//            override fun onHasNoPermission() {
-//                (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
-//            }
-//        })
+        (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
+            override fun onMediaLoaded(albums: ArrayList<Album>?) {
+                this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
+                // binding.swipeRefreshLayout.isRefreshing = false
+            }
+
+            override fun onHasNoPermission() {
+                (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
+            }
+        })
         return true
     }
 
@@ -244,17 +232,21 @@ class AlbumFragment : BaseFragment() {
 
     private fun refreshRecyclerView() {
         binding.apply {
-            val adapter = AlbumListAdapter(albumAdapterListener,
-                    currentListItemView, currentListItemSize)
+            adapter = AlbumListAdapter(
+                    currentListItemView,
+                    currentListItemSize,
+                    albumAdapterListener
+            )
             val recyclerView = albumListLayout.albumListRecyclerView
-            val albumList = albumListLayout.albumList
+            val albumList = this@AlbumFragment.albumViewModel.albumList
 
             recyclerView.adapter = adapter
-            val layoutManager = albumListLayout.albumListRecyclerView.layoutManager as GridLayoutManager
-            layoutManager.spanCount = getSpanCountForAlbumList(
-                    resources, currentListItemView, currentListItemSize)
+            val layoutManager = albumListLayout.albumListRecyclerView.layoutManager as? GridLayoutManager
+            layoutManager?.spanCount = getSpanCountForAlbumList(resources,
+                    currentListItemView,
+                    currentListItemSize)
 
-            bindSampleAlbumListRecyclerView(recyclerView, albumList ?: listOf())
+            bindSampleAlbumListRecyclerView(recyclerView, albumList.value ?: listOf())
 
             adapter.notifyDataSetChanged()
         }
