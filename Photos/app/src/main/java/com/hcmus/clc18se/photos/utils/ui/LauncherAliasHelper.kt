@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package com.hcmus.clc18se.photos.utils
+package com.hcmus.clc18se.photos.utils.ui
 
 import android.content.ComponentName
 import android.content.pm.PackageManager

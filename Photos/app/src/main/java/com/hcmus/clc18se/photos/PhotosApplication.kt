@@ -2,7 +2,7 @@ package com.hcmus.clc18se.photos
 
 import android.app.Application
 import androidx.preference.PreferenceManager
-import com.hcmus.clc18se.photos.utils.ColorResource
+import com.hcmus.clc18se.photos.utils.ui.ColorResource
 //import com.squareup.leakcanary.LeakCanary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

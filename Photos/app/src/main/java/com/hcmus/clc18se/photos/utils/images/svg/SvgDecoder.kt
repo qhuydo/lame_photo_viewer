@@ -1,8 +1,5 @@
-package com.hcmus.clc18se.photos.utils.svg
+package com.hcmus.clc18se.photos.utils.images.svg
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.net.Uri
 import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.ResourceDecoder
 import com.bumptech.glide.load.engine.Resource
@@ -10,7 +7,6 @@ import com.bumptech.glide.load.resource.SimpleResource
 import com.bumptech.glide.request.target.Target
 import com.caverock.androidsvg.SVG
 import com.caverock.androidsvg.SVGParseException
-import com.davemorrissey.labs.subscaleview.decoder.ImageDecoder
 import java.io.IOException
 import java.io.InputStream
 

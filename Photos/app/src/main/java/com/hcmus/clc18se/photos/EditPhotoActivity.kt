@@ -23,10 +23,10 @@ import androidx.exifinterface.media.ExifInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
-import com.hcmus.clc18se.photos.utils.ConvolutionMatrix
-import com.hcmus.clc18se.photos.utils.DrawableImageView
+import com.hcmus.clc18se.photos.utils.images.ConvolutionMatrix
+import com.hcmus.clc18se.photos.utils.images.DrawableImageView
 import com.hcmus.clc18se.photos.utils.UndoPhoto
-import com.hcmus.clc18se.photos.utils.svg.SingleMediaScanner
+import com.hcmus.clc18se.photos.utils.images.SingleMediaScanner
 import com.theartofdev.edmodo.cropper.CropImageView
 import ja.burhanrashid52.photoeditor.OnSaveBitmap
 import ja.burhanrashid52.photoeditor.PhotoEditor

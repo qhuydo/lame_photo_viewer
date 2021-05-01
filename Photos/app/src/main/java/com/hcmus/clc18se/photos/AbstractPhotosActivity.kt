@@ -17,7 +17,7 @@ import androidx.preference.PreferenceManager
 import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.data.MediaProvider
 import com.hcmus.clc18se.photos.database.PhotosDatabase
-import com.hcmus.clc18se.photos.utils.ICON_COLOR
+import com.hcmus.clc18se.photos.utils.ui.ICON_COLOR
 import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel

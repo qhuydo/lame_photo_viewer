@@ -16,7 +16,7 @@ import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentFavouriteAlbumBinding
-import com.hcmus.clc18se.photos.utils.SpaceItemDecoration
+import com.hcmus.clc18se.photos.utils.ui.SpaceItemDecoration
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory

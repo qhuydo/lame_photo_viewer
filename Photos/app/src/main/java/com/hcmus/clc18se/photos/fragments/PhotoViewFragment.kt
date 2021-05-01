@@ -31,14 +31,13 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
-import com.hcmus.clc18se.photos.BuildConfig
 import com.hcmus.clc18se.photos.EditPhotoActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
-import com.hcmus.clc18se.photos.utils.GPSImage
-import com.hcmus.clc18se.photos.utils.GPSImage.Companion.getAddressFromGPSImage
+import com.hcmus.clc18se.photos.utils.images.GPSImage
+import com.hcmus.clc18se.photos.utils.images.GPSImage.Companion.getAddressFromGPSImage
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel

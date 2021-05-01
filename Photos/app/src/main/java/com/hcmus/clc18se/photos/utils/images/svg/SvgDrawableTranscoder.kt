@@ -1,4 +1,4 @@
-package com.hcmus.clc18se.photos.utils.svg
+package com.hcmus.clc18se.photos.utils.images.svg
 
 import android.graphics.Picture
 import android.graphics.drawable.PictureDrawable

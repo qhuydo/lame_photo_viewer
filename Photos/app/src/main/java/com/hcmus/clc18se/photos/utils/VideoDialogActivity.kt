@@ -9,7 +9,7 @@ import android.widget.VideoView
 import com.hcmus.clc18se.photos.R
 
 
-class VideoDialog : Activity() {
+class VideoDialogActivity : Activity() {
     private var uri: Uri? = null
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

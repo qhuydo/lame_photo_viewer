@@ -7,8 +7,8 @@ import com.bumptech.glide.Registry
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
 import com.caverock.androidsvg.SVG
-import com.hcmus.clc18se.photos.utils.svg.SvgDecoder
-import com.hcmus.clc18se.photos.utils.svg.SvgDrawableTranscoder
+import com.hcmus.clc18se.photos.utils.images.svg.SvgDecoder
+import com.hcmus.clc18se.photos.utils.images.svg.SvgDrawableTranscoder
 import java.io.InputStream
 
 /** Module for the SVG sample app.  */

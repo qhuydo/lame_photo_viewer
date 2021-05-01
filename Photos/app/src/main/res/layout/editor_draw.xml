@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true">
 
-        <com.hcmus.clc18se.photos.utils.DrawableImageView
+        <com.hcmus.clc18se.photos.utils.images.DrawableImageView
             android:id="@+id/draw_image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

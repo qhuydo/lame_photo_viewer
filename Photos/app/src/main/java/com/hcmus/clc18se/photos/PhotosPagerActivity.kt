@@ -15,6 +15,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosPagerBinding
 import com.hcmus.clc18se.photos.utils.*
+import com.hcmus.clc18se.photos.utils.ui.ViewAnimation
 import timber.log.Timber
 
 class PhotosPagerActivity : AbstractPhotosActivity() {

@@ -1,4 +1,4 @@
-package com.hcmus.clc18se.photos.utils
+package com.hcmus.clc18se.photos.utils.ui
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter

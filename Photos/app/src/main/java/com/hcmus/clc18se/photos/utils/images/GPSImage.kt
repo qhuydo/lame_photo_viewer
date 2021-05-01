@@ -1,4 +1,4 @@
-package com.hcmus.clc18se.photos.utils
+package com.hcmus.clc18se.photos.utils.images
 
 import android.content.Context
 import android.location.Geocoder

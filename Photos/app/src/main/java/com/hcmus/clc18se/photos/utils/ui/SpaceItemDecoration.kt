@@ -1,4 +1,4 @@
-package com.hcmus.clc18se.photos.utils
+package com.hcmus.clc18se.photos.utils.ui
 
 import android.graphics.Rect
 import android.view.View

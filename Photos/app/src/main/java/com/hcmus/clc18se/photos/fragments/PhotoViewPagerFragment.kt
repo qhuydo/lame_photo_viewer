@@ -14,7 +14,7 @@ import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
-import com.hcmus.clc18se.photos.utils.VideoDialog
+import com.hcmus.clc18se.photos.utils.VideoDialogActivity
 import java.io.*
 
 
@@ -102,7 +102,7 @@ class PhotoViewPagerFragment : Fragment() {
         )
 
         binding.videoViewImage.playIcon.setOnClickListener {
-            val intent = Intent(context, VideoDialog::class.java)
+            val intent = Intent(context, VideoDialogActivity::class.java)
             intent.putExtra("uri", mediaItem!!.requireUri())
             startActivity(intent)
         }
