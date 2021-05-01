@@ -59,4 +59,6 @@ class SecretPhotoFragment : BaseFragment() {
     override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
 
     override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
+
+    override fun getToolbarTitleRes(): Int = R.string.secret_photos_title
 }

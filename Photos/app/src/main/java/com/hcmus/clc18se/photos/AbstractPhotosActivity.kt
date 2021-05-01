@@ -43,7 +43,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         PhotosViewModelFactory(application, PhotosDatabase.getInstance(this).photosDatabaseDao)
     }
 
-    val mediaProvider: MediaProvider by lazy { MediaProvider(application.applicationContext) }
+    private val mediaProvider: MediaProvider by lazy { MediaProvider(application.applicationContext) }
 
     internal val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
@@ -100,7 +100,10 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         Timber.d("onConfigurationChanged")
         super.onConfigurationChanged(newConfig)
+
         colorResource.configTheme(newConfig.uiMode)
+        configLanguage()
+
         recreate()
     }
 
@@ -111,23 +114,24 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
     }
 
     private fun setAppLocale(localeCode: String) {
-        val displayMetrics: DisplayMetrics = resources.getDisplayMetrics()
-        val configuration: Configuration = resources.getConfiguration()
+
+        val displayMetrics: DisplayMetrics = resources.displayMetrics
+        val configuration: Configuration = resources.configuration
+
         configuration.setLocale(Locale(localeCode.toLowerCase(Locale.ROOT)))
-        resources.updateConfiguration(configuration, displayMetrics)
-        configuration.locale = Locale(localeCode.toLowerCase(Locale.ROOT))
+
         resources.updateConfiguration(configuration, displayMetrics)
     }
 
-    private fun configLanguage(locale: Locale? = null) {
+    private fun configLanguage() {
         val defaultIdx = 0
 
         val languageOptions = preferences.getString("app_language", "default")
         val options = resources.getStringArray(R.array.language_values)
         Timber.d("languageOptions $languageOptions")
+
         when (languageOptions) {
             options[defaultIdx] -> {
-
             }
             else -> setAppLocale(languageOptions!!)
         }
@@ -156,11 +160,25 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
                 finish()
             }
             getString(R.string.app_language_key) -> {
-                configLanguage()
+                val defaultIdx = 0
+
+                val languageOptions = preferences.getString("app_language", "default")
+                val options = resources.getStringArray(R.array.language_values)
+
+                when (languageOptions) {
+                    options[defaultIdx] -> {
+                        val config = Configuration().apply { setToDefaults() }
+                        baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+                    }
+                    else -> {
+                        configLanguage()
+                    }
+                }
                 finish()
                 overridePendingTransition(0, 0)
-                startActivity(intent)
+                startActivity(Intent(this, MainActivity::class.java))
                 overridePendingTransition(0, 0)
+
             }
             getString(R.string.app_bottom_bar_navigation_key) -> {
                 startActivity(Intent(this, MainActivity::class.java))

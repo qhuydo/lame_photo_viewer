@@ -38,7 +38,7 @@
 
         <activity
             android:name=".PhotosActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|locale"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -62,7 +62,7 @@
 
         <activity
             android:name=".PhotosPagerActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|locale"
             android:label="Lame Photo Viewer ViewPager"
             android:launchMode="singleTask"
             android:requestLegacyExternalStorage="true"

@@ -51,7 +51,7 @@
                     android:layout_height="match_parent"
                     android:layout_margin="16dp"
                     android:src="@drawable/ic_outline_play_circle_outline_24"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     app:videoThumbnailVisibility="@{photo}"
                     tools:ignore="ContentDescription"
                     tools:visibility="visible" />

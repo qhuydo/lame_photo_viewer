@@ -55,7 +55,7 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
                 return emptyList()
             }
 
-            val dateFormat = SimpleDateFormat("MMM-yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("MMM-yyyy", Locale.ROOT)
             var headerItem =
                     items.first().requireDateTaken()?.let {
                         AdapterItem.AdapterItemHeader(
@@ -210,4 +210,6 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
     override fun getToolbarView(): Toolbar = binding.topAppBar.searchActionBar
 
     override fun getAppbar(): AppBarLayout = binding.topAppBar.appBarLayout
+
+    override fun getToolbarTitleRes(): Int = R.string.photo_title
 }

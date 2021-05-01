@@ -166,4 +166,6 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
     override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
 
     override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
+
+    override fun getToolbarTitleRes(): Int = R.string.favorites_title
 }

@@ -38,4 +38,6 @@ class PeopleFragment : BaseFragment() {
     override fun getToolbarView(): Toolbar = binding.topAppBar.searchActionBar
 
     override fun getAppbar(): AppBarLayout = binding.topAppBar.appBarLayout
+
+    override fun getToolbarTitleRes(): Int = R.string.people_title
 }
