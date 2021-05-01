@@ -6,7 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.hcmus.clc18se.photos.data.FavouriteItem
 
-@Database(entities = [FavouriteItem::class], version = 1, exportSchema = true)
+@Database(
+    entities = [FavouriteItem::class],
+    version = 1,
+    exportSchema = true,
+)
 abstract class PhotosDatabase : RoomDatabase() {
 
     abstract val photosDatabaseDao: PhotosDatabaseDao
@@ -20,12 +24,12 @@ abstract class PhotosDatabase : RoomDatabase() {
                 var instance = INSTANCE
                 if (instance == null) {
                     instance = Room.databaseBuilder(
-                            context.applicationContext,
-                            PhotosDatabase::class.java,
-                            "photos_database"
+                        context.applicationContext,
+                        PhotosDatabase::class.java,
+                        "photos_database"
                     )
-                            .fallbackToDestructiveMigration()
-                            .build()
+                        .fallbackToDestructiveMigration()
+                        .build()
                     INSTANCE = instance
                 }
                 return instance

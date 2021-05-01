@@ -35,7 +35,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         const val THEME_USE_DEFAULT = 0
         const val THEME_WHITE = 1
         const val THEME_DARK = 2
-
     }
 
     val albumViewModel: AlbumViewModel by viewModels()

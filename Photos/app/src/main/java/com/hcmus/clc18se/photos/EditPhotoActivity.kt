@@ -408,9 +408,9 @@ class EditPhotoActivity : AppCompatActivity() {
     private fun smooth(src: Bitmap, value: Double): Bitmap {
         val convolutionMatrix = ConvolutionMatrix(3).apply {
             setAll(1.0)
-            Matrix[1][1] = value
-            Factor = value + 8
-            Offset = 1.0
+            matrix[1][1] = value
+            factor = value + 8
+            offset = 1.0
         }
 
         return ConvolutionMatrix.computeConvolution3x3(src, convolutionMatrix)

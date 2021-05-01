@@ -16,7 +16,7 @@ class AlbumListAdapter(
         private val onClickListener: OnClickListener,
         private val adapterItemType: Int = ITEM_TYPE_GRID,
         private val adapterItemSize: Int = ITEM_SIZE_MEDIUM) :
-        ListAdapter<Album, AlbumListAdapter.ViewHolder>(DiffCallBack()) {
+        ListAdapter<Album, AlbumListAdapter.ViewHolder>(Album.DiffCallBack()) {
 
     companion object {
         // TODO: change constants value to layout id
@@ -49,7 +49,7 @@ class AlbumListAdapter(
         fun bind(album: Album) {
             when (binding) {
                 is ItemAlbumListBinding -> {
-                    setItemListSize(itemView.context.resources, binding.albumListItemImage, itemSize)
+                    setItemListSize(itemView.resources, binding.albumListItemImage, itemSize)
                     binding.album = album
                 }
                 is ItemAlbumListGridBinding -> binding.album = album
@@ -83,16 +83,6 @@ class AlbumListAdapter(
 
     class OnClickListener(val clickListener: (album: Album) -> Unit) {
         fun onClick(album: Album) = clickListener(album)
-    }
-
-    class DiffCallBack : DiffUtil.ItemCallback<Album>() {
-        override fun areContentsTheSame(oldItem: Album, newItem: Album): Boolean {
-            return oldItem == newItem
-        }
-
-        override fun areItemsTheSame(oldItem: Album, newItem: Album): Boolean {
-            return oldItem.path == newItem.path
-        }
     }
 }
 
