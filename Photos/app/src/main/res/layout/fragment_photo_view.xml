@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -12,20 +13,25 @@
             type="int" />
     </data>
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/layout"
-        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <include
+            android:id="@+id/top_app_bar2"
+            layout="@layout/top_app_bar" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/horizontal_view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?colorSurface" />
+            android:background="?colorSurface"
+            android:fitsSystemWindows="true" />
 
         <include
             android:id="@+id/bottom_layout"
             layout="@layout/photo_view_bottom" />
-    </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

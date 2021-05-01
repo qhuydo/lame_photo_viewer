@@ -21,6 +21,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
@@ -48,7 +49,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 // TODO: create a view model for this
-class PhotoViewFragment : Fragment() {
+class PhotoViewFragment : BaseFragment() {
 
     private lateinit var viewModel: PhotosViewModel
 
@@ -389,4 +390,6 @@ class PhotoViewFragment : Fragment() {
             return fragment
         }
     }
+
+    override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
 }

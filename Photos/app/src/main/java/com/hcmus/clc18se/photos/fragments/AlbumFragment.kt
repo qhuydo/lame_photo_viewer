@@ -3,6 +3,7 @@ package com.hcmus.clc18se.photos.fragments
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -28,7 +29,7 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import timber.log.Timber
 import java.util.ArrayList
 
-class AlbumFragment : Fragment() {
+class AlbumFragment : BaseFragment() {
     private lateinit var binding: FragmentAlbumBinding
 
     private val preferences by lazy {
@@ -129,18 +130,18 @@ class AlbumFragment : Fragment() {
             layoutManager.spanCount = getSpanCountForAlbumList(
                     resources, currentListItemView, currentListItemSize)
 
-            swipeRefreshLayout.setOnRefreshListener {
-                (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
-                    override fun onMediaLoaded(albums: ArrayList<Album>?) {
-                        this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
-                        swipeRefreshLayout.isRefreshing = false
-                    }
-
-                    override fun onHasNoPermission() {
-                        (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
-                    }
-                })
-            }
+//            swipeRefreshLayout.setOnRefreshListener {
+//                (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
+//                    override fun onMediaLoaded(albums: ArrayList<Album>?) {
+//                        this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
+//                        swipeRefreshLayout.isRefreshing = false
+//                    }
+//
+//                    override fun onHasNoPermission() {
+//                        (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
+//                    }
+//                })
+//            }
         }
         return binding.root
     }
@@ -185,17 +186,17 @@ class AlbumFragment : Fragment() {
     }
 
     private fun onRefreshAlbumList(): Boolean {
-        binding.swipeRefreshLayout.isRefreshing = true
-        (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
-            override fun onMediaLoaded(albums: ArrayList<Album>?) {
-                this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
-                binding.swipeRefreshLayout.isRefreshing = false
-            }
-
-            override fun onHasNoPermission() {
-                (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
-            }
-        })
+//        binding.swipeRefreshLayout.isRefreshing = true
+//        (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
+//            override fun onMediaLoaded(albums: ArrayList<Album>?) {
+//                this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
+//                binding.swipeRefreshLayout.isRefreshing = false
+//            }
+//
+//            override fun onHasNoPermission() {
+//                (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
+//            }
+//        })
         return true
     }
 
@@ -250,5 +251,7 @@ class AlbumFragment : Fragment() {
             adapter.notifyDataSetChanged()
         }
     }
+
+    override fun getToolbarView(): Toolbar = binding.topAppBar.searchActionBar
 
 }

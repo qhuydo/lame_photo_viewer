@@ -14,16 +14,6 @@
             android:layout_height="match_parent"
             android:background="?colorSurface">
 
-            <include
-                android:id="@+id/top_app_bar2"
-                layout="@layout/top_app_bar"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/top_app_bar"
-                layout="@layout/search_bar_with_tabs"
-                android:visibility="visible" />
-
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/navHostFragmentPager"
                 android:name="androidx.navigation.fragment.NavHostFragment"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -8,13 +9,19 @@
             type="com.hcmus.clc18se.photos.viewModels.PhotosViewModel" />
     </data>
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/activity_vertical_margin">
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/top_app_bar2"
+            layout="@layout/top_app_bar" />
 
         <include
             android:id="@+id/photo_list_layout"
-            layout="@layout/photo_list" />
-    </FrameLayout>
+            layout="@layout/photo_list"
+             />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>

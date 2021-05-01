@@ -56,11 +56,16 @@ class HomeViewPagerFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.viewPager.unregisterOnPageChangeCallback(onPageChangeCallback)
+    }
+
     private fun setUpTabsLayout() {
         val viewPager = binding.viewPager
         viewPager.unregisterOnPageChangeCallback(onPageChangeCallback)
 
-        val tabLayout = parentActivity.binding.topAppBar.tabs
+        val tabLayout = binding.topAppBar.tabs
         val adapter = HomeViewPagerAdapter(this)
 
         viewPager.adapter = adapter
@@ -75,7 +80,7 @@ class HomeViewPagerFragment : Fragment() {
         // changing to other tabs
         viewPager.registerOnPageChangeCallback(onPageChangeCallback)
 
-        parentActivity.setSupportActionBar(parentActivity.binding.topAppBar.searchActionBar)
+        parentActivity.setSupportActionBar(binding.topAppBar.searchActionBar)
 
     }
 

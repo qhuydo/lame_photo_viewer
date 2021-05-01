@@ -2,6 +2,7 @@ package com.hcmus.clc18se.photos.fragments
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -207,4 +208,5 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
         return if (usingTabLayout) R.id.cab_stub_tab else R.id.cab_stub
     }
 
+    override fun getToolbarView(): Toolbar = binding.topAppBar.searchActionBar
 }

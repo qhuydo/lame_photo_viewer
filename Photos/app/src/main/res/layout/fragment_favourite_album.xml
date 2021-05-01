@@ -10,20 +10,27 @@
             type="com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel" />
     </data>
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/activity_vertical_margin">
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/top_app_bar2"
+            layout="@layout/top_app_bar" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photo_list_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="4dp"
+            android:fitsSystemWindows="true"
             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:mediaListItem="@{favouriteAlbumViewModel.mediaItems}"
             app:spanCount="@integer/span_count_photo_grid_big"
             tools:itemCount="16"
             tools:listitem="@layout/item_photo_list_grid" />
-    </FrameLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>

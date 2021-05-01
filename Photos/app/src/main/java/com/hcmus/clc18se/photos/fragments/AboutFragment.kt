@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.databinding.FragmentAboutBinding
 
-class AboutFragment : Fragment() {
+class AboutFragment : BaseFragment() {
     private lateinit var fragmentActivity: FragmentActivity
     private lateinit var binding: FragmentAboutBinding
 
@@ -27,4 +28,6 @@ class AboutFragment : Fragment() {
 
         return binding.root
     }
+
+    override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
 }

@@ -6,18 +6,21 @@
         android:id="@+id/fragment_app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?colorSurface">
+        android:background="?colorSurface"
+        android:fitsSystemWindows="true">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cab_stub2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways" />
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/fragment_tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent">
+            android:background="@android:color/transparent"
+            app:layout_scrollFlags="scroll|enterAlways">
 
         </com.google.android.material.appbar.MaterialToolbar>
 

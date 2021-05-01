@@ -14,24 +14,15 @@
             android:id="@+id/main_coordinator_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?colorSurface">
-
-            <include
-                android:id="@+id/top_app_bar2"
-                layout="@layout/top_app_bar"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/top_app_bar"
-                layout="@layout/search_bar"
-                android:visibility="visible" />
+            android:background="?colorSurface"
+            android:fitsSystemWindows="true">
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/navHostFragment"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/search_bar_height"
+                android:fitsSystemWindows="true"
                 app:defaultNavHost="true"
                 app:navGraph="@navigation/navigation"
                 tools:context="com.hcmus.clc18se.photos.fragments.PhotosFragment"
@@ -44,7 +35,8 @@
                 android:layout_gravity="bottom"
                 android:backgroundTint="?colorSurface"
                 app:fabAlignmentMode="end"
-                app:hideOnScroll="true">
+                app:hideOnScroll="true"
+                app:layout_scrollFlags="scroll|enterAlways">
 
                 <com.google.android.material.bottomnavigation.BottomNavigationView
                     android:id="@+id/bottom_nav"

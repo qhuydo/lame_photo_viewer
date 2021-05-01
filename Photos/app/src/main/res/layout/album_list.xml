@@ -12,20 +12,12 @@
             type="java.util.List&lt;Album&gt;" />
     </data>
 
-    <FrameLayout
-        android:id="@+id/swipe_refresh_layout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/album_list_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?colorSurface"
-        android:orientation="vertical">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/album_list_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="@integer/span_count_photo_grid_big"
-            tools:itemCount="16"
-            tools:listitem="@layout/item_album_list_grid" />
-    </FrameLayout>
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="@integer/span_count_photo_grid_big"
+        tools:itemCount="16"
+        tools:listitem="@layout/item_album_list_grid" />
 </layout>

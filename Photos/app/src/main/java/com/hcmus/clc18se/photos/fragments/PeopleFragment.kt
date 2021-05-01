@@ -5,12 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.databinding.FragmentPeopleBinding
 
-class PeopleFragment : Fragment() {
+class PeopleFragment : BaseFragment() {
 
     private lateinit var binding: FragmentPeopleBinding
 
@@ -32,5 +33,7 @@ class PeopleFragment : Fragment() {
 
         return binding.root
     }
+
+    override fun getToolbarView(): Toolbar = binding.topAppBar.searchActionBar
 
 }

@@ -39,7 +39,7 @@ import timber.log.Timber
  */
 abstract class AbstractPhotoListFragment(
     private val menuRes: Int
-) : Fragment(), OnBackPressed {
+) : BaseFragment(), OnBackPressed {
 
     protected val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireActivity())

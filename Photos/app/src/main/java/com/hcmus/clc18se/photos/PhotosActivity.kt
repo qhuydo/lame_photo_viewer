@@ -110,13 +110,6 @@ class PhotosActivity : AbstractPhotosActivity() {
             setAppbarVisibility(bottomAppBarVisibility)
 
             closeFabBeforeNavigating()
-//
-//            when(destination.id) {
-//                R.id.photoViewFragment -> {
-//                    val layoutParams = binding.navHostFragment.layoutParams as CoordinatorLayout.LayoutParams
-//                    layoutParams.topMargin = 0
-//                }
-//            }
         }
     }
 
@@ -135,13 +128,6 @@ class PhotosActivity : AbstractPhotosActivity() {
     }
 
     override fun setUpNavigationBar() {
-
-        val toolbar = binding.topAppBar.searchActionBar
-        setSupportActionBar(toolbar)
-        toolbar.setupWithNavController(navController, appBarConfiguration)
-
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
         binding.navView.setupWithNavController(navController)
         binding.bottomNav.setupWithNavController(navController)
 
@@ -159,61 +145,31 @@ class PhotosActivity : AbstractPhotosActivity() {
             }
         }
         addOnDestinationChangedListener()
-
-        binding.topAppBar.appBarLayout.bringToFront()
     }
 
     override fun setAppbarVisibility(visibility: Boolean) {
         Timber.d("setAppbarVisibility(visibility: $visibility)")
 
-        val layoutParams = binding.navHostFragment.layoutParams as CoordinatorLayout.LayoutParams
+        // val layoutParams = binding.navHostFragment.layoutParams as CoordinatorLayout.LayoutParams
 
         if (visibility) {
             binding.apply {
-                topAppBar.appBarLayout.visibility = View.VISIBLE
-                topAppBar2.fragmentAppBarLayout.visibility = View.GONE
-
                 setBottomAppBarVisibility()
-
                 fab.visibility = View.VISIBLE
-
-                layoutParams.topMargin = resources.getDimensionPixelSize(R.dimen.search_bar_height)
 
                 mainCoordinatorLayout.requestLayout()
                 mainCoordinatorLayout.invalidate()
-
-                setSupportActionBar(topAppBar.searchActionBar)
-                topAppBar.searchActionBar.setupWithNavController(navController, appBarConfiguration)
             }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         } else {
             binding.apply {
-                topAppBar2.fragmentAppBarLayout.visibility = View.VISIBLE
-                topAppBar.appBarLayout.visibility = View.GONE
 
                 bottomAppBar.visibility = View.GONE
 
                 fab.visibility = View.GONE
                 fabAddPicture.visibility = View.GONE
                 fabAddVideo.visibility = View.GONE
-
-                setAppBarHeight<CoordinatorLayout.LayoutParams>(
-                        binding.topAppBar2.fragmentAppBarLayout,
-                        getAppBarSizeAttr(this@PhotosActivity) ?: DEFAULT_APP_BAR_HEIGHT
-                )
-
-                layoutParams.topMargin = getAppBarSizeAttr(this@PhotosActivity)
-                        ?: DEFAULT_APP_BAR_HEIGHT
-
-                mainCoordinatorLayout.requestLayout()
-                mainCoordinatorLayout.invalidate()
-
-                setSupportActionBar(topAppBar2.fragmentToolBar)
-                topAppBar2.fragmentToolBar.setupWithNavController(
-                        navController,
-                        appBarConfiguration
-                )
             }
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -228,7 +184,8 @@ class PhotosActivity : AbstractPhotosActivity() {
     override fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean) {
         val visibility = if (wantToMakeToolbarInvisible) View.INVISIBLE else View.VISIBLE
         //binding.topAppBar.appBarLayout.visibility = visibility
-        binding.topAppBar2.fragmentAppBarLayout.visibility = visibility
+        //binding.topAppBar.appBarLayout.visibility = visibility
+        // binding.topAppBar2.fragmentAppBarLayout.visibility = visibility
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -11,35 +11,27 @@
         android:showDividers="none"
         app:elevation="0dp">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_layout"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/toolbar"
+            style="@style/SearchBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:toolbarId="@id/toolbar">
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/search_action_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/search_bar_selected_background"
+                android:clickable="true"
+                android:focusable="true"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/toolbar"
-                style="@style/SearchBarStyle"
+                android:id="@+id/cab_stub_tab"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:id="@+id/search_action_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/search_bar_selected_background"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cab_stub_tab"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.card.MaterialCardView>
-
-
-        </androidx.appcompat.widget.Toolbar>
+                android:layout_height="wrap_content" />
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Override tabIconTint attribute of style with selector -->
         <com.google.android.material.tabs.TabLayout
@@ -47,6 +39,7 @@
             style="@style/Widget.MaterialComponents.TabLayout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
             app:tabSelectedTextColor="?colorPrimary"
             app:tabTextColor="?colorOnSurface" />
 

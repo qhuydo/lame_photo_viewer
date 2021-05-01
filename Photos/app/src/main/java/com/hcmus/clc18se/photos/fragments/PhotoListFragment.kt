@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -138,11 +139,13 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
         }
 
         // viewModel.loadImages()
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         (activity as AbstractPhotosActivity).supportActionBar?.title = args.albumName
         setHasOptionsMenu(true)
-
-        return binding.root
     }
 
     override fun refreshRecyclerView() {
@@ -162,9 +165,7 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
             (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.spanCount =
                     getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
 
-
             bindMediaListRecyclerView(recyclerView, photoList ?: listOf())
-
             adapter.notifyDataSetChanged()
         }
     }
@@ -173,4 +174,6 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     override fun getCadSubId(): Int {
         return R.id.cab_stub2
     }
+
+    override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
 }

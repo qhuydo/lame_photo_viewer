@@ -17,13 +17,14 @@
         <item name="android:windowLightStatusBar" tools:targetApi="o_mr1">false</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="android:statusBarColor">@color/dark_grey</item>
+        <item name="android:statusBarColor">@color/system_ui_scrim_dark</item>
         <item name="android:navigationBarColor">@color/dark_grey</item>
         <item name="customSurfaceColor">?colorSurface</item>
 
         <item name="dividerColor">@color/divider_dark</item>
 
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
     <color name="search_bar_background">@color/cardview_dark_background</color>

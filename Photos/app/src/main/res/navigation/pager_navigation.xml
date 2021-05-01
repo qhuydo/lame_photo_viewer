@@ -26,7 +26,7 @@
             android:id="@+id/action_page_album_to_photoListFragment"
             app:destination="@id/photoListFragment" />
         <action
-            android:id="@+id/action_page_album_to_favouriteAlbumFragment2"
+            android:id="@+id/action_page_album_to_favouriteAlbumFragment"
             app:destination="@id/favouriteAlbumFragment" />
     </fragment>
 

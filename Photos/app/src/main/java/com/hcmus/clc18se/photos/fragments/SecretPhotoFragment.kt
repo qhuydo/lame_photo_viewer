@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.android.material.transition.MaterialSharedAxis
@@ -17,7 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.collections.ArrayList
 
-class SecretPhotoFragment : Fragment() {
+class SecretPhotoFragment : BaseFragment() {
     private lateinit var binding: FragmentSecretPhotoBinding
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -54,4 +55,6 @@ class SecretPhotoFragment : Fragment() {
 
         return binding.root
     }
+
+    override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
 }
