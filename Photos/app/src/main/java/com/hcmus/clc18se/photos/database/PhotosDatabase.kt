@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.hcmus.clc18se.photos.data.CustomAlbumInfo
+import com.hcmus.clc18se.photos.data.CustomAlbumItem
 import com.hcmus.clc18se.photos.data.FavouriteItem
 
 @Database(
-    entities = [FavouriteItem::class],
-    version = 1,
+    entities = [FavouriteItem::class, CustomAlbumItem::class, CustomAlbumInfo::class],
+    version = 2,
     exportSchema = true,
 )
 abstract class PhotosDatabase : RoomDatabase() {
