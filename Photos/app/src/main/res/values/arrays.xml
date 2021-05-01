@@ -35,13 +35,13 @@
     <string-array name="bottom_bar_preference_entries">
         <item>Show</item>
         <item>Hide</item>
-<!--        <item>Use tab instead of bottom bar</item>-->
+        <item>Use tab instead of bottom bar</item>
     </string-array>
 
     <string-array name="bottom_bar_preference_values">
         <item>0</item>
         <item>1</item>
-<!--        <item>2</item>-->
+        <item>2</item>
     </string-array>
 
     <string-array name="color_entries">

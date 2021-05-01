@@ -12,13 +12,15 @@
             android:id="@+id/main_coordinator_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?colorSurface">
+            android:background="?colorSurface"
+            android:fitsSystemWindows="true">
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/navHostFragmentPager"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
                 app:defaultNavHost="true"
                 app:navGraph="@navigation/pager_navigation"
                 tools:context="com.hcmus.clc18se.photos.fragments.AboutFragment"

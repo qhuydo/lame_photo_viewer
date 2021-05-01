@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.databinding.FragmentAboutBinding
 
@@ -30,4 +31,6 @@ class AboutFragment : BaseFragment() {
     }
 
     override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
+
+    override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
 }

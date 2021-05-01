@@ -12,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
@@ -102,10 +103,6 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
                 photoList = viewModel.mediaItemList.value
                 photoListRecyclerView.adapter = adapter
 
-                photoListRecyclerView.addItemDecoration(
-                        SpaceItemDecoration(resources.getDimension(R.dimen.photo_list_item_margin).toInt())
-                )
-
                 (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
                     spanCount = getSpanCountForPhotoList(
                             resources,
@@ -176,4 +173,6 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     }
 
     override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
+
+    override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
 }

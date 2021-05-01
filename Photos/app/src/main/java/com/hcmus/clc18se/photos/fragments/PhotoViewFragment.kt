@@ -30,6 +30,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.EditPhotoActivity
@@ -392,4 +393,6 @@ class PhotoViewFragment : BaseFragment() {
     }
 
     override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
+
+    override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
 }

@@ -14,6 +14,7 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/toolbar"
             style="@style/SearchBarStyle"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways">
@@ -39,7 +40,9 @@
             style="@style/Widget.MaterialComponents.TabLayout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways"
+            app:layout_scrollFlags="scroll|snap|enterAlways"
+            android:layout_marginTop="-8dp"
+            app:tabInlineLabel="true"
             app:tabSelectedTextColor="?colorPrimary"
             app:tabTextColor="?colorOnSurface" />
 

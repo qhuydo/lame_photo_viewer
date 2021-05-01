@@ -178,11 +178,11 @@ class MediaItemViewHolder(private val listBinding: ViewDataBinding,
                  itemViewSize: Int = MediaItemListAdapter.ITEM_SIZE_MEDIUM): MediaItemViewHolder {
             return when (viewType) {
                 MediaItemListAdapter.ITEM_TYPE_LIST -> MediaItemViewHolder(
-                        ItemPhotoListBinding.inflate(LayoutInflater.from(parent.context)),
+                        ItemPhotoListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                         itemViewSize
                 )
                 else -> MediaItemViewHolder(
-                        ItemPhotoListGridBinding.inflate(LayoutInflater.from(parent.context)),
+                        ItemPhotoListGridBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                         itemViewSize
                 )
             }

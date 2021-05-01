@@ -13,17 +13,13 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="4dp"
-        android:layout_marginBottom="8dp"
         android:background="?attr/selectableItemBackground"
         android:checkable="true"
+        android:layout_marginHorizontal="4dp"
         android:clickable="true"
         android:focusable="true"
         app:cardCornerRadius="0dp"
-        app:cardElevation="0dp"
-        app:strokeColor="@drawable/stroke_color"
-        app:strokeWidth="0.5dp"
-        app:useCompatPadding="true">
+        app:cardElevation="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

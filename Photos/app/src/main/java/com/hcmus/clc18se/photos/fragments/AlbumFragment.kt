@@ -11,13 +11,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
+import com.hcmus.clc18se.photos.PhotosPagerActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
-import com.hcmus.clc18se.photos.data.Album
-import com.hcmus.clc18se.photos.data.MediaProvider
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentAlbumBinding
 import com.hcmus.clc18se.photos.utils.getSpanCountForAlbumList
@@ -26,8 +26,6 @@ import com.hcmus.clc18se.photos.utils.setAlbumListItemSizeOption
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
-import timber.log.Timber
-import java.util.ArrayList
 
 class AlbumFragment : BaseFragment() {
     private lateinit var binding: FragmentAlbumBinding
@@ -149,9 +147,19 @@ class AlbumFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.favorites.setOnClickListener {
-            findNavController().navigate(
-                    AlbumFragmentDirections.actionPageAlbumToFavouriteAlbumFragment()
-            )
+            when (requireActivity()) {
+                is PhotosPagerActivity -> {
+                    findNavController().navigate(
+                            HomeViewPagerFragmentDirections.actionHomeViewPagerFragmentToFavouriteAlbumFragment()
+                    )
+                }
+                else -> {
+
+                    findNavController().navigate(
+                            AlbumFragmentDirections.actionPageAlbumToFavouriteAlbumFragment()
+                    )
+                }
+            }
         }
     }
 
@@ -254,4 +262,5 @@ class AlbumFragment : BaseFragment() {
 
     override fun getToolbarView(): Toolbar = binding.topAppBar.searchActionBar
 
+    override fun getAppbar(): AppBarLayout = binding.topAppBar.appBarLayout
 }

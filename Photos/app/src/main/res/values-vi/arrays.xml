@@ -27,6 +27,6 @@
     <string-array name="bottom_bar_preference_entries">
         <item>Hiển thị</item>
         <item>Ẩn</item>
-<!--        <item>Dùng thanh tab thay cho thanh dưới cùng</item>-->
+        <item>Dùng thanh tab thay cho thanh dưới cùng</item>
     </string-array>
 </resources>

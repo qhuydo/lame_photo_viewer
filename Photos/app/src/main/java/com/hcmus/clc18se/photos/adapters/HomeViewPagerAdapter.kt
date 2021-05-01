@@ -17,9 +17,9 @@ class HomeViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
      * Mapping of the ViewPager page indexes to their respective Fragments
      */
     internal val tabFragmentsCreators: Map<Int, () -> Fragment> = mapOf(
-            PAGE_PHOTOS to { PhotosFragment() },
-            PAGE_PEOPLE to { PeopleFragment() },
-            PAGE_ALBUM to { AlbumFragment() },
+            PAGE_PHOTOS to { PhotosFragment().apply { hideToolbar = true } },
+            PAGE_PEOPLE to { PeopleFragment().apply { hideToolbar = true } },
+            PAGE_ALBUM to { AlbumFragment().apply { hideToolbar = true } },
     )
 
     override fun getItemCount(): Int {

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.databinding.FragmentPeopleBinding
@@ -36,4 +37,5 @@ class PeopleFragment : BaseFragment() {
 
     override fun getToolbarView(): Toolbar = binding.topAppBar.searchActionBar
 
+    override fun getAppbar(): AppBarLayout = binding.topAppBar.appBarLayout
 }

@@ -4,9 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialcab.attached.destroy
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.PhotosPagerActivity
@@ -18,7 +19,7 @@ import com.hcmus.clc18se.photos.adapters.PAGE_PHOTOS
 import com.hcmus.clc18se.photos.databinding.FragmentHomePagerBinding
 import timber.log.Timber
 
-class HomeViewPagerFragment : Fragment() {
+class HomeViewPagerFragment : BaseFragment() {
 
     private lateinit var binding: FragmentHomePagerBinding
     private val parentActivity by lazy { requireActivity() as PhotosPagerActivity }
@@ -101,4 +102,8 @@ class HomeViewPagerFragment : Fragment() {
             else -> throw IndexOutOfBoundsException()
         })
     }
+
+    override fun getToolbarView(): Toolbar = binding.topAppBar.searchActionBar
+
+    override fun getAppbar(): AppBarLayout  = binding.topAppBar.appBarLayout
 }

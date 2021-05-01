@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_page_album_to_photoListFragment"
             app:destination="@id/photoListFragment" />
+        <action
+            android:id="@+id/action_homeViewPagerFragment_to_favouriteAlbumFragment"
+            app:destination="@id/favouriteAlbumFragment" />
     </fragment>
 
     <fragment
@@ -83,7 +86,7 @@
     <fragment
         android:id="@+id/favouriteAlbumFragment"
         android:name="com.hcmus.clc18se.photos.fragments.FavouriteAlbumFragment"
-        android:label="FavouriteAlbumFragment"
+        android:label="@string/favorites_title"
         tools:layout="@layout/fragment_favourite_album">
         <action
             android:id="@+id/action_favouriteAlbumFragment_to_photoViewFragment"
