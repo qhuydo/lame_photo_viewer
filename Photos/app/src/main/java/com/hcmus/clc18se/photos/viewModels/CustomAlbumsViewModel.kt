@@ -19,6 +19,13 @@ class CustomAlbumViewModel(
     val albums: LiveData<List<Album>>
         get() = _albums
 
+    private var _navigateToPhotoList = MutableLiveData<Album?>(null)
+    val navigateToPhotoList: LiveData<Album?> = _navigateToPhotoList
+
+    private var _idx = MutableLiveData(0)
+    val idx: LiveData<Int>
+        get() = _idx
+
     init {
         loadData()
     }
@@ -65,6 +72,19 @@ class CustomAlbumViewModel(
     fun doneRequestingLoadData() {
         _reloadDataRequest.value = false
     }
+
+    fun startNavigatingToPhotoList(album: Album) {
+        _navigateToPhotoList.postValue(album)
+    }
+
+    fun doneNavigatingToPhotoList() {
+        _navigateToPhotoList.value = null
+    }
+
+    fun getSelectedAlbum(): Album? {
+        return navigateToPhotoList.value ?: _albums.value?.get(idx.value ?: 0)
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -73,8 +93,8 @@ class CustomAlbumViewModelFactory(
         private val database: PhotosDatabaseDao
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CustomAlbumViewModelFactory::class.java)) {
-            return CustomAlbumViewModelFactory(application, database) as T
+        if (modelClass.isAssignableFrom(CustomAlbumViewModel::class.java)) {
+            return CustomAlbumViewModel(application, database) as T
         }
         throw Exception()
     }

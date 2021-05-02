@@ -20,7 +20,6 @@ import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotosBinding
-import com.hcmus.clc18se.photos.utils.ui.SpaceItemDecoration
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
@@ -37,7 +36,6 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
                 PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
         )
     }
-    // private lateinit var viewModel: PhotosViewModel
 
     override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
         override fun onClick(mediaItem: MediaItem) {

@@ -26,16 +26,9 @@ import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 
-class AlbumFragment : BaseFragment() {
+class AlbumFragment : AbstractAlbumFragment() {
+
     private lateinit var binding: FragmentAlbumBinding
-
-    private val preferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(requireActivity())
-    }
-
-    private var currentListItemView: Int = AlbumListAdapter.ITEM_TYPE_LIST
-
-    private var currentListItemSize: Int = 0
 
     private val albumViewModel: AlbumViewModel by activityViewModels()
 
@@ -65,24 +58,10 @@ class AlbumFragment : BaseFragment() {
         albumViewModel.startNavigatingToPhotoList(it)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
-            duration = 300L
-        }
-        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
-            duration = 300L
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_album, container, false
         )
-
-        currentListItemView = requireContext().currentAlbumListItemView(preferences)
-        currentListItemSize = requireContext().currentAlbumListItemSize(preferences)
 
         setHasOptionsMenu(true)
 
@@ -149,33 +128,28 @@ class AlbumFragment : BaseFragment() {
                 }
             }
         }
-    }
+        binding.customAlbum.setOnClickListener {
+            when (requireActivity()) {
+                is PhotosPagerActivity -> {
+                    findNavController().navigate(
+                            HomeViewPagerFragmentDirections.actionHomeViewPagerFragmentToPageCustomAlbum()
+                    )
+                }
+                else -> {
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        val albumListImageItem = menu.findItem(R.id.album_list_item_view_type)
-        setAlbumListIcon(albumListImageItem, currentListItemView)
-
-        val currentPreference = preferences.getString(getString(
-                R.string.album_list_item_size_key), "0") ?: "0"
-        setAlbumListItemSizeOption(resources, menu, currentPreference)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.album_menu, menu)
+                    findNavController().navigate(
+                            AlbumFragmentDirections.actionPageAlbumToPageCustomAlbum()
+                    )
+                }
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (super.onOptionsItemSelected(item)) {
+            return true;
+        }
         return when (item.itemId) {
-            R.id.album_list_item_view_type -> {
-                onItemTypeButtonClicked()
-                setAlbumListIcon(item, currentListItemView)
-                true
-            }
-            R.id.album_item_view_size_big -> onItemSizeOptionClicked(item)
-            R.id.album_item_view_size_medium -> onItemSizeOptionClicked(item)
-            R.id.album_item_view_size_small -> onItemSizeOptionClicked(item)
             R.id.menu_refresh -> onRefreshAlbumList()
             else -> false
         }
@@ -196,41 +170,7 @@ class AlbumFragment : BaseFragment() {
         return true
     }
 
-    private fun onItemTypeButtonClicked() {
-        currentListItemView = if (currentListItemView == AlbumListAdapter.ITEM_TYPE_LIST)
-            AlbumListAdapter.ITEM_TYPE_GRID else AlbumListAdapter.ITEM_TYPE_LIST
-
-        // Save the preference
-        preferences.edit()
-                .putString(getString(R.string.album_list_view_type_key), currentListItemView.toString())
-                .apply()
-
-        refreshRecyclerView()
-    }
-
-    private fun onItemSizeOptionClicked(menuItem: MenuItem): Boolean {
-        menuItem.isChecked = true
-        val options = resources.getStringArray(R.array.photo_list_item_size_value)
-
-        val option = when (menuItem.itemId) {
-            R.id.album_item_view_size_big -> options[0]
-            R.id.album_item_view_size_medium -> options[1]
-            else -> options[2]
-        }
-
-        currentListItemSize = option.toInt()
-
-        // Save the preference
-        preferences.edit()
-                .putString(getString(R.string.album_list_item_size_key), option)
-                .apply()
-
-        refreshRecyclerView()
-
-        return true
-    }
-
-    private fun refreshRecyclerView() {
+    override fun refreshRecyclerView() {
         binding.apply {
             adapter = AlbumListAdapter(
                     currentListItemView,
@@ -257,4 +197,6 @@ class AlbumFragment : BaseFragment() {
     override fun getAppbar(): AppBarLayout = binding.topAppBar.appBarLayout
 
     override fun getToolbarTitleRes(): Int = R.string.album_title
+
+    override fun getOptionMenuResId(): Int = R.menu.album_menu
 }

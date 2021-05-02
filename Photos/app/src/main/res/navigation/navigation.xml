@@ -16,13 +16,20 @@
         <action
             android:id="@+id/action_page_album_to_favouriteAlbumFragment"
             app:destination="@id/favouriteAlbumFragment" />
+        <action
+            android:id="@+id/action_page_album_to_page_custom_album"
+            app:destination="@id/page_custom_albums" />
     </fragment>
 
     <fragment
         android:id="@+id/page_people"
         android:name="com.hcmus.clc18se.photos.fragments.PeopleFragment"
         android:label="@string/people_title"
-        tools:layout="@layout/fragment_people" />
+        tools:layout="@layout/fragment_people" >
+        <action
+            android:id="@+id/action_page_people_to_photoListFragment"
+            app:destination="@id/photoListFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/page_photo"
@@ -86,5 +93,15 @@
         <action
             android:id="@+id/action_SecretPhotoFragment_to_photoViewFragment"
             app:destination="@id/photoViewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/page_custom_albums"
+        android:name="com.hcmus.clc18se.photos.fragments.CustomAlbumsFragment"
+        android:label="@string/custom_album_title"
+        tools:layout="@layout/fragment_custom_albums" >
+        <action
+            android:id="@+id/action_page_custom_albums_to_photoListFragment"
+            app:destination="@id/photoListFragment" />
     </fragment>
 </navigation>

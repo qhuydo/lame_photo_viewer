@@ -246,7 +246,6 @@ class PhotoViewFragment : BaseFragment() {
         }
 
         setUpBottomButtons()
-        (activity as? AppCompatActivity)?.supportActionBar?.title = photos[viewModel.idx.value!!].name
 
         setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
         currentPosition = viewModel.idx.value!!
@@ -267,6 +266,7 @@ class PhotoViewFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = photos[viewModel.idx.value!!].name
         initObservers()
     }
 
