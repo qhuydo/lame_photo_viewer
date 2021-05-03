@@ -337,8 +337,7 @@
 
     <color name="black_alpha_30">#4D000000</color>
 
-    <color name="system_ui_scrim_light">#E3FFFFFF</color>
-    <color name="system_ui_scrim_dark">#C3000000</color>
-
+    <color name="system_ui_scrim_light">#33FFFFFF</color>
+    <color name="system_ui_scrim_dark">#33000000</color>
 
 </resources>

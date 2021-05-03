@@ -181,13 +181,6 @@ class PhotosActivity : AbstractPhotosActivity() {
                 if (!displayBottomBarPreference()) View.INVISIBLE else View.VISIBLE
     }
 
-    override fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean) {
-        val visibility = if (wantToMakeToolbarInvisible) View.INVISIBLE else View.VISIBLE
-        //binding.topAppBar.appBarLayout.visibility = visibility
-        //binding.topAppBar.appBarLayout.visibility = visibility
-        // binding.topAppBar2.fragmentAppBarLayout.visibility = visibility
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return NavigationUI.onNavDestinationSelected(
                 item,

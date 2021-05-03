@@ -109,12 +109,6 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
         photoListBinding = binding.photoListLayout
 
-        currentListItemView = preferences.getString(getString(R.string.photo_list_view_type_key),
-                MediaItemListAdapter.ITEM_TYPE_LIST.toString())!!.toInt()
-
-        currentListItemSize = preferences.getString(getString(R.string.photo_list_item_size_key),
-                "0")!!.toInt()
-
         setHasOptionsMenu(true)
 
         adapter = MediaItemListAdapter(actionCallbacks,

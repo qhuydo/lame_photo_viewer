@@ -148,11 +148,6 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
         outState.putBoolean(BUNDLE_BOTTOM_APPBAR_VISIBILITY, bottomAppBarVisibility)
     }
 
-    override fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean) {
-        val visibility = if (wantToMakeToolbarInvisible) View.INVISIBLE else View.VISIBLE
-        // TODO
-    }
-
     override fun setNavHostFragmentTopMargin(pixelValue: Int) {
         val layoutParams =
                 binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams

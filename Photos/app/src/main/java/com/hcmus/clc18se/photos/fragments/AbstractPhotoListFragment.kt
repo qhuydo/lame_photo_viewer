@@ -2,9 +2,9 @@ package com.hcmus.clc18se.photos.fragments
 
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.afollestad.materialcab.attached.AttachedCab
 import com.afollestad.materialcab.attached.destroy
@@ -61,6 +61,20 @@ abstract class AbstractPhotoListFragment(
     protected lateinit var adapter: MediaItemListAdapter
 
     internal var mainCab: AttachedCab? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        currentListItemView = preferences.getString(
+                getString(R.string.photo_list_view_type_key),
+                MediaItemListAdapter.ITEM_TYPE_LIST.toString()
+        )!!.toInt()
+
+        currentListItemSize = preferences.getString(
+                getString(R.string.photo_list_item_size_key),
+                "0"
+        )!!.toInt()
+
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)

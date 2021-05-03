@@ -19,4 +19,5 @@
 
     <dimen name="video_view_image">300dp</dimen>
     <dimen name="photo_list_item_margin">2dp</dimen>
+    <dimen name="detail_backdrop_height">56dp</dimen>
 </resources>

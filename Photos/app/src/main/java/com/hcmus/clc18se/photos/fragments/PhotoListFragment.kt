@@ -21,7 +21,6 @@ import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoListBinding
-import com.hcmus.clc18se.photos.utils.ui.SpaceItemDecoration
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
@@ -59,12 +58,8 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
-            duration = 300L
-        }
-        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
-            duration = 300L
-        }
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply { duration = 300L }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply { duration = 300L }
     }
 
     override fun onCreateView(
@@ -78,16 +73,6 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
         photoListBinding = binding.photoListLayout
 
-        currentListItemView = preferences.getString(
-                getString(R.string.photo_list_view_type_key),
-                MediaItemListAdapter.ITEM_TYPE_LIST.toString()
-        )!!.toInt()
-
-        currentListItemSize = preferences.getString(
-                getString(R.string.photo_list_item_size_key),
-                "0"
-        )!!.toInt()
-
         adapter = MediaItemListAdapter(
                 actionCallbacks,
                 currentListItemView,
@@ -100,7 +85,6 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
             lifecycleOwner = this@PhotoListFragment
 
             photoListLayout.apply {
-                photoList = viewModel.mediaItemList.value
                 photoListRecyclerView.adapter = adapter
 
                 (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
@@ -115,6 +99,8 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
                     adapter.notifyDataSetChanged()
                     swipeRefreshLayout.isRefreshing = false
                 }
+
+                // topAppBar2.thumbnail = viewModel.mediaItemList.value?.random()
             }
 
         }
@@ -166,7 +152,6 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
             adapter.notifyDataSetChanged()
         }
     }
-
 
     override fun getCadSubId(): Int {
         return R.id.cab_stub2

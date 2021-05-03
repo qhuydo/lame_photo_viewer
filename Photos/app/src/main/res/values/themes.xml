@@ -22,6 +22,8 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
+    <style name="Theme.Photos.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
+
     <style name="Theme.Photos.Indigo.NoActionBar" parent="Theme.Photos.Indigo">
         <item name="android:statusBarColor">@android:color/black</item>
         <item name="android:navigationBarColor">@color/black</item>

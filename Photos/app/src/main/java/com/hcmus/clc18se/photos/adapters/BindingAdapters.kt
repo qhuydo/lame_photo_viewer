@@ -116,7 +116,6 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) = mediaItem?.let {
     }
 }
 
-
 //@BindingAdapter("subSamplingScaleImageViewFromUri")
 fun bindScaleImage(imgView: SubsamplingScaleImageView, imgUri: Uri?, debug: Boolean = false) {
     imgUri?.let {
@@ -143,4 +142,9 @@ fun selectAlbumThumbnail(image: ImageView, album: Album?) {
         val mediaItem = album.getRandomMediaItem()
         bindImage(image, mediaItem)
     }
+}
+
+@BindingAdapter("visibleWhenNonNull")
+fun View.visibleWhenNonNull(obj: Any?) {
+    visibility = if (obj != null) View.VISIBLE else View.GONE
 }

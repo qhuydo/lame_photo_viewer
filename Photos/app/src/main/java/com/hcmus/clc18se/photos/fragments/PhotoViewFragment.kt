@@ -242,7 +242,7 @@ class PhotoViewFragment : BaseFragment() {
         binding.apply {
             lifecycleOwner = this@PhotoViewFragment
             photosViewModel = viewModel
-            navBarColor = activity?.window?.navigationBarColor ?: Color.BLACK
+            // navBarColor = activity?.window?.navigationBarColor ?: Color.BLACK
         }
 
         setUpBottomButtons()
@@ -260,7 +260,7 @@ class PhotoViewFragment : BaseFragment() {
 
         debug = preferences.getBoolean(getString(R.string.image_debugger_key), false)
 
-        requireActivity().window?.navigationBarColor = Color.BLACK
+        // requireActivity().window?.navigationBarColor = Color.BLACK
         return binding.root
     }
 
@@ -356,7 +356,7 @@ class PhotoViewFragment : BaseFragment() {
             accessMediaLocationResultLauncher.unregister()
         }
         (activity as? AppCompatActivity)?.supportActionBar?.show()
-        activity?.window?.navigationBarColor = binding.navBarColor
+        // activity?.window?.navigationBarColor = binding.navBarColor
 
     }
 

@@ -73,4 +73,12 @@ abstract class BaseFragment : Fragment() {
 
     open fun getToolbarTitleRes(): Int? = null
 
+    fun hideTheToolbar() {
+        getAppbar().visibility = View.GONE
+    }
+
+    fun showTheToolbar() {
+        getAppbar().visibility = View.VISIBLE
+    }
+
 }

@@ -7,10 +7,10 @@ import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
@@ -38,14 +38,15 @@ class PhotoViewPagerFragment : Fragment() {
                 if (fullScreen) {
                     window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
                 }
-                (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(true)
+
+                parentFragment.hideTheToolbar()
                 it.hide()
             } else {
                 parentFragment.setBottomToolbarVisibility(true)
                 if (fullScreen) {
                     window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
                 }
-                (requireActivity() as AbstractPhotosActivity).makeToolbarInvisible(false)
+                parentFragment.showTheToolbar()
                 it.show()
             }
         }
@@ -63,7 +64,7 @@ class PhotoViewPagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        actionBar = (activity as AbstractPhotosActivity).supportActionBar
+        actionBar = (activity as AppCompatActivity).supportActionBar
 
         binding.imageView.setOnImageEventListener(object :
             SubsamplingScaleImageView.OnImageEventListener {

@@ -18,9 +18,9 @@
             layout="@layout/top_app_bar" />
 
         <include
+            app:photoList="@{photosViewModel.mediaItemList}"
             android:id="@+id/photo_list_layout"
-            layout="@layout/photo_list"
-             />
+            layout="@layout/photo_list" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

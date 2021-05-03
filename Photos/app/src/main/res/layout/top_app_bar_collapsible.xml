@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="thumbnail"
+            type="com.hcmus.clc18se.photos.data.MediaItem" />
+    </data>
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/fragment_app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:background="?colorSurface"
         android:fitsSystemWindows="true">
 
@@ -13,24 +22,38 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            app:contentScrim="@android:color/transparent"
-            app:layout_scrollFlags="enterAlways|scroll"
-            app:statusBarScrim="@android:color/transparent"
+            android:maxHeight="@dimen/detail_backdrop_height"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false">
+
+            <ImageView
+                imageFromMediaItem="@{thumbnail}"
+                visibleWhenNonNull="@{thumbnail}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                tools:ignore="ContentDescription"
+                tools:src="@tools:sample/backgrounds/scenic" />
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/fragment_tool_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
+                app:contentInsetStartWithNavigation="0dp"
+                app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cab_stub2"
+                android:id="@+id/cab_stub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
+
 </layout>

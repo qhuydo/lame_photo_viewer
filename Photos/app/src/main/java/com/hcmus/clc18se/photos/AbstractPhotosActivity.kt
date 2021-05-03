@@ -69,8 +69,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     protected abstract fun setAppbarVisibility(visibility: Boolean)
 
-    internal abstract fun makeToolbarInvisible(wantToMakeToolbarInvisible: Boolean = false)
-
     private val mediaItemCallback = object : MediaProvider.MediaProviderCallBack {
         override fun onMediaLoaded(albums: ArrayList<Album>?) {
             albumViewModel.notifyAlbumLoaded()
