@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.DisplayMetrics
+import android.view.KeyEvent
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ import com.hcmus.clc18se.photos.data.MediaProvider
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.utils.ui.ICON_COLOR
 import com.hcmus.clc18se.photos.utils.OnBackPressed
+import com.hcmus.clc18se.photos.utils.OnDirectionKeyDown
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
@@ -250,5 +252,22 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
                 super.onBackPressed()
             }
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP,
+            KeyEvent.KEYCODE_DPAD_DOWN,
+            KeyEvent.KEYCODE_DPAD_LEFT,
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                val currentFragment = navHostFragment.childFragmentManager.fragments[0] as? OnDirectionKeyDown
+                val defaultKeyDown = currentFragment?.onKeyDown(keyCode, event)?.not() ?: true
+                if (defaultKeyDown) {
+                    return super.onKeyDown(keyCode, event)
+                }
+                return true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }

@@ -18,6 +18,12 @@
             android:id="@+id/top_app_bar2"
             layout="@layout/top_app_bar" />
 
+        <include
+            android:id="@+id/placeholder"
+            layout="@layout/generic_placeholder"
+            visibleWhenNotEmpty="@{favouriteAlbumViewModel.mediaItems}"
+            tools:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photo_list_recycler_view"
             android:layout_width="match_parent"

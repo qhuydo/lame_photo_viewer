@@ -5,6 +5,7 @@ import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -124,7 +125,7 @@ fun bindScaleImage(imgView: SubsamplingScaleImageView, imgUri: Uri?, debug: Bool
     }
 }
 
-@BindingAdapter(value= ["mediaItem", "debug"], requireAll = false)
+@BindingAdapter(value = ["mediaItem", "debug"], requireAll = false)
 fun SubsamplingScaleImageView.bindMediaItem(mediaItem: MediaItem?, debug: Boolean?) {
     mediaItem?.let {
         when {
@@ -167,12 +168,29 @@ fun setVideoVisibility(videoThumbnail: ImageView, mediaItem: MediaItem?) {
 @BindingAdapter("selectThumbnail")
 fun selectAlbumThumbnail(image: ImageView, album: Album?) {
     album?.let {
-        val mediaItem = album.getRandomMediaItem()
-        bindImage(image, mediaItem)
+        if (album.mediaItems.isNotEmpty()) {
+            val mediaItem = album.getRandomMediaItem()
+            bindImage(image, mediaItem)
+        } else {
+            val sampleResId = image.resources.getIntArray(R.array.sample_photos).random()
+            Glide.with(image.context)
+                    .load(sampleResId)
+                    .into(image)
+        }
     }
 }
 
 @BindingAdapter("visibleWhenNonNull")
 fun View.visibleWhenNonNull(obj: Any?) {
     visibility = if (obj != null) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter("visibleWhenNotEmpty")
+fun View.visibleWhenNotEmpty(obj: List<*>?) {
+    visibility = if (obj.isNullOrEmpty()) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter("placeHolderEmoticon")
+fun TextView.setPlaceHolderEmoticon(nothing: Nothing?) {
+    text = context.resources.getStringArray(R.array.emoticons).random()
 }

@@ -9,10 +9,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -38,6 +35,7 @@ import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
+import com.hcmus.clc18se.photos.utils.OnDirectionKeyDown
 import com.hcmus.clc18se.photos.utils.images.GPSImage
 import com.hcmus.clc18se.photos.utils.images.GPSImage.Companion.getAddressFromGPSImage
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
@@ -50,7 +48,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 // TODO: create a view model for this
-class PhotoViewFragment : BaseFragment() {
+class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
     private lateinit var viewModel: PhotosViewModel
 
@@ -252,16 +250,42 @@ class PhotoViewFragment : BaseFragment() {
 
         initFavouriteButtonState()
 
-        binding.horizontalViewPager.apply {
-            adapter = ScreenSlidePagerAdapter(childFragmentManager, lifecycle)
-            setCurrentItem(viewModel.idx.value!!, false)
-            registerOnPageChangeCallback(viewPagerCallback)
-        }
+        initViewPager()
 
         debug = preferences.getBoolean(getString(R.string.image_debugger_key), false)
 
         // requireActivity().window?.navigationBarColor = Color.BLACK
         return binding.root
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+
+        when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP,
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                if (currentPosition > 0) {
+                    binding.horizontalViewPager.setCurrentItem(currentPosition--, true)
+                    return true
+                }
+            }
+            KeyEvent.KEYCODE_DPAD_DOWN,
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                if (currentPosition < viewModel.mediaItemList.value!!.size) {
+                    binding.horizontalViewPager.setCurrentItem(currentPosition++, true)
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    private fun initViewPager() {
+        binding.horizontalViewPager.apply {
+            adapter = ScreenSlidePagerAdapter(childFragmentManager, lifecycle)
+            setCurrentItem(viewModel.idx.value!!, false)
+            registerOnPageChangeCallback(viewPagerCallback)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

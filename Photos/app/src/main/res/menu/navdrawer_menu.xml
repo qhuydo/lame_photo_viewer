@@ -28,6 +28,11 @@
         android:checkableBehavior="single">
 
         <item
+            android:id="@+id/page_custom_albums"
+            android:icon="@drawable/ic_outline_collections_24"
+            android:title="@string/custom_album_title" />
+
+        <item
             android:id="@+id/favouriteAlbumFragment"
             android:icon="@drawable/ic_outline_favorite_border_24"
             android:title="@string/favorites_title" />
@@ -40,11 +45,13 @@
         <item
             android:id="@+id/file_explorer"
             android:icon="@drawable/ic_outline_folder_24"
-            android:title="@string/file_explorer_title" />
+            android:title="@string/file_explorer_title"
+            android:visible="false" />
         <item
             android:id="@+id/trash"
             android:icon="@drawable/ic_baseline_delete_outline_24"
-            android:title="@string/trash" />
+            android:title="@string/trash"
+            android:visible="false" />
 
     </group>
 

@@ -72,8 +72,10 @@
     <string name="pick_weight">Chọn kích thước nét vẽ</string>
     <string name="add_on_image">Thêm</string>
     <string name="full_screen_view_image">Xem ảnh ở chế độ toàn màn hình</string>
-    <string name="snow">Tuyết</string>
+    <string name="snow_effect">Tuyết</string>
     <string name="path">Đường dẫn: %1$s</string>
     <string name="date_created">Ngày tạo: %1$s</string>
     <string name="location">Vị trí: %1$s</string>
+    <string name="emojis">Emoji</string>
+    <string name="add_from_phone">Thêm từ điện thoại</string>
 </resources>

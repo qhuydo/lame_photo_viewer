@@ -13,7 +13,7 @@
     <string name="file_explorer_title">ファイルエクスプローラー</string>
     <string name="trash">ゴミ箱</string>
     <string name="create">作成</string>
-    <string name="custom_album_title">アルバム</string>
+    <string name="custom_album_title">自分のアルバム</string>
     <string name="navigation_header">ナビゲーション</string>
     <string name="theme_title">テーマ</string>
     <string name="color_title">テーマカラー</string>
@@ -71,8 +71,11 @@
     <string name="pick_weight">ブラシの厚さ</string>
     <string name="add_on_image">追加…</string>
     <string name="full_screen_view_image">全画面表示モードで写真を表示</string>
-    <string name="snow">雪</string>
+    <string name="snow_effect">雪</string>
     <string name="path">パス：%1$s</string>
     <string name="date_created">作成日：%1$s</string>
     <string name="location">位置：%1$s</string>
+    <string name="emojis">絵文字</string>
+    <string name="add_from_phone">デバイスから追加</string>
+    <string name="smooth_effect" translatable="false">スムース</string>
 </resources>

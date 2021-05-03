@@ -9,5 +9,8 @@ data class CustomAlbumInfo(
         @PrimaryKey(autoGenerate = true)
         var id: Long = 0L,
 
-        val name: String
+        val name: String,
+//
+//        @ColumnInfo(name="date_created")
+//        var dateCreated: Long = System.currentTimeMillis()
 )

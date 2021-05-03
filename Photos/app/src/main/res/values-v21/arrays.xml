@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="emoticons">
+        <item>(─‿‿─)</item>
+        <item>ヽ(o＾▽＾o)ノ	</item>
+        <item>(o^▽^o)</item>
+        <item>☆*:.｡.o(≧▽≦)o.｡.:*☆</item>
+        <item>(─‿‿─)♡</item>
+        <item>♡ (￣З￣)</item>
+        <item>UwU</item>
+        <item>(￣▽￣)ノ</item>
+        <item>(づ￣ ³￣)づ</item>
+        <item>(つ✧ω✧)つ</item>
+    </string-array>
+</resources>

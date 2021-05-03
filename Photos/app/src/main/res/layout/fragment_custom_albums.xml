@@ -12,11 +12,18 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:background="?colorSurface">
 
         <include
             android:id="@+id/top_app_bar2"
             layout="@layout/top_app_bar" />
+
+        <include
+            android:id="@+id/placeholder"
+            layout="@layout/generic_placeholder"
+            visibleWhenNotEmpty="@{customAlbumViewModel.albums}"
+            tools:visibility="gone" />
 
         <include
             android:id="@+id/album_list_layout"
@@ -26,6 +33,18 @@
             app:albumList="@{customAlbumViewModel.albums}"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintTop_toBottomOf="@id/barrier" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_add_album"
+            style="@style/fab_small"
+            android:src="@drawable/ic_outline_library_add_24"
+            app:hideOnScroll="true"
+            app:layout_anchor="@id/album_list_layout"
+            app:layout_anchorGravity="bottom|end"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:rippleColor="@color/white"
+            app:useCompatPadding="true"
+            tools:ignore="ContentDescription,OnClick" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

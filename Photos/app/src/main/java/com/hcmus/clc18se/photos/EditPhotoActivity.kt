@@ -306,7 +306,7 @@ class EditPhotoActivity : AppCompatActivity() {
         binding.progressCircular.visibility = View.VISIBLE
         scope.launch {
             addToQueue(bitmap, binding.imageEdit.colorFilter)
-            bitmap = applyFleaEffect(bitmap)
+            bitmap = applyNoiseEffect(bitmap)
 
             withContext(Dispatchers.Main) {
                 bindImage(binding.imageEdit, bitmap)
@@ -457,7 +457,7 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     // link: https://xjaphx.wordpress.com/2011/10/30/image-processing-flea-noise-effect/
-    private fun applyFleaEffect(source: Bitmap): Bitmap {
+    private fun applyNoiseEffect(source: Bitmap): Bitmap {
         // get image size
         val width = source.width
         val height = source.height
