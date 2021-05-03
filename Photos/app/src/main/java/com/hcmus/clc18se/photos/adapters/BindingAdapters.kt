@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.use
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -30,9 +31,11 @@ fun bindMediaListRecyclerView(recyclerView: RecyclerView, data: List<MediaItem>?
 }
 
 @BindingAdapter("albumListItem")
-fun bindSampleAlbumListRecyclerView(recyclerView: RecyclerView, data: List<Album>) {
-    val adapter = recyclerView.adapter as AlbumListAdapter
-    adapter.submitList(data)
+fun bindSampleAlbumListRecyclerView(recyclerView: RecyclerView, data: List<Album>?) {
+    data?.let {
+        val adapter = recyclerView.adapter as? AlbumListAdapter
+        adapter?.submitList(data)
+    }
 }
 
 /**
@@ -172,10 +175,15 @@ fun selectAlbumThumbnail(image: ImageView, album: Album?) {
             val mediaItem = album.getRandomMediaItem()
             bindImage(image, mediaItem)
         } else {
-            val sampleResId = image.resources.getIntArray(R.array.sample_photos).random()
-            Glide.with(image.context)
-                    .load(sampleResId)
-                    .into(image)
+            image.resources.obtainTypedArray(R.array.sample_photos).use { samplePhotos ->
+                val sampleResId = samplePhotos.getResourceId(
+                    (0 until samplePhotos.length()).random(),
+                    R.drawable.ic_launcher_indigo_sample)
+
+                Glide.with(image.context)
+                        .load(sampleResId)
+                        .into(image)
+            }
         }
     }
 }
@@ -185,8 +193,8 @@ fun View.visibleWhenNonNull(obj: Any?) {
     visibility = if (obj != null) View.VISIBLE else View.GONE
 }
 
-@BindingAdapter("visibleWhenNotEmpty")
-fun View.visibleWhenNotEmpty(obj: List<*>?) {
+@BindingAdapter("visibleWhenEmpty")
+fun View.visibleWhenEmpty(obj: List<*>?) {
     visibility = if (obj.isNullOrEmpty()) View.VISIBLE else View.GONE
 }
 

@@ -73,11 +73,12 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     private val viewPagerCallback by lazy {
         object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                currentPosition = position
                 if (photos.isEmpty()) {
                     requireActivity().onBackPressed()
+                    return
                 }
-                currentPosition = position
-                super.onPageSelected(position)
 
                 (requireActivity() as AppCompatActivity).supportActionBar?.title = photos[position].name
                 setEditButtonVisibility(photos[position].isEditable())

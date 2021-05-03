@@ -2,6 +2,7 @@ package com.hcmus.clc18se.photos.database
 
 import androidx.room.*
 import com.hcmus.clc18se.photos.data.CustomAlbum
+import com.hcmus.clc18se.photos.data.CustomAlbumInfo
 import com.hcmus.clc18se.photos.data.CustomAlbumItem
 import com.hcmus.clc18se.photos.data.FavouriteItem
 
@@ -21,9 +22,18 @@ interface PhotosDatabaseDao {
     suspend fun getAllFavouriteItems(): List<FavouriteItem>
 
     @Transaction
-    @Query("select * from custom_album")
+    @Query("select * from custom_album order by name asc, id desc")
     suspend fun getAllCustomAlbums(): List<CustomAlbum>
 
     @Delete
     suspend fun removeCustomAlbumItem(item: CustomAlbumItem)
+
+    @Insert
+    suspend fun addNewCustomAlbum(customAlbumInfo: CustomAlbumInfo): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addMediaItemToCustomAlbum(vararg customAlbumItem: CustomAlbumItem)
+
+    @Query("select count(*) from custom_album where name=:name")
+    suspend fun containsCustomAlbumName(name: String): Boolean
 }

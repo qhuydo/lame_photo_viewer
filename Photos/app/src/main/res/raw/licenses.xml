@@ -16,6 +16,20 @@
     </notice>
 
     <notice>
+        <name>AndroidSVG</name>
+        <url>https://bigbadaboom.github.io/androidsvg</url>
+        <copyright>Copyright 2013-2018 Cave Rock Software Ltd</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+
+    <notice>
+        <name>ColorPickerDialog</name>
+        <url>https://github.com/fennifith/ColorPickerDialog</url>
+        <copyright>Copyright 2013-2018 Cave Rock Software Ltd</copyright>
+        <license>Copyright 2016 James Fenn</license>
+    </notice>
+
+    <notice>
         <name>colorpreference</name>
         <url>https://github.com/kizitonwose/colorpreference</url>
         <copyright>Copyright (C) 2016 Kizito Nwose</copyright>
@@ -36,9 +50,23 @@
 
     <notice>
         <name>Material Contextual Action Bar</name>
-        <url>Material Contextual Action Bar</url>
+        <url>https://github.com/afollestad/material-cab</url>
         <license>Apache Software License 2.0</license>
         <copyright>Copyright 2016 Aidan Follestad</copyright>
+    </notice>
+
+    <notice>
+        <name>Material Dialogs</name>
+        <url>https://github.com/afollestad/material-dialogs</url>
+        <license>Apache Software License 2.0</license>
+        <copyright>Copyright 2018 Aidan Follestad</copyright>
+    </notice>
+
+    <notice>
+        <name>PhotoEditor</name>
+        <url>https://github.com/burhanrashid52/PhotoEditor</url>
+        <license>MIT License</license>
+        <copyright>Copyright (c) 2020 Burhanuddin Rashid</copyright>
     </notice>
 
     <notice>

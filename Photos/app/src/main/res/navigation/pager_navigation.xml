@@ -120,8 +120,16 @@
         android:label="@string/custom_album_title"
         tools:layout="@layout/fragment_custom_albums">
         <action
-            android:id="@+id/action_page_custom_album_to_photoListFragment2"
-            app:destination="@id/photoListFragment" />
+            android:id="@+id/action_page_custom_albums_to_page_custom_photo"
+            app:destination="@id/page_custom_photo" />
+    </fragment>
+    <fragment
+        android:id="@+id/page_custom_photo"
+        android:name="com.hcmus.clc18se.photos.fragments.CustomPhotosFragment"
+        android:label="CustomPhotosFragment" >
+        <action
+            android:id="@+id/action_page_custom_photo_to_photo_view_fragment"
+            app:destination="@id/photoViewFragment" />
     </fragment>
 
 </navigation>

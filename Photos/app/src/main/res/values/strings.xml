@@ -98,5 +98,8 @@
     <string name="date_created">Date created: %1$s</string>
     <string name="location">Location: %1$s</string>
     <string name="nothing_here" translatable="false">Nothing here</string>
+    <string name="add_album_dialog_hint">Your new album name</string>
+    <string name="add_album_dialog_error_blank_field">Blank fields are not allowed</string>
+    <string name="add_album_dialog_error_name_existed">Name existed</string>
 
 </resources>

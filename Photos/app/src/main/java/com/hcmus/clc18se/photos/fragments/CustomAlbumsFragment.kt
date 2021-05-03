@@ -4,13 +4,15 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.WhichButton
+import com.afollestad.materialdialogs.actions.setActionButtonEnabled
+import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.transition.MaterialSharedAxis
-import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
@@ -19,8 +21,7 @@ import com.hcmus.clc18se.photos.databinding.FragmentCustomAlbumsBinding
 import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModelFactory
-import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
-import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
+import kotlinx.coroutines.*
 
 class CustomAlbumsFragment : AbstractAlbumFragment() {
 
@@ -28,12 +29,10 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
 
     private val viewModel: CustomAlbumViewModel by activityViewModels {
         CustomAlbumViewModelFactory(
-                requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            requireActivity().application,
+            PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
         )
     }
-
-    private lateinit var photosViewModel: PhotosViewModel
 
     private lateinit var customAlbumAdapter: AlbumListAdapter
 
@@ -41,69 +40,121 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
         viewModel.startNavigatingToPhotoList(it)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val photosViewModel: PhotosViewModel by navGraphViewModels(
-                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
-        ) {
-            PhotosViewModelFactory(
-                    requireActivity().application,
-                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
-            )
-        }
-        this.photosViewModel = photosViewModel
-    }
-
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentCustomAlbumsBinding.inflate(inflater, container, false)
 
         binding.lifecycleOwner = this
         binding.customAlbumViewModel = viewModel
 
-        customAlbumAdapter = AlbumListAdapter(currentListItemView,
-                currentListItemSize,
-                onClickListener)
+        customAlbumAdapter = AlbumListAdapter(
+            currentListItemView,
+            currentListItemSize,
+            onClickListener
+        )
 
+        binding.fabAddAlbum.setOnClickListener { addAlbum() }
+
+        initRecyclerViews()
         initObservers()
         return binding.root
+    }
+
+    // TODO: refactor me
+    private fun addAlbum() = MaterialDialog(requireContext()).show {
+        title(R.string.add_album_dialog_hint)
+        input(
+            allowEmpty = false,
+            waitForPositiveButton = false
+        ) { dialog, charSequence ->
+            val inputFiled = dialog.getInputField()
+            var isValid = true
+
+            val name = charSequence.trim().toString()
+
+            val nameExisted = runBlocking {
+                async {
+                    return@async viewModel.containsAlbumName(name)
+                }.await()
+            }
+
+            if (nameExisted) {
+                inputFiled.error = getString(R.string.add_album_dialog_error_name_existed)
+                isValid = false
+            }
+
+            if (charSequence.isBlank()) {
+                inputFiled.error = getString(R.string.add_album_dialog_error_blank_field)
+                isValid = false
+            }
+
+            dialog.setActionButtonEnabled(WhichButton.POSITIVE, isValid)
+        }
+        negativeButton { cancel() }
+        positiveButton(res = R.string.ok) {
+            if (it.getInputField().error.isNullOrEmpty()) {
+                val name = it.getInputField().text.toString().trim()
+
+                viewModel.viewModelScope.launch {
+                    val album = viewModel.insertNewAlbum(name)
+                    withContext(Dispatchers.Main) {
+                        viewModel.startNavigatingToPhotoList(album)
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun initRecyclerViews() {
+        binding.albumListLayout.apply {
+
+            albumListRecyclerView.adapter = customAlbumAdapter
+
+            val layoutManager = albumListRecyclerView.layoutManager as? GridLayoutManager
+            layoutManager?.spanCount = getSpanCountForAlbumList(
+                resources,
+                currentListItemView,
+                currentListItemSize
+            )
+        }
     }
 
     private fun initObservers() {
         viewModel.navigateToPhotoList.observe(viewLifecycleOwner) {
             if (it != null) {
-                photosViewModel.setMediaItemFromAlbum(
-                        viewModel.getSelectedAlbum()?.mediaItems ?: listOf()
-                )
+                photosViewModel.setMediaItemFromAlbum(it.mediaItems)
 
                 findNavController().navigate(
-                        CustomAlbumsFragmentDirections.actionPageCustomAlbumToPhotoListFragment2(
-                                it.getName() ?: "???")
+                    CustomAlbumsFragmentDirections.actionPageCustomAlbumsToPageCustomPhoto()
                 )
 
                 viewModel.doneNavigatingToPhotoList()
             }
         }
-
     }
 
     override fun refreshRecyclerView() {
         binding.apply {
             customAlbumAdapter = AlbumListAdapter(
-                    currentListItemView,
-                    currentListItemSize,
-                    onClickListener
+                currentListItemView,
+                currentListItemSize,
+                onClickListener
             )
             val recyclerView = albumListLayout.albumListRecyclerView
             val albumList = viewModel.albums
 
             recyclerView.adapter = customAlbumAdapter
-            val layoutManager = albumListLayout.albumListRecyclerView.layoutManager as? GridLayoutManager
-            layoutManager?.spanCount = getSpanCountForAlbumList(resources,
-                    currentListItemView,
-                    currentListItemSize)
+            val layoutManager =
+                albumListLayout.albumListRecyclerView.layoutManager as? GridLayoutManager
+            layoutManager?.spanCount = getSpanCountForAlbumList(
+                resources,
+                currentListItemView,
+                currentListItemSize
+            )
 
             bindSampleAlbumListRecyclerView(recyclerView, albumList.value ?: listOf())
 

@@ -32,22 +32,7 @@ class AlbumFragment : AbstractAlbumFragment() {
 
     private val albumViewModel: AlbumViewModel by activityViewModels()
 
-    private lateinit var photosViewModel: PhotosViewModel
-
     private lateinit var adapter: AlbumListAdapter
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val viewModel: PhotosViewModel by navGraphViewModels(
-                (requireActivity() as AbstractPhotosActivity).getNavGraphResId(),
-        ) {
-            PhotosViewModelFactory(
-                    requireActivity().application,
-                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
-            )
-        }
-        photosViewModel = viewModel
-    }
 
     private val albumAdapterListener = AlbumListAdapter.OnClickListener {
         // I know something went wrong with this, but it was kinda runnable,

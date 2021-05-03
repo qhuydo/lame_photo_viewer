@@ -6,45 +6,41 @@
     <data>
 
         <variable
-            name="customAlbumViewModel"
-            type="com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModel" />
+            name="photosViewModel"
+            type="com.hcmus.clc18se.photos.viewModels.PhotosViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:background="?colorSurface">
+        android:layout_height="match_parent">
 
         <include
             android:id="@+id/top_app_bar2"
             layout="@layout/top_app_bar" />
 
+
+        <include
+            android:id="@+id/photo_list_layout"
+            layout="@layout/photo_list"
+            app:photoList="@{photosViewModel.mediaItemList}" />
+
         <include
             android:id="@+id/placeholder"
             layout="@layout/generic_placeholder"
-            visibleWhenEmpty="@{customAlbumViewModel.albums}"
+            visibleWhenEmpty="@{photosViewModel.mediaItemList}"
             tools:visibility="gone" />
-
-        <include
-            android:id="@+id/album_list_layout"
-            layout="@layout/album_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:albumList="@{customAlbumViewModel.albums}"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:layout_constraintTop_toBottomOf="@id/barrier" />
-
+        
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_add_album"
+            android:id="@+id/fab_add_photo"
             style="@style/fab_small"
-            android:src="@drawable/ic_outline_library_add_24"
+            android:src="@drawable/ic_outline_add_photo_alternate_24"
             app:hideOnScroll="true"
-            app:layout_anchor="@id/album_list_layout"
+            app:layout_anchor="@id/photo_list_layout"
             app:layout_anchorGravity="bottom|end"
             app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
             app:rippleColor="@color/white"
             app:useCompatPadding="true"
-            tools:ignore="ContentDescription,OnClick" />
+            tools:ignore="ContentDescription" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

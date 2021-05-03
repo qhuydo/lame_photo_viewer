@@ -21,7 +21,7 @@
         <include
             android:id="@+id/placeholder"
             layout="@layout/generic_placeholder"
-            visibleWhenNotEmpty="@{favouriteAlbumViewModel.mediaItems}"
+            visibleWhenEmpty="@{favouriteAlbumViewModel.mediaItems}"
             tools:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView

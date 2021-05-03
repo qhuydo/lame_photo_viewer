@@ -92,7 +92,7 @@
         <item>2</item>
     </string-array>
 
-    <integer-array name="sample_photos">
+    <array name="sample_photos">
         <item>@drawable/ic_launcher_sample</item>
         <item>@drawable/ic_launcher_blue_sample</item>
         <item>@drawable/ic_launcher_brown_sample</item>
@@ -103,6 +103,6 @@
         <item>@drawable/ic_launcher_pink_sample</item>
         <item>@drawable/ic_launcher_red_sample</item>
         <item>@drawable/ic_launcher_yellow_sample</item>
-    </integer-array>
+    </array>
 
 </resources>

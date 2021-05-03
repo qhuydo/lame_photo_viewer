@@ -1,17 +1,23 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.navigation.navGraphViewModels
 import androidx.preference.PreferenceManager
 import com.google.android.material.transition.MaterialSharedAxis
+import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.utils.currentAlbumListItemSize
 import com.hcmus.clc18se.photos.utils.currentAlbumListItemView
 import com.hcmus.clc18se.photos.utils.setAlbumListIcon
 import com.hcmus.clc18se.photos.utils.setAlbumListItemSizeOption
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 
 abstract class AbstractAlbumFragment : BaseFragment() {
 
@@ -19,9 +25,24 @@ abstract class AbstractAlbumFragment : BaseFragment() {
         PreferenceManager.getDefaultSharedPreferences(requireActivity())
     }
 
+    protected lateinit var photosViewModel: PhotosViewModel
+
     protected var currentListItemView: Int = AlbumListAdapter.ITEM_TYPE_LIST
 
     protected var currentListItemSize: Int = 0
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val viewModel: PhotosViewModel by navGraphViewModels(
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId(),
+        ) {
+            PhotosViewModelFactory(
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            )
+        }
+        photosViewModel = viewModel
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

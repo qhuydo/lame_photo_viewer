@@ -11,7 +11,6 @@ data class Album(
         val path: String,
         val mediaItems: MutableList<MediaItem>,
         private var name: String? = null,
-        private var thumbnailUri: Uri? = null
 ): Parcelable {
 
     fun getName(): String? {
@@ -36,7 +35,7 @@ data class Album(
         }
 
         override fun areItemsTheSame(oldItem: Album, newItem: Album): Boolean {
-            return oldItem.path == newItem.path
+            return oldItem.path == newItem.path && oldItem.name == newItem.name
         }
     }
 }

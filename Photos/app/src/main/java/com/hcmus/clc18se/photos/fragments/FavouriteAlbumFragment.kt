@@ -16,6 +16,8 @@ import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
+import com.hcmus.clc18se.photos.adapters.visibleWhenEmpty
+import com.hcmus.clc18se.photos.adapters.visibleWhenNonNull
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentFavouriteAlbumBinding
@@ -59,20 +61,21 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
             duration = 300L
         }
+
+        val photosViewModel: PhotosViewModel by navGraphViewModels(
+            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+        ) {
+            PhotosViewModelFactory(
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            )
+        }
+        this.photosViewModel = photosViewModel
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentFavouriteAlbumBinding.inflate(inflater, container, false)
-
-        val photosViewModel: PhotosViewModel by navGraphViewModels(
-                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
-        ) {
-            PhotosViewModelFactory(
-                    requireActivity().application,
-                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
-            )
-        }
-        this.photosViewModel = photosViewModel
+        binding.lifecycleOwner = this
 
         currentListItemView = requireContext().currentPhotoListItemView(preferences)
         currentListItemSize = requireContext().currentPhotoListItemSize(preferences)
@@ -86,7 +89,6 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
         }
 
         binding.apply {
-            lifecycleOwner = this@FavouriteAlbumFragment
 
             photoListRecyclerView.adapter = adapter
 
@@ -100,18 +102,17 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
         }
 
         setHasOptionsMenu(true)
+        initObservers()
 
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initObservers()
-    }
-
     private fun initObservers() {
         viewModel.mediaItems.observe(viewLifecycleOwner) {
-            adapter.filterAndSubmitList(it)
+            if (it != null) {
+                adapter.filterAndSubmitList(it)
+                binding.placeholder.root.visibleWhenEmpty(it)
+            }
         }
 
         viewModel.reloadDataRequest.observe(viewLifecycleOwner) {
