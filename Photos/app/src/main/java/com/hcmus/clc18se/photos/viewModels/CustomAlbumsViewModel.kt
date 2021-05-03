@@ -31,7 +31,7 @@ class CustomAlbumViewModel(
         loadData()
     }
 
-    private fun loadData() = viewModelScope.launch {
+    internal fun loadData() = viewModelScope.launch {
         loadAlbumsFromDatabase()
     }
 
@@ -42,11 +42,17 @@ class CustomAlbumViewModel(
 
         val customAlbums = database.getAllCustomAlbums().map {
             val name = it.albumInfo.name
+            val id = it.albumInfo.id
             val mediaItems = getMediaItemListFromCustomAlbumItem(it.albumItems)
-            return@map Album(path = "", mediaItems = mediaItems, name = name)
+            return@map Album(path = "", mediaItems = mediaItems, name = name, customAlbumId = id)
         }
 
         _albums.value = customAlbums
+
+        if (selectedAlbum.value != null) {
+            _selectedAlbum.value =
+                _albums.value?.first { it.customAlbumId == selectedAlbum.value?.customAlbumId }
+        }
 
         Timber.d("loadData(): ${(System.currentTimeMillis() - startTime)} ms")
 
@@ -96,6 +102,24 @@ class CustomAlbumViewModel(
 
     suspend fun containsAlbumName(name: String): Boolean {
         return database.containsCustomAlbumName(name)
+    }
+
+    // TODO: fix this inefficient
+    fun insertPhotosIntoSelectedAlbum(mediaItems: List<MediaItem>) {
+        if (selectedAlbum.value == null
+            || (selectedAlbum.value != null
+                    && selectedAlbum.value!!.customAlbumId == null)
+        ) {
+            return
+        }
+        viewModelScope.launch {
+            val albumId = selectedAlbum.value!!.customAlbumId!!
+            val customAlbumItems = mediaItems.map {
+                CustomAlbumItem(id = it.id, albumId = albumId)
+            }
+            database.addMediaItemToCustomAlbum(*customAlbumItems.toTypedArray())
+            requestReloadingData()
+        }
     }
 }
 

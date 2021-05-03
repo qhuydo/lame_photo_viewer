@@ -1,6 +1,5 @@
 package com.hcmus.clc18se.photos.data
 
-import android.net.Uri
 import android.os.Parcelable
 import androidx.recyclerview.widget.DiffUtil
 import kotlinx.parcelize.Parcelize
@@ -11,6 +10,7 @@ data class Album(
         val path: String,
         val mediaItems: MutableList<MediaItem>,
         private var name: String? = null,
+        val customAlbumId: Long? = null
 ): Parcelable {
 
     fun getName(): String? {
@@ -35,7 +35,7 @@ data class Album(
         }
 
         override fun areItemsTheSame(oldItem: Album, newItem: Album): Boolean {
-            return oldItem.path == newItem.path && oldItem.name == newItem.name
+            return oldItem.path == newItem.path && oldItem.customAlbumId == newItem.customAlbumId
         }
     }
 }

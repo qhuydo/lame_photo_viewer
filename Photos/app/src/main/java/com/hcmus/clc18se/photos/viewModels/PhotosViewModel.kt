@@ -63,6 +63,7 @@ class PhotosViewModel(application: Application,
         when (other) {
             is PhotosViewModel -> _mediaItemList.value = other._mediaItemList.value
             is FavouriteAlbumViewModel -> _mediaItemList.value = other.mediaItems.value
+            is CustomAlbumViewModel -> _mediaItemList.value = other.selectedAlbum.value?.mediaItems
         }
     }
 

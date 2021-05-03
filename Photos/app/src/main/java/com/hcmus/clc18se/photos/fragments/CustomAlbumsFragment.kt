@@ -12,6 +12,7 @@ import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
@@ -63,8 +64,14 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     // TODO: refactor me
     private fun addAlbum() = MaterialDialog(requireContext()).show {
+        lifecycleOwner(this@CustomAlbumsFragment)
         title(R.string.add_album_dialog_hint)
         input(
             allowEmpty = false,
@@ -107,7 +114,6 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
             }
         }
     }
-
 
     private fun initRecyclerViews() {
         binding.albumListLayout.apply {
