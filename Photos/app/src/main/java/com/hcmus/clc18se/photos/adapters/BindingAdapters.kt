@@ -79,7 +79,6 @@ fun bindImage(imgView: ImageView, bitmap: Bitmap?) {
     }
 }
 
-
 @BindingAdapter("imageFromMediaItem")
 fun bindImage(imgView: ImageView, mediaItem: MediaItem?) = mediaItem?.let {
     when {
@@ -101,7 +100,6 @@ fun bindImage(imgView: ImageView, mediaItem: MediaItem?) = mediaItem?.let {
 
             Glide.with(imgView.context)
                     .asBitmap()
-                    .centerCrop()
                     .load(mediaItem.requireUri())
                     .transition(BitmapTransitionOptions.withCrossFade())
                     .into(imgView)
@@ -122,6 +120,36 @@ fun bindScaleImage(imgView: SubsamplingScaleImageView, imgUri: Uri?, debug: Bool
         imgView.apply {
             setImage(ImageSource.uri(imgUri))
             setDebug(debug)
+        }
+    }
+}
+
+@BindingAdapter(value= ["mediaItem", "debug"], requireAll = false)
+fun SubsamplingScaleImageView.bindMediaItem(mediaItem: MediaItem?, debug: Boolean?) {
+    mediaItem?.let {
+        when {
+            it.isSupportedStaticImage() -> {
+                bindScaleImage(this, it.requireUri(), debug ?: false)
+                visibility = View.VISIBLE
+            }
+            it.isSVG() -> {
+                MediaItem.bindSvgToSubScaleImageView(it, this)
+                visibility = View.VISIBLE
+            }
+            else -> visibility = View.GONE
+        }
+    }
+}
+
+@BindingAdapter("mediaItem")
+fun ImageView.setGifOrVideoMediaItem(mediaItem: MediaItem?) {
+    mediaItem?.let {
+        when {
+            it.isGif() || it.isVideo() -> {
+                bindImage(this, mediaItem)
+                visibility = View.VISIBLE
+            }
+            else -> visibility = View.GONE
         }
     }
 }

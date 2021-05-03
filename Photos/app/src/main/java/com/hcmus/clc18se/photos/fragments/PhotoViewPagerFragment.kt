@@ -17,7 +17,6 @@ import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 import com.hcmus.clc18se.photos.utils.VideoDialogActivity
 import java.io.*
 
-
 class PhotoViewPagerFragment : Fragment() {
 
     internal var mediaItem: MediaItem? = null
@@ -93,22 +92,15 @@ class PhotoViewPagerFragment : Fragment() {
             fullScreen = savedInstanceState.getBoolean(BUNDLE_FULLSCREEN)
         }
 
-        MediaItem.bindMediaItemToImageDrawable(
-            requireContext(),
-            binding.imageView,
-            binding.glideImageView,
-            mediaItem,
-            binding.videoViewImage,
-            debug
-        )
-
-        binding.videoViewImage.playIcon.setOnClickListener {
+        binding.playIcon.setOnClickListener {
             val intent = Intent(context, VideoDialogActivity::class.java)
             intent.putExtra("uri", mediaItem!!.requireUri())
             startActivity(intent)
         }
 
         binding.apply {
+            photo = mediaItem
+            debug = this@PhotoViewPagerFragment.debug
             imageView.setOnClickListener(onImageClickListener)
             glideImageView.setOnClickListener(onImageClickListener)
         }

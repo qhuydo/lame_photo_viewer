@@ -3,6 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="photo"
+            type="com.hcmus.clc18se.photos.data.MediaItem" />
+
+        <variable
+            name="debug"
+            type="Boolean" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,23 +26,44 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
 
         <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+            mediaItem="@{photo}"
+            debug="@{debug}"
             android:id="@+id/image_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <ImageView
-            android:id="@+id/glide_image_view"
-            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible"
-            tools:ignore="ContentDescription" />
+            tools:visibility="gone" />
 
-        <include
-            android:id="@+id/video_view_image"
-            layout="@layout/item_video_pager" />
+        <FrameLayout
+            android:id="@+id/image_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                mediaItem="@{photo}"
+                android:id="@+id/glide_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:ignore="ContentDescription"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
+            <ImageView
+                videoThumbnailVisibility="@{photo}"
+                android:id="@+id/play_icon"
+                android:layout_width="match_parent"
+                android:layout_height="148dp"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_outline_play_circle_outline_24"
+                android:visibility="invisible"
+                tools:ignore="ContentDescription"
+                tools:visibility="visible" />
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

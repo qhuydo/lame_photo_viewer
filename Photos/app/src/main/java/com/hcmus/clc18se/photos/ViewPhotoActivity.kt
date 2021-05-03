@@ -31,15 +31,7 @@ class ViewPhotoActivity: AppCompatActivity() {
                         null,
                         it.path.toString()
                 )
-
-                MediaItem.bindMediaItemToImageDrawable(
-                        this,
-                        binding.imageView,
-                        binding.glideImageView,
-                        mediaItem,
-                        binding.videoViewImage,
-                        false
-                )
+                binding.photo = mediaItem
             }
         }
         else {
@@ -54,14 +46,7 @@ class ViewPhotoActivity: AppCompatActivity() {
                         it.path.toString()
                 )
 
-                MediaItem.bindMediaItemToImageDrawable(
-                        this,
-                        binding.imageView,
-                        binding.glideImageView,
-                        mediaItem,
-                        binding.videoViewImage,
-                        false
-                )
+                binding.photo = mediaItem
             }
         }
 

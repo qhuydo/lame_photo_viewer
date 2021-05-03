@@ -11,13 +11,11 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
-import androidx.room.Entity
 import com.caverock.androidsvg.SVG
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.adapters.bindScaleImage
-import com.hcmus.clc18se.photos.databinding.ItemVideoPagerBinding
 import com.hcmus.clc18se.photos.utils.*
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
@@ -94,51 +92,9 @@ data class MediaItem(
             }
         }
 
-        /**
-         * Bind a media item to one of give image view
-         * @param subScaleImageView: set the image to this object when isSupportedImage() is true
-         * @param imageView: set the image using glide in other cases
-         */
-        fun bindMediaItemToImageDrawable(
-                context: Context,
-                subScaleImageView: SubsamplingScaleImageView,
-                imageView: ImageView,
-                mediaItem: MediaItem?,
-                videoView: ItemVideoPagerBinding,
-                debug: Boolean
-        ) {
-            imageView.visibility = View.INVISIBLE
-            subScaleImageView.visibility = View.INVISIBLE
-            videoView.imageFrame.visibility = View.INVISIBLE
-            videoView.playIcon.visibility = View.INVISIBLE
-
-            mediaItem?.let {
-                when {
-                    it.isSupportedStaticImage() -> {
-                        bindScaleImage(subScaleImageView, it.requireUri(), debug)
-                        subScaleImageView.visibility = View.VISIBLE
-                    }
-                    it.isGif() -> {
-                        bindImage(imageView, mediaItem)
-                        imageView.visibility = View.VISIBLE
-                    }
-                    it.isSVG() -> {
-                        bindSvgToSubScaleImageView(it, context, subScaleImageView)
-                        subScaleImageView.visibility = View.VISIBLE
-                    }
-                    it.isVideo() -> {
-                        videoView.imageFrame.visibility = View.VISIBLE
-                        videoView.playIcon.visibility = View.VISIBLE
-                        videoView.photo = it
-                    }
-                }
-            }
-        }
-
-        private fun bindSvgToSubScaleImageView(it: MediaItem, context: Context, subScaleImageView: SubsamplingScaleImageView) {
+        fun bindSvgToSubScaleImageView(item: MediaItem, imageView: SubsamplingScaleImageView) {
             try {
-                val inputStream = it.requireUri().let { it1 -> context.contentResolver.openInputStream(it1) }
-                inputStream.use {
+                item.requireUri().let { imageView.context.contentResolver.openInputStream(it) }.use {
                     val svg = SVG.getFromInputStream(it)
                     val picture = svg.renderToPicture()
 
@@ -151,7 +107,7 @@ data class MediaItem(
                     val canvas = Canvas(bitmap)
                     canvas.drawPicture(drawable.picture)
 
-                    subScaleImageView.setImage(ImageSource.bitmap(bitmap))
+                    imageView.setImage(ImageSource.bitmap(bitmap))
 
                 }
             } catch (ex: FileNotFoundException) {
