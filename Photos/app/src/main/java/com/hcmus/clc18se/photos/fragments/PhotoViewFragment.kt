@@ -73,6 +73,9 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     private val viewPagerCallback by lazy {
         object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                if (photos.isEmpty()) {
+                    requireActivity().onBackPressed()
+                }
                 currentPosition = position
                 super.onPageSelected(position)
 

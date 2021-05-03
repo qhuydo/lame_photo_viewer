@@ -20,8 +20,6 @@ android {
         versionName "0.1"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField("String", "PLACES_API_KEY", PLACES_API_KEY)
     }
 
     buildTypes {

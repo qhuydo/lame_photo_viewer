@@ -32,6 +32,12 @@
         <action
             android:id="@+id/action_page_album_to_photoListFragment"
             app:destination="@id/photoListFragment" />
+        <action
+            android:id="@+id/action_page_album_to_favouriteAlbumFragment"
+            app:destination="@id/favouriteAlbumFragment" />
+        <action
+            android:id="@+id/action_page_album_to_page_custom_album"
+            app:destination="@id/page_custom_albums" />
     </fragment>
 
     <fragment

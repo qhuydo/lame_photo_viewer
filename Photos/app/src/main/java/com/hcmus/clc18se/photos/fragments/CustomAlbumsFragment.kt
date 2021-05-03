@@ -79,7 +79,7 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
                 )
 
                 findNavController().navigate(
-                        CustomAlbumsFragmentDirections.actionPageCustomAlbumsToPhotoListFragment(
+                        CustomAlbumsFragmentDirections.actionPageCustomAlbumToPhotoListFragment2(
                                 it.getName() ?: "???")
                 )
 
