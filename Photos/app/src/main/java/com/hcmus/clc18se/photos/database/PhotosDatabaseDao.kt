@@ -31,7 +31,7 @@ interface PhotosDatabaseDao {
     @Insert
     suspend fun addNewCustomAlbum(customAlbumInfo: CustomAlbumInfo): Long
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert
     suspend fun addMediaItemToCustomAlbum(vararg customAlbumItem: CustomAlbumItem)
 
     @Query("select count(*) from custom_album where name=:name")

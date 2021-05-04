@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -105,7 +104,7 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
             if (it.getInputField().error.isNullOrEmpty()) {
                 val name = it.getInputField().text.toString().trim()
 
-                viewModel.viewModelScope.launch {
+                CoroutineScope(Dispatchers.IO).launch {
                     val album = viewModel.insertNewAlbum(name)
                     withContext(Dispatchers.Main) {
                         viewModel.startNavigatingToPhotoList(album)

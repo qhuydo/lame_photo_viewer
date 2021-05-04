@@ -21,9 +21,7 @@ import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.utils.ui.ICON_COLOR
 import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.OnDirectionKeyDown
-import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
-import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
-import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
+import com.hcmus.clc18se.photos.viewModels.*
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
 import java.util.*
@@ -39,10 +37,17 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         const val THEME_DARK = 2
     }
 
-    val albumViewModel: AlbumViewModel by viewModels()
+    protected val albumViewModel: AlbumViewModel by viewModels()
 
-    val photosViewModel: PhotosViewModel by viewModels {
+    protected val photosViewModel: PhotosViewModel by viewModels {
         PhotosViewModelFactory(application, PhotosDatabase.getInstance(this).photosDatabaseDao)
+    }
+
+    private val customAlbumViewModel: CustomAlbumViewModel by viewModels {
+        CustomAlbumViewModelFactory(
+                application,
+                PhotosDatabase.getInstance(this).photosDatabaseDao
+        )
     }
 
     internal val mediaProvider: MediaProvider by lazy { MediaProvider(application.applicationContext) }
@@ -95,6 +100,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         colorResource.configColor(this)
         colorResource.configTheme()
         configLanguage()
+        customAlbumViewModel.loadData()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
