@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.*
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
@@ -137,6 +138,10 @@ class PhotoViewPagerFragment : Fragment() {
                 secret()
                 true
             }
+            R.id.action_rename -> {
+                rename()
+                true
+            }
             R.id.action_copy -> {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
                 intent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -223,14 +228,62 @@ class PhotoViewPagerFragment : Fragment() {
         }
     }
 
-    private fun moveFile(fileDest:File){
+    @SuppressLint("CutPasteId")
+    private fun rename(){
+        var newName:String? = mediaItem!!.name
+        val path = mediaItem!!.requirePath(requireContext())
+        val dialog = Dialog(requireContext()).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(R.layout.dialog_rename)
+        }
+
+        dialog.findViewById<Button>(R.id.ok_override)?.setOnClickListener {
+            newName?.let {
+                val fileDest = File(path!!.substring(0, path.lastIndexOf("/") + 1) + newName)
+                if (fileDest.exists()) {
+                    Toast.makeText(requireContext(), "Your file is duplicate", Toast.LENGTH_SHORT).show()
+                } else {
+                    try {
+                        val contentResolver = requireContext().contentResolver
+                        val contentValues = ContentValues()
+                        contentValues.put(MediaStore.Files.FileColumns.DISPLAY_NAME, newName);
+                        contentResolver.update(mediaItem!!.requireUri(), contentValues, null, null);
+                        dialog.dismiss()
+                        Toast.makeText(requireContext(), "Rename successful", Toast.LENGTH_SHORT).show()
+                        (requireActivity() as AppCompatActivity).supportActionBar?.title = newName!!
+                    }
+                    catch (e: Exception){
+                        Toast.makeText(requireContext(), "Rename unsuccessful", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        dialog.findViewById<TextInputEditText>(R.id.rename_field).visibility = View.VISIBLE
+        newName = dialog.findViewById<TextInputEditText>(R.id.rename_field).text.toString() + mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))
+        dialog.findViewById<TextInputEditText>(R.id.rename_field).addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int,
+                                           count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int,
+                                       before: Int, count: Int) {
+                newName = s.toString() + mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))
+            }
+        })
+        dialog.show()
+    }
+
+    private fun moveFile(fileDest: File){
         try {
             val outputStream = FileOutputStream(fileDest)
             val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
             inputStream!!.copyTo(outputStream)
             inputStream.close()
             outputStream.close()
-            Toast.makeText(requireContext(),"Move successful",Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Move successful", Toast.LENGTH_SHORT).show()
         } catch (e: java.lang.Exception) {
             Toast.makeText(context, "Move file unsuccess", Toast.LENGTH_SHORT).show()
         }
