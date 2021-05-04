@@ -1,9 +1,12 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.*
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.ActionBar
@@ -11,11 +14,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.google.android.material.textfield.TextInputEditText
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 import com.hcmus.clc18se.photos.utils.VideoDialogActivity
 import java.io.*
+
 
 class PhotoViewPagerFragment : Fragment() {
 
@@ -52,9 +57,9 @@ class PhotoViewPagerFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = PhotoViewPagerPageBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
@@ -66,7 +71,7 @@ class PhotoViewPagerFragment : Fragment() {
         actionBar = (activity as AppCompatActivity).supportActionBar
 
         binding.imageView.setOnImageEventListener(object :
-            SubsamplingScaleImageView.OnImageEventListener {
+                SubsamplingScaleImageView.OnImageEventListener {
 
             override fun onImageLoadError(e: Exception?) {
                 binding.progressCircular.visibility = View.GONE
@@ -164,16 +169,68 @@ class PhotoViewPagerFragment : Fragment() {
         }
     }
 
+    @SuppressLint("CutPasteId")
     private fun secret() {
         val cw = ContextWrapper(requireContext().applicationContext)
         val directory = cw.getDir("images", Context.MODE_PRIVATE)
-        val fileDest = File(directory, mediaItem!!.name)
+        var fileDest:File = File(directory, mediaItem!!.name)
+        var newName:String? = null
+        if (fileDest.exists()) {
+            val dialog = Dialog(requireContext()).apply {
+                requestWindowFeature(Window.FEATURE_NO_TITLE)
+                setContentView(R.layout.dialog_duplicate_file)
+            }
+
+            dialog.findViewById<Button>(R.id.ok_override)?.setOnClickListener {
+                newName?.let {
+                    fileDest = File(directory, newName)
+                    if (fileDest.exists()) {
+                        Toast.makeText(requireContext(), "Your file is duplicate", Toast.LENGTH_SHORT).show()
+                    } else {
+                        moveFile(fileDest)
+                        dialog.dismiss()
+                    }
+                }?: run{
+                    moveFile(fileDest)
+                    dialog.dismiss()
+                }
+            }
+
+            dialog.findViewById<Button>(R.id.rename_button)?.setOnClickListener {
+                dialog.findViewById<TextInputEditText>(R.id.rename_field).visibility = View.VISIBLE
+                newName = dialog.findViewById<TextInputEditText>(R.id.rename_field).text.toString() + mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))
+                dialog.findViewById<TextInputEditText>(R.id.rename_field).addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable) {}
+                    override fun beforeTextChanged(s: CharSequence, start: Int,
+                                                   count: Int, after: Int) {
+
+                    }
+
+                    override fun onTextChanged(s: CharSequence, start: Int,
+                                               before: Int, count: Int) {
+                        newName = s.toString() + mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))
+                    }
+                })
+            }
+
+            dialog.findViewById<Button>(R.id.cancel_override)?.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialog.show()
+        }
+        else{
+            moveFile(fileDest)
+        }
+    }
+
+    private fun moveFile(fileDest:File){
         try {
             val outputStream = FileOutputStream(fileDest)
             val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
             inputStream!!.copyTo(outputStream)
             inputStream.close()
             outputStream.close()
+            Toast.makeText(requireContext(),"Move successful",Toast.LENGTH_SHORT).show()
         } catch (e: java.lang.Exception) {
             Toast.makeText(context, "Move file unsuccess", Toast.LENGTH_SHORT).show()
         }
@@ -226,7 +283,7 @@ class PhotoViewPagerFragment : Fragment() {
             data?.let {
                 val cw = ContextWrapper(requireContext().applicationContext)
                 val treeUri = data.data
-                val fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)?.createFile(mediaItem!!.mimeType!!,mediaItem!!.name)
+                val fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
                 try {
                     val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
                     val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
