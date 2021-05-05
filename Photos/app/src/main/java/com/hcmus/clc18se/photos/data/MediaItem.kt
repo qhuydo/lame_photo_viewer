@@ -121,8 +121,10 @@ data class MediaItem(
                 checkVideoMimeType(mimeType) -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
                 else -> MediaStore.Files.getContentUri("external")
             }
-            // content://media/external/file/33
-            // content://media/external/video/media/33
+
+            // id = 33
+            // MediaStore.Files.getContentUri("external") -> content://media/external/file/33
+            // MediaStore.Images.Media.EXTERNAL_CONTENT_URI -> content://media/external/video/media/33
             return ContentUris.withAppendedId(contentUri, id)
         }
     }

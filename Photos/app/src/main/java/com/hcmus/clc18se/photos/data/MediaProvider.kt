@@ -4,14 +4,13 @@ import android.Manifest
 import android.content.ContentResolver
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.provider.BaseColumns
 import android.provider.MediaStore
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
 import timber.log.Timber
-import java.io.File
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -55,7 +54,11 @@ class MediaProvider(private val context: Context) {
         val columnUri = MediaStore.Files.getContentUri("external")
 
         // Return only video and image metadata.
-        val selection = DEFAULT_MEDIA_ITEM_SELECTION
+        val selection = "(${MediaStore.Files.FileColumns.MEDIA_TYPE}" +
+                "=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
+                " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}" +
+                "=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO})"
+
         val projection = arrayOf(
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.MediaColumns.DISPLAY_NAME,
@@ -86,24 +89,27 @@ class MediaProvider(private val context: Context) {
                 var mimeType: String
                 var name: String
                 var dateAdded: Date
+                var bucketPath: String
 
                 val idColumn = cursor.getColumnIndex(BaseColumns._ID)
                 val nameColumn = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
                 val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
                 val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
-                val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
+                // val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
+                val bucketPathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME)
 
                 while (cursor.moveToNext()) {
                     path = cursor.getString(pathColumn)
                     id = cursor.getLong(idColumn)
                     mimeType = cursor.getString(mimeTypeColumn)
                     name = cursor.getString(nameColumn)
-                    dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateAddedColumn)))
+                    // dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateAddedColumn)))
 
                     val mediaItem = MediaItem.getInstance(id, name, null, mimeType, path)
 
                     //search bucket
-                    val bucketPath = File(path).parent
+                    // val bucketPath = File(path).parent
+                    bucketPath = cursor.getString(bucketPathColumn)
                     bucketPath?.let {
                         if (folderMap.containsKey(bucketPath)) {
                             folderMap[bucketPath]?.mediaItems?.add(0, mediaItem)
@@ -149,42 +155,67 @@ val DEFAULT_MEDIA_ITEM_SELECTION_ARGS: Array<String>? = null
 const val DEFAULT_MEDIA_ITEM_SELECTION = "(${MediaStore.Files.FileColumns.MEDIA_TYPE}" +
         "=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
         " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO})" +
-        " AND ${BaseColumns._ID}"
+        " AND ${BaseColumns._ID}=?"
+
+val DEFAULT_CONTENT_URI: Uri = MediaStore.Files.getContentUri("external")
+val DEFAULT_SORT_ORDER: String? = null
 
 fun ContentResolver.loadMediaItemFromId(itemId: Long): MediaItem? {
-    val columnUri = MediaStore.Files.getContentUri("external")
+    val items = queryMediaItems(selectionArgs = arrayOf("$itemId"))
+    return items?.firstOrNull()
+}
 
-    // Return only video and image metadata.
-    val selection = "$DEFAULT_MEDIA_ITEM_SELECTION=$itemId"
-    val projection = DEFAULT_MEDIA_ITEM_PROJECTION
-    val selectionArgs: Array<String>? = DEFAULT_MEDIA_ITEM_SELECTION_ARGS
+fun ContentResolver.loadMediaItemFromIds(itemIds: List<Long>): List<MediaItem> {
+    val selection = "(${MediaStore.Files.FileColumns.MEDIA_TYPE}" +
+            "=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
+            " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO})"
+    return queryMediaItems(selection = selection, itemsIds = itemIds) ?: listOf()
+}
+
+// TODO: document me!
+private fun ContentResolver.queryMediaItems(
+        columnUri: Uri = DEFAULT_CONTENT_URI,
+        projection: Array<String>? = DEFAULT_MEDIA_ITEM_PROJECTION,
+        selection: String? = DEFAULT_MEDIA_ITEM_SELECTION,
+        selectionArgs: Array<String>? = DEFAULT_MEDIA_ITEM_SELECTION_ARGS,
+        sortOrder: String? = DEFAULT_SORT_ORDER,
+        itemsIds: List<Long>? = null
+): List<MediaItem>? {
 
     query(columnUri,
             projection,
             selection,
             selectionArgs,
-            null
+            sortOrder
     )?.use { cursor ->
 
-        val path: String
-        val id: Long
-        val mimeType: String
-        val name: String
+        var path: String
+        var id: Long
+        var mimeType: String
+        var name: String
 
         val idColumn = cursor.getColumnIndex(BaseColumns._ID)
         val nameColumn = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
         val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
         val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
 
-        if (cursor.moveToNext()) {
-            path = cursor.getString(pathColumn)
+        val list = mutableListOf<MediaItem>()
+        val itemIdSet = itemsIds?.toSet()
+
+        while (cursor.moveToNext()) {
             id = cursor.getLong(idColumn)
+
+            if (itemIdSet != null && id !in itemIdSet) {
+                continue
+            }
+
+            path = cursor.getString(pathColumn)
             mimeType = cursor.getString(mimeTypeColumn)
             name = cursor.getString(nameColumn)
 
-            return MediaItem.getInstance(id, name, null, mimeType, path)
+            list.add(MediaItem.getInstance(id, name, null, mimeType, path))
         }
-
+        return list
     }
     return null
 }

@@ -42,7 +42,7 @@ class CustomAlbumViewModel(
             val name = it.albumInfo.name
             val id = it.albumInfo.id
             val mediaItems = getMediaItemListFromCustomAlbumItem(it.albumItems)
-            return@map Album(path = "", mediaItems = mediaItems, name = name, customAlbumId = id)
+            return@map Album(path = "", mediaItems = mediaItems.toMutableList(), name = name, customAlbumId = id)
         }
 
         withContext(Dispatchers.Main) {
@@ -59,20 +59,23 @@ class CustomAlbumViewModel(
 
     }
 
-    private suspend fun getMediaItemListFromCustomAlbumItem(items: List<CustomAlbumItem>): MutableList<MediaItem> {
-        val mediaItems: MutableList<MediaItem> = mutableListOf()
-        items.forEach { item ->
-            val mediaItem = loadMediaItemFromId(item.id)
-            mediaItem?.let { mediaItems.add(it) } ?: database.removeCustomAlbumItem(item)
-        }
-        return mediaItems
-    }
-
-    private fun loadMediaItemFromId(itemId: Long): MediaItem? {
-        return getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromId(
-                itemId
+    private fun getMediaItemListFromCustomAlbumItem(items: List<CustomAlbumItem>): List<MediaItem> {
+//        val mediaItems: MutableList<MediaItem> = mutableListOf()
+//        items.forEach { item ->
+//            val mediaItem = loadMediaItemFromId(item.id)
+//            mediaItem?.let { mediaItems.add(it) } ?: database.removeCustomAlbumItem(item)
+//        }
+//        return mediaItems
+        return getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromIds(
+                items.map { it.id }
         )
     }
+
+//    private fun loadMediaItemFromId(itemId: Long): MediaItem? {
+//        return getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromId(
+//                itemId
+//        )
+//    }
 
     private var _reloadDataRequest = MutableLiveData(false)
     val reloadDataRequest: LiveData<Boolean>

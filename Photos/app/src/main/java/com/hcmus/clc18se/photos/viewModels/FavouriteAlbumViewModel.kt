@@ -2,9 +2,12 @@ package com.hcmus.clc18se.photos.viewModels
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.hcmus.clc18se.photos.data.FavouriteItem
 import com.hcmus.clc18se.photos.data.MediaItem
-import com.hcmus.clc18se.photos.data.loadMediaItemFromId
+import com.hcmus.clc18se.photos.data.loadMediaItemFromIds
 import com.hcmus.clc18se.photos.database.PhotosDatabaseDao
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -37,28 +40,23 @@ class FavouriteAlbumViewModel(
         loadData()
     }
 
-    private fun loadMediaItemFromId(itemId: Long): MediaItem? {
-        return getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromId(itemId)
-    }
-
     fun loadData() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             Timber.d("Start loading FavouriteMediaItems")
             val startTime = System.currentTimeMillis()
 
             val favourites = database.getAllFavouriteItems()
-            val favouriteMediaItems = ArrayList<MediaItem>()
+            val favouriteMediaItems = loadMediaItemFromIds(favourites)
 
-            for (favouriteItem in favourites) {
-                val mediaItem = loadMediaItemFromId(favouriteItem.id)
-                mediaItem?.let { favouriteMediaItems.add(it) }
-                        ?: database.removeFavouriteItems(favouriteItem)
-            }
-
-            _mediaItems.value = favouriteMediaItems
+            _mediaItems.postValue(favouriteMediaItems)
             Timber.d("loadFavouriteMediaItems(): ${(System.currentTimeMillis() - startTime)} ms")
         }
     }
+
+    private fun loadMediaItemFromIds(favourites: List<FavouriteItem>) =
+            getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromIds(
+                    favourites.map { it.id }
+            )
 
     fun requestReloadingData() {
         _reloadDataRequest.value = true
