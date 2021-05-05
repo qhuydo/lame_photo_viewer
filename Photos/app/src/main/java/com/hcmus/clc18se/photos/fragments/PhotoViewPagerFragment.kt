@@ -22,7 +22,6 @@ import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 import com.hcmus.clc18se.photos.utils.VideoDialogActivity
 import java.io.*
 
-
 class PhotoViewPagerFragment : Fragment() {
 
     internal var mediaItem: MediaItem? = null
@@ -174,7 +173,6 @@ class PhotoViewPagerFragment : Fragment() {
         }
     }
 
-    @SuppressLint("CutPasteId")
     private fun secret() {
         val cw = ContextWrapper(requireContext().applicationContext)
         val directory = cw.getDir("images", Context.MODE_PRIVATE)
@@ -228,7 +226,6 @@ class PhotoViewPagerFragment : Fragment() {
         }
     }
 
-    @SuppressLint("CutPasteId")
     private fun rename(){
         var newName:String? = mediaItem!!.name
         val path = mediaItem!!.requirePath(requireContext())

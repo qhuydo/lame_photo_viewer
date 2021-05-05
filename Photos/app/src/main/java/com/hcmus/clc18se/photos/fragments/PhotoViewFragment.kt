@@ -27,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
@@ -46,6 +47,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.FileNotFoundException
+import java.time.Duration
 
 // TODO: create a view model for this
 class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
@@ -60,7 +63,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
     private val favouriteAlbumViewModel: FavouriteAlbumViewModel by activityViewModels {
         FavouriteAlbumViewModelFactory(
-                requireActivity().application, contentProvider
+            requireActivity().application, contentProvider
         )
     }
 
@@ -80,7 +83,8 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
                     return
                 }
 
-                (requireActivity() as AppCompatActivity).supportActionBar?.title = photos[position].name
+                (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                    photos[position].name
                 setEditButtonVisibility(photos[position].isEditable())
                 initFavouriteButtonState()
             }
@@ -90,11 +94,11 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
-                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
             PhotosViewModelFactory(
-                    requireActivity().application,
-                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
             )
         }
         this.photos = viewModel.mediaItemList.value ?: listOf()
@@ -102,21 +106,25 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     }
 
     private lateinit var resultLauncher: ActivityResultLauncher<IntentSenderRequest>
+
     private lateinit var accessMediaLocationResultLauncher: ActivityResultLauncher<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         resultLauncher = registerForActivityResult(
-                ActivityResultContracts.StartIntentSenderForResult()
+            ActivityResultContracts.StartIntentSenderForResult()
         ) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 viewModel.deletePendingImage()
             }
         }
 
+        // Từ phiên bản Android Q trở đi, khi truy cập EXIF location cần phải được HĐH cho phép
+        // trong thời gian chạy.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             accessMediaLocationResultLauncher = registerForActivityResult(
-                    ActivityResultContracts.RequestPermission(),
+                ActivityResultContracts.RequestPermission()
             ) {
                 if (it) {
                     getMediaItemAddressCallback()
@@ -145,7 +153,18 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
         }
 
         nukeButton.setOnClickListener {
-            viewModel.deleteImage(viewModel.mediaItemList.value!![currentPosition])
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                MaterialDialog(requireContext()).show {
+                    title(R.string.delete_warning_dialog_title)
+                    message(R.string.delete_warning_dialog_msg)
+                    positiveButton(R.string.yes) {
+                        viewModel.deleteImage(photos[currentPosition])
+                    }
+                    negativeButton(R.string.no) {}
+                }
+            } else {
+                viewModel.deleteImage(photos[currentPosition])
+            }
         }
 
         infoButton.setOnClickListener {
@@ -181,13 +200,15 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             findViewById<TextView>(R.id.path).text = resources.getString(R.string.path, path)
 
             val dateCreated = photos[currentPosition].requireDateTaken()
-            findViewById<TextView>(R.id.date_create).text = resources.getString(R.string.date_created, dateCreated)
+            findViewById<TextView>(R.id.date_create).text =
+                resources.getString(R.string.date_created, dateCreated)
         }
 
         val address: String? = getMediaItemAddress()
         address?.let {
             Timber.d(it)
-            dialog?.findViewById<TextView>(R.id.name_place)?.text = resources.getString(R.string.location, it)
+            dialog?.findViewById<TextView>(R.id.name_place)?.text =
+                resources.getString(R.string.location, it)
         }
 
         dialog?.findViewById<Button>(R.id.off_info_dialog)?.setOnClickListener {
@@ -220,21 +241,24 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     private fun getMediaItemAddressCallback() {
 
         val uri = MediaStore.setRequireOriginal(photos[currentPosition].requireUri())
-        requireContext().contentResolver.openInputStream(uri).use { inputStream ->
-            inputStream?.let {
-                val gpsImage = GPSImage(it)
-                val address = getAddressFromGPSImage(gpsImage, requireContext())
-                address?.let {
-                    dialog?.findViewById<TextView>(R.id.name_place)?.text = resources.getString(R.string.location, address)
+        try {
+            requireContext().contentResolver.openInputStream(uri).use { inputStream ->
+                inputStream?.let {
+                    val gpsImage = GPSImage(it)
+                    getAddressFromGPSImage(gpsImage, requireContext())?.let { address ->
+                        dialog?.findViewById<TextView>(R.id.name_place)?.text =
+                            resources.getString(R.string.location, address)
+                    }
                 }
             }
+        } catch (ex: FileNotFoundException) {
         }
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // TODO: clean this code
         (activity as AbstractPhotosActivity).setNavHostFragmentTopMargin(0)
@@ -294,7 +318,8 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? AppCompatActivity)?.supportActionBar?.title = photos[viewModel.idx.value!!].name
+        (activity as? AppCompatActivity)?.supportActionBar?.title =
+            photos[viewModel.idx.value!!].name
         initObservers()
     }
 
@@ -389,12 +414,12 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     }
 
     private inner class ScreenSlidePagerAdapter(
-            fragmentManager: FragmentManager,
-            lifecycle: Lifecycle
+        fragmentManager: FragmentManager,
+        lifecycle: Lifecycle
     ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
         val fullscreen =
-                preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
+            preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
 
         override fun getItemId(position: Int): Long {
             return photos[position].id

@@ -1,10 +1,18 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.app.Activity
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.*
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.preference.PreferenceManager
 import com.afollestad.materialcab.attached.AttachedCab
 import com.afollestad.materialcab.attached.destroy
@@ -18,6 +26,7 @@ import com.hcmus.clc18se.photos.utils.getColorAttribute
 import com.hcmus.clc18se.photos.utils.setPhotoListIcon
 import com.hcmus.clc18se.photos.utils.setPhotoListItemSizeOption
 import timber.log.Timber
+
 
 /**
  * Inherited by [PhotoListFragment] & [PhotosFragment]
@@ -62,17 +71,27 @@ abstract class AbstractPhotoListFragment(
 
     internal var mainCab: AttachedCab? = null
 
+    private lateinit var deleteRequestLauncher: ActivityResultLauncher<IntentSenderRequest>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentListItemView = preferences.getString(
-                getString(R.string.photo_list_view_type_key),
-                MediaItemListAdapter.ITEM_TYPE_LIST.toString()
+            getString(R.string.photo_list_view_type_key),
+            MediaItemListAdapter.ITEM_TYPE_LIST.toString()
         )!!.toInt()
 
         currentListItemSize = preferences.getString(
-                getString(R.string.photo_list_item_size_key),
-                "0"
+            getString(R.string.photo_list_item_size_key),
+            "0"
         )!!.toInt()
+
+        deleteRequestLauncher = registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { activityResult ->
+            if (Activity.RESULT_OK == activityResult.resultCode) {
+                Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     }
 
@@ -223,9 +242,26 @@ abstract class AbstractPhotoListFragment(
     private fun onCabItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_multiple_delete) {
             // Delete button is clicked, handle the deletion and finish the multi select process
-            Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val uriList = adapter.getSelectedItems().map { it.requireUri() }
+                requestDeletePermission(uriList)
+                mainCab?.destroy()
+            } else {
+
+            }
         }
         return true
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun requestDeletePermission(uriList: List<Uri>) {
+        val pi = MediaStore.createDeleteRequest(requireContext().contentResolver, uriList)
+        deleteRequestLauncher.launch(IntentSenderRequest.Builder(pi.intentSender).build())
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        deleteRequestLauncher.unregister()
     }
 
     override fun onBackPress(): Boolean {

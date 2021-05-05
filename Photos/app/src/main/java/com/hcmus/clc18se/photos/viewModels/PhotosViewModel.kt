@@ -19,8 +19,9 @@ import java.lang.IndexOutOfBoundsException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class PhotosViewModel(application: Application,
-                      private val database: PhotosDatabaseDao
+class PhotosViewModel(
+    application: Application,
+    private val database: PhotosDatabaseDao
 ) : AndroidViewModel(application) {
 
     private var _mediaItemList = MutableLiveData<List<MediaItem>>()
@@ -81,10 +82,10 @@ class PhotosViewModel(application: Application,
                     }
                 }
                 getApplication<Application>().contentResolver.registerContentObserver(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, observer
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, observer
                 )
                 getApplication<Application>().contentResolver.registerContentObserver(
-                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, observer
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, observer
                 )
 
                 contentObserver = observer
@@ -139,10 +140,10 @@ class PhotosViewModel(application: Application,
         withContext(Dispatchers.IO) {
             try {
                 val result = getApplication<Application>().contentResolver.delete(
-                        item.requireUri(),
-                        "${MediaStore.Images.Media._ID} = ?",
-                        arrayOf(item.id.toString())
-                )
+                    item.requireUri(),
+                    null,
+                    null)
+
                 Timber.d("Delete result - $result columns affected")
 
                 if (result > 0) {
@@ -157,13 +158,13 @@ class PhotosViewModel(application: Application,
             } catch (securityException: SecurityException) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val recoverableSecurityException =
-                            securityException as? RecoverableSecurityException
-                                    ?: throw securityException
+                        securityException as? RecoverableSecurityException
+                            ?: throw securityException
 
                     pendingDeleteImage = item
-                    withContext(Dispatchers.Main) {
-                        _permissionNeededForDelete.value = recoverableSecurityException.userAction.actionIntent.intentSender
-                    }
+
+                    _permissionNeededForDelete.postValue(recoverableSecurityException.userAction.actionIntent.intentSender)
+
                 } else {
                     throw securityException
                 }
@@ -187,27 +188,20 @@ class PhotosViewModel(application: Application,
         val mediaItems = mutableListOf<MediaItem>()
         withContext(Dispatchers.IO) {
 
-            val projection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                arrayOf(MediaStore.MediaColumns._ID,
-                        MediaStore.Files.FileColumns.DATA,
-                        MediaStore.MediaColumns.DISPLAY_NAME,
-                        MediaStore.MediaColumns.DATE_ADDED,
-                        MediaStore.MediaColumns.MIME_TYPE,
-                        MediaStore.MediaColumns.DATE_MODIFIED,
-                        MediaStore.Images.ImageColumns.ORIENTATION
-                )
-            } else {
-                arrayOf(
-                        MediaStore.MediaColumns._ID,
-                        MediaStore.Files.FileColumns.DATA,
-                        MediaStore.MediaColumns.DISPLAY_NAME,
-                        MediaStore.MediaColumns.DATE_ADDED,
-                        MediaStore.MediaColumns.MIME_TYPE,
-                        MediaStore.MediaColumns.DATE_MODIFIED,
-                )
-            }
-            val selection = "${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
-                    " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}"
+            val projection = arrayOf(
+                MediaStore.MediaColumns._ID,
+                MediaStore.Files.FileColumns.DATA,
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                MediaStore.MediaColumns.DATE_ADDED,
+                MediaStore.MediaColumns.MIME_TYPE,
+                MediaStore.MediaColumns.DATE_MODIFIED,
+                MediaStore.Images.ImageColumns.ORIENTATION
+            )
+
+            val selection = MediaStore.Files.FileColumns.MEDIA_TYPE +
+                    "=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
+                    " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}" +
+                    "=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}"
             // val selection = MediaStore.Images.Media.DATE_ADDED
             val selectionArgs: Array<String>? = null
             val sortOrder = "${MediaStore.MediaColumns.DATE_ADDED} DESC"
@@ -216,34 +210,33 @@ class PhotosViewModel(application: Application,
             //val columnUri = MediaStore.Images.Media.INTERNAL_CONTENT_URI
 
             getApplication<Application>().contentResolver.query(
-                    columnUri,
-                    projection,
-                    selection,
-                    selectionArgs,
-                    sortOrder
+                columnUri,
+                projection,
+                selection,
+                selectionArgs,
+                sortOrder
             )?.use { cursor ->
 
-                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val dateModifiedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
-                val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-                val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
-                val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+                val idCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val dateAddedCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
+                val nameCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+                val mimeCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+                val pathCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+                val orientationCol =
+                    cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.ORIENTATION)
 
                 while (cursor.moveToNext()) {
-                    val id = cursor.getLong(idColumn)
-                    val dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateModifiedColumn)))
-                    val displayName = cursor.getString(displayNameColumn)
-                    val mimeType = cursor.getString(mimeTypeColumn)
-                    val orientation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.ORIENTATION))
-                    } else {
-                        0
-                    }
+                    val id = cursor.getLong(idCol)
+                    val dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateAddedCol)))
+                    val displayName = cursor.getString(nameCol)
+                    val mimeType = cursor.getString(mimeCol)
+                    val orientation = orientationCol
 
-                    val path = cursor.getString(pathColumn)
+                    val path = cursor.getString(pathCol)
                     // val uri = MediaItem.getMediaUriFromMimeType(mimeType, id)
 
-                    val image = MediaItem(id, displayName, null, dateAdded, mimeType, orientation, path)
+                    val image =
+                        MediaItem(id, displayName, null, dateAdded, mimeType, orientation, path)
                     mediaItems += image
                 }
 
@@ -271,8 +264,8 @@ class PhotosViewModel(application: Application,
 
 @Suppress("UNCHECKED_CAST")
 class PhotosViewModelFactory(
-        private val application: Application,
-        private val database: PhotosDatabaseDao
+    private val application: Application,
+    private val database: PhotosDatabaseDao
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PhotosViewModel::class.java)) {

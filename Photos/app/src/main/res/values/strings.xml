@@ -71,7 +71,8 @@
     <string name="rotate">Rotate</string>
     <string name="photo_properties">Properties</string>
     <string name="grant_permission">Grant Permission</string>
-    <string name="permission_not_granted">To continue, please give &appname; access to your photos</string>
+    <string name="permission_not_granted">To continue, please give &appname;
+        access to your photos</string>
     <string name="undo">Undo</string>
     <string name="select_all">Select all</string>
     <string name="set_as">Set as</string>
@@ -98,11 +99,14 @@
     <string name="date_created">Date created: %1$s</string>
     <string name="location">Location: %1$s</string>
     <string name="nothing_here" translatable="false">Nothing here</string>
-    <string name="add_album_dialog_hint">Your new album name</string>
-    <string name="add_album_dialog_error_blank_field">Blank fields are not allowed</string>
+    <string name="add_album_dialog_hint">Album name</string>
+    <string name="add_album_dialog_error_blank_field" translatable="false">Blank fields are not allowed</string>
     <string name="add_album_dialog_error_name_existed">Name existed</string>
     <string name="file_duplicate">Your file is duplicate, can you want override</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel" translatable="false">@android:string/cancel</string>
     <string name="new_file">New file</string>
-
+    <string name="delete_warning_dialog_title">Remove from device</string>
+    <string name="delete_warning_dialog_msg">Do you really want to delete this?</string>
+    <string name="yes" translatable="false">@android:string/yes</string>
+    <string name="no" translatable="false">@android:string/no</string>
 </resources>

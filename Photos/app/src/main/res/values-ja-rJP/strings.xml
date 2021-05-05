@@ -78,4 +78,9 @@
     <string name="emojis">絵文字</string>
     <string name="add_from_phone">デバイスから追加</string>
     <string name="smooth_effect" translatable="false">スムース</string>
+    <string name="add_album_dialog_hint">アルバムの名前</string>
+    <string name="add_album_dialog_error_name_existed">名前は既に存在しています</string>
+    <string name="new_file">新しいファイルを作成</string>
+    <string name="delete_warning_dialog_title">デバイスから削除</string>
+    <string name="delete_warning_dialog_msg">デバイスから完全に削除してもよろしいですか。</string>
 </resources>

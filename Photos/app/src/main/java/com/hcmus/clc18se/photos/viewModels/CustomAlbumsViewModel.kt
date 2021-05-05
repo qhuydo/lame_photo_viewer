@@ -11,8 +11,8 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class CustomAlbumViewModel(
-        application: Application,
-        private val database: PhotosDatabaseDao
+    application: Application,
+    private val database: PhotosDatabaseDao
 ) : AndroidViewModel(application) {
 
     private var _albums = MutableLiveData<List<Album>>()
@@ -42,7 +42,12 @@ class CustomAlbumViewModel(
             val name = it.albumInfo.name
             val id = it.albumInfo.id
             val mediaItems = getMediaItemListFromCustomAlbumItem(it.albumItems)
-            return@map Album(path = "", mediaItems = mediaItems.toMutableList(), name = name, customAlbumId = id)
+            return@map Album(
+                path = "",
+                mediaItems = mediaItems.toMutableList(),
+                name = name,
+                customAlbumId = id
+            )
         }
 
         withContext(Dispatchers.Main) {
@@ -59,23 +64,11 @@ class CustomAlbumViewModel(
 
     }
 
-    private fun getMediaItemListFromCustomAlbumItem(items: List<CustomAlbumItem>): List<MediaItem> {
-//        val mediaItems: MutableList<MediaItem> = mutableListOf()
-//        items.forEach { item ->
-//            val mediaItem = loadMediaItemFromId(item.id)
-//            mediaItem?.let { mediaItems.add(it) } ?: database.removeCustomAlbumItem(item)
-//        }
-//        return mediaItems
-        return getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromIds(
-                items.map { it.id }
+    private fun getMediaItemListFromCustomAlbumItem(items: List<CustomAlbumItem>) =
+        getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromIds(
+            items.map { it.id }
         )
-    }
 
-//    private fun loadMediaItemFromId(itemId: Long): MediaItem? {
-//        return getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromId(
-//                itemId
-//        )
-//    }
 
     private var _reloadDataRequest = MutableLiveData(false)
     val reloadDataRequest: LiveData<Boolean>
@@ -111,8 +104,8 @@ class CustomAlbumViewModel(
     // TODO: fix this inefficient
     fun insertPhotosIntoSelectedAlbum(mediaItems: List<MediaItem>) {
         if (selectedAlbum.value == null
-                || (selectedAlbum.value != null
-                        && selectedAlbum.value!!.customAlbumId == null)
+            || (selectedAlbum.value != null
+                    && selectedAlbum.value!!.customAlbumId == null)
         ) {
             return
         }
@@ -130,8 +123,8 @@ class CustomAlbumViewModel(
 
 @Suppress("UNCHECKED_CAST")
 class CustomAlbumViewModelFactory(
-        private val application: Application,
-        private val database: PhotosDatabaseDao
+    private val application: Application,
+    private val database: PhotosDatabaseDao
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CustomAlbumViewModel::class.java)) {
