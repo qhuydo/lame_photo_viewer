@@ -3,9 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <import type="com.hcmus.clc18se.photos.data.MediaItem" />
+
+        <variable
+            name="photos"
+            type="java.util.List&lt;MediaItem&gt;" />
+    </data>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="?colorSurface">
 
         <include
             android:id="@+id/top_app_bar"
@@ -16,6 +26,7 @@
             android:layout_height="match_parent"
             android:background="?colorSurface"
             android:fitsSystemWindows="true"
+            android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <ImageView
@@ -39,6 +50,22 @@
                 app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            android:id="@+id/photo_list"
+            layout="@layout/photo_list"
+            app:photoList="@{photos}"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/progress_people"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            style="?android:attr/progressBarStyleHorizontal"/>
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
