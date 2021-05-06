@@ -1,11 +1,13 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.app.Activity
+import android.content.ContentUris
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.BaseColumns
 import android.provider.MediaStore
 import android.view.*
 import android.widget.Toast
@@ -18,8 +20,11 @@ import com.afollestad.materialcab.attached.AttachedCab
 import com.afollestad.materialcab.attached.destroy
 import com.afollestad.materialcab.attached.isActive
 import com.afollestad.materialcab.createCab
+import com.afollestad.materialdialogs.MaterialDialog
+import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
+import com.hcmus.clc18se.photos.data.deleteMultipleMediaItems
 import com.hcmus.clc18se.photos.databinding.PhotoListBinding
 import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.getColorAttribute
@@ -47,7 +52,7 @@ import timber.log.Timber
  * @see [PhotoListFragment]
  */
 abstract class AbstractPhotoListFragment(
-    private val menuRes: Int
+        private val menuRes: Int
 ) : BaseFragment(), OnBackPressed {
 
     protected val preferences: SharedPreferences by lazy {
@@ -76,17 +81,17 @@ abstract class AbstractPhotoListFragment(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentListItemView = preferences.getString(
-            getString(R.string.photo_list_view_type_key),
-            MediaItemListAdapter.ITEM_TYPE_LIST.toString()
+                getString(R.string.photo_list_view_type_key),
+                MediaItemListAdapter.ITEM_TYPE_LIST.toString()
         )!!.toInt()
 
         currentListItemSize = preferences.getString(
-            getString(R.string.photo_list_item_size_key),
-            "0"
+                getString(R.string.photo_list_item_size_key),
+                "0"
         )!!.toInt()
 
         deleteRequestLauncher = registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult()
+                ActivityResultContracts.StartIntentSenderForResult()
         ) { activityResult ->
             if (Activity.RESULT_OK == activityResult.resultCode) {
                 Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
@@ -114,9 +119,9 @@ abstract class AbstractPhotoListFragment(
         setPhotoListIcon(photoListImageItem, currentListItemView)
 
         val currentPreference = preferences.getString(
-            getString(
-                R.string.photo_list_item_size_key
-            ), "0"
+                getString(
+                        R.string.photo_list_item_size_key
+                ), "0"
         ) ?: "0"
         setPhotoListItemSizeOption(resources, menu, currentPreference)
     }
@@ -151,8 +156,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-            .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
-            .apply()
+                .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
+                .apply()
 
         refreshRecyclerView()
     }
@@ -171,8 +176,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-            .putString(getString(R.string.photo_list_item_size_key), option)
-            .apply()
+                .putString(getString(R.string.photo_list_item_size_key), option)
+                .apply()
 
         refreshRecyclerView()
 
@@ -245,8 +250,25 @@ abstract class AbstractPhotoListFragment(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 val uriList = adapter.getSelectedItems().map { it.requireUri() }
                 requestDeletePermission(uriList)
-                mainCab?.destroy()
+
             } else {
+                val parentActivity = requireActivity() as? AbstractPhotosActivity
+                if (parentActivity?.haveWriteStoragePermission() == true) {
+
+                    MaterialDialog(requireContext()).show {
+
+                        title(R.string.delete_warning_dialog_title)
+                        message(R.string.delete_warning_dialog_msg)
+                        positiveButton(R.string.yes) {
+                            requireContext().contentResolver.deleteMultipleMediaItems(adapter.getSelectedItems())
+                            mainCab?.destroy()
+                        }
+                        negativeButton(R.string.no) {}
+                    }
+
+                } else {
+                    parentActivity?.jumpToMainActivity()
+                }
 
             }
         }

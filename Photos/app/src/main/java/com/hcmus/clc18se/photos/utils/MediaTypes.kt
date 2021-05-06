@@ -18,7 +18,14 @@ const val TYPE_GIF = 16
 val svgMimeTypes = arrayOf("image/svg+xml")
 
 //val imageExtensions = arrayOf("jpg", "png", "jpe", "jpeg", "bmp")
-val imageMimeTypes = arrayOf("image/*", "image/jpeg", "image/jpg", "image/png", "image/bmp", "image/webp")
+val imageMimeTypes = arrayOf(
+    "image/*",
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/bmp",
+    "image/webp",
+)
 
 //  arrayOf("mp4", "mkv", "webm", "avi")
 val videoExtensions = arrayOf("mp4", "mkv", "webm", "avi")
@@ -100,8 +107,10 @@ private fun checkExtension(path: String?, extensions: Array<String>): Boolean {
 fun getFileName(context: Context, uri: Uri): String? {
     //retrieve file name
     try {
-        val cursor = context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME),
-                null, null, null)
+        val cursor = context.contentResolver.query(
+            uri, arrayOf(OpenableColumns.DISPLAY_NAME),
+            null, null, null
+        )
         if (cursor != null) {
             val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
             cursor.moveToFirst()

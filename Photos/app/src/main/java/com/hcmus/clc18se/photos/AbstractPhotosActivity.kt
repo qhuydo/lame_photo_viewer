@@ -1,7 +1,9 @@
 package com.hcmus.clc18se.photos
 
+import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
 import android.provider.MediaStore
@@ -10,6 +12,7 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
@@ -276,4 +279,12 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         }
         return super.onKeyDown(keyCode, event)
     }
+
+    internal fun haveWriteStoragePermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
 }
