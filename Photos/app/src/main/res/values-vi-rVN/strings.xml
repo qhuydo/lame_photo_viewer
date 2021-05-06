@@ -84,4 +84,15 @@
     <string name="new_file">Tạo file mới</string>
     <string name="delete_warning_dialog_title">Xóa khỏi thiết bị</string>
     <string name="delete_warning_dialog_msg">Bạn thực sự muốn xóa khỏi thiết bị?</string>
+    <string name="set_file_name_dialog_title">Tên ảnh</string>
+    <string name="file_duplicate_warning_dialog_title">Tên đã tồn tại</string>
+    <string name="file_duplicate_warning_dialog_msg">Bạn có muốn ghi đè với file đã bị trùng</string>
+    <string name="override">Ghi đè</string>
+    <string name="rename_unsucceed">Đổi tên thất bại</string>
+    <string name="rename_succeed">Đổi tên thành công</string>
+    <string name="move_succeed">Chuyển file thành công</string>
+    <string name="move_unsucceed">Không thể đổi tên file</string>
+    <string name="failed">Thất bại</string>
+    <string name="copy_succeed">Đã sao chép</string>
+    <string name="copy_file_unsucceed">Không thể sao chép</string>
 </resources>

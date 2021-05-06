@@ -83,4 +83,15 @@
     <string name="new_file">新しいファイルを作成</string>
     <string name="delete_warning_dialog_title">デバイスから削除</string>
     <string name="delete_warning_dialog_msg">デバイスから完全に削除してもよろしいですか。</string>
+    <string name="set_file_name_dialog_title">ファイルの名前</string>
+    <string name="file_duplicate_warning_dialog_title">名前は既に存在しています</string>
+    <string name="file_duplicate_warning_dialog_msg">同じファイルの名が既にあります、上書きしますか。</string>
+    <string name="override">上書き</string>
+    <string name="failed">失敗</string>
+    <string name="rename_unsucceed">名前の変更 失敗</string>
+    <string name="rename_succeed">名前の変更 成功</string>
+    <string name="move_succeed">ファイルに移動 成功</string>
+    <string name="move_unsucceed">ファイルに移動 失敗</string>
+    <string name="copy_succeed">コピー成功</string>
+    <string name="copy_file_unsucceed">コピー失敗</string>
 </resources>

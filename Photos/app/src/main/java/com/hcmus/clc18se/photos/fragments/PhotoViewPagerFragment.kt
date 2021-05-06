@@ -1,21 +1,20 @@
 package com.hcmus.clc18se.photos.fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.*
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import com.google.android.material.textfield.TextInputEditText
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
@@ -92,8 +91,8 @@ class PhotoViewPagerFragment : Fragment() {
             override fun onTileLoadError(e: Exception?) {}
         })
 
-        if (savedInstanceState?.containsKey(BUNDLE_MEDIAITEM) == true) {
-            mediaItem = savedInstanceState.getParcelable(BUNDLE_MEDIAITEM)
+        if (savedInstanceState?.containsKey(BUNDLE_MEDIA_ITEM) == true) {
+            mediaItem = savedInstanceState.getParcelable(BUNDLE_MEDIA_ITEM)
             fullScreen = savedInstanceState.getBoolean(BUNDLE_FULLSCREEN)
         }
 
@@ -155,7 +154,7 @@ class PhotoViewPagerFragment : Fragment() {
         super.onSaveInstanceState(outState)
         val rootView = view
         if (rootView != null) {
-            outState.putParcelable(BUNDLE_MEDIAITEM, mediaItem)
+            outState.putParcelable(BUNDLE_MEDIA_ITEM, mediaItem)
             outState.putBoolean(BUNDLE_FULLSCREEN, fullScreen)
         }
     }
@@ -176,135 +175,85 @@ class PhotoViewPagerFragment : Fragment() {
     private fun secret() {
         val cw = ContextWrapper(requireContext().applicationContext)
         val directory = cw.getDir("images", Context.MODE_PRIVATE)
-        var fileDest:File = File(directory, mediaItem!!.name)
-        var newName:String? = null
-        if (fileDest.exists()) {
-            val dialog = Dialog(requireContext()).apply {
-                requestWindowFeature(Window.FEATURE_NO_TITLE)
-                setContentView(R.layout.dialog_duplicate_file)
-            }
+        var fileDest = File(directory, mediaItem!!.name)
 
-            dialog.findViewById<Button>(R.id.ok_override)?.setOnClickListener {
-                newName?.let {
-                    fileDest = File(directory, newName)
-                    if (fileDest.exists()) {
-                        Toast.makeText(requireContext(), "Your file is duplicate", Toast.LENGTH_SHORT).show()
-                    } else {
-                        moveFile(fileDest)
-                        dialog.dismiss()
+        if (fileDest.exists()) {
+            MaterialDialog(requireContext()).show {
+                title(R.string.file_duplicate_warning_dialog_title)
+                message(R.string.file_duplicate_warning_dialog_msg)
+                negativeButton(R.string.cancel) { }
+                @Suppress("DEPRECATION")
+                neutralButton(R.string.rename) {
+
+                    MaterialDialog(requireContext()).show {
+                        input()
+                        title(R.string.set_file_name_dialog_title)
+                        positiveButton {
+                            val newName = "${getInputField().text}${mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))}"
+                            fileDest = File(directory, newName)
+                            if (fileDest.exists()) {
+                                Toast.makeText(requireContext(), R.string.failed, Toast.LENGTH_SHORT).show()
+                            } else {
+                                copyToInternal(fileDest)
+                            }
+                        }
                     }
-                }?: run{
-                    moveFile(fileDest)
-                    dialog.dismiss()
+
+                }
+                positiveButton(R.string.override) {
+                    copyToInternal(fileDest)
                 }
             }
-
-            dialog.findViewById<Button>(R.id.rename_button)?.setOnClickListener {
-                dialog.findViewById<TextInputEditText>(R.id.rename_field).visibility = View.VISIBLE
-                newName = dialog.findViewById<TextInputEditText>(R.id.rename_field).text.toString() + mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))
-                dialog.findViewById<TextInputEditText>(R.id.rename_field).addTextChangedListener(object : TextWatcher {
-                    override fun afterTextChanged(s: Editable) {}
-                    override fun beforeTextChanged(s: CharSequence, start: Int,
-                                                   count: Int, after: Int) {
-
-                    }
-
-                    override fun onTextChanged(s: CharSequence, start: Int,
-                                               before: Int, count: Int) {
-                        newName = s.toString() + mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))
-                    }
-                })
-            }
-
-            dialog.findViewById<Button>(R.id.cancel_override)?.setOnClickListener {
-                dialog.dismiss()
-            }
-            dialog.show()
-        }
-        else{
-            moveFile(fileDest)
+        } else {
+            copyToInternal(fileDest)
         }
     }
 
-    private fun rename(){
-        var newName:String? = mediaItem!!.name
+    private fun rename() {
         val path = mediaItem!!.requirePath(requireContext())
-        val dialog = Dialog(requireContext()).apply {
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.dialog_rename)
-        }
 
-        dialog.findViewById<Button>(R.id.ok_override)?.setOnClickListener {
-            newName?.let {
-                val fileDest = File(path!!.substring(0, path.lastIndexOf("/") + 1) + newName)
+        MaterialDialog(requireContext()).show {
+            input()
+            title(R.string.set_file_name_dialog_title)
+            positiveButton {
+                val newName = "${getInputField().text}${mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))}"
+                val fileDest = File("${path!!.substring(0, path.lastIndexOf("/") + 1)}$newName")
+
                 if (fileDest.exists()) {
-                    Toast.makeText(requireContext(), "Your file is duplicate", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.file_duplicate_warning_dialog_title), Toast.LENGTH_SHORT).show()
                 } else {
                     try {
                         val contentResolver = requireContext().contentResolver
                         val contentValues = ContentValues()
                         contentValues.put(MediaStore.Files.FileColumns.DISPLAY_NAME, newName);
                         contentResolver.update(mediaItem!!.requireUri(), contentValues, null, null);
-                        dialog.dismiss()
-                        Toast.makeText(requireContext(), "Rename successful", Toast.LENGTH_SHORT).show()
-                        (requireActivity() as AppCompatActivity).supportActionBar?.title = newName!!
-                    }
-                    catch (e: Exception){
-                        Toast.makeText(requireContext(), "Rename unsuccessful", Toast.LENGTH_SHORT).show()
+
+                        Toast.makeText(requireContext(), getString(R.string.rename_succeed), Toast.LENGTH_SHORT).show()
+                        (requireActivity() as AppCompatActivity).supportActionBar?.title = newName
+
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), getString(R.string.rename_unsucceed), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
-
-        dialog.findViewById<TextInputEditText>(R.id.rename_field).visibility = View.VISIBLE
-        newName = dialog.findViewById<TextInputEditText>(R.id.rename_field).text.toString() + mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))
-        dialog.findViewById<TextInputEditText>(R.id.rename_field).addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(s: CharSequence, start: Int,
-                                           count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int,
-                                       before: Int, count: Int) {
-                newName = s.toString() + mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))
-            }
-        })
-        dialog.show()
     }
 
-    private fun moveFile(fileDest: File){
-        try {
-            val outputStream = FileOutputStream(fileDest)
-            val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
-            inputStream!!.copyTo(outputStream)
-            inputStream.close()
-            outputStream.close()
-            Toast.makeText(requireContext(), "Move successful", Toast.LENGTH_SHORT).show()
-        } catch (e: java.lang.Exception) {
-            Toast.makeText(context, "Move file unsuccess", Toast.LENGTH_SHORT).show()
-        }
+    private fun copyToInternal(fileDest: File) {
+        var outputStream: FileOutputStream? = null
+        var inputStream: InputStream? = null
 
-//        // delete old file
-//        val resolver = requireContext().contentResolver
-//        try {
-//            result = resolver.delete(mediaItem!!.requireUri(), null, null)
-//        }
-//        catch (securityException: SecurityException) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                val recoverableSecurityException =
-//                        securityException as? RecoverableSecurityException
-//                                ?: throw SecurityException()
-//
-//                val intentSender = recoverableSecurityException.userAction.actionIntent.intentSender
-//
-//                intentSender?.let {
-//                    startIntentSenderForResult(intentSender, 0, null, 0, 0, 0, null)
-//                }
-//            } else {
-//                throw SecurityException()
-//            }
-//        }
+        try {
+            outputStream = FileOutputStream(fileDest)
+            inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
+            inputStream?.copyTo(outputStream)
+            Toast.makeText(requireContext(), getString(R.string.move_succeed), Toast.LENGTH_SHORT).show()
+        } catch (e: java.lang.Exception) {
+            Toast.makeText(context, getString(R.string.move_unsucceed), Toast.LENGTH_SHORT).show()
+        } finally {
+            inputStream?.close()
+            outputStream?.close()
+        }
     }
 
     private fun openWith() {
@@ -314,7 +263,7 @@ class PhotoViewPagerFragment : Fragment() {
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
         } catch (anfe: ActivityNotFoundException) {
-            Toast.makeText(requireContext(), "No App found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.no_app_found), Toast.LENGTH_SHORT).show()
             anfe.printStackTrace()
         }
     }
@@ -340,9 +289,9 @@ class PhotoViewPagerFragment : Fragment() {
                     inputStream!!.copyTo(outputStream!!)
                     inputStream.close()
                     outputStream.close()
-                    Toast.makeText(context, "Copy file success", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.copy_succeed), Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Copy file unsuccessful", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.copy_file_unsucceed), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -350,7 +299,7 @@ class PhotoViewPagerFragment : Fragment() {
     }
 
     companion object {
-        private const val BUNDLE_MEDIAITEM = "uri"
+        private const val BUNDLE_MEDIA_ITEM = "uri"
         private const val BUNDLE_FULLSCREEN = "fullscreen"
         private const val COPY_FILE = 2345
     }

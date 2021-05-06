@@ -25,7 +25,7 @@ data class MediaItem(
         private var uri: Uri?,
         private var dateTaken: Date?,
         val mimeType: String?,
-        private var orientation: Int?,
+        var orientation: Int?,
         private var path: String?,
 ) : Parcelable {
 

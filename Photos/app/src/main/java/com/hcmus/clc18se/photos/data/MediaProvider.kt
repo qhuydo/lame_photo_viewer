@@ -221,7 +221,6 @@ private fun ContentResolver.queryMediaItems(
     return null
 }
 
-
 fun ContentResolver.deleteMultipleMediaItems(list: List<MediaItem>) {
 
     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {

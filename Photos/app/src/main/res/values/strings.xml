@@ -102,11 +102,22 @@
     <string name="add_album_dialog_hint">Album name</string>
     <string name="add_album_dialog_error_blank_field" translatable="false">Blank fields are not allowed</string>
     <string name="add_album_dialog_error_name_existed">Name existed</string>
-    <string name="file_duplicate">Your file is duplicate, can you want override</string>
+    <string name="file_duplicate_warning_dialog_title">Name existed</string>
+    <string name="file_duplicate_warning_dialog_msg">The same filename exist. Do you want to override</string>
+    <string name="override">Override</string>
     <string name="cancel" translatable="false">@android:string/cancel</string>
     <string name="new_file">New file</string>
     <string name="delete_warning_dialog_title">Remove from device</string>
     <string name="delete_warning_dialog_msg">Do you really want to delete this?</string>
     <string name="yes" translatable="false">@android:string/yes</string>
     <string name="no" translatable="false">@android:string/no</string>
+    <string name="failed">Failed</string>
+    <string name="set_file_name_dialog_title">File name</string>
+    <string name="rename_unsucceed">Renamed</string>
+    <string name="rename_succeed">Could not rename</string>
+    <string name="move_succeed">Moved</string>
+    <string name="move_unsucceed">Could not move</string>
+    <string name="no_app_found">No App found</string>
+    <string name="copy_succeed">Copied</string>
+    <string name="copy_file_unsucceed">Could not copy</string>
 </resources>
