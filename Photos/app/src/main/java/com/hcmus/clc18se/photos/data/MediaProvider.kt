@@ -5,6 +5,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.BaseColumns
 import android.provider.MediaStore
 import androidx.core.content.ContextCompat
@@ -218,4 +219,35 @@ private fun ContentResolver.queryMediaItems(
         return list
     }
     return null
+}
+
+
+fun ContentResolver.deleteMultipleMediaItems(list: List<MediaItem>) {
+
+    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+
+        val selection = "(${MediaStore.Files.FileColumns.MEDIA_TYPE}" +
+                "=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
+                " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO})"
+
+        val ids = list.map { it.id }
+
+        query(MediaStore.Files.getContentUri("external"),
+                listOf(BaseColumns._ID).toTypedArray(),
+                selection,
+                null,
+                null
+        )?.use { cursor ->
+            val idColumn = cursor.getColumnIndex(BaseColumns._ID)
+
+            while (cursor.moveToNext()) {
+                val id = cursor.getLong(idColumn)
+                val idx = ids.indexOf(id)
+                if (idx != -1) {
+                    delete(list[idx].requireUri(), null, null)
+                }
+            }
+
+        }
+    }
 }

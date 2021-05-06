@@ -153,7 +153,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
         }
 
         nukeButton.setOnClickListener {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                 MaterialDialog(requireContext()).show {
                     title(R.string.delete_warning_dialog_title)
                     message(R.string.delete_warning_dialog_msg)
@@ -207,8 +207,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
         val address: String? = getMediaItemAddress()
         address?.let {
             Timber.d(it)
-            dialog?.findViewById<TextView>(R.id.name_place)?.text =
-                resources.getString(R.string.location, it)
+            dialog?.findViewById<TextView>(R.id.name_place)?.text = getString(R.string.location, it)
         }
 
         dialog?.findViewById<Button>(R.id.off_info_dialog)?.setOnClickListener {

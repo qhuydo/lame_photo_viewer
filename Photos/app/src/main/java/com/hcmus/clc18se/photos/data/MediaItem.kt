@@ -8,14 +8,10 @@ import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import android.os.Parcelable
 import android.provider.MediaStore
-import android.view.View
-import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import com.caverock.androidsvg.SVG
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import com.hcmus.clc18se.photos.adapters.bindImage
-import com.hcmus.clc18se.photos.adapters.bindScaleImage
 import com.hcmus.clc18se.photos.utils.*
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
@@ -54,7 +50,7 @@ data class MediaItem(
     fun requireUri(): Uri {
         uri?.let {
             return it
-        } ?: return getMediaUriFromMimeType(mimeType, id)
+        } ?: return uriFromMimeType(mimeType, id)
     }
 
     fun requirePath(context: Context): String? {
@@ -115,7 +111,7 @@ data class MediaItem(
             }
         }
 
-        fun getMediaUriFromMimeType(mimeType: String?, id: Long): Uri {
+        fun uriFromMimeType(mimeType: String?, id: Long): Uri {
             val contentUri = when {
                 checkImageMimeType(mimeType) -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 checkVideoMimeType(mimeType) -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
