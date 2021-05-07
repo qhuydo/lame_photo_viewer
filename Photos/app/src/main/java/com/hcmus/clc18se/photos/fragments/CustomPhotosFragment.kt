@@ -42,15 +42,15 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
 
     private val albumViewModel: CustomAlbumViewModel by activityViewModels {
         CustomAlbumViewModelFactory(
-            requireActivity().application,
-            PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
         )
     }
 
     private val photosViewModel: PhotosViewModel by activityViewModels {
         PhotosViewModelFactory(
-            requireActivity().application,
-            PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
         )
     }
 
@@ -67,11 +67,11 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
-            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
             PhotosViewModelFactory(
-                requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
             )
         }
         this.viewModel = viewModel
@@ -81,12 +81,13 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
         super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply { duration = 300L }
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply { duration = 300L }
+        viewModel.loadSelectedPhotoList()
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = FragmentCustomPhotosBinding.inflate(layoutInflater, container, false)
 
@@ -105,9 +106,9 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
 
     private fun initRecyclerViews() {
         adapter = MediaItemListAdapter(
-            actionCallbacks,
-            currentListItemView,
-            currentListItemSize
+                actionCallbacks,
+                currentListItemView,
+                currentListItemSize
         ).apply {
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
@@ -118,9 +119,9 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
 
                 (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
                     spanCount = getSpanCountForPhotoList(
-                        resources,
-                        currentListItemView,
-                        currentListItemSize
+                            resources,
+                            currentListItemView,
+                            currentListItemSize
                     )
                 }
             }
@@ -143,9 +144,9 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
             }
         }
 
-        albumViewModel.selectedPhotoList.observe(viewLifecycleOwner) {
+        viewModel.customAlbum.observe(viewLifecycleOwner) {
             if (it != null) {
-                viewModel.loadDataFromOtherViewModel(albumViewModel)
+                viewModel.loadSelectedPhotoList()
             }
         }
 
@@ -154,7 +155,7 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
                 val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
                 viewModel.setCurrentItemView(idx)
                 findNavController().navigate(
-                    CustomPhotosFragmentDirections.actionPageCustomPhotoToPhotoViewFragment()
+                        CustomPhotosFragmentDirections.actionPageCustomPhotoToPhotoViewFragment()
                 )
                 viewModel.doneNavigatingToImageView()
             }
@@ -165,7 +166,7 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        albumViewModel.selectedAlbum.value?.let { album ->
+        viewModel.customAlbum.value?.let { album ->
             (requireActivity() as? AppCompatActivity)?.supportActionBar?.title = album.getName()
         }
     }
@@ -173,12 +174,12 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
     override fun refreshRecyclerView() {
         binding.apply {
             adapter = MediaItemListAdapter(
-                actionCallbacks,
-                currentListItemView,
-                currentListItemSize
+                    actionCallbacks,
+                    currentListItemView,
+                    currentListItemSize
             ).apply {
                 stateRestorationPolicy =
-                    RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+                        RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             }
 
             val recyclerView = photoListLayout.photoListRecyclerView
@@ -186,7 +187,7 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
 
             recyclerView.adapter = adapter
             (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.spanCount =
-                getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
+                    getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
 
             bindMediaListRecyclerView(recyclerView, photoList ?: listOf())
             adapter.notifyDataSetChanged()
@@ -202,7 +203,7 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
     override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
 
     private fun addPhotos(mediaItems: List<MediaItem>) {
-        albumViewModel.insertPhotosIntoSelectedAlbum(mediaItems)
+        viewModel.insertPhotosIntoSelectedAlbum(mediaItems)
     }
 
     private fun addPhotosBottomSheet() = MaterialDialog(requireContext(), BottomSheet()).show {
@@ -210,11 +211,11 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
         lifecycleOwner(this@CustomPhotosFragment)
 
         val dialogBinding = PhotoListDialogBinding.inflate(this@CustomPhotosFragment.layoutInflater)
-            .apply {
-                lifecycleOwner = this@CustomPhotosFragment
-                this.viewmodel = photosViewModel
-                initRecyclerViewForBottomSheet(photoListRecyclerView)
-            }
+                .apply {
+                    lifecycleOwner = this@CustomPhotosFragment
+                    this.viewmodel = photosViewModel
+                    initRecyclerViewForBottomSheet(photoListRecyclerView)
+                }
 
 
         val observer = Observer<List<MediaItem>> {
@@ -245,21 +246,20 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
         }
 
         recyclerView.adapter = MediaItemListAdapter(
-            adapterCallback,
-            adapterViewType = currentListItemView,
-            itemViewSize = currentListItemSize,
-            enforceMultiSelection = true
+                adapterCallback,
+                adapterViewType = currentListItemView,
+                itemViewSize = currentListItemSize,
+                enforceMultiSelection = true
         )
 
         (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
             spanCount = getSpanCountForPhotoList(
-                resources,
-                currentListItemView,
-                currentListItemSize
+                    resources,
+                    currentListItemView,
+                    currentListItemSize
             )
         }
 
     }
-
 
 }

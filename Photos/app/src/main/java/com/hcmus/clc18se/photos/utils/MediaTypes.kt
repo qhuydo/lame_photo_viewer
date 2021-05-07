@@ -1,7 +1,6 @@
 package com.hcmus.clc18se.photos.utils
 
 import android.content.Context
-import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -136,4 +135,20 @@ fun getRealPathFromURI(context: Context, contentUri: Uri?): String? {
         it.getString(columnIndex)
     }
 
+}
+
+fun isSVG(mimeType: String?): Boolean {
+    return mimeType in svgMimeTypes
+}
+
+fun isSupportedStaticImage(mimeType: String): Boolean {
+    return mimeType in imageMimeTypes
+}
+
+fun isGif(mimeType: String): Boolean {
+    return (mimeType in gifMimeTypes)
+}
+
+fun isVideo(mimeType: String?): Boolean {
+    return (mimeType in videoMimeTypes)
 }

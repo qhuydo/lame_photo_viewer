@@ -29,8 +29,8 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
 
     private val viewModel: CustomAlbumViewModel by activityViewModels {
         CustomAlbumViewModelFactory(
-            requireActivity().application,
-            PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
         )
     }
 
@@ -41,9 +41,9 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = FragmentCustomAlbumsBinding.inflate(inflater, container, false)
 
@@ -51,9 +51,9 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
         binding.customAlbumViewModel = viewModel
 
         customAlbumAdapter = AlbumListAdapter(
-            currentListItemView,
-            currentListItemSize,
-            onClickListener
+                currentListItemView,
+                currentListItemSize,
+                onClickListener
         )
 
         binding.fabAddAlbum.setOnClickListener { addAlbum() }
@@ -73,8 +73,8 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
         lifecycleOwner(this@CustomAlbumsFragment)
         title(R.string.add_album_dialog_hint)
         input(
-            allowEmpty = false,
-            waitForPositiveButton = false
+                allowEmpty = false,
+                waitForPositiveButton = false
         ) { dialog, charSequence ->
             val inputFiled = dialog.getInputField()
             var isValid = true
@@ -121,21 +121,23 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
 
             val layoutManager = albumListRecyclerView.layoutManager as? GridLayoutManager
             layoutManager?.spanCount = getSpanCountForAlbumList(
-                resources,
-                currentListItemView,
-                currentListItemSize
+                    resources,
+                    currentListItemView,
+                    currentListItemSize
             )
         }
     }
 
     private fun initObservers() {
 
-        viewModel.selectedPhotoList.observe(viewLifecycleOwner) { mediaItems ->
-            if (mediaItems != null) {
-                photosViewModel.setMediaItemFromAlbum(mediaItems)
+        viewModel.navigateToPhotoList.observe(viewLifecycleOwner) { album ->
+            if (album != null) {
+                photosViewModel.setCustomAlbum(album)
+
                 findNavController().navigate(
-                    CustomAlbumsFragmentDirections.actionPageCustomAlbumsToPageCustomPhoto()
+                        CustomAlbumsFragmentDirections.actionPageCustomAlbumsToPageCustomPhoto()
                 )
+
                 viewModel.doneNavigatingToPhotoList()
             }
         }
@@ -144,20 +146,20 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
     override fun refreshRecyclerView() {
         binding.apply {
             customAlbumAdapter = AlbumListAdapter(
-                currentListItemView,
-                currentListItemSize,
-                onClickListener
+                    currentListItemView,
+                    currentListItemSize,
+                    onClickListener
             )
             val recyclerView = albumListLayout.albumListRecyclerView
             val albumList = viewModel.albums
 
             recyclerView.adapter = customAlbumAdapter
             val layoutManager =
-                albumListLayout.albumListRecyclerView.layoutManager as? GridLayoutManager
+                    albumListLayout.albumListRecyclerView.layoutManager as? GridLayoutManager
             layoutManager?.spanCount = getSpanCountForAlbumList(
-                resources,
-                currentListItemView,
-                currentListItemSize
+                    resources,
+                    currentListItemView,
+                    currentListItemSize
             )
 
             bindSampleAlbumListRecyclerView(recyclerView, albumList.value ?: listOf())

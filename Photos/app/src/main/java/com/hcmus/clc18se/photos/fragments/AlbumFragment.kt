@@ -6,6 +6,7 @@ import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.preference.PreferenceManager
@@ -24,6 +25,7 @@ import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
+import kotlinx.coroutines.launch
 
 class AlbumFragment : AbstractAlbumFragment() {
 
@@ -48,6 +50,7 @@ class AlbumFragment : AbstractAlbumFragment() {
         )
 
         setHasOptionsMenu(true)
+
 
         binding.lifecycleOwner = this@AlbumFragment
         binding.albumViewModel = this@AlbumFragment.albumViewModel
@@ -76,10 +79,10 @@ class AlbumFragment : AbstractAlbumFragment() {
         albumViewModel.albumList.observe(viewLifecycleOwner, {
             if (it != null) {
                 binding.progressCircular.visibility = View.INVISIBLE
-                albumViewModel.albumList.value?.let { list ->
-                    bindSampleAlbumListRecyclerView(binding.albumListLayout.albumListRecyclerView, list)
-                    adapter.submitList(this@AlbumFragment.albumViewModel.albumList.value)
-                }
+//                albumViewModel.albumList.value?.let { list ->
+//                    bindSampleAlbumListRecyclerView(binding.albumListLayout.albumListRecyclerView, list)
+//                    adapter.submitList(this@AlbumFragment.albumViewModel.albumList.value)
+//                }
             }
         })
 
@@ -140,17 +143,8 @@ class AlbumFragment : AbstractAlbumFragment() {
 
     // TODO: onRefreshAlbumList
     private fun onRefreshAlbumList(): Boolean {
-//        binding.swipeRefreshLayout.isRefreshing = true
-//        (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
-//            override fun onMediaLoaded(albums: ArrayList<Album>?) {
-//                this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
-//                // binding.swipeRefreshLayout.isRefreshing = false
-//            }
-//
-//            override fun onHasNoPermission() {
-//                (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
-//            }
-//        })
+        // binding.swipeRefreshLayout.isRefreshing = true
+        albumViewModel.loadAlbums()
         return true
     }
 
