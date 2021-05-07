@@ -94,4 +94,6 @@
     <string name="move_unsucceed">ファイルに移動 失敗</string>
     <string name="copy_succeed">コピー成功</string>
     <string name="copy_file_unsucceed">コピー失敗</string>
+    <string name="image_saved">保存 成功</string>
+    <string name="image_saved_fail">保存 失敗</string>
 </resources>

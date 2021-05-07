@@ -1,6 +1,7 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -21,7 +22,7 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 
 abstract class AbstractAlbumFragment : BaseFragment() {
 
-    protected val preferences by lazy {
+    protected val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireActivity())
     }
 

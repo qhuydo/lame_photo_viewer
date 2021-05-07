@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
@@ -33,21 +34,22 @@ class PhotoViewPagerFragment : Fragment() {
     private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
 
     private val onImageClickListener = View.OnClickListener {
-        val window = requireActivity().window
+        // val window = requireActivity().window
 
         actionBar?.let {
             if (it.isShowing) {
                 parentFragment.setBottomToolbarVisibility(false)
                 if (fullScreen) {
-                    window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+                    // window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+                    (requireActivity() as AbstractPhotosActivity).toggleImmersiveMode()
                 }
-
                 parentFragment.hideTheToolbar()
                 it.hide()
             } else {
                 parentFragment.setBottomToolbarVisibility(true)
                 if (fullScreen) {
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+                    // window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+                    (requireActivity() as AbstractPhotosActivity).toggleImmersiveMode()
                 }
                 parentFragment.showTheToolbar()
                 it.show()
@@ -189,10 +191,18 @@ class PhotoViewPagerFragment : Fragment() {
                         input()
                         title(R.string.set_file_name_dialog_title)
                         positiveButton {
-                            val newName = "${getInputField().text}${mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))}"
+                            val newName = "${getInputField().text}${
+                                mediaItem!!.name.substring(
+                                        mediaItem!!.name.lastIndexOf(".")
+                                )
+                            }"
                             fileDest = File(directory, newName)
                             if (fileDest.exists()) {
-                                Toast.makeText(requireContext(), R.string.failed, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                        requireContext(),
+                                        R.string.failed,
+                                        Toast.LENGTH_SHORT
+                                ).show()
                             } else {
                                 copyToInternal(fileDest)
                             }
@@ -216,11 +226,19 @@ class PhotoViewPagerFragment : Fragment() {
             input()
             title(R.string.set_file_name_dialog_title)
             positiveButton {
-                val newName = "${getInputField().text}${mediaItem!!.name.substring(mediaItem!!.name.lastIndexOf("."))}"
+                val newName = "${getInputField().text}${
+                    mediaItem!!.name.substring(
+                            mediaItem!!.name.lastIndexOf(".")
+                    )
+                }"
                 val fileDest = File("${path!!.substring(0, path.lastIndexOf("/") + 1)}$newName")
 
                 if (fileDest.exists()) {
-                    Toast.makeText(requireContext(), getString(R.string.file_duplicate_warning_dialog_title), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                            requireContext(),
+                            getString(R.string.file_duplicate_warning_dialog_title),
+                            Toast.LENGTH_SHORT
+                    ).show()
                 } else {
                     try {
                         val contentResolver = requireContext().contentResolver
@@ -228,11 +246,19 @@ class PhotoViewPagerFragment : Fragment() {
                         contentValues.put(MediaStore.Files.FileColumns.DISPLAY_NAME, newName);
                         contentResolver.update(mediaItem!!.requireUri(), contentValues, null, null);
 
-                        Toast.makeText(requireContext(), getString(R.string.rename_succeed), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                                requireContext(),
+                                getString(R.string.rename_succeed),
+                                Toast.LENGTH_SHORT
+                        ).show()
                         (requireActivity() as AppCompatActivity).supportActionBar?.title = newName
 
                     } catch (e: Exception) {
-                        Toast.makeText(requireContext(), getString(R.string.rename_unsucceed), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                                requireContext(),
+                                getString(R.string.rename_unsucceed),
+                                Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -247,7 +273,8 @@ class PhotoViewPagerFragment : Fragment() {
             outputStream = FileOutputStream(fileDest)
             inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
             inputStream?.copyTo(outputStream)
-            Toast.makeText(requireContext(), getString(R.string.move_succeed), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.move_succeed), Toast.LENGTH_SHORT)
+                    .show()
         } catch (e: java.lang.Exception) {
             Toast.makeText(context, getString(R.string.move_unsucceed), Toast.LENGTH_SHORT).show()
         } finally {
@@ -263,7 +290,8 @@ class PhotoViewPagerFragment : Fragment() {
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
         } catch (anfe: ActivityNotFoundException) {
-            Toast.makeText(requireContext(), getString(R.string.no_app_found), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.no_app_found), Toast.LENGTH_SHORT)
+                    .show()
             anfe.printStackTrace()
         }
     }
@@ -282,16 +310,22 @@ class PhotoViewPagerFragment : Fragment() {
             data?.let {
                 val cw = ContextWrapper(requireContext().applicationContext)
                 val treeUri = data.data
-                val fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
+                val fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                        ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
                 try {
                     val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
                     val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
                     inputStream!!.copyTo(outputStream!!)
                     inputStream.close()
                     outputStream.close()
-                    Toast.makeText(context, getString(R.string.copy_succeed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.copy_succeed), Toast.LENGTH_SHORT)
+                            .show()
                 } catch (e: Exception) {
-                    Toast.makeText(context, getString(R.string.copy_file_unsucceed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                            context,
+                            getString(R.string.copy_file_unsucceed),
+                            Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }

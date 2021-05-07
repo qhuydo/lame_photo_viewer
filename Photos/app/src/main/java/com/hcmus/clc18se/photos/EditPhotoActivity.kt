@@ -26,6 +26,7 @@ import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
 import com.hcmus.clc18se.photos.utils.images.ConvolutionMatrix
 import com.hcmus.clc18se.photos.utils.images.DrawableImageView
 import com.hcmus.clc18se.photos.utils.UndoPhoto
+import com.hcmus.clc18se.photos.utils.getBitMap
 import com.hcmus.clc18se.photos.utils.images.SingleMediaScanner
 import com.theartofdev.edmodo.cropper.CropImageView
 import ja.burhanrashid52.photoeditor.OnSaveBitmap
@@ -627,7 +628,7 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     private fun getBitMapFromUri(uri: Uri): Bitmap {
-        return MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        return contentResolver.getBitMap(uri)
     }
 
     private fun createFileToSave(): File {
@@ -827,6 +828,8 @@ class EditPhotoActivity : AppCompatActivity() {
                 val resolver = contentResolver
                 val date = System.currentTimeMillis()
 
+                // TODO: get the mediaStore from the current uri, then saved the new file
+                //      corresponding with the data from the mediaStore columns
                 contentValues = ContentValues().apply {
                     put(MediaStore.Images.ImageColumns.DISPLAY_NAME, fileSave.name)
                     put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
@@ -854,8 +857,7 @@ class EditPhotoActivity : AppCompatActivity() {
                 }
             }
         } catch (e: IOException) {
-            // TODO: extract string
-            Toast.makeText(this, "Failed to save Image", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.image_saved_fail), Toast.LENGTH_LONG).show()
             return
         }
 
@@ -880,8 +882,7 @@ class EditPhotoActivity : AppCompatActivity() {
         }
         SingleMediaScanner(this, fileSave)
 
-        // TODO: extract string
-        Toast.makeText(this, "Image Saved Successfully", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, getString(R.string.image_saved), Toast.LENGTH_LONG).show()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -914,7 +915,7 @@ class EditPhotoActivity : AppCompatActivity() {
             Intent.ACTION_PICK,
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         )
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_INTENT)
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.pick_image_intent_chooser_title)), PICK_IMAGE_INTENT)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

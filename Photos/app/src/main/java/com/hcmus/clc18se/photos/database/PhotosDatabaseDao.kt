@@ -25,6 +25,10 @@ interface PhotosDatabaseDao {
     @Query("select * from custom_album order by name asc, id desc")
     suspend fun getAllCustomAlbums(): List<CustomAlbum>
 
+    @Transaction
+    @Query("select * from custom_album where id=:id")
+    suspend fun getCustomAlbum(id: Long): CustomAlbum
+
     @Delete
     suspend fun removeCustomAlbumItem(item: CustomAlbumItem)
 

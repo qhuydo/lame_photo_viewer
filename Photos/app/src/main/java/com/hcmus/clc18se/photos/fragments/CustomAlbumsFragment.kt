@@ -129,14 +129,13 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
     }
 
     private fun initObservers() {
-        viewModel.navigateToPhotoList.observe(viewLifecycleOwner) {
-            if (it != null) {
-                photosViewModel.setMediaItemFromAlbum(it.mediaItems)
 
+        viewModel.selectedPhotoList.observe(viewLifecycleOwner) { mediaItems ->
+            if (mediaItems != null) {
+                photosViewModel.setMediaItemFromAlbum(mediaItems)
                 findNavController().navigate(
                     CustomAlbumsFragmentDirections.actionPageCustomAlbumsToPageCustomPhoto()
                 )
-
                 viewModel.doneNavigatingToPhotoList()
             }
         }

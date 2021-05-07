@@ -143,7 +143,7 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
             }
         }
 
-        albumViewModel.selectedAlbum.observe(viewLifecycleOwner) {
+        albumViewModel.selectedPhotoList.observe(viewLifecycleOwner) {
             if (it != null) {
                 viewModel.loadDataFromOtherViewModel(albumViewModel)
             }

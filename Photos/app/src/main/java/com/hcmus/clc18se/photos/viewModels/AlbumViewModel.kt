@@ -3,6 +3,9 @@ package com.hcmus.clc18se.photos.viewModels
 import android.app.Application
 import androidx.lifecycle.*
 import com.hcmus.clc18se.photos.data.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AlbumViewModel(application: Application) : AndroidViewModel(application) {
     private var _albumList = MutableLiveData<List<Album>>()
@@ -12,9 +15,9 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
     private var _navigateToPhotoList = MutableLiveData<Album?>(null)
     val navigateToPhotoList: LiveData<Album?> = _navigateToPhotoList
 
-    private var _onAlbumLoaded = MutableLiveData(false)
-    val onAlbumLoaded: LiveData<Boolean>
-        get() = _onAlbumLoaded
+//    private var _onAlbumLoaded = MutableLiveData(false)
+//    val onAlbumLoaded: LiveData<Boolean>
+//        get() = _onAlbumLoaded
 
     private var _idx = MutableLiveData(0)
     val idx: LiveData<Int>
@@ -33,10 +36,10 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun notifyAlbumLoaded() {
-        _albumList.value = MediaProvider.albums
-        _onAlbumLoaded.value = true
-    }
+//    fun notifyAlbumLoaded() {
+//        _albumList.value = MediaProvider.albums
+//        _onAlbumLoaded.value = true
+//    }
 
     fun startNavigatingToPhotoList(album: Album) {
         _navigateToPhotoList.postValue(album)
@@ -44,5 +47,11 @@ class AlbumViewModel(application: Application) : AndroidViewModel(application) {
 
     fun doneNavigatingToPhotoList() {
         _navigateToPhotoList.value = null
+    }
+
+    fun loadAlbums() = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            _albumList.postValue(getApplication<Application>().contentResolver.loadAlbums())
+        }
     }
 }

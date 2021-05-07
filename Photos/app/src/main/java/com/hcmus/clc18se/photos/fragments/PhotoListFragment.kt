@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
@@ -31,7 +32,14 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
     private val args: PhotoListFragmentArgs by navArgs()
 
-    private lateinit var viewModel: PhotosViewModel
+    private val viewModel: PhotosViewModel by viewModels {
+        PhotosViewModelFactory(
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+        )
+    }
+
+    private lateinit var navGraphViewModel: PhotosViewModel
 
     override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
         override fun onClick(mediaItem: MediaItem) {
@@ -45,7 +53,7 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        val viewModel: PhotosViewModel by navGraphViewModels(
+        val navGraphViewModel: PhotosViewModel by navGraphViewModels(
                 (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
             PhotosViewModelFactory(
@@ -53,7 +61,11 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
                     PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
             )
         }
-        this.viewModel = viewModel
+        val bucketId = args.bucketId
+        val bucketPath = args.albumName
+
+        viewModel.loadImages(bucketId, bucketPath)
+        this.navGraphViewModel = navGraphViewModel
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,26 +95,7 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
         binding.apply {
             lifecycleOwner = this@PhotoListFragment
-
-            photoListLayout.apply {
-                photoListRecyclerView.adapter = adapter
-
-                (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
-                    spanCount = getSpanCountForPhotoList(
-                            resources,
-                            currentListItemView,
-                            currentListItemSize
-                    )
-                }
-
-                swipeRefreshLayout.setOnRefreshListener {
-                    adapter.notifyDataSetChanged()
-                    swipeRefreshLayout.isRefreshing = false
-                }
-
-                // topAppBar2.thumbnail = viewModel.mediaItemList.value?.random()
-            }
-
+            initRecyclerView()
         }
 
         viewModel.mediaItemList.observe(viewLifecycleOwner) { images ->
@@ -111,18 +104,39 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
         viewModel.navigateToImageView.observe(viewLifecycleOwner) { mediaItem ->
             if (mediaItem != null) {
-                val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
-                viewModel.setCurrentItemView(idx)
+                navGraphViewModel.loadDataFromOtherViewModel(viewModel)
+                val idx = navGraphViewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
+                navGraphViewModel.setCurrentItemView(idx)
+
                 this@PhotoListFragment.findNavController().navigate(
                         PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
                 )
                 viewModel.doneNavigatingToImageView()
             }
-
         }
-
         // viewModel.loadImages()
         return binding.root
+    }
+
+    private fun FragmentPhotoListBinding.initRecyclerView() {
+        photoListLayout.apply {
+            photoListRecyclerView.adapter = adapter
+
+            (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
+                spanCount = getSpanCountForPhotoList(
+                        resources,
+                        currentListItemView,
+                        currentListItemSize
+                )
+            }
+
+            swipeRefreshLayout.setOnRefreshListener {
+                adapter.notifyDataSetChanged()
+                swipeRefreshLayout.isRefreshing = false
+            }
+
+            // topAppBar2.thumbnail = viewModel.mediaItemList.value?.random()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

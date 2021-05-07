@@ -95,4 +95,6 @@
     <string name="failed">Thất bại</string>
     <string name="copy_succeed">Đã sao chép</string>
     <string name="copy_file_unsucceed">Không thể sao chép</string>
+    <string name="image_saved">Đã lưu</string>
+    <string name="image_saved_fail">Không thể lưu ảnh</string>
 </resources>

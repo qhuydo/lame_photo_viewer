@@ -171,14 +171,15 @@ fun setVideoVisibility(videoThumbnail: ImageView, mediaItem: MediaItem?) {
 @BindingAdapter("selectThumbnail")
 fun selectAlbumThumbnail(image: ImageView, album: Album?) {
     album?.let {
-        if (album.mediaItems.isNotEmpty()) {
-            val mediaItem = album.getRandomMediaItem()
+        val mediaItem = album.thumbnailUri
+
+        if (mediaItem != null) {
             bindImage(image, mediaItem)
         } else {
             image.resources.obtainTypedArray(R.array.sample_photos).use { samplePhotos ->
                 val sampleResId = samplePhotos.getResourceId(
-                    (0 until samplePhotos.length()).random(),
-                    R.drawable.ic_launcher_indigo_sample)
+                        (0 until samplePhotos.length()).random(),
+                        R.drawable.ic_launcher_indigo_sample)
 
                 Glide.with(image.context)
                         .load(sampleResId)

@@ -10,18 +10,18 @@ import android.os.Looper
 import android.provider.MediaStore
 import androidx.lifecycle.*
 import com.hcmus.clc18se.photos.data.MediaItem
+import com.hcmus.clc18se.photos.data.queryAllMediaItems
+import com.hcmus.clc18se.photos.data.queryMediaItemsFromBucketName
 import com.hcmus.clc18se.photos.database.PhotosDatabaseDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.lang.IndexOutOfBoundsException
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 class PhotosViewModel(
-    application: Application,
-    private val database: PhotosDatabaseDao
+        application: Application,
+        private val database: PhotosDatabaseDao
 ) : AndroidViewModel(application) {
 
     private var _mediaItemList = MutableLiveData<List<MediaItem>>()
@@ -45,7 +45,7 @@ class PhotosViewModel(
         get() = _navigateToImageView
 
     init {
-        _mediaItemList.value = mutableListOf()
+        // _mediaItemList.value = mutableListOf()
         // loadImages()
     }
 
@@ -64,7 +64,7 @@ class PhotosViewModel(
         when (other) {
             is PhotosViewModel -> _mediaItemList.value = other._mediaItemList.value
             is FavouriteAlbumViewModel -> _mediaItemList.value = other.mediaItems.value
-            is CustomAlbumViewModel -> _mediaItemList.value = other.selectedAlbum.value?.mediaItems
+            // is CustomAlbumViewModel -> _mediaItemList.value = other.selectedAlbum.value?.mediaItems
         }
     }
 
@@ -75,22 +75,39 @@ class PhotosViewModel(
                 _mediaItemList.value = images
             }
 
-            if (contentObserver == null) {
-                val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
-                    override fun onChange(selfChange: Boolean) {
-                        loadImages()
-                    }
-                }
-                getApplication<Application>().contentResolver.registerContentObserver(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, observer
-                )
-                getApplication<Application>().contentResolver.registerContentObserver(
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, observer
-                )
-
-                contentObserver = observer
-            }
+            registerObserverWhenNull()
         }
+    }
+
+    private fun registerObserverWhenNull() {
+        if (contentObserver == null) {
+            val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
+                override fun onChange(selfChange: Boolean) {
+                    loadImages()
+                }
+            }
+            val contentResolver = getApplication<Application>().contentResolver
+            contentResolver.registerContentObserver(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, observer
+            )
+            contentResolver.registerContentObserver(
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, observer
+            )
+
+            contentObserver = observer
+        }
+    }
+
+    fun loadImages(bucketId: Long, bucketName: String) {
+        viewModelScope.launch {
+            val contentResolver = getApplication<Application>().contentResolver
+            val images = contentResolver.queryMediaItemsFromBucketName(bucketId, bucketName)
+            withContext(Dispatchers.Main) {
+                _mediaItemList.value = images
+            }
+            registerObserverWhenNull()
+        }
+
     }
 
     fun setMediaItemFromAlbum(mediaItems: List<MediaItem>) {
@@ -140,9 +157,9 @@ class PhotosViewModel(
         withContext(Dispatchers.IO) {
             try {
                 val result = getApplication<Application>().contentResolver.delete(
-                    item.requireUri(),
-                    null,
-                    null)
+                        item.requireUri(),
+                        null,
+                        null)
 
                 Timber.d("Delete result - $result columns affected")
 
@@ -158,8 +175,8 @@ class PhotosViewModel(
             } catch (securityException: SecurityException) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val recoverableSecurityException =
-                        securityException as? RecoverableSecurityException
-                            ?: throw securityException
+                            securityException as? RecoverableSecurityException
+                                    ?: throw securityException
 
                     pendingDeleteImage = item
 
@@ -185,64 +202,7 @@ class PhotosViewModel(
     }
 
     private suspend fun queryMediaItems(): List<MediaItem> {
-        val mediaItems = mutableListOf<MediaItem>()
-        withContext(Dispatchers.IO) {
-
-            val projection = arrayOf(
-                MediaStore.MediaColumns._ID,
-                MediaStore.Files.FileColumns.DATA,
-                MediaStore.MediaColumns.DISPLAY_NAME,
-                MediaStore.MediaColumns.DATE_ADDED,
-                MediaStore.MediaColumns.MIME_TYPE,
-                MediaStore.MediaColumns.DATE_MODIFIED,
-                MediaStore.Images.ImageColumns.ORIENTATION
-            )
-
-            val selection = MediaStore.Files.FileColumns.MEDIA_TYPE +
-                    "=${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}" +
-                    " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}" +
-                    "=${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}"
-            // val selection = MediaStore.Images.Media.DATE_ADDED
-            val selectionArgs: Array<String>? = null
-            val sortOrder = "${MediaStore.MediaColumns.DATE_ADDED} DESC"
-
-            val columnUri = MediaStore.Files.getContentUri("external")
-            //val columnUri = MediaStore.Images.Media.INTERNAL_CONTENT_URI
-
-            getApplication<Application>().contentResolver.query(
-                columnUri,
-                projection,
-                selection,
-                selectionArgs,
-                sortOrder
-            )?.use { cursor ->
-
-                val idCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val dateAddedCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
-                val nameCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-                val mimeCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
-                val pathCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
-                val orientationCol =
-                    cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.ORIENTATION)
-
-                while (cursor.moveToNext()) {
-                    val id = cursor.getLong(idCol)
-                    val dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateAddedCol)))
-                    val displayName = cursor.getString(nameCol)
-                    val mimeType = cursor.getString(mimeCol)
-                    val orientation = orientationCol
-
-                    val path = cursor.getString(pathCol)
-                    // val uri = MediaItem.getMediaUriFromMimeType(mimeType, id)
-
-                    val image =
-                        MediaItem(id, displayName, null, dateAdded, mimeType, orientation, path)
-                    mediaItems += image
-                }
-
-                Timber.i("Found ${cursor.count} images")
-            }
-        }
+        val mediaItems = getApplication<Application>().contentResolver.queryAllMediaItems()
         Timber.i("Found ${mediaItems.size} images")
         return mediaItems
     }
@@ -264,8 +224,8 @@ class PhotosViewModel(
 
 @Suppress("UNCHECKED_CAST")
 class PhotosViewModelFactory(
-    private val application: Application,
-    private val database: PhotosDatabaseDao
+        private val application: Application,
+        private val database: PhotosDatabaseDao
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PhotosViewModel::class.java)) {

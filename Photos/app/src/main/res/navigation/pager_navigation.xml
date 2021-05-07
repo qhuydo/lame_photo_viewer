@@ -44,7 +44,7 @@
         android:id="@+id/page_people"
         android:name="com.hcmus.clc18se.photos.fragments.PeopleFragment"
         android:label="@string/people_title"
-        tools:layout="@layout/fragment_people" >
+        tools:layout="@layout/fragment_people">
         <action
             android:id="@+id/action_page_people_to_photoListFragment2"
             app:destination="@id/photoListFragment" />
@@ -83,6 +83,9 @@
         <argument
             android:name="albumName"
             app:argType="string" />
+        <argument
+            android:name="bucketId"
+            app:argType="long" />
         <action
             android:id="@+id/action_photoListFragment_to_photoViewFragment"
             app:destination="@id/photoViewFragment" />
@@ -126,7 +129,8 @@
     <fragment
         android:id="@+id/page_custom_photo"
         android:name="com.hcmus.clc18se.photos.fragments.CustomPhotosFragment"
-        android:label="CustomPhotosFragment" >
+        android:label="CustomPhotosFragment"
+        tools:layout="@layout/fragment_custom_photos">
         <action
             android:id="@+id/action_page_custom_photo_to_photo_view_fragment"
             app:destination="@id/photoViewFragment" />

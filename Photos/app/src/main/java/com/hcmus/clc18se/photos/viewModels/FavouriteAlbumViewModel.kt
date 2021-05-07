@@ -41,19 +41,19 @@ class FavouriteAlbumViewModel(
     }
 
     fun loadData() {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             Timber.d("Start loading FavouriteMediaItems")
             val startTime = System.currentTimeMillis()
 
             val favourites = database.getAllFavouriteItems()
             val favouriteMediaItems = loadMediaItemFromIds(favourites)
 
-            _mediaItems.postValue(favouriteMediaItems)
+            _mediaItems.value = favouriteMediaItems
             Timber.d("loadFavouriteMediaItems(): ${(System.currentTimeMillis() - startTime)} ms")
         }
     }
 
-    private fun loadMediaItemFromIds(favourites: List<FavouriteItem>) =
+    private suspend fun loadMediaItemFromIds(favourites: List<FavouriteItem>) =
             getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromIds(
                     favourites.map { it.id }
             )

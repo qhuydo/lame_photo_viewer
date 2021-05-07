@@ -120,4 +120,6 @@
     <string name="no_app_found">No App found</string>
     <string name="copy_succeed">Copied</string>
     <string name="copy_file_unsucceed">Could not copy</string>
+    <string name="image_saved">Image Saved</string>
+    <string name="image_saved_fail">Could not save the image</string>
 </resources>

@@ -18,7 +18,6 @@ import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
 import com.hcmus.clc18se.photos.data.Album
-import com.hcmus.clc18se.photos.data.MediaProvider
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentAlbumBinding
 import com.hcmus.clc18se.photos.utils.*
@@ -74,8 +73,8 @@ class AlbumFragment : AbstractAlbumFragment() {
     }
 
     private fun initObservers() {
-        albumViewModel.onAlbumLoaded.observe(viewLifecycleOwner, {
-            if (it == true) {
+        albumViewModel.albumList.observe(viewLifecycleOwner, {
+            if (it != null) {
                 binding.progressCircular.visibility = View.INVISIBLE
                 albumViewModel.albumList.value?.let { list ->
                     bindSampleAlbumListRecyclerView(binding.albumListLayout.albumListRecyclerView, list)
@@ -86,11 +85,10 @@ class AlbumFragment : AbstractAlbumFragment() {
 
         albumViewModel.navigateToPhotoList.observe(viewLifecycleOwner, {
             if (it != null) {
-                photosViewModel.setMediaItemFromAlbum(albumViewModel.getSelectedAlbum()?.mediaItems
-                        ?: listOf())
                 this.findNavController().navigate(
-                        AlbumFragmentDirections.actionPageAlbumToPhotoListFragment(it.getName()
-                                ?: "???"))
+                        AlbumFragmentDirections.actionPageAlbumToPhotoListFragment(
+                                it.getName() ?: "???",
+                                it.bucketId!!))
                 albumViewModel.doneNavigatingToPhotoList()
             }
         })
@@ -140,18 +138,19 @@ class AlbumFragment : AbstractAlbumFragment() {
         }
     }
 
+    // TODO: onRefreshAlbumList
     private fun onRefreshAlbumList(): Boolean {
 //        binding.swipeRefreshLayout.isRefreshing = true
-        (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
-            override fun onMediaLoaded(albums: ArrayList<Album>?) {
-                this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
-                // binding.swipeRefreshLayout.isRefreshing = false
-            }
-
-            override fun onHasNoPermission() {
-                (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
-            }
-        })
+//        (requireActivity() as AbstractPhotosActivity).mediaProvider.loadAlbum(object : MediaProvider.MediaProviderCallBack {
+//            override fun onMediaLoaded(albums: ArrayList<Album>?) {
+//                this@AlbumFragment.albumViewModel.notifyAlbumLoaded()
+//                // binding.swipeRefreshLayout.isRefreshing = false
+//            }
+//
+//            override fun onHasNoPermission() {
+//                (requireActivity() as AbstractPhotosActivity).jumpToMainActivity()
+//            }
+//        })
         return true
     }
 

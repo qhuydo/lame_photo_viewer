@@ -1,9 +1,7 @@
 package com.hcmus.clc18se.photos.fragments
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +19,7 @@ import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPeopleBinding
+import com.hcmus.clc18se.photos.utils.getBitMap
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +29,6 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
-
 
 class PeopleFragment : BaseFragment() {
     private var numberMediaItem = 0
@@ -87,7 +85,6 @@ class PeopleFragment : BaseFragment() {
                         binding.photoList.root.visibility = View.VISIBLE
                     }
                 }
-
             }
         }
 
@@ -100,8 +97,8 @@ class PeopleFragment : BaseFragment() {
 
     override fun getToolbarTitleRes(): Int = R.string.people_title
 
-    @SuppressLint("SetTextI18n")
     private suspend fun listFaceImage(list: List<MediaItem>): List<MediaItem> {
+        val context = requireActivity().applicationContext
         val detector: FaceDetector = FaceDetector.Builder(context)
                 .setTrackingEnabled(false)
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
@@ -112,7 +109,8 @@ class PeopleFragment : BaseFragment() {
             Timber.d("${item.mimeType} ${item.name}")
             try {
                 if (item.isVideo()) continue
-                var bitmap: Bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, item.requireUri())
+
+                var bitmap: Bitmap = context.contentResolver.getBitMap(item.requireUri())
                 var scale = 1
                 val byteBitmap = bitmap.width * bitmap.height * 4
                 while (byteBitmap / scale / scale > 6000000) {
@@ -130,14 +128,10 @@ class PeopleFragment : BaseFragment() {
                     newList.add(item)
                     Timber.d("Face")
                 }
-            }
-            catch (e: NullPointerException)
-            {
-
-            }
+            } catch (e: Exception) { }
             number++
             withContext(Dispatchers.Main) {
-                binding.progressPeople.text = number.toString() + "/" + numberMediaItem
+                binding.progressPeople.text = "$number/$numberMediaItem"
             }
         }
         return newList

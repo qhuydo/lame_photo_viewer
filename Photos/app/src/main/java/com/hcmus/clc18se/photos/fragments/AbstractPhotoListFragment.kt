@@ -30,6 +30,10 @@ import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.getColorAttribute
 import com.hcmus.clc18se.photos.utils.setPhotoListIcon
 import com.hcmus.clc18se.photos.utils.setPhotoListItemSizeOption
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 
@@ -254,18 +258,7 @@ abstract class AbstractPhotoListFragment(
             } else {
                 val parentActivity = requireActivity() as? AbstractPhotosActivity
                 if (parentActivity?.haveWriteStoragePermission() == true) {
-
-                    MaterialDialog(requireContext()).show {
-
-                        title(R.string.delete_warning_dialog_title)
-                        message(R.string.delete_warning_dialog_msg)
-                        positiveButton(R.string.yes) {
-                            requireContext().contentResolver.deleteMultipleMediaItems(adapter.getSelectedItems())
-                            mainCab?.destroy()
-                        }
-                        negativeButton(R.string.no) {}
-                    }
-
+                    showDeleteWarningDialog()
                 } else {
                     parentActivity?.jumpToMainActivity()
                 }
@@ -273,6 +266,23 @@ abstract class AbstractPhotoListFragment(
             }
         }
         return true
+    }
+
+    private fun showDeleteWarningDialog() {
+        MaterialDialog(requireContext()).show {
+
+            title(R.string.delete_warning_dialog_title)
+            message(R.string.delete_warning_dialog_msg)
+            positiveButton(R.string.yes) {
+                GlobalScope.launch {
+                    requireContext().contentResolver.deleteMultipleMediaItems(adapter.getSelectedItems())
+                    withContext(Dispatchers.Main) {
+                        mainCab?.destroy()
+                    }
+                }
+            }
+            negativeButton(R.string.no) {}
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.R)

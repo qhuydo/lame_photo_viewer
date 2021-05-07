@@ -4,15 +4,14 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.hcmus.clc18se.photos.data.*
 import com.hcmus.clc18se.photos.database.PhotosDatabaseDao
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class CustomAlbumViewModel(
-    application: Application,
-    private val database: PhotosDatabaseDao
+        application: Application,
+        private val database: PhotosDatabaseDao
 ) : AndroidViewModel(application) {
 
     private var _albums = MutableLiveData<List<Album>>()
@@ -30,44 +29,52 @@ class CustomAlbumViewModel(
     val selectedAlbum: LiveData<Album?>
         get() = _selectedAlbum
 
-    internal fun loadData() = CoroutineScope(Dispatchers.IO).launch {
+    private var _selectedPhotoList = MutableLiveData<List<MediaItem>?>(null)
+    val selectedPhotoList: LiveData<List<MediaItem>?>
+        get() = _selectedPhotoList
+
+    internal fun loadData() = viewModelScope.launch {
         loadAlbumsFromDatabase()
     }
 
     private suspend fun loadAlbumsFromDatabase() {
         Timber.d("Start loading CustomAlbums from the database")
-        val startTime = System.currentTimeMillis()
+        withContext(Dispatchers.IO) {
+            val startTime = System.currentTimeMillis()
 
-        val customAlbums = database.getAllCustomAlbums().map {
-            val name = it.albumInfo.name
-            val id = it.albumInfo.id
-            val mediaItems = getMediaItemListFromCustomAlbumItem(it.albumItems)
-            return@map Album(
-                path = "",
-                mediaItems = mediaItems.toMutableList(),
-                name = name,
-                customAlbumId = id
-            )
-        }
-
-        withContext(Dispatchers.Main) {
-            _albums.value = customAlbums
-
-            if (selectedAlbum.value != null) {
-                _selectedAlbum.value = _albums.value?.first {
-                    it.customAlbumId == selectedAlbum.value?.customAlbumId
-                }
+            val customAlbums = database.getAllCustomAlbums().map {
+                val name = it.albumInfo.name
+                val id = it.albumInfo.id
+                return@map Album(path = "",
+                        name = name,
+                        customAlbumId = id,
+                        thumbnailUri = getFirstMediaItem(it.albumItems.random())?.requireUri()
+                )
             }
 
-            Timber.d("loadData(): ${(System.currentTimeMillis() - startTime)} ms")
-        }
+            withContext(Dispatchers.Main) {
+                _albums.value = customAlbums
 
+                if (selectedAlbum.value != null) {
+                    _selectedAlbum.value = _albums.value?.first {
+                        it.customAlbumId == selectedAlbum.value?.customAlbumId
+                    }
+                }
+
+                Timber.d("loadData(): ${(System.currentTimeMillis() - startTime)} ms")
+            }
+        }
     }
 
-    private fun getMediaItemListFromCustomAlbumItem(items: List<CustomAlbumItem>) =
-        getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromIds(
-            items.map { it.id }
-        )
+    private suspend fun getMediaItemListFromCustomAlbumItem(items: List<CustomAlbumItem>) =
+            getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromIds(
+                    items.map { it.id }
+            )
+
+    private suspend fun getFirstMediaItem(item: CustomAlbumItem) =
+            getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromId(
+                    item.id
+            )
 
 
     private var _reloadDataRequest = MutableLiveData(false)
@@ -83,12 +90,25 @@ class CustomAlbumViewModel(
     }
 
     fun startNavigatingToPhotoList(album: Album) {
-        _selectedAlbum.postValue(album)
-        _navigateToPhotoList.postValue(album)
+        _selectedAlbum.value = album
+        _navigateToPhotoList.value = album
+        loadSelectedPhotoList()
+    }
+
+    fun loadSelectedPhotoList() = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            _selectedAlbum.value?.let { album ->
+                val customAlbumItems = database.getCustomAlbum(album.customAlbumId!!).albumItems
+                val mediaItems = getMediaItemListFromCustomAlbumItem(customAlbumItems)
+                _selectedPhotoList.postValue(mediaItems)
+            }
+        }
     }
 
     fun doneNavigatingToPhotoList() {
         _navigateToPhotoList.value = null
+        _selectedAlbum.value = null
+        _selectedPhotoList.value = null
     }
 
     suspend fun insertNewAlbum(name: String): Album {
@@ -104,8 +124,8 @@ class CustomAlbumViewModel(
     // TODO: fix this inefficient
     fun insertPhotosIntoSelectedAlbum(mediaItems: List<MediaItem>) {
         if (selectedAlbum.value == null
-            || (selectedAlbum.value != null
-                    && selectedAlbum.value!!.customAlbumId == null)
+                || (selectedAlbum.value != null
+                        && selectedAlbum.value!!.customAlbumId == null)
         ) {
             return
         }
@@ -123,8 +143,8 @@ class CustomAlbumViewModel(
 
 @Suppress("UNCHECKED_CAST")
 class CustomAlbumViewModelFactory(
-    private val application: Application,
-    private val database: PhotosDatabaseDao
+        private val application: Application,
+        private val database: PhotosDatabaseDao
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CustomAlbumViewModel::class.java)) {

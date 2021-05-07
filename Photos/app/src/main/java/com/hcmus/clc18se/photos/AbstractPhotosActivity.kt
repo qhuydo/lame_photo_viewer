@@ -18,12 +18,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.preference.PreferenceManager
-import com.hcmus.clc18se.photos.data.Album
-import com.hcmus.clc18se.photos.data.MediaProvider
 import com.hcmus.clc18se.photos.database.PhotosDatabase
-import com.hcmus.clc18se.photos.utils.ui.ICON_COLOR
 import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.OnDirectionKeyDown
+import com.hcmus.clc18se.photos.utils.ui.ICON_COLOR
 import com.hcmus.clc18se.photos.viewModels.*
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
@@ -48,12 +46,12 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     private val customAlbumViewModel: CustomAlbumViewModel by viewModels {
         CustomAlbumViewModelFactory(
-                application,
-                PhotosDatabase.getInstance(this).photosDatabaseDao
+            application,
+            PhotosDatabase.getInstance(this).photosDatabaseDao
         )
     }
 
-    internal val mediaProvider: MediaProvider by lazy { MediaProvider(application.applicationContext) }
+    // internal val mediaProvider: MediaProvider by lazy { MediaProvider(application.applicationContext) }
 
     internal val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
@@ -79,16 +77,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     protected abstract fun setAppbarVisibility(visibility: Boolean)
 
-    private val mediaItemCallback = object : MediaProvider.MediaProviderCallBack {
-        override fun onMediaLoaded(albums: ArrayList<Album>?) {
-            albumViewModel.notifyAlbumLoaded()
-        }
-
-        override fun onHasNoPermission() {
-            jumpToMainActivity()
-        }
-    }
-
     internal fun jumpToMainActivity() {
         val intent = Intent(this@AbstractPhotosActivity, MainActivity::class.java)
         startActivity(intent)
@@ -99,7 +87,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         photosViewModel.loadImages()
-        mediaProvider.loadAlbum(mediaItemCallback)
+        albumViewModel.loadAlbums()
         colorResource.configColor(this)
         colorResource.configTheme()
         configLanguage()
@@ -158,7 +146,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
                 Timber.d("Color config change")
                 val adaptiveIconColor =
-                        preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
+                    preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
 
                 if (adaptiveIconColor) {
                     colorResource.enableSetNewIconFlag()
@@ -177,7 +165,10 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
                 when (languageOptions) {
                     options[defaultIdx] -> {
                         val config = Configuration().apply { setToDefaults() }
-                        baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+                        baseContext.resources.updateConfiguration(
+                            config,
+                            baseContext.resources.displayMetrics
+                        )
                     }
                     else -> {
                         configLanguage()
@@ -196,7 +187,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
             getString(R.string.adaptive_icon_color_key) -> {
                 val adaptiveIconColor =
-                        preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
+                    preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
 
                 if (adaptiveIconColor) {
                     val currentIconColor = colorResource.getCurrentThemeColor()
@@ -269,7 +260,8 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
             KeyEvent.KEYCODE_DPAD_DOWN,
             KeyEvent.KEYCODE_DPAD_LEFT,
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                val currentFragment = navHostFragment.childFragmentManager.fragments[0] as? OnDirectionKeyDown
+                val currentFragment =
+                    navHostFragment.childFragmentManager.fragments[0] as? OnDirectionKeyDown
                 val defaultKeyDown = currentFragment?.onKeyDown(keyCode, event)?.not() ?: true
                 if (defaultKeyDown) {
                     return super.onKeyDown(keyCode, event)
@@ -282,9 +274,40 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     internal fun haveWriteStoragePermission(): Boolean {
         return ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    /**
+     * Detects and toggles immersive mode.
+     */
+    fun toggleImmersiveMode() {
+
+        // BEGIN_INCLUDE (get_current_ui_flags)
+        // The UI options currently enabled are represented by a bitfield.
+        // getSystemUiVisibility() gives us that bitfield.
+        val uiOptions: Int = window.decorView.systemUiVisibility
+        var newUiOptions = uiOptions
+        // END_INCLUDE (get_current_ui_flags)
+        // BEGIN_INCLUDE (toggle_ui_flags)
+        val isImmersiveModeEnabled = (uiOptions or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions
+        if (isImmersiveModeEnabled) {
+            Timber.i("Turning immersive mode mode off. ")
+        } else {
+            Timber.i("Turning immersive mode mode on.")
+        }
+
+        // Immersive mode: Backward compatible to KitKat (API 19).
+        // Note that this flag doesn't do anything by itself, it only augments the behavior
+        // of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the purposes of this sample
+        // all three flags are being toggled together.
+        // This sample uses the "sticky" form of immersive mode, which will let the user swipe
+        // the bars back in again, but will automatically make them disappear a few seconds later.
+        newUiOptions = newUiOptions xor View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        newUiOptions = newUiOptions xor View.SYSTEM_UI_FLAG_FULLSCREEN
+        newUiOptions = newUiOptions xor View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        window.decorView.systemUiVisibility = newUiOptions
+        //END_INCLUDE (set_ui_flags)
+    }
 }
