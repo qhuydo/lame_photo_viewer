@@ -20,7 +20,9 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.data.MediaItem
-import timber.log.Timber
+import com.hcmus.clc18se.photos.utils.getMimeType
+import com.hcmus.clc18se.photos.utils.isSVG
+import com.hcmus.clc18se.photos.utils.isVideo
 
 @BindingAdapter("mediaListItem")
 fun bindMediaListRecyclerView(recyclerView: RecyclerView, data: List<MediaItem>?) {
@@ -85,32 +87,38 @@ fun bindImage(imgView: ImageView, bitmap: Bitmap?) {
 
 @BindingAdapter("imageFromMediaItem")
 fun bindImage(imgView: ImageView, mediaItem: MediaItem?) = mediaItem?.let {
+    bindImage(imgView, it.requireUri(), it.mimeType)
+}
+
+fun bindImage(imgView: ImageView, uri: Uri, mimeType: String?) {
     when {
-        mediaItem.isSVG() -> {
+        isSVG(mimeType) -> {
+
             Glide.with(imgView.context)
                     .`as`(PictureDrawable::class.java)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .listener(SvgSoftwareLayerSetter())
-                    .load(mediaItem.requireUri())
+                    .load(uri)
                     .error(R.drawable.ic_launcher_grey_sample)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imgView)
 
         }
-        mediaItem.isVideo() -> {
+        isVideo(mimeType) -> {
 
-            Timber.d("Load video thumbnail from Glide ")
-            Timber.d("Uri ${mediaItem.requireUri()}")
-            Timber.d("Path ${mediaItem.requirePath(imgView.context)}")
+            // Timber.d("Load video thumbnail from Glide ")
+            // Timber.d("Uri ${mediaItem.requireUri()}")
+            // Timber.d("Path ${mediaItem.requirePath(imgView.context)}")
 
             Glide.with(imgView.context)
                     .asBitmap()
-                    .load(mediaItem.requireUri())
+                    .load(uri)
                     .transition(BitmapTransitionOptions.withCrossFade())
                     .into(imgView)
         }
         else -> {
             Glide.with(imgView.context)
-                    .load(mediaItem.requireUri())
+                    .load(uri)
                     //.apply(requestOptions)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imgView)
@@ -171,10 +179,11 @@ fun setVideoVisibility(videoThumbnail: ImageView, mediaItem: MediaItem?) {
 @BindingAdapter("selectThumbnail")
 fun selectAlbumThumbnail(image: ImageView, album: Album?) {
     album?.let {
-        val mediaItem = album.thumbnailUri
+        val uri = album.thumbnailUri
 
-        if (mediaItem != null) {
-            bindImage(image, mediaItem)
+        if (uri != null) {
+            val mime = getMimeType(image.context, uri)
+            bindImage(image, uri, mime)
         } else {
             image.resources.obtainTypedArray(R.array.sample_photos).use { samplePhotos ->
                 val sampleResId = samplePhotos.getResourceId(

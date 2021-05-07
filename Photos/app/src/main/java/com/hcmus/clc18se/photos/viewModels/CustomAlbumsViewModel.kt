@@ -25,13 +25,13 @@ class CustomAlbumViewModel(
     private var _navigateToPhotoList = MutableLiveData<Album?>(null)
     val navigateToPhotoList: LiveData<Album?> = _navigateToPhotoList
 
-    private var _selectedAlbum = MutableLiveData<Album?>(null)
-    val selectedAlbum: LiveData<Album?>
-        get() = _selectedAlbum
+//    private var _selectedAlbum = MutableLiveData<Album?>(null)
+//    val selectedAlbum: LiveData<Album?>
+//        get() = _selectedAlbum
 
-    private var _selectedPhotoList = MutableLiveData<List<MediaItem>?>(null)
-    val selectedPhotoList: LiveData<List<MediaItem>?>
-        get() = _selectedPhotoList
+//    private var _selectedPhotoList = MutableLiveData<List<MediaItem>?>(null)
+//    val selectedPhotoList: LiveData<List<MediaItem>?>
+//        get() = _selectedPhotoList
 
     internal fun loadData() = viewModelScope.launch {
         loadAlbumsFromDatabase()
@@ -48,33 +48,32 @@ class CustomAlbumViewModel(
                 return@map Album(path = "",
                         name = name,
                         customAlbumId = id,
-                        thumbnailUri = getFirstMediaItem(it.albumItems.random())?.requireUri()
+                        thumbnailUri = getFirstMediaItem(it.albumItems.randomOrNull())?.requireUri()
                 )
             }
 
             withContext(Dispatchers.Main) {
                 _albums.value = customAlbums
 
-                if (selectedAlbum.value != null) {
-                    _selectedAlbum.value = _albums.value?.first {
-                        it.customAlbumId == selectedAlbum.value?.customAlbumId
-                    }
-                }
+//                if (selectedAlbum.value != null) {
+//                    _selectedAlbum.value = _albums.value?.first {
+//                        it.customAlbumId == selectedAlbum.value?.customAlbumId
+//                    }
+//                }
 
                 Timber.d("loadData(): ${(System.currentTimeMillis() - startTime)} ms")
             }
         }
     }
 
-    private suspend fun getMediaItemListFromCustomAlbumItem(items: List<CustomAlbumItem>) =
-            getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromIds(
-                    items.map { it.id }
-            )
-
-    private suspend fun getFirstMediaItem(item: CustomAlbumItem) =
-            getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromId(
-                    item.id
-            )
+    private suspend fun getFirstMediaItem(item: CustomAlbumItem?): MediaItem? {
+        if (item == null) {
+            return null
+        }
+        return getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromId(
+                item.id
+        )
+    }
 
 
     private var _reloadDataRequest = MutableLiveData(false)
@@ -90,25 +89,13 @@ class CustomAlbumViewModel(
     }
 
     fun startNavigatingToPhotoList(album: Album) {
-        _selectedAlbum.value = album
+//        _selectedAlbum.value = album
         _navigateToPhotoList.value = album
-        loadSelectedPhotoList()
-    }
-
-    fun loadSelectedPhotoList() = viewModelScope.launch {
-        withContext(Dispatchers.IO) {
-            _selectedAlbum.value?.let { album ->
-                val customAlbumItems = database.getCustomAlbum(album.customAlbumId!!).albumItems
-                val mediaItems = getMediaItemListFromCustomAlbumItem(customAlbumItems)
-                _selectedPhotoList.postValue(mediaItems)
-            }
-        }
+//        loadSelectedPhotoList()
     }
 
     fun doneNavigatingToPhotoList() {
         _navigateToPhotoList.value = null
-        _selectedAlbum.value = null
-        _selectedPhotoList.value = null
     }
 
     suspend fun insertNewAlbum(name: String): Album {
@@ -119,25 +106,6 @@ class CustomAlbumViewModel(
 
     suspend fun containsAlbumName(name: String): Boolean {
         return database.containsCustomAlbumName(name)
-    }
-
-    // TODO: fix this inefficient
-    fun insertPhotosIntoSelectedAlbum(mediaItems: List<MediaItem>) {
-        if (selectedAlbum.value == null
-                || (selectedAlbum.value != null
-                        && selectedAlbum.value!!.customAlbumId == null)
-        ) {
-            return
-        }
-        viewModelScope.launch {
-            val albumId = selectedAlbum.value!!.customAlbumId!!
-            val customAlbumItems = mediaItems.map {
-                CustomAlbumItem(id = it.id, albumId = albumId)
-            }
-            database.addMediaItemToCustomAlbum(*customAlbumItems.toTypedArray())
-            // requestReloadingData()
-            loadData()
-        }
     }
 }
 

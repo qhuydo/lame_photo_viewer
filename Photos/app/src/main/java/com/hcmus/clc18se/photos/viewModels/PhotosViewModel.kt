@@ -9,9 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import androidx.lifecycle.*
-import com.hcmus.clc18se.photos.data.MediaItem
-import com.hcmus.clc18se.photos.data.queryAllMediaItems
-import com.hcmus.clc18se.photos.data.queryMediaItemsFromBucketName
+import com.hcmus.clc18se.photos.data.*
 import com.hcmus.clc18se.photos.database.PhotosDatabaseDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,6 +49,16 @@ class PhotosViewModel(
 
     private var contentObserver: ContentObserver? = null
 
+    private var _customAlbum = MutableLiveData<Album>(null)
+    val customAlbum: LiveData<Album>
+        get() = _customAlbum
+
+    fun setCustomAlbum(album: Album) {
+        if (album.customAlbumId != null) {
+            _customAlbum.postValue(album)
+        }
+    }
+
     fun setCurrentItemView(newIdx: Int) {
         _mediaItemList.value?.let {
             if (newIdx in it.indices) {
@@ -77,6 +85,26 @@ class PhotosViewModel(
 
             registerObserverWhenNull()
         }
+    }
+
+    fun loadSelectedPhotoList() = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            _customAlbum.value?.let { album ->
+                val customAlbumItems = database.getCustomAlbum(album.customAlbumId!!).albumItems
+                val mediaItems = getMediaItemListFromCustomAlbumItem(customAlbumItems)
+                _mediaItemList.postValue(mediaItems)
+            }
+        }
+    }
+
+    private suspend fun getMediaItemListFromCustomAlbumItem(items: List<CustomAlbumItem>?): List<MediaItem> {
+        if (items == null) {
+            return emptyList()
+        }
+        return getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromIds(
+                items.map { it.id }
+        )
+
     }
 
     private fun registerObserverWhenNull() {
@@ -220,6 +248,25 @@ class PhotosViewModel(
     fun doneNavigatingToImageView() {
         _navigateToImageView.value = null
     }
+
+    fun insertPhotosIntoSelectedAlbum(mediaItems: List<MediaItem>) {
+        if (customAlbum.value == null
+                || (customAlbum.value != null
+                        && customAlbum.value!!.customAlbumId == null)
+        ) {
+            return
+        }
+        viewModelScope.launch {
+            val albumId = customAlbum.value!!.customAlbumId!!
+            val customAlbumItems = mediaItems.map {
+                CustomAlbumItem(id = it.id, albumId = albumId)
+            }
+            database.addMediaItemToCustomAlbum(*customAlbumItems.toTypedArray())
+            // requestReloadingData()
+            loadSelectedPhotoList()
+        }
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST")
