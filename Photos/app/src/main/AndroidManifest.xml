@@ -29,7 +29,7 @@
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="face" />
-
+        <service android:name=".service.DetectFace" />
         <activity
             android:name=".MainActivity"
             android:configChanges="uiMode"

@@ -1,34 +1,33 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.graphics.Bitmap
+import android.app.ActivityManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.core.graphics.scale
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.vision.Frame
-import com.google.android.gms.vision.face.FaceDetector
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
+import com.hcmus.clc18se.photos.PhotosApplication.Companion.list
+import com.hcmus.clc18se.photos.PhotosApplication.Companion.newList
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPeopleBinding
 import com.hcmus.clc18se.photos.utils.getBitMap
+import com.hcmus.clc18se.photos.service.DetectFace
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
-import java.util.*
-import kotlin.collections.ArrayList
 
 class PeopleFragment : BaseFragment() {
     private var numberMediaItem = 0
@@ -75,17 +74,22 @@ class PeopleFragment : BaseFragment() {
 
         viewModel.mediaItemList.observe(viewLifecycleOwner) {
             if (it != null) {
-                numberMediaItem = it.size
-                CoroutineScope(Dispatchers.Default).launch {
-                    val list = listFaceImage(it)
-                    Timber.d("${list.size}")
-                    withContext(Dispatchers.Main) {
-                        binding.photos = list
-                        binding.progressPeople.visibility = View.GONE
-                        binding.photoList.root.visibility = View.VISIBLE
+                if (numberMediaItem == 0)
+                {
+                    list = it
+                    numberMediaItem = it.size
+                    val intent = Intent(context, DetectFace::class.java)
+                    if (requireContext().applicationContext.startService(intent) != null)
+                    {
+                        binding.progressPeople.text = "start"
+                    }
+                    else
+                    {
+                        binding.progressPeople.text = "not start"
                     }
                 }
             }
+            binding.photos = newList
         }
 
         return binding.root
@@ -134,6 +138,5 @@ class PeopleFragment : BaseFragment() {
                 binding.progressPeople.text = "$number/$numberMediaItem"
             }
         }
-        return newList
     }
 }
