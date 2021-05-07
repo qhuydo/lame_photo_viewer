@@ -54,18 +54,7 @@
         <include
             android:id="@+id/photo_list"
             layout="@layout/photo_list"
-            app:photoList="@{photos}"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/progress_people"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            style="?android:attr/progressBarStyleHorizontal"/>
-
+            app:photoList="@{photos}" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

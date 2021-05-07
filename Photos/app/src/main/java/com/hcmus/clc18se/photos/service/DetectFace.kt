@@ -5,14 +5,12 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.scale
@@ -20,7 +18,6 @@ import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.FaceDetector
 import com.hcmus.clc18se.photos.PhotosApplication.Companion.list
 import com.hcmus.clc18se.photos.PhotosApplication.Companion.newList
-import com.hcmus.clc18se.photos.PhotosApplication.Companion.numberDetected
 import com.hcmus.clc18se.photos.data.MediaItem
 import timber.log.Timber
 
@@ -42,6 +39,7 @@ class DetectFace : Service() {
     @SuppressLint("SetTextI18n")
     private fun listFaceImage(list: List<MediaItem>): List<MediaItem> {
         val numberMediaItem = list.size
+        var numberDetected = 0
         val builder = NotificationCompat.Builder(this, CHANNEL_ID).apply {
             setContentTitle("Detect face")
             setContentText("Detect in progress")
@@ -80,6 +78,9 @@ class DetectFace : Service() {
                                 if (faces.size() > 0) {
                                     newList.add(item)
                                     Timber.d("Face")
+                                    val intent = Intent()
+                                    intent.action = "test.Broadcast"
+                                    sendBroadcast(intent)
                                 }
                             }
                             catch (e: NullPointerException)

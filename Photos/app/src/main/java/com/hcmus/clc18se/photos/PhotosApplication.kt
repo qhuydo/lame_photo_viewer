@@ -17,7 +17,6 @@ import timber.log.Timber
 class PhotosApplication : Application() {
     companion object{
         val newList = ArrayList<MediaItem>()
-        var numberDetected = 0
         var list:List<MediaItem>? = null
     }
     private val applicationScope = CoroutineScope(Dispatchers.Default)
