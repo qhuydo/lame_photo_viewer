@@ -11,6 +11,7 @@
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/inner_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:transitionGroup="true">
@@ -20,39 +21,30 @@
             layout="@layout/search_bar"
             android:visibility="visible" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <include
+            android:id="@+id/placeholder"
+            layout="@layout/generic_placeholder"
+            visibleWhenEmpty="@{photosViewModel.mediaItemList}"
+            tools:visibility="gone" />
+
+
+        <include
+            android:id="@+id/photo_list_layout"
+            layout="@layout/photo_list_fast_scroller"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?colorSurface"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_marginBottom="@dimen/bottom_app_bar_overlap_space"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_outline_photo_24"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="ContentDescription" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_album_label"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-            <include
-                android:id="@+id/photo_list_layout"
-                layout="@layout/photo_list" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--            dirty way to create a space between photo list & bottom appbar -->
+        <!--        <TextView-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="128dp"-->
+        <!--            android:background="?colorPrimary"-->
+        <!--            app:layout_anchor="@id/photo_list_layout"-->
+        <!--            app:layout_anchorGravity="bottom"-->
+        <!--            app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/photo_list_layout" />-->
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

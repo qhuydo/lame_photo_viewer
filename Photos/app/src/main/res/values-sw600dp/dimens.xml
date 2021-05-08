@@ -3,4 +3,5 @@
     <dimen name="photo_list_item_size_small">80dp</dimen>
     <dimen name="photo_list_item_size_medium">96dp</dimen>
     <dimen name="photo_list_item_size_big">120dp</dimen>
+    <dimen name="bottom_app_bar_overlap_space">64dp</dimen>
 </resources>

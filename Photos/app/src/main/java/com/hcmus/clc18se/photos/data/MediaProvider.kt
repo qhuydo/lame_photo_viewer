@@ -50,7 +50,7 @@ suspend fun ContentResolver.loadAlbums(): List<Album> = withContext(Dispatchers.
             BaseColumns._ID,
     )
     val selectionArgs: Array<String>? = DEFAULT_MEDIA_ITEM_SELECTION_ARGS
-    val sortOrder = MediaStore.Files.FileColumns.DATE_ADDED
+    val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
     val folderMap = HashMap<Long, Album>()
     val albums = mutableListOf<Album>()
 
@@ -164,8 +164,7 @@ suspend fun ContentResolver.queryAllMediaItems(): MutableList<MediaItem> = withC
 }
 
 suspend fun ContentResolver.queryMediaItemsFromBucketName(
-        bucketId: Long,
-        bucketName: String): List<MediaItem> = withContext(Dispatchers.IO) {
+        bucketId: Long): List<MediaItem> = withContext(Dispatchers.IO) {
 
     val mediaItems = mutableListOf<MediaItem>()
     val projection = DEFAULT_MEDIA_ITEM_PROJECTION

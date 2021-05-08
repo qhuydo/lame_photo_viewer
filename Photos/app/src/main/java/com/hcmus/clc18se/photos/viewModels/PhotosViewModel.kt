@@ -129,7 +129,7 @@ class PhotosViewModel(
     fun loadImages(bucketId: Long, bucketName: String) {
         viewModelScope.launch {
             val contentResolver = getApplication<Application>().contentResolver
-            val images = contentResolver.queryMediaItemsFromBucketName(bucketId, bucketName)
+            val images = contentResolver.queryMediaItemsFromBucketName(bucketId)
             withContext(Dispatchers.Main) {
                 _mediaItemList.value = images
             }

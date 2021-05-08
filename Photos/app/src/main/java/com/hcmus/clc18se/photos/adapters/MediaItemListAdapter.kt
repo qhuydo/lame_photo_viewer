@@ -6,27 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Checkable
 import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.*
 import com.google.android.material.card.MaterialCardView
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.ItemPhotoHeaderBinding
 import com.hcmus.clc18se.photos.databinding.ItemPhotoListBinding
 import com.hcmus.clc18se.photos.databinding.ItemPhotoListGridBinding
+import com.l4digital.fastscroll.FastScroller
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class MediaItemListAdapter(
-    private val actionCallbacks: ActionCallbacks,
-    private val adapterViewType: Int = ITEM_TYPE_GRID,
-    private val itemViewSize: Int = ITEM_SIZE_MEDIUM,
-    private val enforceMultiSelection: Boolean = false
-) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItem.DiffCallBack) {
+        private val actionCallbacks: ActionCallbacks,
+        private val adapterViewType: Int = ITEM_TYPE_GRID,
+        private val itemViewSize: Int = ITEM_SIZE_MEDIUM,
+        private val enforceMultiSelection: Boolean = false
+) : ListAdapter<AdapterItem, RecyclerView.ViewHolder>(AdapterItem.DiffCallBack),
+        FastScroller.SectionIndexer {
 
     companion object {
         const val ITEM_TYPE_LIST = 0
@@ -42,6 +42,9 @@ class MediaItemListAdapter(
     private var multiSelect = false
     private val selectedItems = mutableListOf<MediaItem>()
 
+    private var headerIndices = mutableListOf<Int>()
+    private var headers = arrayOf<AdapterItem.AdapterItemHeader>()
+
     fun numberOfSelectedItems(): Int {
         return selectedItems.size
     }
@@ -51,6 +54,17 @@ class MediaItemListAdapter(
     fun filterAndSubmitList(items: List<MediaItem>) {
         adapterScope.launch {
             val list = actionCallbacks.onGroupListItem(items)
+            val headerList = mutableListOf<AdapterItem.AdapterItemHeader>()
+            list.forEachIndexed { index, adapterItem ->
+                if (adapterItem is AdapterItem.AdapterItemHeader) {
+                    headerIndices.add(index)
+                    headerList.add(adapterItem)
+                }
+            }
+            headers = headerList.toTypedArray()
+//            Timber.d(headerList.toString())
+//            Timber.d(headerIndices.toString())
+
             withContext(Dispatchers.Main) {
                 submitList(list)
             }
@@ -62,8 +76,8 @@ class MediaItemListAdapter(
         when (holder) {
             is MediaItemViewHolder -> {
                 bindMediaItemViewHolder(
-                    holder,
-                    (adapterItem as AdapterItem.AdapterMediaItem).mediaItem
+                        holder,
+                        (adapterItem as AdapterItem.AdapterMediaItem).mediaItem
                 )
             }
             is MediaHeaderViewHolder -> {
@@ -83,8 +97,8 @@ class MediaItemListAdapter(
     }
 
     private fun setListeners(
-        holderMediaItem: MediaItemViewHolder,
-        item: MediaItem
+            holderMediaItem: MediaItemViewHolder,
+            item: MediaItem
     ) {
         if (enforceMultiSelection && !multiSelect) {
             multiSelect = true
@@ -172,13 +186,19 @@ class MediaItemListAdapter(
             return items.map { AdapterItem.AdapterMediaItem(it) }
         }
     }
+
+    override fun getSectionText(position: Int): CharSequence {
+        val lastIdx = headerIndices.firstOrNull { index -> position <= index }
+                ?: headerIndices.last()
+        return (getItem(lastIdx) as? AdapterItem.AdapterItemHeader)?.title ?: ""
+    }
 }
 
 class MediaItemViewHolder(
-    private val listBinding: ViewDataBinding,
-    private val itemViewSize: Int = MediaItemListAdapter.ITEM_SIZE_MEDIUM
+        private val listBinding: ViewDataBinding,
+        private val itemViewSize: Int = MediaItemListAdapter.ITEM_SIZE_MEDIUM
 ) :
-    RecyclerView.ViewHolder(listBinding.root) {
+        RecyclerView.ViewHolder(listBinding.root) {
 
     fun bind(item: MediaItem) {
         when (listBinding) {
@@ -196,26 +216,26 @@ class MediaItemViewHolder(
 
     companion object {
         fun from(
-            parent: ViewGroup,
-            viewType: Int,
-            itemViewSize: Int = MediaItemListAdapter.ITEM_SIZE_MEDIUM
+                parent: ViewGroup,
+                viewType: Int,
+                itemViewSize: Int = MediaItemListAdapter.ITEM_SIZE_MEDIUM
         ): MediaItemViewHolder {
             return when (viewType) {
                 MediaItemListAdapter.ITEM_TYPE_LIST -> MediaItemViewHolder(
-                    ItemPhotoListBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    ),
-                    itemViewSize
+                        ItemPhotoListBinding.inflate(
+                                LayoutInflater.from(parent.context),
+                                parent,
+                                false
+                        ),
+                        itemViewSize
                 )
                 else -> MediaItemViewHolder(
-                    ItemPhotoListGridBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    ),
-                    itemViewSize
+                        ItemPhotoListGridBinding.inflate(
+                                LayoutInflater.from(parent.context),
+                                parent,
+                                false
+                        ),
+                        itemViewSize
                 )
             }
         }
@@ -233,7 +253,7 @@ class MediaItemViewHolder(
 }
 
 class MediaHeaderViewHolder(val binding: ItemPhotoHeaderBinding) :
-    RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root) {
 
     fun bind(itemHeader: AdapterItem.AdapterItemHeader) {
         binding.header = itemHeader
@@ -242,12 +262,11 @@ class MediaHeaderViewHolder(val binding: ItemPhotoHeaderBinding) :
     companion object {
         fun from(parent: ViewGroup): MediaHeaderViewHolder {
             return MediaHeaderViewHolder(
-                ItemPhotoHeaderBinding.inflate(LayoutInflater.from(parent.context))
+                    ItemPhotoHeaderBinding.inflate(LayoutInflater.from(parent.context))
             )
         }
     }
 }
-
 
 sealed class AdapterItem {
     abstract val id: Long
@@ -257,8 +276,8 @@ sealed class AdapterItem {
     }
 
     data class AdapterItemHeader(
-        val timeStamp: Long,
-        val title: String
+            val timeStamp: Long,
+            val title: String
     ) : AdapterItem() {
         override val id: Long = timeStamp * -1
     }

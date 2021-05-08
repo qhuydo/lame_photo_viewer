@@ -36,17 +36,25 @@
         <license>Apache Software License 2.0</license>
     </notice>
 
+        <notice>
+        <name>colorpreference</name>
+        <url>https://github.com/kizitonwose/colorpreference</url>
+        <copyright>Copyright (C) 2016 Kizito Nwose</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+
+    <notice>
+        <name>FastScroll</name>
+        <url>https://github.com/L4Digital/FastScroll</url>
+        <license>Apache Software License 2.0</license>
+        <copyright>Copyright 2018 L4 Digital. All rights reserved.</copyright>
+    </notice>
+
     <notice>
         <name>Glide</name>
         <url>https://github.com/bumptech/glide</url>
     </notice>
 
-    <notice>
-        <name>FlexibleAdapter</name>
-        <url>https://github.com/davideas/FlexibleAdapter</url>
-        <license>Apache Software License 2.0</license>
-        <copyright>Copyright 2015-2017 Davide Steduto.</copyright>
-    </notice>
 
     <notice>
         <name>Material Contextual Action Bar</name>

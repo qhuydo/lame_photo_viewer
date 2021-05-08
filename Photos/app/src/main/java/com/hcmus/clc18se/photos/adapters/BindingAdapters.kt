@@ -23,11 +23,20 @@ import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.utils.getMimeType
 import com.hcmus.clc18se.photos.utils.isSVG
 import com.hcmus.clc18se.photos.utils.isVideo
+import com.l4digital.fastscroll.FastScrollView
 
 @BindingAdapter("mediaListItem")
 fun bindMediaListRecyclerView(recyclerView: RecyclerView, data: List<MediaItem>?) {
     data?.let {
         val adapter = recyclerView.adapter as? MediaItemListAdapter
+        adapter?.filterAndSubmitList(data)
+    }
+}
+
+@BindingAdapter("mediaListItem")
+fun bindMediaListRecyclerView(fastScrollView: FastScrollView, data: List<MediaItem>?) {
+    data?.let {
+        val adapter = fastScrollView.recyclerView.adapter as? MediaItemListAdapter
         adapter?.filterAndSubmitList(data)
     }
 }

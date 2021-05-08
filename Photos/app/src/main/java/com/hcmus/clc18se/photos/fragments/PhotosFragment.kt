@@ -1,10 +1,8 @@
 package com.hcmus.clc18se.photos.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.Toolbar
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -21,14 +19,13 @@ import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotosBinding
-import com.hcmus.clc18se.photos.service.DetectFace
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
+import com.l4digital.fastscroll.FastScroller
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
@@ -64,7 +61,8 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
                                 dateFormat.format(it.time)
                         )
                     } ?: return super.onGroupListItem(items)
-            var headerTimeStamp = items.first().requireDateTaken()?.month to items.first().requireDateTaken()?.year
+            var headerTimeStamp =
+                    items.first().requireDateTaken()?.month to items.first().requireDateTaken()?.year
 
             items.forEachIndexed { index, mediaItem ->
                 if (index == 0) {
@@ -82,7 +80,8 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
                         adapterItems.add(headerItem)
                     }
                 }
-                        ?: return adapterItems + items.subList(index, items.lastIndex).map { AdapterItem.AdapterMediaItem(it) }
+                        ?: return adapterItems + items.subList(index, items.lastIndex)
+                                .map { AdapterItem.AdapterMediaItem(it) }
                 adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
             }
 
@@ -106,15 +105,13 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_photos, container, false
-        )
-
+        binding = FragmentPhotosBinding.inflate(inflater, container, false)
         photoListBinding = binding.photoListLayout
 
         setHasOptionsMenu(true)
 
-        adapter = MediaItemListAdapter(actionCallbacks,
+        adapter = MediaItemListAdapter(
+                actionCallbacks,
                 currentListItemView,
                 currentListItemSize
         ).apply {
@@ -128,15 +125,10 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
             photoListLayout.apply {
                 photoList = viewModel.mediaItemList.value
-                photoListRecyclerView.adapter = adapter
-                bindMediaListRecyclerView(photoListRecyclerView, photoList)
-
-                (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
-                    spanCount = getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
-                }
+                setUpRecyclerView()
 
                 swipeRefreshLayout.setOnRefreshListener {
-                    adapter.notifyDataSetChanged()
+                    viewModel.loadImages()
                     swipeRefreshLayout.isRefreshing = false
                 }
             }
@@ -175,19 +167,22 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
     override fun refreshRecyclerView() {
         binding.apply {
-            adapter = MediaItemListAdapter(actionCallbacks,
+            adapter = MediaItemListAdapter(
+                    actionCallbacks,
                     currentListItemView,
                     currentListItemSize
             ).apply {
-                stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+                stateRestorationPolicy =
+                        RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             }
 
-            val recyclerView = photoListLayout.photoListRecyclerView
+            val recyclerView = photoListLayout.fastscrollView.recyclerView
             val photoList = viewModel.mediaItemList.value
 
             recyclerView.adapter = adapter
-            (photoListLayout.photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
-                spanCount = getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
+            (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
+                spanCount =
+                        getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
             }
 
             bindMediaListRecyclerView(recyclerView, photoList ?: listOf())
@@ -197,7 +192,8 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
     }
 
     override fun getCadSubId(): Int {
-        val bottomAppBarPref = preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0")
+        val bottomAppBarPref =
+                preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0")
         val usingTabLayout = bottomAppBarPref == MainActivity.TAB_LAYOUT_OPTION
         return if (usingTabLayout) R.id.cab_stub_tab else R.id.cab_stub
     }
@@ -207,4 +203,37 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
     override fun getAppbar(): AppBarLayout = binding.topAppBar.appBarLayout
 
     override fun getToolbarTitleRes(): Int = R.string.photo_title
+
+    private fun setUpRecyclerView() {
+        binding.photoListLayout.apply {
+            val recyclerView = fastscrollView.recyclerView
+            recyclerView.layoutManager = StaggeredGridLayoutManager(
+                    getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize),
+                    StaggeredGridLayoutManager.VERTICAL
+            )
+
+            fastscrollView.fastScroller.setFastScrollListener(object : FastScroller.FastScrollListener {
+                override fun onFastScrollStart(fastScroller: FastScroller?) {
+                    swipeRefreshLayout.isEnabled = false
+                }
+
+                override fun onFastScrollStop(fastScroller: FastScroller?) {
+                    swipeRefreshLayout.isEnabled = true
+                    (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
+                        invalidateSpanAssignments()
+                        requestLayout()
+                    }
+                }
+
+            })
+
+            fastscrollView.fastScroller.setSectionIndexer { position ->
+                adapter.getSectionText(position)
+            }
+
+            recyclerView.adapter = adapter
+            bindMediaListRecyclerView(recyclerView, photoList)
+        }
+
+    }
 }

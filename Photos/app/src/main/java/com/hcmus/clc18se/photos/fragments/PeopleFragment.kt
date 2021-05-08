@@ -14,22 +14,18 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.PhotosApplication.Companion.list
 import com.hcmus.clc18se.photos.PhotosApplication.Companion.newList
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
-import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPeopleBinding
 import com.hcmus.clc18se.photos.service.DetectFace
-import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
-
 
 class PeopleFragment : BaseFragment() {
     private var numberMediaItem = 0
@@ -57,7 +53,7 @@ class PeopleFragment : BaseFragment() {
         requireContext().registerReceiver(mBroadcast, filter)
     }
 
-    val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
+    private val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
         override fun onClick(mediaItem: MediaItem) {
             viewModel.startNavigatingToImageView(mediaItem)
         }
@@ -66,7 +62,7 @@ class PeopleFragment : BaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_people, container, false
         )
@@ -79,16 +75,12 @@ class PeopleFragment : BaseFragment() {
 
         viewModel.mediaItemList.observe(viewLifecycleOwner) {
             if (it != null) {
-                if (list == null)
-                {
+                if (list == null) {
                     list = it
                     val intent = Intent(context, DetectFace::class.java)
-                    if (requireContext().applicationContext.startService(intent) != null)
-                    {
+                    if (requireContext().applicationContext.startService(intent) != null) {
                         Toast.makeText(context, "Service detect face is running", Toast.LENGTH_SHORT).show()
-                    }
-                    else
-                    {
+                    } else {
                         Toast.makeText(context, "Service detect face unable to start", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -107,7 +99,7 @@ class PeopleFragment : BaseFragment() {
 
     inner class MyMainLocalReceiver : BroadcastReceiver() {
         override fun onReceive(localContext: Context?, callerIntent: Intent) {
-            Log.d("receive","update face")
+            Log.d("receive", "update face")
             binding.photos = newList
         }
     }

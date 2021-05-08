@@ -117,9 +117,12 @@
     <string name="rename_succeed">Could not rename</string>
     <string name="move_succeed">Moved</string>
     <string name="move_unsucceed">Could not move</string>
-    <string name="no_app_found">No App found</string>
+    <string name="no_app_found" translatable="false">No App found</string>
     <string name="copy_succeed">Copied</string>
     <string name="copy_file_unsucceed">Could not copy</string>
     <string name="image_saved">Image Saved</string>
     <string name="image_saved_fail">Could not save the image</string>
+    <string name="unknownName" translatable="false">@android:string/unknownName</string>
+    <string name="detect_face_title">Detect face</string>
+    <string name="detect_in_progress">Detect in progress</string>
 </resources>

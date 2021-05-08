@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.hcmus.clc18se.photos.data.MediaItem" />
+
+        <variable
+            name="photoList"
+            type="java.util.List&lt;MediaItem&gt;" />
+    </data>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorSurface"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <com.l4digital.fastscroll.FastScrollView
+            android:id="@+id/fastscroll_view"
+            mediaListItem="@{photoList}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:bubbleColor="?colorPrimary"
+            app:bubbleSize="small"
+            app:bubbleTextColor="?colorOnPrimary"
+            app:bubbleTextSize="16sp"
+            app:handleColor="#999999"
+            app:showBubble="true">
+
+            <!--            <androidx.recyclerview.widget.RecyclerView-->
+            <!--                mediaListItem="@{photoList}"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                app:fastScrollEnabled="false"-->
+            <!--                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"-->
+            <!--                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"-->
+            <!--                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"-->
+            <!--                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"-->
+            <!--                app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"-->
+            <!--                app:spanCount="@integer/span_count_photo_grid_big"-->
+            <!--                tools:itemCount="16"-->
+            <!--                tools:listitem="@layout/item_photo_list_grid" />-->
+
+        </com.l4digital.fastscroll.FastScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</layout>

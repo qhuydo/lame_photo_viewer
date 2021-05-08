@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.databinding.ViewDataBinding
 import androidx.preference.PreferenceManager
 import com.afollestad.materialcab.attached.AttachedCab
 import com.afollestad.materialcab.attached.destroy
@@ -26,6 +27,7 @@ import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.data.deleteMultipleMediaItems
 import com.hcmus.clc18se.photos.databinding.PhotoListBinding
+import com.hcmus.clc18se.photos.databinding.PhotoListFastScrollerBinding
 import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.getColorAttribute
 import com.hcmus.clc18se.photos.utils.setPhotoListIcon
@@ -74,7 +76,7 @@ abstract class AbstractPhotoListFragment(
 
     // Used in refreshRecyclerView()
     // Must be init in onCreateView() from the inherit class
-    protected lateinit var photoListBinding: PhotoListBinding
+    protected lateinit var photoListBinding: ViewDataBinding
 
     protected lateinit var adapter: MediaItemListAdapter
 
@@ -146,11 +148,23 @@ abstract class AbstractPhotoListFragment(
     }
 
     private fun onRefreshPhotoList(): Boolean {
-        photoListBinding.apply {
-            swipeRefreshLayout.isRefreshing = true
-            adapter.notifyDataSetChanged()
-            swipeRefreshLayout.isRefreshing = false
+        when (photoListBinding) {
+            is PhotoListBinding  -> {
+                (photoListBinding as PhotoListBinding).apply {
+                    swipeRefreshLayout.isRefreshing = true
+                    adapter.notifyDataSetChanged()
+                    swipeRefreshLayout.isRefreshing = false
+                }
+            }
+            is PhotoListFastScrollerBinding -> {
+                (photoListBinding as PhotoListFastScrollerBinding).apply {
+                    swipeRefreshLayout.isRefreshing = true
+                    adapter.notifyDataSetChanged()
+                    swipeRefreshLayout.isRefreshing = false
+                }
+            }
         }
+
         return true
     }
 

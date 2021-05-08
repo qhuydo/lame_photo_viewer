@@ -1,6 +1,5 @@
 package com.hcmus.clc18se.photos.service
 
-import android.R
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -18,7 +17,9 @@ import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.FaceDetector
 import com.hcmus.clc18se.photos.PhotosApplication.Companion.list
 import com.hcmus.clc18se.photos.PhotosApplication.Companion.newList
+import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
+import com.hcmus.clc18se.photos.utils.getBitMap
 import timber.log.Timber
 
 
@@ -36,16 +37,17 @@ class DetectFace : Service() {
         this.stopSelf()
     }
 
-    @SuppressLint("SetTextI18n")
     private fun listFaceImage(list: List<MediaItem>): List<MediaItem> {
         val numberMediaItem = list.size
         var numberDetected = 0
         val builder = NotificationCompat.Builder(this, CHANNEL_ID).apply {
-            setContentTitle("Detect face")
-            setContentText("Detect in progress")
-            setSmallIcon(android.R.drawable.ic_media_next)
-            setPriority(NotificationCompat.PRIORITY_LOW)
+
+            setContentTitle(getString(R.string.detect_face_title))
+            setContentText(getString(R.string.detect_in_progress))
+            setSmallIcon(R.drawable.ic_baseline_face_24)
+
             setProgress(numberMediaItem, 0, false)
+            priority = NotificationCompat.PRIORITY_LOW
         }
         val detector: FaceDetector = FaceDetector.Builder(baseContext)
                 .setTrackingEnabled(false)
@@ -58,10 +60,11 @@ class DetectFace : Service() {
                     //If there are stories, add them to the table
                     try {
                         for (item in list) {
+                            val context = applicationContext
                             Timber.d("${item.mimeType} ${item.name}")
                             try {
                                 if (item.isVideo()) continue
-                                var bitmap: Bitmap = MediaStore.Images.Media.getBitmap(baseContext.contentResolver, item.requireUri())
+                                var bitmap: Bitmap = context.contentResolver.getBitMap(item.requireUri())
                                 var scale = 1
                                 val byteBitmap = bitmap.width * bitmap.height * 4
                                 while (byteBitmap / scale / scale > 6000000) {
@@ -77,7 +80,7 @@ class DetectFace : Service() {
                                 val faces = detector.detect(frame)
                                 if (faces.size() > 0) {
                                     newList.add(item)
-                                    Timber.d("Face")
+                                    // Timber.d("Face")
                                     val intent = Intent()
                                     intent.action = "test.Broadcast"
                                     sendBroadcast(intent)
@@ -88,15 +91,15 @@ class DetectFace : Service() {
 
                             }
                             numberDetected++
-                            builder.setContentText(numberDetected.toString() + "/" + numberMediaItem.toString())
-                            builder.setProgress(numberMediaItem, numberDetected, false);
+                            builder.setContentText("$numberDetected/$numberMediaItem")
+                            builder.setProgress(numberMediaItem, numberDetected, false)
                             notify(1, builder.build())
                         }
                         builder.setContentText("Detect face complete")
                                 .setProgress(0, 0, false)
                         notify(1, builder.build())
                     } catch (ex: Exception) {
-                        Log.d("---", "Exception in thread")
+                        Timber.d("Exception in thread")
                     }
                 }
             }.start()
@@ -110,7 +113,7 @@ class DetectFace : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = getString(R.string.unknownName)
             val description = getString(R.string.unknownName)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(CHANNEL_ID, name, importance)
             channel.description = description
             // Register the channel with the system; you can't change the importance

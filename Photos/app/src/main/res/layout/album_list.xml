@@ -13,6 +13,7 @@
     </data>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:paddingBottom="@dimen/bottom_app_bar_overlap_space"
         albumListItem="@{albumList}"
         android:id="@+id/album_list_recycler_view"
         android:layout_width="match_parent"
