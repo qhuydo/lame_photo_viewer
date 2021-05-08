@@ -266,6 +266,10 @@ class PhotosViewModel(
         }
     }
 
+    fun clearData() {
+        _mediaItemList.postValue(emptyList())
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST")

@@ -43,18 +43,12 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
     private lateinit var viewModel: PhotosViewModel
 
     private val albumViewModel: CustomAlbumViewModel by activityViewModels {
-        CustomAlbumViewModelFactory(
-                requireActivity().application,
-                database
-        )
+        CustomAlbumViewModelFactory(requireActivity().application, database)
     }
 
     // the view model to get all photos in device
     private val photosViewModel: PhotosViewModel by activityViewModels {
-        PhotosViewModelFactory(
-                requireActivity().application,
-                database
-        )
+        PhotosViewModelFactory(requireActivity().application, database)
     }
 
     override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
@@ -118,17 +112,15 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
 
-        binding.apply {
-            photoListLayout.apply {
-                photoListRecyclerView.adapter = adapter
+        binding.photoListLayout.photoListRecyclerView.apply {
+            adapter = this@CustomPhotosFragment.adapter
 
-                (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
-                    spanCount = getSpanCountForPhotoList(
-                            resources,
-                            currentListItemView,
-                            currentListItemSize
-                    )
-                }
+            (layoutManager as? StaggeredGridLayoutManager)?.apply {
+                spanCount = getSpanCountForPhotoList(
+                        resources,
+                        currentListItemView,
+                        currentListItemSize
+                )
             }
         }
     }
@@ -265,6 +257,11 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
             )
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.clearData()
     }
 
 }

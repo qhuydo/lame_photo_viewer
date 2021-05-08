@@ -107,7 +107,7 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
                 val idx = navGraphViewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
                 navGraphViewModel.setCurrentItemView(idx)
 
-                this@PhotoListFragment.findNavController().navigate(
+                findNavController().navigate(
                         PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
                 )
                 viewModel.doneNavigatingToImageView()

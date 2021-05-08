@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import timber.log.Timber
 
 abstract class BaseFragment : Fragment() {
@@ -21,6 +22,10 @@ abstract class BaseFragment : Fragment() {
 
     companion object {
         const val BUNDLE_TOOLBAR_VISIBILITY = "BUNDLE_TOOLBAR_VISIBILITY"
+    }
+
+    protected val database by lazy {
+        PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
     }
 
     // get the toolbar object from the layout which needs to be setup navigation

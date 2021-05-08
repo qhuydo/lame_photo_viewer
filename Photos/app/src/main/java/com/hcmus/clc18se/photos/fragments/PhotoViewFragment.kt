@@ -60,11 +60,9 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
     private val preferences by lazy { (requireActivity() as AbstractPhotosActivity).preferences }
 
-    private val contentProvider by lazy { PhotosDatabase.getInstance(requireContext()).photosDatabaseDao }
-
     private val favouriteAlbumViewModel: FavouriteAlbumViewModel by activityViewModels {
         FavouriteAlbumViewModelFactory(
-            requireActivity().application, contentProvider
+            requireActivity().application, database
         )
     }
 
@@ -430,7 +428,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     private fun initFavouriteButtonState() {
         lifecycleScope.launch {
             val mediaItem = viewModel.mediaItemList.value!![currentPosition]
-            val isFavouriteItem = contentProvider.hasFavouriteItem(mediaItem.id)
+            val isFavouriteItem = database.hasFavouriteItem(mediaItem.id)
 
             withContext(Dispatchers.Main) {
                 changeFavouriteButtonState(isFavouriteItem)

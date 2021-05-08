@@ -10,7 +10,7 @@ import com.hcmus.clc18se.photos.data.FavouriteItem
 
 @Database(
     entities = [FavouriteItem::class, CustomAlbumItem::class, CustomAlbumInfo::class],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 abstract class PhotosDatabase : RoomDatabase() {

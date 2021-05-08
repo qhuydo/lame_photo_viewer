@@ -77,10 +77,6 @@ abstract class AbstractPhotoListFragment(
     // On click listener object used by MediaItemListAdapter
     abstract val actionCallbacks: MediaItemListAdapter.ActionCallbacks
 
-    protected val database by lazy {
-        PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
-    }
-
     // Used in refreshRecyclerView()
     // Must be init in onCreateView() from the inherit class
     protected lateinit var photoListBinding: ViewDataBinding
@@ -312,7 +308,7 @@ abstract class AbstractPhotoListFragment(
 
             title(R.string.remove_favourite_dialog_title)
             message(R.string.remove_favourite_dialog_msg)
-            positiveButton {
+            positiveButton(R.string.delete_title) {
 
                 val favouriteAlbumViewModel: FavouriteAlbumViewModel by activityViewModels {
                     FavouriteAlbumViewModelFactory(requireActivity().application, database)
@@ -326,6 +322,7 @@ abstract class AbstractPhotoListFragment(
                     }
                 }
             }
+            negativeButton(R.string.cancel) { }
 
         }
 

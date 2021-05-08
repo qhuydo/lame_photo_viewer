@@ -18,51 +18,30 @@ class CustomAlbumViewModel(
     val albums: LiveData<List<Album>>
         get() = _albums
 
-//    private var _customAlbums = MutableLiveData<List<CustomAlbum>>()
-//    val customAlbum: LiveData<List<CustomAlbum>>
-//        get() = _customAlbums
-
     private var _navigateToPhotoList = MutableLiveData<Album?>(null)
     val navigateToPhotoList: LiveData<Album?> = _navigateToPhotoList
-
-//    private var _selectedAlbum = MutableLiveData<Album?>(null)
-//    val selectedAlbum: LiveData<Album?>
-//        get() = _selectedAlbum
-
-//    private var _selectedPhotoList = MutableLiveData<List<MediaItem>?>(null)
-//    val selectedPhotoList: LiveData<List<MediaItem>?>
-//        get() = _selectedPhotoList
 
     internal fun loadData() = viewModelScope.launch {
         loadAlbumsFromDatabase()
     }
 
-    private suspend fun loadAlbumsFromDatabase() {
+    private suspend fun loadAlbumsFromDatabase() = withContext(Dispatchers.IO) {
         Timber.d("Start loading CustomAlbums from the database")
-        withContext(Dispatchers.IO) {
-            val startTime = System.currentTimeMillis()
+        val startTime = System.currentTimeMillis()
 
-            val customAlbums = database.getAllCustomAlbums().map {
-                val name = it.albumInfo.name
-                val id = it.albumInfo.id
-                return@map Album(path = "",
-                        name = name,
-                        customAlbumId = id,
-                        thumbnailUri = getFirstMediaItem(it.albumItems.randomOrNull())?.requireUri()
-                )
-            }
+        val customAlbums = database.getAllCustomAlbums().map {
+            val name = it.albumInfo.name
+            val id = it.albumInfo.id
+            return@map Album(path = "",
+                    name = name,
+                    customAlbumId = id,
+                    thumbnailUri = getFirstMediaItem(it.albumItems.randomOrNull())?.requireUri()
+            )
+        }
 
-            withContext(Dispatchers.Main) {
-                _albums.value = customAlbums
-
-//                if (selectedAlbum.value != null) {
-//                    _selectedAlbum.value = _albums.value?.first {
-//                        it.customAlbumId == selectedAlbum.value?.customAlbumId
-//                    }
-//                }
-
-                Timber.d("loadData(): ${(System.currentTimeMillis() - startTime)} ms")
-            }
+        withContext(Dispatchers.Main) {
+            _albums.value = customAlbums
+            Timber.d("loadData(): ${(System.currentTimeMillis() - startTime)} ms")
         }
     }
 
@@ -89,9 +68,7 @@ class CustomAlbumViewModel(
     }
 
     fun startNavigatingToPhotoList(album: Album) {
-//        _selectedAlbum.value = album
-        _navigateToPhotoList.value = album
-//        loadSelectedPhotoList()
+        _navigateToPhotoList.postValue(album)
     }
 
     fun doneNavigatingToPhotoList() {
@@ -106,6 +83,14 @@ class CustomAlbumViewModel(
 
     suspend fun containsAlbumName(name: String): Boolean {
         return database.containsCustomAlbumName(name)
+    }
+
+    fun removePhotosFromAlbum(items: List<MediaItem>, albumId: Long) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+
+            }
+        }
     }
 }
 

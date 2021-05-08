@@ -28,10 +28,7 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
     private lateinit var binding: FragmentCustomAlbumsBinding
 
     private val viewModel: CustomAlbumViewModel by activityViewModels {
-        CustomAlbumViewModelFactory(
-                requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
-        )
+        CustomAlbumViewModelFactory(requireActivity().application, database)
     }
 
     private lateinit var customAlbumAdapter: AlbumListAdapter
