@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
 import android.content.res.Resources.Theme
+import android.os.Build
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.AppBarLayout
@@ -27,13 +29,13 @@ const val SEARCH_BAR_HEIGHT = 88
 const val DEFAULT_APP_BAR_HEIGHT = 56
 
 fun <T : ViewGroup.LayoutParams> setAppBarHeight(
-    appBarLayout: AppBarLayout, dp: Int,
-    activity: AppCompatActivity? = null
+        appBarLayout: AppBarLayout, dp: Int,
+        activity: AppCompatActivity? = null
 ) {
     @Suppress("UNCHECKED_CAST") val layoutParams = appBarLayout.layoutParams as T
     if (activity != null) {
         layoutParams.height = TypedValue.complexToDimensionPixelSize(
-            dp, activity.resources.displayMetrics
+                dp, activity.resources.displayMetrics
         )
     } else {
         layoutParams.height = dp
@@ -102,4 +104,20 @@ fun getColorAttribute(context: Context, attribute: Int): Int {
     val theme: Theme = context.theme
     theme.resolveAttribute(attribute, typedValue, true)
     return typedValue.data
+}
+
+fun setLightStatusBar(view: View, activity: Activity?) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        var flags = view.systemUiVisibility
+        flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        view.systemUiVisibility = flags
+    }
+}
+
+fun unsetLightStatusBar(view: View, activity: Activity?) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        var flags = view.systemUiVisibility
+        flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        view.systemUiVisibility = flags
+    }
 }

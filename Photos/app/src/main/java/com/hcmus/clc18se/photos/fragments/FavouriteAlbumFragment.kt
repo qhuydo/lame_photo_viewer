@@ -2,6 +2,7 @@ package com.hcmus.clc18se.photos.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
@@ -31,14 +32,8 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
 
     private lateinit var binding: FragmentFavouriteAlbumBinding
 
-    private val peach by lazy {
-        PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
-    }
-
     private val viewModel: FavouriteAlbumViewModel by activityViewModels {
-        FavouriteAlbumViewModelFactory(
-                requireActivity().application, peach
-        )
+        FavouriteAlbumViewModelFactory(requireActivity().application, database)
     }
 
     private lateinit var photosViewModel: PhotosViewModel
@@ -53,6 +48,8 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
         }
     }
 
+    override fun getCurrentViewModel(): PhotosViewModel = photosViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
@@ -63,11 +60,11 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
         }
 
         val photosViewModel: PhotosViewModel by navGraphViewModels(
-            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
             PhotosViewModelFactory(
-                requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
             )
         }
         this.photosViewModel = photosViewModel
@@ -168,4 +165,14 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
     override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
 
     override fun getToolbarTitleRes(): Int = R.string.favorites_title
+
+    override fun onPrepareCabMenu(menu: Menu) {
+        super.onPrepareCabMenu(menu)
+
+        val actionAddToFavourite = menu.findItem(R.id.action_add_to_favourite)
+        val actionRemoveToFavourite = menu.findItem(R.id.action_remove_favourite)
+
+        actionAddToFavourite?.isVisible = false
+        actionRemoveToFavourite?.isVisible = true
+    }
 }

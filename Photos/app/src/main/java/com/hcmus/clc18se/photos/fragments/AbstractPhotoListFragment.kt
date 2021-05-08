@@ -1,13 +1,11 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.app.Activity
-import android.content.ContentUris
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.BaseColumns
 import android.provider.MediaStore
 import android.view.*
 import android.widget.Toast
@@ -16,6 +14,9 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import com.afollestad.materialcab.attached.AttachedCab
 import com.afollestad.materialcab.attached.destroy
@@ -26,12 +27,14 @@ import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.data.deleteMultipleMediaItems
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.PhotoListBinding
 import com.hcmus.clc18se.photos.databinding.PhotoListFastScrollerBinding
-import com.hcmus.clc18se.photos.utils.OnBackPressed
-import com.hcmus.clc18se.photos.utils.getColorAttribute
-import com.hcmus.clc18se.photos.utils.setPhotoListIcon
-import com.hcmus.clc18se.photos.utils.setPhotoListItemSizeOption
+import com.hcmus.clc18se.photos.utils.*
+import com.hcmus.clc18se.photos.utils.ui.isColorDark
+import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
+import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -58,7 +61,7 @@ import timber.log.Timber
  * @see [PhotoListFragment]
  */
 abstract class AbstractPhotoListFragment(
-    private val menuRes: Int
+        private val menuRes: Int
 ) : BaseFragment(), OnBackPressed {
 
     protected val preferences: SharedPreferences by lazy {
@@ -74,6 +77,10 @@ abstract class AbstractPhotoListFragment(
     // On click listener object used by MediaItemListAdapter
     abstract val actionCallbacks: MediaItemListAdapter.ActionCallbacks
 
+    protected val database by lazy {
+        PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+    }
+
     // Used in refreshRecyclerView()
     // Must be init in onCreateView() from the inherit class
     protected lateinit var photoListBinding: ViewDataBinding
@@ -84,20 +91,23 @@ abstract class AbstractPhotoListFragment(
 
     private lateinit var deleteRequestLauncher: ActivityResultLauncher<IntentSenderRequest>
 
+    // get the current viewModel of the fragment
+    abstract fun getCurrentViewModel(): PhotosViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentListItemView = preferences.getString(
-            getString(R.string.photo_list_view_type_key),
-            MediaItemListAdapter.ITEM_TYPE_LIST.toString()
+                getString(R.string.photo_list_view_type_key),
+                MediaItemListAdapter.ITEM_TYPE_LIST.toString()
         )!!.toInt()
 
         currentListItemSize = preferences.getString(
-            getString(R.string.photo_list_item_size_key),
-            "0"
+                getString(R.string.photo_list_item_size_key),
+                "0"
         )!!.toInt()
 
         deleteRequestLauncher = registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult()
+                ActivityResultContracts.StartIntentSenderForResult()
         ) { activityResult ->
             if (Activity.RESULT_OK == activityResult.resultCode) {
                 Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
@@ -125,9 +135,9 @@ abstract class AbstractPhotoListFragment(
         setPhotoListIcon(photoListImageItem, currentListItemView)
 
         val currentPreference = preferences.getString(
-            getString(
-                R.string.photo_list_item_size_key
-            ), "0"
+                getString(
+                        R.string.photo_list_item_size_key
+                ), "0"
         ) ?: "0"
         setPhotoListItemSizeOption(resources, menu, currentPreference)
     }
@@ -174,13 +184,13 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-            .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
-            .apply()
+                .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
+                .apply()
 
         refreshRecyclerView()
     }
 
-    protected fun onItemSizeOptionClicked(menuItem: MenuItem): Boolean {
+    private fun onItemSizeOptionClicked(menuItem: MenuItem): Boolean {
         menuItem.isChecked = true
         val options = resources.getStringArray(R.array.photo_list_item_size_value)
 
@@ -194,8 +204,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-            .putString(getString(R.string.photo_list_item_size_key), option)
-            .apply()
+                .putString(getString(R.string.photo_list_item_size_key), option)
+                .apply()
 
         refreshRecyclerView()
 
@@ -230,7 +240,7 @@ abstract class AbstractPhotoListFragment(
 
             mainCab = createCab(getCadSubId()) {
                 title(literal = "${adapter.numberOfSelectedItems()}")
-                
+
                 menu(R.menu.photo_list_context_menu)
                 popupTheme(R.style.Theme_Photos_Indigo)
                 titleColor(literal = colorOnPrimary)
@@ -238,9 +248,17 @@ abstract class AbstractPhotoListFragment(
                 backgroundColor(literal = colorPrimary)
                 slideDown()
 
-                onCreate { _, menu -> onCabCreated(menu) }
+                onCreate { _, menu -> onPrepareCabMenu(menu) }
                 onSelection { onCabItemSelected(it) }
                 onDestroy {
+                    requireActivity().window.statusBarColor = getColorAttribute(requireContext(), R.attr.statusBarBackground)
+                    val statusBackground = getColorAttribute(requireContext(), R.attr.statusBarBackground)
+                    if (isColorDark(statusBackground)) {
+                        setLightStatusBar(requireActivity().window.decorView, requireActivity())
+                    } else {
+                        unsetLightStatusBar(requireActivity().window.decorView, requireActivity())
+                    }
+
                     adapter.finishSelection()
                     mainCab = null
                     true
@@ -249,38 +267,83 @@ abstract class AbstractPhotoListFragment(
         }
     }
 
-    private fun onCabCreated(menu: Menu): Boolean {
-//        // Makes the icons in the overflow menu visible
-//        if (menu.javaClass.simpleName == "MenuBuilder") {
-//            try {
-//                val field = menu.javaClass.getDeclaredField("mOptionalIconsVisible")
-//                field.isAccessible = true
-//                field.setBoolean(menu, true)
-//            } catch (ignored: Exception) {
-//                ignored.printStackTrace()
-//            }
-//        }
-        return true // allow creation
+    private fun onCabItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_multiple_delete -> {
+                onActionRemoveMediaItems()
+                true
+            }
+            R.id.action_add_to_favourite -> {
+                onActionAddToFavourite()
+                true
+            }
+            R.id.action_remove_favourite -> {
+                onActionRemoveFromToFavourite()
+                true
+            }
+            R.id.action_select_all -> {
+                lifecycleScope.launch {
+                    adapter.selectAll()
+                    invalidateCab()
+                }
+                true
+            }
+            else -> false
+        }
     }
 
-    private fun onCabItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_multiple_delete) {
-            // Delete button is clicked, handle the deletion and finish the multi select process
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val uriList = adapter.getSelectedItems().map { it.requireUri() }
-                requestDeletePermission(uriList)
+    private fun onActionAddToFavourite() {
+        val favouriteAlbumViewModel: FavouriteAlbumViewModel by activityViewModels {
+            FavouriteAlbumViewModelFactory(requireActivity().application, database)
+        }
+        favouriteAlbumViewModel.viewModelScope.launch {
 
-            } else {
-                val parentActivity = requireActivity() as? AbstractPhotosActivity
-                if (parentActivity?.haveWriteStoragePermission() == true) {
-                    showDeleteWarningDialog()
-                } else {
-                    parentActivity?.jumpToMainActivity()
-                }
-
+            favouriteAlbumViewModel.addToFavouriteAlbum(adapter.getSelectedItems())
+            withContext(Dispatchers.Main) {
+                mainCab?.destroy()
+                Toast.makeText(requireContext(), getString(R.string.action_add_to_favourite_succeed), Toast.LENGTH_SHORT).show()
             }
         }
-        return true
+    }
+
+    private fun onActionRemoveFromToFavourite() {
+
+        MaterialDialog(requireContext()).show {
+
+            title(R.string.remove_favourite_dialog_title)
+            message(R.string.remove_favourite_dialog_msg)
+            positiveButton {
+
+                val favouriteAlbumViewModel: FavouriteAlbumViewModel by activityViewModels {
+                    FavouriteAlbumViewModelFactory(requireActivity().application, database)
+                }
+
+                favouriteAlbumViewModel.viewModelScope.launch {
+                    favouriteAlbumViewModel.removeFromFavourite(adapter.getSelectedItems())
+                    withContext(Dispatchers.Main) {
+                        mainCab?.destroy()
+                        Toast.makeText(requireContext(), getString(R.string.action_remove_from_favourite_succeed), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    private fun onActionRemoveMediaItems() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val uriList = adapter.getSelectedItems().map { it.requireUri() }
+            requestDeletePermission(uriList)
+        } else {
+            val parentActivity = requireActivity() as? AbstractPhotosActivity
+            if (parentActivity?.haveWriteStoragePermission() == true) {
+                showDeleteWarningDialog()
+            } else {
+                parentActivity?.jumpToMainActivity()
+            }
+
+        }
     }
 
     private fun showDeleteWarningDialog() {
@@ -316,5 +379,17 @@ abstract class AbstractPhotoListFragment(
             it.destroy()
             return true
         } ?: return false
+    }
+
+    open fun onPrepareCabMenu(menu: Menu) {
+        // set the status bar color to match with ?colorPrimary
+        // to match with status bar color
+        requireActivity().window.statusBarColor = getColorAttribute(requireContext(), R.attr.colorPrimary)
+        val onPrimaryColor = getColorAttribute(requireContext(), R.attr.colorOnPrimary)
+        if (isColorDark(onPrimaryColor)) {
+            setLightStatusBar(requireActivity().window.decorView, requireActivity())
+        } else {
+            unsetLightStatusBar(requireActivity().window.decorView, requireActivity())
+        }
     }
 }

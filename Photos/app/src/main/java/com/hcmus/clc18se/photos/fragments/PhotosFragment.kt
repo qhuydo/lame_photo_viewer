@@ -31,10 +31,7 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
     private lateinit var binding: FragmentPhotosBinding
     private val viewModel: PhotosViewModel by activityViewModels {
-        PhotosViewModelFactory(
-                requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
-        )
+        PhotosViewModelFactory(requireActivity().application, database)
     }
 
     override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
@@ -88,6 +85,8 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
             return adapterItems
         }
     }
+
+    override fun getCurrentViewModel(): PhotosViewModel = viewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -234,6 +233,7 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
             recyclerView.adapter = adapter
             bindMediaListRecyclerView(recyclerView, photoList)
         }
-
     }
+
+//    override fun onPrepareCabMenu(menu: Menu) {}
 }

@@ -133,4 +133,9 @@
     <string name="action_remove_favourite">Remove from favourite album</string>
     <string name="action_add_to_secret_album">Add to Secret folder</string>
     <string name="action_remove_from_secret_album">Remove from secret folder</string>
+    <string name="remove_favourite_dialog_title" translatable="false">@string/action_remove_favourite</string>
+    <string name="remove_favourite_dialog_msg">Your photo will not be removed</string>
+    <string name="action_add_to_favourite_succeed">Added to favourite album</string>
+    <string name="action_remove_from_favourite_succeed">Removed from favourite album</string>
+    <string name="action_remove_from_custom_album">Remove from custom album</string>
 </resources>

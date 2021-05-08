@@ -35,7 +35,9 @@ import com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 
+
 class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list) {
+
     private lateinit var binding: FragmentCustomPhotosBinding
 
     private lateinit var viewModel: PhotosViewModel
@@ -43,14 +45,15 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
     private val albumViewModel: CustomAlbumViewModel by activityViewModels {
         CustomAlbumViewModelFactory(
                 requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                database
         )
     }
 
+    // the view model to get all photos in device
     private val photosViewModel: PhotosViewModel by activityViewModels {
         PhotosViewModelFactory(
                 requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                database
         )
     }
 
@@ -64,6 +67,8 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
         }
     }
 
+    override fun getCurrentViewModel(): PhotosViewModel = viewModel
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
@@ -71,7 +76,7 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
         ) {
             PhotosViewModelFactory(
                     requireActivity().application,
-                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                    database
             )
         }
         this.viewModel = viewModel

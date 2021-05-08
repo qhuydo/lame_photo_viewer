@@ -6,9 +6,9 @@ import com.hcmus.clc18se.photos.data.FavouriteItem
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.data.loadMediaItemFromIds
 import com.hcmus.clc18se.photos.database.PhotosDatabaseDao
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class FavouriteAlbumViewModel(
@@ -28,29 +28,35 @@ class FavouriteAlbumViewModel(
     val reloadDataRequest: LiveData<Boolean>
         get() = _reloadDataRequest
 
-    fun setCurrentItemView(newIdx: Int) {
-        _mediaItems.value?.let {
-            if (newIdx in it.indices) {
-                _idx.value = newIdx
-            }
-        }
-    }
-
     init {
         loadData()
     }
 
-    fun loadData() {
-        viewModelScope.launch {
+    fun loadData() = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+
             Timber.d("Start loading FavouriteMediaItems")
             val startTime = System.currentTimeMillis()
 
             val favourites = database.getAllFavouriteItems()
             val favouriteMediaItems = loadMediaItemFromIds(favourites)
 
-            _mediaItems.value = favouriteMediaItems
+            _mediaItems.postValue(favouriteMediaItems)
             Timber.d("loadFavouriteMediaItems(): ${(System.currentTimeMillis() - startTime)} ms")
         }
+    }
+
+
+    suspend fun addToFavouriteAlbum(items: List<MediaItem>) = withContext(Dispatchers.IO) {
+        val favouriteItems = items.map { it.toFavouriteItem() }
+        database.addFavouriteItems(*favouriteItems.toTypedArray())
+        requestReloadingData()
+    }
+
+    suspend fun removeFromFavourite(items: List<MediaItem>) = withContext(Dispatchers.IO) {
+        val favouriteItems = items.map { it.toFavouriteItem() }
+        database.removeFavouriteItems(*favouriteItems.toTypedArray())
+        requestReloadingData()
     }
 
     private suspend fun loadMediaItemFromIds(favourites: List<FavouriteItem>) =
@@ -59,7 +65,7 @@ class FavouriteAlbumViewModel(
             )
 
     fun requestReloadingData() {
-        _reloadDataRequest.value = true
+        _reloadDataRequest.postValue(true)
     }
 
     fun doneRequestingLoadData() {

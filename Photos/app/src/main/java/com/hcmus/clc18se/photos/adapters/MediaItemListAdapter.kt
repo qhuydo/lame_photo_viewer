@@ -177,6 +177,22 @@ class MediaItemListAdapter(
         notifyDataSetChanged()
     }
 
+    suspend fun selectAll() {
+        withContext(adapterScope.coroutineContext) {
+
+            multiSelect = true
+            selectedItems.clear()
+            selectedItems.addAll(currentList
+                    .filterIsInstance<AdapterItem.AdapterMediaItem>()
+                    .map { it.mediaItem }
+            )
+
+            withContext(Dispatchers.Main) {
+                notifyDataSetChanged()
+            }
+        }
+    }
+
     interface ActionCallbacks {
 
         fun onClick(mediaItem: MediaItem)

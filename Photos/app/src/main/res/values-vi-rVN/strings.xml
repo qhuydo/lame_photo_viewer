@@ -103,8 +103,11 @@
     <string name="size">Dung lượng: %1$s</string>
     <string name="action_add_to_favourite">Thêm vào danh sách yêu thích</string>
     <string name="add_to_custom_album">Thêm vào album</string>
-    <string name="action_remove_favourite">Xóa khỏi album</string>
     <string name="action_add_to_secret_album">Thêm vào thư mục bí mật</string>
     <string name="action_remove_from_secret_album">Bỏ khỏi thư mục bí mật</string>
     <string name="image_size">Độ phân giải: %1$s</string>
+    <string name="action_add_to_favourite_succeed">Đã thêm vào danh sách yêu thích</string>
+    <string name="action_remove_from_favourite_succeed">Đã xóa khỏi danh sách yêu thích</string>
+    <string name="action_remove_from_custom_album">Xóa khỏi album</string>
+    <string name="action_remove_favourite">Xóa khỏi danh sách yêu thích</string>
 </resources>

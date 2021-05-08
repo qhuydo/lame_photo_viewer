@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
 
     <item
         android:id="@+id/action_add_to_favourite"
@@ -13,7 +15,7 @@
         android:icon="@drawable/favorite_remove_black_24dp"
         android:title="@string/action_remove_favourite"
         android:visible="false"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
 
@@ -25,9 +27,9 @@
     <item
         android:id="@+id/action_remove_from_custom_album"
         android:icon="@drawable/ic_outline_library_add_24"
-        android:title="@string/add_to_custom_album"
+        android:title="@string/action_remove_from_custom_album"
         android:visible="false"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_add_to_secret_album"
@@ -36,11 +38,11 @@
         app:showAsAction="always" />
 
     <item
-        android:visible="false"
         android:id="@+id/action_remove_secret_album"
         android:icon="@drawable/ic_outline_lock_24"
         android:title="@string/action_remove_from_secret_album"
-        app:showAsAction="ifRoom" />
+        android:visible="false"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_select_all"

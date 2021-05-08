@@ -76,16 +76,18 @@ class PhotosViewModel(
         }
     }
 
-    fun loadImages() {
-        viewModelScope.launch {
+    fun loadImages() = viewModelScope.launch {
+
+        withContext(Dispatchers.IO) {
             val images = queryMediaItems()
+
             withContext(Dispatchers.Main) {
                 _mediaItemList.value = images
+                registerObserverWhenNull()
             }
-
-            registerObserverWhenNull()
         }
     }
+
 
     fun loadSelectedPhotoList() = viewModelScope.launch {
         withContext(Dispatchers.IO) {
@@ -126,20 +128,17 @@ class PhotosViewModel(
         }
     }
 
-    fun loadImages(bucketId: Long, bucketName: String) {
-        viewModelScope.launch {
+    fun loadImages(bucketId: Long) = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+
             val contentResolver = getApplication<Application>().contentResolver
             val images = contentResolver.queryMediaItemsFromBucketName(bucketId)
+
             withContext(Dispatchers.Main) {
                 _mediaItemList.value = images
+                registerObserverWhenNull()
             }
-            registerObserverWhenNull()
         }
-
-    }
-
-    fun setMediaItemFromAlbum(mediaItems: List<MediaItem>) {
-        _mediaItemList.value = mediaItems
     }
 
     private var _itemFavouriteStateChanged = MutableLiveData<Boolean?>(null)

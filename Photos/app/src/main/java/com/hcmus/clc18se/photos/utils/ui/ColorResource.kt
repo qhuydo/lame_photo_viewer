@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
@@ -111,4 +112,9 @@ class ColorResource(
         }
     }
 
+}
+
+fun isColorDark(color: Int): Boolean {
+    val darkness: Double = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255
+    return darkness >= 0.5
 }

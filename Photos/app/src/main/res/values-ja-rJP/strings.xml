@@ -105,4 +105,7 @@
     <string name="action_add_to_secret_album">秘密アルバムに追加</string>
     <string name="action_remove_from_secret_album">秘密アルバムから削除</string>
     <string name="image_size">画像解像度: %1$s</string>
+    <string name="action_add_to_favourite_succeed">お気に入りに追加 成功</string>
+    <string name="action_remove_from_favourite_succeed">お気に入りに削除 成功</string>
+    <string name="action_remove_from_custom_album">アルバムから削除</string>
 </resources>

@@ -33,10 +33,7 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     private val args: PhotoListFragmentArgs by navArgs()
 
     private val viewModel: PhotosViewModel by viewModels {
-        PhotosViewModelFactory(
-                requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
-        )
+        PhotosViewModelFactory(requireActivity().application, database)
     }
 
     private lateinit var navGraphViewModel: PhotosViewModel
@@ -51,6 +48,8 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
         }
     }
 
+    override fun getCurrentViewModel(): PhotosViewModel = viewModel
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val navGraphViewModel: PhotosViewModel by navGraphViewModels(
@@ -64,7 +63,7 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
         val bucketId = args.bucketId
         val bucketPath = args.albumName
 
-        viewModel.loadImages(bucketId, bucketPath)
+        viewModel.loadImages(bucketId)
         this.navGraphViewModel = navGraphViewModel
     }
 
