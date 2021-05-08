@@ -23,18 +23,21 @@ import com.afollestad.materialcab.attached.destroy
 import com.afollestad.materialcab.attached.isActive
 import com.afollestad.materialcab.createCab
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.bottomsheets.BottomSheet
+import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
+import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
+import com.hcmus.clc18se.photos.data.Album
 import com.hcmus.clc18se.photos.data.deleteMultipleMediaItems
-import com.hcmus.clc18se.photos.database.PhotosDatabase
+import com.hcmus.clc18se.photos.databinding.DialogCustomAlbumsBinding
 import com.hcmus.clc18se.photos.databinding.PhotoListBinding
 import com.hcmus.clc18se.photos.databinding.PhotoListFastScrollerBinding
 import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.utils.ui.isColorDark
-import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
-import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
-import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
+import com.hcmus.clc18se.photos.viewModels.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -247,23 +250,14 @@ abstract class AbstractPhotoListFragment(
                 onCreate { _, menu -> onPrepareCabMenu(menu) }
                 onSelection { onCabItemSelected(it) }
                 onDestroy {
-                    requireActivity().window.statusBarColor = getColorAttribute(requireContext(), R.attr.statusBarBackground)
-                    val statusBackground = getColorAttribute(requireContext(), R.attr.statusBarBackground)
-                    if (isColorDark(statusBackground)) {
-                        setLightStatusBar(requireActivity().window.decorView, requireActivity())
-                    } else {
-                        unsetLightStatusBar(requireActivity().window.decorView, requireActivity())
-                    }
-
-                    adapter.finishSelection()
-                    mainCab = null
-                    true
+                    onCabDestroy()
                 }
             }
         }
     }
 
-    private fun onCabItemSelected(item: MenuItem): Boolean {
+
+    open fun onCabItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_multiple_delete -> {
                 onActionRemoveMediaItems()
@@ -284,7 +278,51 @@ abstract class AbstractPhotoListFragment(
                 }
                 true
             }
+            R.id.action_add_to_custom_album -> {
+                onActionAddToCustomAlbum()
+                true
+            }
             else -> false
+        }
+    }
+
+    private fun onActionAddToCustomAlbum() {
+        val customAlbumViewModel: CustomAlbumViewModel by activityViewModels {
+            CustomAlbumViewModelFactory(requireActivity().application, database)
+        }
+
+        pickCustomAlbumDialog(customAlbumViewModel)
+
+    }
+
+    private fun pickCustomAlbumDialog(customAlbumViewModel: CustomAlbumViewModel) {
+        MaterialDialog(requireContext(), BottomSheet()).show {
+            lifecycleOwner(this@AbstractPhotoListFragment)
+
+            title(R.string.pick_custom_album_dialog_title)
+
+            val dialogBinding = DialogCustomAlbumsBinding.inflate(layoutInflater, view, false)
+            dialogBinding.customAlbumViewModel = customAlbumViewModel
+
+            dialogBinding.albumListLayout.albumListRecyclerView.adapter = AlbumListAdapter(
+                    onClickListener = AlbumListAdapter.OnClickListener {
+                        dismiss()
+                        startAddingPhotoToCustomAlbum(it, customAlbumViewModel)
+                    }
+            )
+
+            customView(view = dialogBinding.root, scrollable = true)
+        }
+    }
+
+    private fun startAddingPhotoToCustomAlbum(album: Album, customAlbumViewModel: CustomAlbumViewModel) {
+        customAlbumViewModel.viewModelScope.launch {
+            customAlbumViewModel.addPhotosToAlbum(adapter.getSelectedItems(), album.customAlbumId!!)
+            mainCab?.destroy()
+            Toast.makeText(requireContext(),
+                    getString(R.string.add_photo_to_custom_album_succeed, album.getName()),
+                    Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -295,10 +333,10 @@ abstract class AbstractPhotoListFragment(
         favouriteAlbumViewModel.viewModelScope.launch {
 
             favouriteAlbumViewModel.addToFavouriteAlbum(adapter.getSelectedItems())
-            withContext(Dispatchers.Main) {
-                mainCab?.destroy()
-                Toast.makeText(requireContext(), getString(R.string.action_add_to_favourite_succeed), Toast.LENGTH_SHORT).show()
-            }
+
+            mainCab?.destroy()
+            Toast.makeText(requireContext(), getString(R.string.action_add_to_favourite_succeed), Toast.LENGTH_SHORT).show()
+
         }
     }
 
@@ -316,10 +354,10 @@ abstract class AbstractPhotoListFragment(
 
                 favouriteAlbumViewModel.viewModelScope.launch {
                     favouriteAlbumViewModel.removeFromFavourite(adapter.getSelectedItems())
-                    withContext(Dispatchers.Main) {
-                        mainCab?.destroy()
-                        Toast.makeText(requireContext(), getString(R.string.action_remove_from_favourite_succeed), Toast.LENGTH_SHORT).show()
-                    }
+
+                    mainCab?.destroy()
+                    Toast.makeText(requireContext(), getString(R.string.action_remove_from_favourite_succeed), Toast.LENGTH_SHORT).show()
+
                 }
             }
             negativeButton(R.string.cancel) { }
@@ -388,5 +426,19 @@ abstract class AbstractPhotoListFragment(
         } else {
             unsetLightStatusBar(requireActivity().window.decorView, requireActivity())
         }
+    }
+
+    open fun onCabDestroy(): Boolean {
+        requireActivity().window.statusBarColor = getColorAttribute(requireContext(), R.attr.statusBarBackground)
+        val statusBackground = getColorAttribute(requireContext(), R.attr.statusBarBackground)
+        if (isColorDark(statusBackground)) {
+            setLightStatusBar(requireActivity().window.decorView, requireActivity())
+        } else {
+            unsetLightStatusBar(requireActivity().window.decorView, requireActivity())
+        }
+
+        adapter.finishSelection()
+        mainCab = null
+        return true
     }
 }

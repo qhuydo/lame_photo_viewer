@@ -138,4 +138,8 @@
     <string name="action_add_to_favourite_succeed">Added to favourite album</string>
     <string name="action_remove_from_favourite_succeed">Removed from favourite album</string>
     <string name="action_remove_from_custom_album">Remove from custom album</string>
+    <string name="action_remove_from_custom_album_succeed">Photos removed</string>
+    <string name="pick_custom_album_dialog_title">Pick an album</string>
+    <string name="add_photo_to_custom_album_succeed">Added to %1$s</string>
+    <string name="add_photo_dialog_title">Pick photo</string>
 </resources>

@@ -2,17 +2,17 @@ package com.hcmus.clc18se.photos.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.afollestad.materialcab.attached.destroy
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.customview.customView
@@ -25,15 +25,16 @@ import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
 import com.hcmus.clc18se.photos.adapters.visibleWhenEmpty
 import com.hcmus.clc18se.photos.data.MediaItem
-import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentCustomPhotosBinding
-import com.hcmus.clc18se.photos.databinding.PhotoListBinding
 import com.hcmus.clc18se.photos.databinding.PhotoListDialogBinding
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list) {
@@ -137,6 +138,7 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
         albumViewModel.reloadDataRequest.observe(viewLifecycleOwner) {
             if (it) {
                 albumViewModel.loadData()
+                viewModel.loadSelectedPhotoList()
                 albumViewModel.doneRequestingLoadData()
             }
         }
@@ -206,6 +208,7 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
     private fun addPhotosBottomSheet() = MaterialDialog(requireContext(), BottomSheet()).show {
 
         lifecycleOwner(this@CustomPhotosFragment)
+        title(R.string.add_photo_dialog_title)
 
         val dialogBinding = PhotoListDialogBinding.inflate(this@CustomPhotosFragment.layoutInflater)
                 .apply {
@@ -262,6 +265,48 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
     override fun onDestroy() {
         super.onDestroy()
         viewModel.clearData()
+    }
+
+    override fun onCabItemSelected(item: MenuItem): Boolean {
+        val result = super.onCabItemSelected(item)
+        if (!result) {
+            return when (item.itemId) {
+                R.id.action_remove_from_custom_album -> {
+                    onActionRemoveFromCustomAlbum()
+                    true
+                }
+                else -> false
+            }
+        }
+        return result
+    }
+
+    private fun onActionRemoveFromCustomAlbum() {
+
+        viewModel.viewModelScope.launch {
+            val customAlbum = viewModel.customAlbum.value
+            customAlbum?.let {
+                albumViewModel.removePhotosFromAlbum(adapter.getSelectedItems(), it.customAlbumId!!)
+                mainCab?.destroy()
+            }
+        }
+    }
+
+    override fun onPrepareCabMenu(menu: Menu) {
+        super.onPrepareCabMenu(menu)
+
+        val actionAddToCustomAlbum = menu.findItem(R.id.action_add_to_custom_album)
+        val actionRemoveFromCustomAlbum = menu.findItem(R.id.action_remove_from_custom_album)
+
+        actionAddToCustomAlbum?.isVisible = false
+        actionRemoveFromCustomAlbum?.isVisible = true
+
+        binding.fabAddPhoto.hide()
+    }
+
+    override fun onCabDestroy(): Boolean {
+        binding.fabAddPhoto.show()
+        return super.onCabDestroy()
     }
 
 }

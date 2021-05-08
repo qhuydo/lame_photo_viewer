@@ -108,4 +108,8 @@
     <string name="action_add_to_favourite_succeed">お気に入りに追加 成功</string>
     <string name="action_remove_from_favourite_succeed">お気に入りに削除 成功</string>
     <string name="action_remove_from_custom_album">アルバムから削除</string>
+    <string name="action_remove_from_custom_album_succeed">削除 成功</string>
+    <string name="pick_custom_album_dialog_title">アルバムを選択</string>
+    <string name="add_photo_to_custom_album_succeed">「%1$s」に追加 成功</string>
+    <string name="add_photo_dialog_title">写真を選択</string>
 </resources>

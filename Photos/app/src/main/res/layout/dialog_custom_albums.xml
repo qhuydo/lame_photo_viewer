@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="customAlbumViewModel"
+            type="com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="?colorSurface">
+
+        <include
+            android:id="@+id/placeholder"
+            layout="@layout/generic_placeholder"
+            visibleWhenEmpty="@{customAlbumViewModel.albums}"
+            tools:visibility="gone" />
+
+        <include
+            android:id="@+id/album_list_layout"
+            layout="@layout/album_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="0dp"
+            app:albumList="@{customAlbumViewModel.albums}"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintTop_toBottomOf="@id/barrier" />
+
+    </FrameLayout>
+
+</layout>

@@ -20,13 +20,13 @@
     <item
 
         android:id="@+id/action_add_to_custom_album"
-        android:icon="@drawable/ic_baseline_library_add_24"
+        android:icon="@drawable/ic_baseline_add_photo_alternate_24"
         android:title="@string/add_to_custom_album"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_remove_from_custom_album"
-        android:icon="@drawable/ic_outline_library_add_24"
+        android:icon="@drawable/ic_remove_photo_alternate_black_24dp"
         android:title="@string/action_remove_from_custom_album"
         android:visible="false"
         app:showAsAction="always" />

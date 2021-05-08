@@ -29,15 +29,16 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin">
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/favorites"
                     style="@style/Theme.Photos.OutlineButton"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:layout_marginEnd="8dp"
+                    android:maxWidth="@dimen/outline_button_max_width"
                     android:text="@string/favorites_title"
                     app:flow_verticalBias="0.0"
                     app:icon="@drawable/ic_outline_favorite_border_24"
@@ -59,6 +60,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:maxWidth="@dimen/outline_button_max_width"
                     android:text="@string/custom_album_title"
                     app:icon="@drawable/ic_outline_collections_24"
                     app:layout_constraintBottom_toBottomOf="@+id/barrier"

@@ -60,7 +60,7 @@ class CustomAlbumViewModel(
         get() = _reloadDataRequest
 
     fun requestReloadingData() {
-        _reloadDataRequest.value = true
+        _reloadDataRequest.postValue(true)
     }
 
     fun doneRequestingLoadData() {
@@ -85,13 +85,18 @@ class CustomAlbumViewModel(
         return database.containsCustomAlbumName(name)
     }
 
-    fun removePhotosFromAlbum(items: List<MediaItem>, albumId: Long) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-
-            }
-        }
+    suspend fun removePhotosFromAlbum(items: List<MediaItem>, albumId: Long) = withContext(Dispatchers.IO) {
+        val ids = items.map { it.id }
+        database.deleteCustomAlbumItemById(albumId, *ids.toLongArray())
+        requestReloadingData()
     }
+
+    suspend fun addPhotosToAlbum(items: List<MediaItem>, albumId: Long) = withContext(Dispatchers.IO) {
+        val customAlbumItems = items.map { CustomAlbumItem(id = it.id, albumId = albumId) }
+        database.addMediaItemToCustomAlbum(*customAlbumItems.toTypedArray())
+        requestReloadingData()
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST")

@@ -40,4 +40,7 @@ interface PhotosDatabaseDao {
 
     @Query("select count(*) from custom_album where name=:name")
     suspend fun containsCustomAlbumName(name: String): Boolean
+
+    @Query("delete from custom_album_item where album_id=:albumId and id in (:id)")
+    suspend fun deleteCustomAlbumItemById(albumId: Long, vararg id: Long)
 }

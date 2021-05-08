@@ -110,4 +110,8 @@
     <string name="action_remove_from_favourite_succeed">Đã xóa khỏi danh sách yêu thích</string>
     <string name="action_remove_from_custom_album">Xóa khỏi album</string>
     <string name="action_remove_favourite">Xóa khỏi danh sách yêu thích</string>
+    <string name="action_remove_from_custom_album_succeed">Đã xóa ảnh</string>
+    <string name="pick_custom_album_dialog_title">Chọn album</string>
+    <string name="add_photo_to_custom_album_succeed">Đã thêm vào Album %1$s</string>
+    <string name="add_photo_dialog_title">Chọn ảnh</string>
 </resources>
