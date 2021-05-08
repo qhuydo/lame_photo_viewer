@@ -13,6 +13,7 @@ import java.io.InputStream
 class GPSImage {
     var latitude: Double? = null
     var longitude: Double? = null
+    lateinit var exif:ExifInterface
 
     private fun convertToDegree(stringDMS: String): Double {
         val result: Double?
@@ -52,7 +53,7 @@ class GPSImage {
     @RequiresApi(Build.VERSION_CODES.N)
     constructor(inputStream: InputStream) {
         try {
-            val exif = ExifInterface(inputStream)
+            exif = ExifInterface(inputStream)
 //            val floatArray = FloatArray(2)
 //            val hasLatLong = exif.getLatLong(floatArray)
 //            if (hasLatLong) {
@@ -70,7 +71,7 @@ class GPSImage {
     constructor(path: String?) {
         try {
             path?.let {
-                val exif = ExifInterface(it)
+                exif = ExifInterface(it)
                 getLatLong(exif)
             }
 
@@ -100,6 +101,7 @@ class GPSImage {
             }
         }
     }
+
 
     companion object {
 

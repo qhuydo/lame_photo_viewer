@@ -3,6 +3,7 @@ package com.hcmus.clc18se.photos.fragments
 import android.app.Activity
 import android.app.Dialog
 import android.content.*
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
@@ -11,6 +12,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
+import androidx.navigation.navGraphViewModels
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
@@ -18,12 +20,15 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 import com.hcmus.clc18se.photos.utils.VideoDialogActivity
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import java.io.*
 
 class PhotoViewPagerFragment : Fragment() {
-
+    private lateinit var viewModel: PhotosViewModel
     internal var mediaItem: MediaItem? = null
     private var dialog: Dialog? = null
     private lateinit var binding: PhotoViewPagerPageBinding
@@ -142,6 +147,12 @@ class PhotoViewPagerFragment : Fragment() {
                 rename()
                 true
             }
+            R.id.action_move -> {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                startActivityForResult(Intent.createChooser(intent, "Choose directory"), MOVE_FILE)
+                true
+            }
             R.id.action_copy -> {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
                 intent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -200,7 +211,7 @@ class PhotoViewPagerFragment : Fragment() {
                             if (fileDest.exists()) {
                                 Toast.makeText(
                                         requireContext(),
-                                        R.string.failed,
+                                        R.string.failed_filename_exist_again,
                                         Toast.LENGTH_SHORT
                                 ).show()
                             } else {
@@ -296,6 +307,18 @@ class PhotoViewPagerFragment : Fragment() {
         }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val viewModel: PhotosViewModel by navGraphViewModels(
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+        ) {
+            PhotosViewModelFactory(
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            )
+        }
+        this.viewModel = viewModel
+    }
     override fun onDetach() {
         super.onDetach()
         if (fullScreen) {
@@ -306,35 +329,178 @@ class PhotoViewPagerFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == COPY_FILE) {
-            data?.let {
-                val cw = ContextWrapper(requireContext().applicationContext)
-                val treeUri = data.data
-                val fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                        ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
-                try {
-                    val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
-                    val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
-                    inputStream!!.copyTo(outputStream!!)
-                    inputStream.close()
-                    outputStream.close()
-                    Toast.makeText(context, getString(R.string.copy_succeed), Toast.LENGTH_SHORT)
-                            .show()
-                } catch (e: Exception) {
-                    Toast.makeText(
-                            context,
-                            getString(R.string.copy_file_unsucceed),
-                            Toast.LENGTH_SHORT
-                    ).show()
+        if (resultCode == Activity.RESULT_OK ) {
+            when (requestCode){
+                COPY_FILE ->{
+                    data?.let {
+                        val cw = ContextWrapper(requireContext().applicationContext)
+                        val treeUri = data.data
+                        var fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                                ?.findFile(mediaItem!!.name)
+                        if (fileDest != null)
+                        {
+                            MaterialDialog(requireContext()).show {
+                                title(R.string.file_duplicate_warning_dialog_title)
+                                message(R.string.file_duplicate_warning_dialog_msg)
+                                negativeButton(R.string.cancel) { }
+                                @Suppress("DEPRECATION")
+                                neutralButton(R.string.rename) {
+
+                                    MaterialDialog(requireContext()).show {
+                                        input()
+                                        title(R.string.set_file_name_dialog_title)
+                                        positiveButton {
+                                            val newName = "${getInputField().text}${
+                                                mediaItem!!.name.substring(
+                                                        mediaItem!!.name.lastIndexOf(".")
+                                                )
+                                            }"
+                                            fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                                                    ?.findFile(newName)
+                                            if (fileDest != null) {
+                                                Toast.makeText(
+                                                        requireContext(),
+                                                        R.string.failed_filename_exist_again,
+                                                        Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                            else{
+                                                dismiss()
+                                                fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                                                        ?.createFile(mediaItem!!.mimeType!!,newName)
+                                                copyFile(fileDest)
+                                            }
+                                        }
+                                    }
+
+                                }
+                                positiveButton(R.string.override) {
+                                    dismiss()
+                                    copyFile(fileDest)
+                                }
+                            }
+                        }
+                        else{
+                            fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                                    ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
+                            copyFile(fileDest)
+                        }
+                    }
+                }
+                MOVE_FILE ->{
+                    data?.let {
+                        val cw = ContextWrapper(requireContext().applicationContext)
+                        val treeUri = data.data
+                        var fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                                ?.findFile(mediaItem!!.name)
+                        if (fileDest != null)
+                        {
+                            MaterialDialog(requireContext()).show {
+                                title(R.string.file_duplicate_warning_dialog_title)
+                                message(R.string.file_duplicate_warning_dialog_msg)
+                                negativeButton(R.string.cancel) { }
+                                @Suppress("DEPRECATION")
+                                neutralButton(R.string.rename) {
+
+                                    MaterialDialog(requireContext()).show {
+                                        input()
+                                        title(R.string.set_file_name_dialog_title)
+                                        positiveButton {
+                                            val newName = "${getInputField().text}${
+                                                mediaItem!!.name.substring(
+                                                        mediaItem!!.name.lastIndexOf(".")
+                                                )
+                                            }"
+                                            fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                                                    ?.findFile(newName)
+                                            if (fileDest != null) {
+                                                Toast.makeText(
+                                                        requireContext(),
+                                                        R.string.failed_filename_exist_again,
+                                                        Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                            else{
+                                                dismiss()
+                                                fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                                                        ?.createFile(mediaItem!!.mimeType!!,newName)
+                                                moveFile(fileDest)
+                                            }
+                                        }
+                                    }
+
+                                }
+                                positiveButton(R.string.override) {
+                                    dismiss()
+                                    moveFile(fileDest)
+                                }
+                            }
+                        }
+                        else{
+                            fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                                    ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
+                            moveFile(fileDest)
+                        }
+                    }
                 }
             }
+
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    fun moveFile(fileDest: DocumentFile?){
+        try {
+            val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
+            val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
+            inputStream!!.copyTo(outputStream!!)
+            inputStream.close()
+            outputStream.close()
+            Toast.makeText(context, getString(R.string.move_succeed), Toast.LENGTH_SHORT)
+                    .show()
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                MaterialDialog(requireContext()).show {
+                    title(R.string.delete_warning_dialog_title)
+                    message(R.string.delete_warning_dialog_msg)
+                    positiveButton(R.string.yes) {
+                        viewModel.deleteImage(mediaItem!!)
+                    }
+                    negativeButton(R.string.no) {}
+                }
+            } else {
+                viewModel.deleteImage(mediaItem!!)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(
+                    context,
+                    getString(R.string.move_unsucceed),
+                    Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    fun copyFile(fileDest: DocumentFile?){
+        try {
+            val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
+            val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
+            inputStream!!.copyTo(outputStream!!)
+            inputStream.close()
+            outputStream.close()
+            Toast.makeText(context, getString(R.string.copy_succeed), Toast.LENGTH_SHORT)
+                    .show()
+        } catch (e: Exception) {
+            Toast.makeText(
+                    context,
+                    getString(R.string.copy_file_unsucceed),
+                    Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     companion object {
         private const val BUNDLE_MEDIA_ITEM = "uri"
         private const val BUNDLE_FULLSCREEN = "fullscreen"
         private const val COPY_FILE = 2345
+        private const val MOVE_FILE = 3456
     }
 }

@@ -24,12 +24,31 @@
         android:singleLine="false" />
 
     <TextView
+        android:id="@+id/size"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/size_image"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:visibility="gone"/>
+
+    <TextView
         android:id="@+id/name_place"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:singleLine="false" />
+        android:singleLine="false"
+        android:visibility="gone"/>
 
     <Button
         android:layout_gravity="center_horizontal"

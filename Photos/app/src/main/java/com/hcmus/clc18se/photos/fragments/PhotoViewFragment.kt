@@ -5,7 +5,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
+import android.media.ExifInterface
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -47,8 +47,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.File
 import java.io.FileNotFoundException
-import java.time.Duration
+import java.lang.Exception
 
 // TODO: create a view model for this
 class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
@@ -202,11 +203,22 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             val dateCreated = photos[currentPosition].requireDateTaken()
             findViewById<TextView>(R.id.date_create).text =
                 resources.getString(R.string.date_created, dateCreated)
+
+            val size = getFileSize(path!!)
+            findViewById<TextView>(R.id.size)?.visibility = View.VISIBLE
+            findViewById<TextView>(R.id.size)?.text = getString(R.string.size, size)
+
+            if (!photos[currentPosition].isVideo())
+            {
+                findViewById<TextView>(R.id.size_image)?.visibility = View.VISIBLE
+                findViewById<TextView>(R.id.size_image)?.text = getString(R.string.image_size, getImageSize(path))
+            }
         }
 
         val address: String? = getMediaItemAddress()
         address?.let {
             Timber.d(it)
+            dialog?.findViewById<TextView>(R.id.name_place)?.visibility = View.VISIBLE
             dialog?.findViewById<TextView>(R.id.name_place)?.text = getString(R.string.location, it)
         }
 
@@ -215,6 +227,49 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             dialog = null
         }
         dialog?.show()
+    }
+
+    private fun getImageSize(path: String): String?{
+        var sizeString:String? = null
+        val gpsImage = GPSImage(path)
+        try {
+            val length = gpsImage.exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)
+            val width = gpsImage.exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)
+            if (length != null && width != null) {
+                sizeString = "$length:$width"
+            }
+        }
+        catch (e:Exception)
+        {
+
+        }
+        return sizeString
+    }
+
+    private fun getFileSize(path:String): String? {
+        var sizeString:String? = null
+        try {
+            val file = File(path)
+            var size:Double = file.length().toDouble()
+            var count = 0
+            while (size > 1024)
+            {
+                size = size / 1024
+                count++
+            }
+            sizeString = String.format("%.1f", size)
+            when(count){
+                0 -> sizeString += "B"
+                1 -> sizeString += "KB"
+                2 -> sizeString += "MB"
+                3 -> sizeString += "GB"
+                4 -> sizeString += "TB"
+            }
+        }
+        catch (e:Exception){
+
+        }
+        return sizeString
     }
 
     private fun getMediaItemAddress(): String? {
