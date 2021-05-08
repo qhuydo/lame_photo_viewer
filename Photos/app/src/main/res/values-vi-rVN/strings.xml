@@ -97,4 +97,5 @@
     <string name="copy_file_unsucceed">Không thể sao chép</string>
     <string name="image_saved">Đã lưu</string>
     <string name="image_saved_fail">Không thể lưu ảnh</string>
+    <string name="failed_filename_exist_again">Thất bại bởi vì file trùng</string>
 </resources>

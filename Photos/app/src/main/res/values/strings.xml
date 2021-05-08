@@ -112,6 +112,7 @@
     <string name="yes" translatable="false">@android:string/yes</string>
     <string name="no" translatable="false">@android:string/no</string>
     <string name="failed">Failed</string>
+    <string name="failed_filename_exist_again">Failed because the same filename exist again</string>
     <string name="set_file_name_dialog_title">File name</string>
     <string name="rename_unsucceed">Renamed</string>
     <string name="rename_succeed">Could not rename</string>
@@ -125,4 +126,6 @@
     <string name="unknownName" translatable="false">@android:string/unknownName</string>
     <string name="detect_face_title">Detect face</string>
     <string name="detect_in_progress">Detect in progress</string>
+    <string name="size">Size: %1$s</string>
+    <string name="image_size">Image size: %1$s</string>
 </resources>
