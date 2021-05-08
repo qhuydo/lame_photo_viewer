@@ -124,8 +124,13 @@
     <string name="image_saved">Image Saved</string>
     <string name="image_saved_fail">Could not save the image</string>
     <string name="unknownName" translatable="false">@android:string/unknownName</string>
-    <string name="detect_face_title">Detect face</string>
+    <string name="detect_face_title">Face detect</string>
     <string name="detect_in_progress">Detect in progress</string>
     <string name="size">Size: %1$s</string>
-    <string name="image_size">Image size: %1$s</string>
+    <string name="image_size">Resolution: %1$s</string>
+    <string name="action_add_to_favourite">Add to favourite album</string>
+    <string name="add_to_custom_album">Add to album</string>
+    <string name="action_remove_favourite">Remove from favourite album</string>
+    <string name="action_add_to_secret_album">Add to Secret folder</string>
+    <string name="action_remove_from_secret_album">Remove from secret folder</string>
 </resources>

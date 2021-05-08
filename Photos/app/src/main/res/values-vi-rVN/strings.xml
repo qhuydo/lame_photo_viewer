@@ -98,4 +98,13 @@
     <string name="image_saved">Đã lưu</string>
     <string name="image_saved_fail">Không thể lưu ảnh</string>
     <string name="failed_filename_exist_again">Thất bại bởi vì file trùng</string>
+    <string name="detect_face_title">Nhận diện khuôn mặt</string>
+    <string name="detect_in_progress">Đang nhận diện khuôn mặt</string>
+    <string name="size">Dung lượng: %1$s</string>
+    <string name="action_add_to_favourite">Thêm vào danh sách yêu thích</string>
+    <string name="add_to_custom_album">Thêm vào album</string>
+    <string name="action_remove_favourite">Xóa khỏi album</string>
+    <string name="action_add_to_secret_album">Thêm vào thư mục bí mật</string>
+    <string name="action_remove_from_secret_album">Bỏ khỏi thư mục bí mật</string>
+    <string name="image_size">Độ phân giải: %1$s</string>
 </resources>

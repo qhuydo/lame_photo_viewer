@@ -25,6 +25,8 @@
 
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <item name="android:textColor">?colorOnSurface</item>
     </style>
 
     <color name="search_bar_background">@color/cardview_dark_background</color>

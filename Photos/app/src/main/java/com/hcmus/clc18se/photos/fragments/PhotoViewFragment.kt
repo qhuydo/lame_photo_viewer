@@ -236,7 +236,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             val length = gpsImage.exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)
             val width = gpsImage.exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)
             if (length != null && width != null) {
-                sizeString = "$length:$width"
+                sizeString = "$length × $width"
             }
         }
         catch (e:Exception)

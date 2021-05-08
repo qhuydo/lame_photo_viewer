@@ -58,7 +58,7 @@ import timber.log.Timber
  * @see [PhotoListFragment]
  */
 abstract class AbstractPhotoListFragment(
-        private val menuRes: Int
+    private val menuRes: Int
 ) : BaseFragment(), OnBackPressed {
 
     protected val preferences: SharedPreferences by lazy {
@@ -87,17 +87,17 @@ abstract class AbstractPhotoListFragment(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentListItemView = preferences.getString(
-                getString(R.string.photo_list_view_type_key),
-                MediaItemListAdapter.ITEM_TYPE_LIST.toString()
+            getString(R.string.photo_list_view_type_key),
+            MediaItemListAdapter.ITEM_TYPE_LIST.toString()
         )!!.toInt()
 
         currentListItemSize = preferences.getString(
-                getString(R.string.photo_list_item_size_key),
-                "0"
+            getString(R.string.photo_list_item_size_key),
+            "0"
         )!!.toInt()
 
         deleteRequestLauncher = registerForActivityResult(
-                ActivityResultContracts.StartIntentSenderForResult()
+            ActivityResultContracts.StartIntentSenderForResult()
         ) { activityResult ->
             if (Activity.RESULT_OK == activityResult.resultCode) {
                 Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
@@ -125,9 +125,9 @@ abstract class AbstractPhotoListFragment(
         setPhotoListIcon(photoListImageItem, currentListItemView)
 
         val currentPreference = preferences.getString(
-                getString(
-                        R.string.photo_list_item_size_key
-                ), "0"
+            getString(
+                R.string.photo_list_item_size_key
+            ), "0"
         ) ?: "0"
         setPhotoListItemSizeOption(resources, menu, currentPreference)
     }
@@ -149,7 +149,7 @@ abstract class AbstractPhotoListFragment(
 
     private fun onRefreshPhotoList(): Boolean {
         when (photoListBinding) {
-            is PhotoListBinding  -> {
+            is PhotoListBinding -> {
                 (photoListBinding as PhotoListBinding).apply {
                     swipeRefreshLayout.isRefreshing = true
                     adapter.notifyDataSetChanged()
@@ -174,8 +174,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-                .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
-                .apply()
+            .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
+            .apply()
 
         refreshRecyclerView()
     }
@@ -194,8 +194,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-                .putString(getString(R.string.photo_list_item_size_key), option)
-                .apply()
+            .putString(getString(R.string.photo_list_item_size_key), option)
+            .apply()
 
         refreshRecyclerView()
 
@@ -230,6 +230,7 @@ abstract class AbstractPhotoListFragment(
 
             mainCab = createCab(getCadSubId()) {
                 title(literal = "${adapter.numberOfSelectedItems()}")
+                
                 menu(R.menu.photo_list_context_menu)
                 popupTheme(R.style.Theme_Photos_Indigo)
                 titleColor(literal = colorOnPrimary)
@@ -249,16 +250,16 @@ abstract class AbstractPhotoListFragment(
     }
 
     private fun onCabCreated(menu: Menu): Boolean {
-        // Makes the icons in the overflow menu visible
-        if (menu.javaClass.simpleName == "MenuBuilder") {
-            try {
-                val field = menu.javaClass.getDeclaredField("mOptionalIconsVisible")
-                field.isAccessible = true
-                field.setBoolean(menu, true)
-            } catch (ignored: Exception) {
-                ignored.printStackTrace()
-            }
-        }
+//        // Makes the icons in the overflow menu visible
+//        if (menu.javaClass.simpleName == "MenuBuilder") {
+//            try {
+//                val field = menu.javaClass.getDeclaredField("mOptionalIconsVisible")
+//                field.isAccessible = true
+//                field.setBoolean(menu, true)
+//            } catch (ignored: Exception) {
+//                ignored.printStackTrace()
+//            }
+//        }
         return true // allow creation
     }
 

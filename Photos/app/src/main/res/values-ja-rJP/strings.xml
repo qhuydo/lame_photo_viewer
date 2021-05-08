@@ -96,4 +96,13 @@
     <string name="copy_file_unsucceed">コピー失敗</string>
     <string name="image_saved">保存 成功</string>
     <string name="image_saved_fail">保存 失敗</string>
+    <string name="detect_face_title">顔検出</string>
+    <string name="detect_in_progress">顔検出中</string>
+    <string name="size">サイズ: %1$s</string>
+    <string name="action_add_to_favourite">お気に入りのアルバムに追加</string>
+    <string name="add_to_custom_album">自分のアルバムに追加</string>
+    <string name="action_remove_favourite">アルバムから削除</string>
+    <string name="action_add_to_secret_album">秘密アルバムに追加</string>
+    <string name="action_remove_from_secret_album">秘密アルバムから削除</string>
+    <string name="image_size">画像解像度: %1$s</string>
 </resources>

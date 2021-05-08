@@ -3,6 +3,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_add_to_favourite"
+        android:icon="@drawable/favorite_create_black_24dp"
+        android:title="@string/action_add_to_favourite"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_remove_favourite"
+        android:icon="@drawable/favorite_remove_black_24dp"
+        android:title="@string/action_remove_favourite"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+
+        android:id="@+id/action_add_to_custom_album"
+        android:icon="@drawable/ic_baseline_library_add_24"
+        android:title="@string/add_to_custom_album"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_remove_from_custom_album"
+        android:icon="@drawable/ic_outline_library_add_24"
+        android:title="@string/add_to_custom_album"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_add_to_secret_album"
+        android:icon="@drawable/ic_baseline_lock_24"
+        android:title="@string/action_add_to_secret_album"
+        app:showAsAction="always" />
+
+    <item
+        android:visible="false"
+        android:id="@+id/action_remove_secret_album"
+        android:icon="@drawable/ic_outline_lock_24"
+        android:title="@string/action_remove_from_secret_album"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_select_all"
         android:icon="@drawable/ic_baseline_select_all_24"
         android:title="@string/select_all"
@@ -10,7 +50,7 @@
 
     <item
         android:id="@+id/action_multiple_delete"
-        android:icon="@drawable/ic_baseline_delete_24"
+        android:icon="@drawable/ic_baseline_delete_forever_24"
         android:title="@string/delete_title"
         app:showAsAction="ifRoom" />
 
