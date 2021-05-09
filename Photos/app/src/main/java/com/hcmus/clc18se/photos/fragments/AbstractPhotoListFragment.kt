@@ -1,7 +1,6 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.app.Activity
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -17,7 +16,6 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
-import androidx.preference.PreferenceManager
 import com.afollestad.materialcab.attached.AttachedCab
 import com.afollestad.materialcab.attached.destroy
 import com.afollestad.materialcab.attached.isActive
@@ -30,8 +28,7 @@ import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
-import com.hcmus.clc18se.photos.data.Album
-import com.hcmus.clc18se.photos.data.deleteMultipleMediaItems
+import com.hcmus.clc18se.photos.data.*
 import com.hcmus.clc18se.photos.databinding.DialogCustomAlbumsBinding
 import com.hcmus.clc18se.photos.databinding.PhotoListBinding
 import com.hcmus.clc18se.photos.databinding.PhotoListFastScrollerBinding
@@ -66,10 +63,6 @@ import timber.log.Timber
 abstract class AbstractPhotoListFragment(
     private val menuRes: Int
 ) : BaseFragment(), OnBackPressed {
-
-    protected val preferences: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(requireActivity())
-    }
 
     // Current list item view type, get from preference
     protected var currentListItemView: Int = MediaItemListAdapter.ITEM_TYPE_LIST
@@ -140,12 +133,21 @@ abstract class AbstractPhotoListFragment(
         val photoListImageItem = menu.findItem(R.id.photo_list_item_view_type)
         setPhotoListIcon(photoListImageItem, currentListItemView)
 
-        val currentPreference = preferences.getString(
-            getString(
-                R.string.photo_list_item_size_key
-            ), "0"
+        val itemSizePreference = preferences.getString(
+            getString(R.string.photo_list_item_size_key), "0"
         ) ?: "0"
-        setPhotoListItemSizeOption(resources, menu, currentPreference)
+
+        setPhotoListItemSizeOption(resources, menu, itemSizePreference)
+
+        val orderPreference = preferences.getString(
+            getString(R.string.sort_order_key), DEFAULT_SORT_ORDER
+        ) ?: DEFAULT_SORT_ORDER
+
+        when (orderPreference) {
+            SORT_BY_DATE_TAKEN -> menu.findItem(R.id.action_order_by_date_taken)?.isChecked = true
+            SORT_BY_DATE_MODIFIED -> menu.findItem(R.id.action_order_by_date_modified)?.isChecked = true
+            else -> menu.findItem(R.id.action_order_by_date_added)?.isChecked = true
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -155,9 +157,15 @@ abstract class AbstractPhotoListFragment(
                 setPhotoListIcon(item, currentListItemView)
                 true
             }
-            R.id.item_view_size_big -> onItemSizeOptionClicked(item)
-            R.id.item_view_size_medium -> onItemSizeOptionClicked(item)
+
+            R.id.item_view_size_big,
+            R.id.item_view_size_medium,
             R.id.item_view_size_small -> onItemSizeOptionClicked(item)
+
+            R.id.action_order_by_date_added,
+            R.id.action_order_by_date_taken,
+            R.id.action_order_by_date_modified -> onOrderByOptionClicked(item)
+
             R.id.menu_refresh -> onRefreshPhotoList()
             else -> false
         }
@@ -214,6 +222,24 @@ abstract class AbstractPhotoListFragment(
             .apply()
 
         refreshRecyclerView()
+
+        return true
+    }
+
+    private fun onOrderByOptionClicked(menuItem: MenuItem): Boolean {
+        menuItem.isChecked = true
+
+        val option = when (menuItem.itemId) {
+            R.id.action_order_by_date_modified -> SORT_BY_DATE_MODIFIED
+            R.id.action_order_by_date_taken -> SORT_BY_DATE_TAKEN
+            else -> DEFAULT_SORT_ORDER
+        }
+
+        preferences.edit()
+            .putString(getString(R.string.sort_order_key), option)
+            .apply()
+
+        getCurrentViewModel().loadImages()
 
         return true
     }

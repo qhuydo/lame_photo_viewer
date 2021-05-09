@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.StringRes
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
 import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.database.PhotosDatabase
@@ -26,6 +28,10 @@ abstract class BaseFragment : Fragment() {
 
     protected val database by lazy {
         PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+    }
+
+    protected val preferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(requireActivity())
     }
 
     // get the toolbar object from the layout which needs to be setup navigation

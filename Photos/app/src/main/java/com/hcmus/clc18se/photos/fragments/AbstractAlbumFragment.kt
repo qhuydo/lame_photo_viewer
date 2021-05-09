@@ -1,13 +1,11 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.navigation.navGraphViewModels
-import androidx.preference.PreferenceManager
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.R
@@ -21,10 +19,6 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 
 abstract class AbstractAlbumFragment : BaseFragment() {
-
-    protected val preferences: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(requireActivity())
-    }
 
     protected lateinit var photosViewModel: PhotosViewModel
 

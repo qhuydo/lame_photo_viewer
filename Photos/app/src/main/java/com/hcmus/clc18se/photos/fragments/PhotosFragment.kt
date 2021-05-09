@@ -52,20 +52,20 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
             val flags = DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH or DateUtils.FORMAT_NO_MONTH_DAY
 
-            var headerItem = items.first().requireDateTaken()?.let {
+            var headerItem = items.first().getDateSorted()?.let {
                 AdapterItem.AdapterItemHeader(
                         it.time,
                         DateUtils.formatDateTime(context, it.time, flags)
                 )
             } ?: return super.onGroupListItem(items)
 
-            var headerTimeStamp = items.first().requireDateTaken()?.month to items.first().requireDateTaken()?.year
+            var headerTimeStamp = items.first().getDateSorted()?.month to items.first().getDateSorted()?.year
 
             items.forEachIndexed { index, mediaItem ->
                 if (index == 0) {
                     adapterItems.add(headerItem)
                 }
-                val date = mediaItem.requireDateTaken()
+                val date = mediaItem.getDateSorted()
                 date?.let {
                     val itemTimeStamp = it.month to it.year
                     if (itemTimeStamp != headerTimeStamp) {
@@ -76,8 +76,7 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
                         )
                         adapterItems.add(headerItem)
                     }
-                }
-                        ?: return adapterItems + items.subList(index, items.lastIndex)
+                } ?: return adapterItems + items.subList(index, items.lastIndex)
                                 .map { AdapterItem.AdapterMediaItem(it) }
                 adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
             }

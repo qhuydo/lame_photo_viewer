@@ -113,4 +113,9 @@
     <string name="add_photo_to_custom_album_succeed">「%1$s」に追加 成功</string>
     <string name="add_photo_dialog_title">写真を選択</string>
     <string name="select">選択</string>
+    <string name="action_group_by">グループ分け</string>
+    <string name="date_added">追加時間</string>
+    <string name="date_modified">論集時間</string>
+    <string name="date_taken">撮影時間</string>
+    <string name="action_order_by">並べ替え</string>
 </resources>
