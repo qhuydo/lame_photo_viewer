@@ -64,7 +64,7 @@ import timber.log.Timber
  * @see [PhotoListFragment]
  */
 abstract class AbstractPhotoListFragment(
-        private val menuRes: Int
+    private val menuRes: Int
 ) : BaseFragment(), OnBackPressed {
 
     protected val preferences: SharedPreferences by lazy {
@@ -96,23 +96,30 @@ abstract class AbstractPhotoListFragment(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentListItemView = preferences.getString(
-                getString(R.string.photo_list_view_type_key),
-                MediaItemListAdapter.ITEM_TYPE_LIST.toString()
+            getString(R.string.photo_list_view_type_key),
+            MediaItemListAdapter.ITEM_TYPE_LIST.toString()
         )!!.toInt()
 
         currentListItemSize = preferences.getString(
-                getString(R.string.photo_list_item_size_key),
-                "0"
+            getString(R.string.photo_list_item_size_key),
+            "0"
         )!!.toInt()
 
         deleteRequestLauncher = registerForActivityResult(
-                ActivityResultContracts.StartIntentSenderForResult()
+            ActivityResultContracts.StartIntentSenderForResult()
         ) { activityResult ->
             if (Activity.RESULT_OK == activityResult.resultCode) {
                 Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
             }
         }
 
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Swipe to refresh layout is disabled by default
+        changeSwipeLayoutEnableState(isSwipeLayoutEnabled())
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -134,9 +141,9 @@ abstract class AbstractPhotoListFragment(
         setPhotoListIcon(photoListImageItem, currentListItemView)
 
         val currentPreference = preferences.getString(
-                getString(
-                        R.string.photo_list_item_size_key
-                ), "0"
+            getString(
+                R.string.photo_list_item_size_key
+            ), "0"
         ) ?: "0"
         setPhotoListItemSizeOption(resources, menu, currentPreference)
     }
@@ -183,8 +190,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-                .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
-                .apply()
+            .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
+            .apply()
 
         refreshRecyclerView()
     }
@@ -203,8 +210,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-                .putString(getString(R.string.photo_list_item_size_key), option)
-                .apply()
+            .putString(getString(R.string.photo_list_item_size_key), option)
+            .apply()
 
         refreshRecyclerView()
 
@@ -220,6 +227,8 @@ abstract class AbstractPhotoListFragment(
 
     abstract fun getCadSubId(): Int
 
+    open fun isSwipeLayoutEnabled(): Boolean = false
+
     fun invalidateCab() {
         if (adapter.numberOfSelectedItems() == 0) {
             mainCab?.destroy()
@@ -232,30 +241,46 @@ abstract class AbstractPhotoListFragment(
                 title(literal = "${adapter.numberOfSelectedItems()}")
             }
         } else {
-            val colorPrimary = getColorAttribute(requireContext(), R.attr.colorPrimary)
-            Timber.d("Color primary $colorPrimary")
-            val colorOnPrimary = getColorAttribute(requireContext(), R.attr.colorOnPrimary)
-            Timber.d("Color On primary $colorOnPrimary")
-
-            mainCab = createCab(getCadSubId()) {
-                title(literal = "${adapter.numberOfSelectedItems()}")
-
-                menu(R.menu.photo_list_context_menu)
-                popupTheme(R.style.Theme_Photos_Indigo)
-                titleColor(literal = colorOnPrimary)
-                subtitleColor(literal = colorOnPrimary)
-                backgroundColor(literal = colorPrimary)
-                slideDown()
-
-                onCreate { _, menu -> onPrepareCabMenu(menu) }
-                onSelection { onCabItemSelected(it) }
-                onDestroy {
-                    onCabDestroy()
-                }
-            }
+            createCab()
         }
     }
 
+    private fun createCab() {
+        val colorPrimary = getColorAttribute(requireContext(), R.attr.colorPrimary)
+        Timber.d("Color primary $colorPrimary")
+        val colorOnPrimary = getColorAttribute(requireContext(), R.attr.colorOnPrimary)
+        Timber.d("Color On primary $colorOnPrimary")
+
+        mainCab = createCab(getCadSubId()) {
+            title(literal = "${adapter.numberOfSelectedItems()}")
+
+            menu(R.menu.photo_list_context_menu)
+            popupTheme(R.style.Theme_Photos_Indigo)
+            titleColor(literal = colorOnPrimary)
+            subtitleColor(literal = colorOnPrimary)
+            backgroundColor(literal = colorPrimary)
+            slideDown()
+
+            onCreate { _, menu ->
+                changeSwipeLayoutEnableState(false)
+                onPrepareCabMenu(menu)
+            }
+            onSelection { onCabItemSelected(it) }
+            onDestroy { onCabDestroy() }
+        }
+    }
+
+    private fun changeSwipeLayoutEnableState(isEnabled: Boolean = true) {
+        when (photoListBinding) {
+            is PhotoListBinding -> {
+                (photoListBinding as PhotoListBinding).swipeRefreshLayout.isEnabled = isEnabled
+            }
+            is PhotoListFastScrollerBinding -> {
+                (photoListBinding as PhotoListFastScrollerBinding).swipeRefreshLayout.isEnabled =
+                    isEnabled
+            }
+        }
+    }
 
     open fun onCabItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -305,23 +330,27 @@ abstract class AbstractPhotoListFragment(
             dialogBinding.customAlbumViewModel = customAlbumViewModel
 
             dialogBinding.albumListLayout.albumListRecyclerView.adapter = AlbumListAdapter(
-                    onClickListener = AlbumListAdapter.OnClickListener {
-                        dismiss()
-                        startAddingPhotoToCustomAlbum(it, customAlbumViewModel)
-                    }
+                onClickListener = AlbumListAdapter.OnClickListener {
+                    dismiss()
+                    startAddingPhotoToCustomAlbum(it, customAlbumViewModel)
+                }
             )
 
             customView(view = dialogBinding.root, scrollable = true)
         }
     }
 
-    private fun startAddingPhotoToCustomAlbum(album: Album, customAlbumViewModel: CustomAlbumViewModel) {
+    private fun startAddingPhotoToCustomAlbum(
+        album: Album,
+        customAlbumViewModel: CustomAlbumViewModel
+    ) {
         customAlbumViewModel.viewModelScope.launch {
             customAlbumViewModel.addPhotosToAlbum(adapter.getSelectedItems(), album.customAlbumId!!)
             mainCab?.destroy()
-            Toast.makeText(requireContext(),
-                    getString(R.string.add_photo_to_custom_album_succeed, album.getName()),
-                    Toast.LENGTH_SHORT
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.add_photo_to_custom_album_succeed, album.getName()),
+                Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -335,7 +364,11 @@ abstract class AbstractPhotoListFragment(
             favouriteAlbumViewModel.addToFavouriteAlbum(adapter.getSelectedItems())
 
             mainCab?.destroy()
-            Toast.makeText(requireContext(), getString(R.string.action_add_to_favourite_succeed), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.action_add_to_favourite_succeed),
+                Toast.LENGTH_SHORT
+            ).show()
 
         }
     }
@@ -356,7 +389,11 @@ abstract class AbstractPhotoListFragment(
                     favouriteAlbumViewModel.removeFromFavourite(adapter.getSelectedItems())
 
                     mainCab?.destroy()
-                    Toast.makeText(requireContext(), getString(R.string.action_remove_from_favourite_succeed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.action_remove_from_favourite_succeed),
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                 }
             }
@@ -419,7 +456,8 @@ abstract class AbstractPhotoListFragment(
     open fun onPrepareCabMenu(menu: Menu) {
         // set the status bar color to match with ?colorPrimary
         // to match with status bar color
-        requireActivity().window.statusBarColor = getColorAttribute(requireContext(), R.attr.colorPrimary)
+        requireActivity().window.statusBarColor =
+            getColorAttribute(requireContext(), R.attr.colorPrimary)
         val onPrimaryColor = getColorAttribute(requireContext(), R.attr.colorOnPrimary)
         if (isColorDark(onPrimaryColor)) {
             setLightStatusBar(requireActivity().window.decorView, requireActivity())
@@ -429,8 +467,11 @@ abstract class AbstractPhotoListFragment(
     }
 
     open fun onCabDestroy(): Boolean {
-        requireActivity().window.statusBarColor = getColorAttribute(requireContext(), R.attr.statusBarBackground)
+        requireActivity().window.statusBarColor =
+            getColorAttribute(requireContext(), R.attr.statusBarBackground)
+
         val statusBackground = getColorAttribute(requireContext(), R.attr.statusBarBackground)
+
         if (isColorDark(statusBackground)) {
             setLightStatusBar(requireActivity().window.decorView, requireActivity())
         } else {
@@ -439,6 +480,9 @@ abstract class AbstractPhotoListFragment(
 
         adapter.finishSelection()
         mainCab = null
+
+        changeSwipeLayoutEnableState(isSwipeLayoutEnabled())
+
         return true
     }
 }

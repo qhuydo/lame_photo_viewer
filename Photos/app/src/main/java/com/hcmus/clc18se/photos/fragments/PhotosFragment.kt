@@ -27,7 +27,6 @@ import com.l4digital.fastscroll.FastScroller
 import timber.log.Timber
 import java.util.*
 
-
 class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
     private lateinit var binding: FragmentPhotosBinding
@@ -236,5 +235,5 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
         }
     }
 
-//    override fun onPrepareCabMenu(menu: Menu) {}
+    override fun isSwipeLayoutEnabled() = true
 }

@@ -53,15 +53,14 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val navGraphViewModel: PhotosViewModel by navGraphViewModels(
-                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
             PhotosViewModelFactory(
-                    requireActivity().application,
-                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
             )
         }
         val bucketId = args.bucketId
-        val bucketPath = args.albumName
 
         viewModel.loadImages(bucketId)
         this.navGraphViewModel = navGraphViewModel
@@ -74,20 +73,20 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_photo_list, container, false
+            inflater, R.layout.fragment_photo_list, container, false
         )
 
         photoListBinding = binding.photoListLayout
 
         adapter = MediaItemListAdapter(
-                actionCallbacks,
-                currentListItemView,
-                currentListItemSize
+            actionCallbacks,
+            currentListItemView,
+            currentListItemSize
         ).apply {
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
@@ -108,7 +107,7 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
                 navGraphViewModel.setCurrentItemView(idx)
 
                 findNavController().navigate(
-                        PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
+                    PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
                 )
                 viewModel.doneNavigatingToImageView()
             }
@@ -123,9 +122,9 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
             (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
                 spanCount = getSpanCountForPhotoList(
-                        resources,
-                        currentListItemView,
-                        currentListItemSize
+                    resources,
+                    currentListItemView,
+                    currentListItemSize
                 )
             }
 
@@ -147,11 +146,12 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     override fun refreshRecyclerView() {
         binding.apply {
             adapter = MediaItemListAdapter(
-                    actionCallbacks,
-                    currentListItemView,
-                    currentListItemSize
+                actionCallbacks,
+                currentListItemView,
+                currentListItemSize
             ).apply {
-                stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+                stateRestorationPolicy =
+                    RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             }
 
             val recyclerView = photoListLayout.photoListRecyclerView
@@ -159,7 +159,7 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
             recyclerView.adapter = adapter
             (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.spanCount =
-                    getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
+                getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
 
             bindMediaListRecyclerView(recyclerView, photoList ?: listOf())
             adapter.notifyDataSetChanged()
@@ -173,4 +173,6 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
 
     override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
+
+    override fun isSwipeLayoutEnabled() = true
 }
