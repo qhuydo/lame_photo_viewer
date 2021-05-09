@@ -278,9 +278,10 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             accessMediaLocationResultLauncher.launch(Manifest.permission.ACCESS_MEDIA_LOCATION)
         } else {
             val path = photos[currentPosition].requirePath(requireContext())
-            path?.let {
-                val gpsImage = GPSImage(it)
+            if (path != null){
+                val gpsImage = GPSImage(path)
                 address = getAddressFromGPSImage(gpsImage, requireContext())
+                Toast.makeText(context,gpsImage.exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE),Toast.LENGTH_LONG).show()
             }
         }
         return address

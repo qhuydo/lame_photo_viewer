@@ -1,8 +1,12 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.R.attr
+import android.R.attr.*
 import android.app.Activity
 import android.app.Dialog
 import android.content.*
+import android.graphics.Color
+import android.media.ExifInterface
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -23,9 +27,15 @@ import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 import com.hcmus.clc18se.photos.utils.VideoDialogActivity
+import com.hcmus.clc18se.photos.utils.images.GPSImage
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
+import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import java.io.*
+
 
 class PhotoViewPagerFragment : Fragment() {
     private lateinit var viewModel: PhotosViewModel
@@ -145,6 +155,21 @@ class PhotoViewPagerFragment : Fragment() {
             }
             R.id.action_rename -> {
                 rename()
+                true
+            }
+            R.id.action_rotate -> {
+                binding.imageView.rotation = binding.imageView.rotation + 90f
+                true
+            }
+            R.id.action_change_place -> {
+                val intent = PlaceAutocomplete.IntentBuilder()
+                        .accessToken("pk.eyJ1IjoiaGF0aGVoaWVuIiwiYSI6ImNrb2d2eno0NDBodGQyd29hbjM1cTF4ZmgifQ.1Lx5E1AhezMWq4JakdbBOg")
+                        .placeOptions(PlaceOptions.builder()
+                                .backgroundColor(Color.parseColor("#EEEEEE"))
+                                .limit(5)
+                                .build(PlaceOptions.MODE_CARDS))
+                        .build(activity)
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
                 true
             }
             R.id.action_move -> {
@@ -331,14 +356,13 @@ class PhotoViewPagerFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK ) {
             when (requestCode){
-                COPY_FILE ->{
+                COPY_FILE -> {
                     data?.let {
                         val cw = ContextWrapper(requireContext().applicationContext)
                         val treeUri = data.data
                         var fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
                                 ?.findFile(mediaItem!!.name)
-                        if (fileDest != null)
-                        {
+                        if (fileDest != null) {
                             MaterialDialog(requireContext()).show {
                                 title(R.string.file_duplicate_warning_dialog_title)
                                 message(R.string.file_duplicate_warning_dialog_msg)
@@ -363,11 +387,10 @@ class PhotoViewPagerFragment : Fragment() {
                                                         R.string.failed_filename_exist_again,
                                                         Toast.LENGTH_SHORT
                                                 ).show()
-                                            }
-                                            else{
+                                            } else {
                                                 dismiss()
                                                 fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                                                        ?.createFile(mediaItem!!.mimeType!!,newName)
+                                                        ?.createFile(mediaItem!!.mimeType!!, newName)
                                                 copyFile(fileDest)
                                             }
                                         }
@@ -379,22 +402,20 @@ class PhotoViewPagerFragment : Fragment() {
                                     copyFile(fileDest)
                                 }
                             }
-                        }
-                        else{
+                        } else {
                             fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
                                     ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
                             copyFile(fileDest)
                         }
                     }
                 }
-                MOVE_FILE ->{
+                MOVE_FILE -> {
                     data?.let {
                         val cw = ContextWrapper(requireContext().applicationContext)
                         val treeUri = data.data
                         var fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
                                 ?.findFile(mediaItem!!.name)
-                        if (fileDest != null)
-                        {
+                        if (fileDest != null) {
                             MaterialDialog(requireContext()).show {
                                 title(R.string.file_duplicate_warning_dialog_title)
                                 message(R.string.file_duplicate_warning_dialog_msg)
@@ -419,11 +440,10 @@ class PhotoViewPagerFragment : Fragment() {
                                                         R.string.failed_filename_exist_again,
                                                         Toast.LENGTH_SHORT
                                                 ).show()
-                                            }
-                                            else{
+                                            } else {
                                                 dismiss()
                                                 fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                                                        ?.createFile(mediaItem!!.mimeType!!,newName)
+                                                        ?.createFile(mediaItem!!.mimeType!!, newName)
                                                 moveFile(fileDest)
                                             }
                                         }
@@ -435,16 +455,22 @@ class PhotoViewPagerFragment : Fragment() {
                                     moveFile(fileDest)
                                 }
                             }
-                        }
-                        else{
+                        } else {
                             fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
                                     ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
                             moveFile(fileDest)
                         }
                     }
                 }
+                AUTOCOMPLETE_REQUEST_CODE -> {
+                    val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
+                    val latlo = LatLng((selectedCarmenFeature.geometry() as Point).latitude(),((selectedCarmenFeature.geometry()) as Point).longitude())
+                    val lati = latlo.latitude
+                    val longti = latlo.longitude
+                    val gpsImage = GPSImage(mediaItem!!.requirePath(requireContext()))
+                    gpsImage.geoTag(lati,longti)
+                }
             }
-
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -502,5 +528,6 @@ class PhotoViewPagerFragment : Fragment() {
         private const val BUNDLE_FULLSCREEN = "fullscreen"
         private const val COPY_FILE = 2345
         private const val MOVE_FILE = 3456
+        private const val AUTOCOMPLETE_REQUEST_CODE = 123
     }
 }

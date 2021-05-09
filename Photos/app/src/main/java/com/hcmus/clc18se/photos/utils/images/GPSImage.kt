@@ -3,12 +3,13 @@ package com.hcmus.clc18se.photos.utils.images
 import android.content.Context
 import android.location.Geocoder
 import android.media.ExifInterface
-
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
+import java.lang.Math.floor
 
 class GPSImage {
     var latitude: Double? = null
@@ -70,8 +71,8 @@ class GPSImage {
 
     constructor(path: String?) {
         try {
-            path?.let {
-                exif = ExifInterface(it)
+            if (path != null){
+                exif = ExifInterface(path)
                 getLatLong(exif)
             }
 
@@ -99,6 +100,54 @@ class GPSImage {
             } else {
                 0 - convertToDegree(long)
             }
+        }
+    }
+
+    fun getDMSLatitude():String?{
+        latitude?.let {
+            val degrees = floor(latitude!!)
+            val minutes = floor(60.0 * (latitude!! - degrees))
+            val seconds = 3600.0 * (latitude!! - degrees) - (60.0 * minutes) * 10000
+            return degrees.toString() + "/1," + minutes.toString() + "/1," + seconds.toLong().toString() + "/10000"
+        }
+        return null
+    }
+
+    fun getDMSLongtitude():String?{
+        latitude?.let {
+            val degrees = floor(longitude!!)
+            val minutes = floor(60.0 * (longitude!! - degrees))
+            val seconds = 3600.0 * (longitude!! - degrees) - (60.0 * minutes)
+            return degrees.toString() + "/1," + minutes.toString() + "/1," + seconds.toLong().toString() + "/1"
+        }
+        return null
+    }
+
+    fun geoTag(latitude1: Double, longitude1: Double) {
+        var latitude = latitude1
+        var longitude = longitude1
+        try {
+            val num1Lat = floor(latitude).toInt()
+            val num2Lat = floor((latitude - num1Lat) * 60).toInt()
+            val num3Lat = (latitude - (num1Lat.toDouble() + num2Lat.toDouble() / 60)) * 360000000
+            val num1Lon = floor(longitude).toInt()
+            val num2Lon = floor((longitude - num1Lon) * 60).toInt()
+            val num3Lon = (longitude - (num1Lon.toDouble() + num2Lon.toDouble() / 60)) * 360000000
+            exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE, "$num1Lat/1,$num2Lat/1,${num3Lat.toLong()}/1000")
+            exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, "$num1Lon/1,$num2Lon/1,${num3Lon.toLong()}/1000")
+            if (latitude > 0) {
+                exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "N")
+            } else {
+                exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "S")
+            }
+            if (longitude > 0) {
+                exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "E")
+            } else {
+                exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "W")
+            }
+            exif.saveAttributes()
+        } catch (e: IOException) {
+            Log.e("Error", e.localizedMessage)
         }
     }
 

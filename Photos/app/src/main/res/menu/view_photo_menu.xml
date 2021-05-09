@@ -22,6 +22,11 @@
     <item
         android:id="@+id/action_rename"
         android:title="@string/rename" />
+
+    <item
+        android:id="@+id/action_change_place"
+        android:title="@string/change_place" />
+
     <item
         android:id="@+id/action_slideshow"
         android:title="@string/slideshow" />
