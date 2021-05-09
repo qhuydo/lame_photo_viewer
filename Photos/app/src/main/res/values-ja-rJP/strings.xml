@@ -112,4 +112,5 @@
     <string name="pick_custom_album_dialog_title">アルバムを選択</string>
     <string name="add_photo_to_custom_album_succeed">「%1$s」に追加 成功</string>
     <string name="add_photo_dialog_title">写真を選択</string>
+    <string name="select">選択</string>
 </resources>

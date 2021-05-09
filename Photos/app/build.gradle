@@ -76,13 +76,13 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     implementation 'de.psdev.licensesdialog:licensesdialog:2.1.0'
     implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
-    implementation 'me.jfenn.ColorPickerDialog:base:0.2.2'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0'
     implementation 'com.afollestad:material-cab:2.0.1'
     implementation 'com.afollestad.material-dialogs:core:3.3.0'
     implementation 'com.afollestad.material-dialogs:input:3.3.0'
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.3.0'
     implementation 'com.afollestad.material-dialogs:lifecycle:3.3.0'
+    implementation 'com.afollestad.material-dialogs:color:3.3.0'
     implementation 'com.l4digital.fastscroll:fastscroll:2.0.1'
 
     // Crop image
