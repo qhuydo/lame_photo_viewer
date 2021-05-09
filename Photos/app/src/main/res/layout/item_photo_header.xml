@@ -4,22 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="header"
             type="com.hcmus.clc18se.photos.adapters.AdapterItem.AdapterItemHeader" />
     </data>
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:checkable="false"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardElevation="0dp"
+        app:strokeColor="@android:color/transparent"
+        app:strokeWidth="0dp">
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAllCaps="true"
-            android:textAppearance="?textAppearanceListItem"
+            android:padding="@dimen/activity_vertical_margin"
             android:text="@{header.title}"
+            android:textAllCaps="true"
+            android:textAppearance="?textAppearancePopupMenuHeader"
             android:textColor="?colorOnSurface"
             tools:text="DD MM YYYY" />
-    </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

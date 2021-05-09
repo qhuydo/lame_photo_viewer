@@ -143,4 +143,11 @@
     <string name="add_photo_to_custom_album_succeed">Added to %1$s</string>
     <string name="add_photo_dialog_title">Pick photo</string>
     <string name="change_place">Change place</string>
+    <string name="select">Select</string>
+    <string name="sort_order_key" translatable="false">sort_order_key</string>
+    <string name="action_group_by">Group by</string>
+    <string name="date_added">Date added</string>
+    <string name="date_modified">Date modified</string>
+    <string name="date_taken">Date taken</string>
+    <string name="action_order_by">Order by</string>
 </resources>

@@ -20,6 +20,8 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
 import androidx.core.view.drawToBitmap
 import androidx.exifinterface.media.ExifInterface
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.color.colorChooser
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
@@ -28,13 +30,13 @@ import com.hcmus.clc18se.photos.utils.images.DrawableImageView
 import com.hcmus.clc18se.photos.utils.UndoPhoto
 import com.hcmus.clc18se.photos.utils.getBitMap
 import com.hcmus.clc18se.photos.utils.images.SingleMediaScanner
+import com.hcmus.clc18se.photos.utils.ui.allColorPaletteRes
 import com.theartofdev.edmodo.cropper.CropImageView
 import ja.burhanrashid52.photoeditor.OnSaveBitmap
 import ja.burhanrashid52.photoeditor.PhotoEditor
 import ja.burhanrashid52.photoeditor.PhotoEditorView
 import ja.burhanrashid52.photoeditor.SaveSettings
 import kotlinx.coroutines.*
-import me.jfenn.colorpickerdialog.dialogs.ColorPickerDialog
 import java.io.*
 import java.nio.IntBuffer
 import java.text.SimpleDateFormat
@@ -887,26 +889,21 @@ class EditPhotoActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onPickColorButtonClick(view: View) {
-        ColorPickerDialog()
-            .withColor(Color.WHITE) // the default / initial color
-            .withListener { _, color ->
-                // a color has been picked; use it
+        MaterialDialog(this).show {
+            title(R.string.pick_color)
+            colorChooser(
+                colors = resources.getIntArray(R.array.color_picker_dialog_values),
+                subColors = context.allColorPaletteRes(),
+                allowCustomArgb = true,
+                showAlphaSelector = true
+            ) { _, color ->
+                // Use color integer
                 curColorDraw = color
                 binding.drawConfigEditor.pickColor.setBackgroundColor(curColorDraw)
                 viewDraw.setNewColor(curColorDraw)
             }
-            .withTheme(R.style.ColorPickerDialog)
-            .withPresets(*resources.getIntArray(R.array.color_choices))
-            .withAlphaEnabled(true)
-            .show(supportFragmentManager, "colorPicker")
-
-//        val colorPicker = AmbilWarnaDialog(this, curColorDraw, object : OnAmbilWarnaListener {
-//            override fun onCancel(dialog: AmbilWarnaDialog) {}
-//            override fun onOk(dialog: AmbilWarnaDialog, color: Int) {
-//
-//            }
-//        })
-//        colorPicker.show()
+            positiveButton(R.string.select)
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")

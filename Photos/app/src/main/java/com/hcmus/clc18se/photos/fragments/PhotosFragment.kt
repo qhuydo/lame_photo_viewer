@@ -1,6 +1,7 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
@@ -24,7 +25,6 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import com.l4digital.fastscroll.FastScroller
 import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
 
 class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
@@ -50,34 +50,33 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
                 return emptyList()
             }
 
-            val dateFormat = SimpleDateFormat("MMM-yyyy", Locale.ROOT)
-            var headerItem =
-                    items.first().requireDateTaken()?.let {
-                        AdapterItem.AdapterItemHeader(
-                                it.time,
-                                dateFormat.format(it.time)
-                        )
-                    } ?: return super.onGroupListItem(items)
-            var headerTimeStamp =
-                    items.first().requireDateTaken()?.month to items.first().requireDateTaken()?.year
+            val flags = DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH or DateUtils.FORMAT_NO_MONTH_DAY
+
+            var headerItem = items.first().getDateSorted()?.let {
+                AdapterItem.AdapterItemHeader(
+                        it.time,
+                        DateUtils.formatDateTime(context, it.time, flags)
+                )
+            } ?: return super.onGroupListItem(items)
+
+            var headerTimeStamp = items.first().getDateSorted()?.month to items.first().getDateSorted()?.year
 
             items.forEachIndexed { index, mediaItem ->
                 if (index == 0) {
                     adapterItems.add(headerItem)
                 }
-                val date = mediaItem.requireDateTaken()
+                val date = mediaItem.getDateSorted()
                 date?.let {
                     val itemTimeStamp = it.month to it.year
                     if (itemTimeStamp != headerTimeStamp) {
                         headerTimeStamp = itemTimeStamp
                         headerItem = AdapterItem.AdapterItemHeader(
                                 date.time,
-                                dateFormat.format(it.time)
+                                DateUtils.formatDateTime(context, it.time, flags)
                         )
                         adapterItems.add(headerItem)
                     }
-                }
-                        ?: return adapterItems + items.subList(index, items.lastIndex)
+                } ?: return adapterItems + items.subList(index, items.lastIndex)
                                 .map { AdapterItem.AdapterMediaItem(it) }
                 adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
             }
@@ -235,5 +234,5 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
         }
     }
 
-//    override fun onPrepareCabMenu(menu: Menu) {}
+    override fun isSwipeLayoutEnabled() = true
 }

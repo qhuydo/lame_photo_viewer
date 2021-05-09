@@ -114,4 +114,10 @@
     <string name="pick_custom_album_dialog_title">Chọn album</string>
     <string name="add_photo_to_custom_album_succeed">Đã thêm vào Album %1$s</string>
     <string name="add_photo_dialog_title">Chọn ảnh</string>
+    <string name="select">Chọn</string>
+    <string name="action_group_by">Gom nhóm theo</string>
+    <string name="date_added">Ngày thêm vào</string>
+    <string name="date_modified">Ngày chỉnh sửa</string>
+    <string name="date_taken">Ngày chụp</string>
+    <string name="action_order_by">Sắp xếp theo</string>
 </resources>

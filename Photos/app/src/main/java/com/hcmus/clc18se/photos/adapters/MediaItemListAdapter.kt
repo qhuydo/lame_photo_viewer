@@ -18,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class MediaItemListAdapter(
         private val actionCallbacks: ActionCallbacks,
@@ -86,13 +85,57 @@ class MediaItemListAdapter(
         }
     }
 
+//    private fun bindHeaderViewHolder(holder: MediaHeaderViewHolder, adapterItem: AdapterItem?) {
+//        holder.bind(adapterItem as AdapterItem.AdapterItemHeader)
+//
+//        holder.itemView.setOnLongClickListener {
+//            if (enforceMultiSelection) {
+//                return@setOnLongClickListener false
+//            }
+//
+//            if (!multiSelect) {
+//                multiSelect = true
+//                // selectItem(holderMediaItem, item)
+//
+//                val pos = holder.bindingAdapterPosition
+//
+//                for (i in pos until currentList.size) {
+//
+//                    val item = getItem(i)
+//                    if (item is AdapterItem.AdapterItemHeader) {
+//                        break
+//                    }
+//
+//                    if (item is AdapterItem.AdapterMediaItem) {
+//                        if (!selectedItems.contains(item.mediaItem)) {
+//                            selectedItems.add(item.mediaItem)
+//                        }
+//                    }
+//                }
+//
+//                if (holder.itemView is Checkable) {
+//                    holder.itemView.isChecked = true
+//                }
+//
+//                actionCallbacks.onSelectionChange()
+//            }
+//
+//            true
+//        }
+//
+//    }
+
     private fun bindMediaItemViewHolder(holderMediaItem: MediaItemViewHolder, item: MediaItem) {
+        if (enforceMultiSelection && !multiSelect) {
+            multiSelect = true
+        }
+
         holderMediaItem.bind(item)
 
         setListeners(holderMediaItem, item)
 
         if (holderMediaItem.itemView is Checkable) {
-            (holderMediaItem.itemView as Checkable).isChecked = selectedItems.contains(item)
+            holderMediaItem.itemView.isChecked = selectedItems.contains(item)
         }
     }
 
@@ -100,9 +143,7 @@ class MediaItemListAdapter(
             holderMediaItem: MediaItemViewHolder,
             item: MediaItem
     ) {
-        if (enforceMultiSelection && !multiSelect) {
-            multiSelect = true
-        }
+
         holderMediaItem.itemView.setOnLongClickListener {
             if (enforceMultiSelection) {
                 return@setOnLongClickListener false
@@ -278,7 +319,10 @@ class MediaHeaderViewHolder(val binding: ItemPhotoHeaderBinding) :
     companion object {
         fun from(parent: ViewGroup): MediaHeaderViewHolder {
             return MediaHeaderViewHolder(
-                    ItemPhotoHeaderBinding.inflate(LayoutInflater.from(parent.context))
+                    ItemPhotoHeaderBinding.inflate(LayoutInflater.from(parent.context),
+                            parent,
+                            false
+                    )
             )
         }
     }

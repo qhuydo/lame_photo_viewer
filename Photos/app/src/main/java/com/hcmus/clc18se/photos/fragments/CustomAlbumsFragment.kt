@@ -16,7 +16,6 @@ import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
-import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentCustomAlbumsBinding
 import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModel
@@ -42,6 +41,7 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
+        photosViewModel.clearData()
         binding = FragmentCustomAlbumsBinding.inflate(inflater, container, false)
 
         binding.lifecycleOwner = this

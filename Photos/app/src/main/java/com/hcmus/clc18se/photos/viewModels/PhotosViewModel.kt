@@ -3,12 +3,15 @@ package com.hcmus.clc18se.photos.viewModels
 import android.app.Application
 import android.app.RecoverableSecurityException
 import android.content.IntentSender
+import android.content.SharedPreferences
 import android.database.ContentObserver
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import androidx.lifecycle.*
+import androidx.preference.PreferenceManager
+import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.*
 import com.hcmus.clc18se.photos.database.PhotosDatabaseDao
 import kotlinx.coroutines.Dispatchers
@@ -18,8 +21,8 @@ import timber.log.Timber
 import java.lang.IndexOutOfBoundsException
 
 class PhotosViewModel(
-        application: Application,
-        private val database: PhotosDatabaseDao
+    application: Application,
+    private val database: PhotosDatabaseDao
 ) : AndroidViewModel(application) {
 
     private var _mediaItemList = MutableLiveData<List<MediaItem>>()
@@ -42,9 +45,10 @@ class PhotosViewModel(
     val navigateToImageView: LiveData<MediaItem?>
         get() = _navigateToImageView
 
-    init {
-        // _mediaItemList.value = mutableListOf()
-        // loadImages()
+    private val preferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(
+            getApplication<Application>().applicationContext
+        )
     }
 
     private var contentObserver: ContentObserver? = null
@@ -77,9 +81,15 @@ class PhotosViewModel(
     }
 
     fun loadImages() = viewModelScope.launch {
+        val context = getApplication<Application>().applicationContext
+
+        val sortOrder = preferences.getString(
+            context.getString(R.string.sort_order_key),
+            DEFAULT_SORT_ORDER
+        ) ?: DEFAULT_SORT_ORDER
 
         withContext(Dispatchers.IO) {
-            val images = queryMediaItems()
+            val images = queryMediaItems(sortOrder)
 
             withContext(Dispatchers.Main) {
                 _mediaItemList.value = images
@@ -87,7 +97,6 @@ class PhotosViewModel(
             }
         }
     }
-
 
     fun loadSelectedPhotoList() = viewModelScope.launch {
         withContext(Dispatchers.IO) {
@@ -104,7 +113,7 @@ class PhotosViewModel(
             return emptyList()
         }
         return getApplication<Application>().applicationContext.contentResolver.loadMediaItemFromIds(
-                items.map { it.id }
+            items.map { it.id }
         )
 
     }
@@ -118,10 +127,10 @@ class PhotosViewModel(
             }
             val contentResolver = getApplication<Application>().contentResolver
             contentResolver.registerContentObserver(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, observer
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, observer
             )
             contentResolver.registerContentObserver(
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, observer
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, observer
             )
 
             contentObserver = observer
@@ -184,9 +193,10 @@ class PhotosViewModel(
         withContext(Dispatchers.IO) {
             try {
                 val result = getApplication<Application>().contentResolver.delete(
-                        item.requireUri(),
-                        null,
-                        null)
+                    item.requireUri(),
+                    null,
+                    null
+                )
 
                 Timber.d("Delete result - $result columns affected")
 
@@ -202,8 +212,8 @@ class PhotosViewModel(
             } catch (securityException: SecurityException) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val recoverableSecurityException =
-                            securityException as? RecoverableSecurityException
-                                    ?: throw securityException
+                        securityException as? RecoverableSecurityException
+                            ?: throw securityException
 
                     pendingDeleteImage = item
 
@@ -228,8 +238,8 @@ class PhotosViewModel(
         _deleteSucceed.value = null
     }
 
-    private suspend fun queryMediaItems(): List<MediaItem> {
-        val mediaItems = getApplication<Application>().contentResolver.queryAllMediaItems()
+    private suspend fun queryMediaItems(sortOrder: String = DEFAULT_SORT_ORDER): List<MediaItem> {
+        val mediaItems = getApplication<Application>().contentResolver.queryAllMediaItems(sortOrder)
         Timber.i("Found ${mediaItems.size} images")
         return mediaItems
     }
@@ -250,8 +260,8 @@ class PhotosViewModel(
 
     fun insertPhotosIntoSelectedAlbum(mediaItems: List<MediaItem>) {
         if (customAlbum.value == null
-                || (customAlbum.value != null
-                        && customAlbum.value!!.customAlbumId == null)
+            || (customAlbum.value != null
+                    && customAlbum.value!!.customAlbumId == null)
         ) {
             return
         }
@@ -269,13 +279,12 @@ class PhotosViewModel(
     fun clearData() {
         _mediaItemList.postValue(emptyList())
     }
-
 }
 
 @Suppress("UNCHECKED_CAST")
 class PhotosViewModelFactory(
-        private val application: Application,
-        private val database: PhotosDatabaseDao
+    private val application: Application,
+    private val database: PhotosDatabaseDao
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PhotosViewModel::class.java)) {

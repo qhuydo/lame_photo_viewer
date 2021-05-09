@@ -58,8 +58,6 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
     private lateinit var photos: List<MediaItem>
 
-    private val preferences by lazy { (requireActivity() as AbstractPhotosActivity).preferences }
-
     private val favouriteAlbumViewModel: FavouriteAlbumViewModel by activityViewModels {
         FavouriteAlbumViewModelFactory(
             requireActivity().application, database
@@ -198,7 +196,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             val path = photos[currentPosition].requirePath(requireContext())
             findViewById<TextView>(R.id.path).text = resources.getString(R.string.path, path)
 
-            val dateCreated = photos[currentPosition].requireDateTaken()
+            val dateCreated = photos[currentPosition].getDateSorted()
             findViewById<TextView>(R.id.date_create).text =
                 resources.getString(R.string.date_created, dateCreated)
 

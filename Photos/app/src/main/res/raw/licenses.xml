@@ -23,13 +23,6 @@
     </notice>
 
     <notice>
-        <name>ColorPickerDialog</name>
-        <url>https://github.com/fennifith/ColorPickerDialog</url>
-        <copyright>Copyright 2013-2018 Cave Rock Software Ltd</copyright>
-        <license>Apache Software License 2.0</license>
-    </notice>
-
-    <notice>
         <name>colorpreference</name>
         <url>https://github.com/kizitonwose/colorpreference</url>
         <copyright>Copyright (C) 2016 Kizito Nwose</copyright>

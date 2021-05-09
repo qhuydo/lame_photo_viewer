@@ -36,4 +36,23 @@
             </group>
         </menu>
     </item>
+
+    <item
+        android:id="@+id/action_order_by"
+        android:title="@string/action_order_by">
+
+        <menu android:id="@+id/group_by_menu">
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/action_order_by_date_added"
+                    android:title="@string/date_added" />
+                <item
+                    android:id="@+id/action_order_by_date_modified"
+                    android:title="@string/date_modified" />
+                <item
+                    android:id="@+id/action_order_by_date_taken"
+                    android:title="@string/date_taken" />
+            </group>
+        </menu>
+    </item>
 </menu>

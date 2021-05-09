@@ -20,13 +20,13 @@ import java.util.*
 
 @Parcelize
 data class MediaItem(
-        val id: Long,
-        val name: String,
-        private var uri: Uri?,
-        private var dateTaken: Date?,
-        val mimeType: String?,
-        var orientation: Int?,
-        private var path: String?,
+    val id: Long,
+    val name: String,
+    private var uri: Uri?,
+    private var dateSorted: Date?,
+    val mimeType: String?,
+    var orientation: Int?,
+    private var path: String?,
 ) : Parcelable {
 
     fun isSVG(): Boolean {
@@ -64,8 +64,8 @@ data class MediaItem(
         return path
     }
 
-    fun requireDateTaken(): Date? {
-        return dateTaken
+    fun getDateSorted(): Date? {
+        return dateSorted
     }
 
     fun toFavouriteItem(): FavouriteItem {
@@ -74,7 +74,13 @@ data class MediaItem(
 
     companion object {
 
-        fun getInstance(id: Long, name: String, uri: Uri?, mimeType: String, path: String? = null): MediaItem {
+        fun getInstance(
+            id: Long,
+            name: String,
+            uri: Uri?,
+            mimeType: String,
+            path: String? = null
+        ): MediaItem {
             return MediaItem(id, name, uri, null, mimeType, null, path)
         }
 
@@ -90,22 +96,23 @@ data class MediaItem(
 
         fun bindSvgToSubScaleImageView(item: MediaItem, imageView: SubsamplingScaleImageView) {
             try {
-                item.requireUri().let { imageView.context.contentResolver.openInputStream(it) }.use {
-                    val svg = SVG.getFromInputStream(it)
-                    val picture = svg.renderToPicture()
+                item.requireUri().let { imageView.context.contentResolver.openInputStream(it) }
+                    .use {
+                        val svg = SVG.getFromInputStream(it)
+                        val picture = svg.renderToPicture()
 
-                    val drawable = PictureDrawable(picture)
-                    val bitmap = Bitmap.createBitmap(
+                        val drawable = PictureDrawable(picture)
+                        val bitmap = Bitmap.createBitmap(
                             drawable.intrinsicWidth,
                             drawable.intrinsicHeight,
                             Bitmap.Config.ARGB_8888
-                    )
-                    val canvas = Canvas(bitmap)
-                    canvas.drawPicture(drawable.picture)
+                        )
+                        val canvas = Canvas(bitmap)
+                        canvas.drawPicture(drawable.picture)
 
-                    imageView.setImage(ImageSource.bitmap(bitmap))
+                        imageView.setImage(ImageSource.bitmap(bitmap))
 
-                }
+                    }
             } catch (ex: FileNotFoundException) {
                 Timber.d("$ex")
             }

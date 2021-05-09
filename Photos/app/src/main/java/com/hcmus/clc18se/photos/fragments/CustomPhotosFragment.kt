@@ -238,7 +238,6 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
         }
     }
 
-
     private fun initRecyclerViewForBottomSheet(recyclerView: RecyclerView) {
         val adapterCallback = object : MediaItemListAdapter.ActionCallbacks {
             override fun onClick(mediaItem: MediaItem) {}
@@ -260,11 +259,6 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
             )
         }
 
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.clearData()
     }
 
     override fun onCabItemSelected(item: MenuItem): Boolean {
