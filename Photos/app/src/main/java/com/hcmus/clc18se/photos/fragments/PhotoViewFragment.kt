@@ -206,8 +206,11 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
             if (!photos[currentPosition].isVideo())
             {
-                findViewById<TextView>(R.id.size_image)?.visibility = View.VISIBLE
-                findViewById<TextView>(R.id.size_image)?.text = getString(R.string.image_size, getImageSize(path))
+                val imageSize = getImageSize(path)
+                imageSize?.let {
+                    findViewById<TextView>(R.id.size_image)?.visibility = View.VISIBLE
+                    findViewById<TextView>(R.id.size_image)?.text = getString(R.string.image_size, imageSize)
+                }
             }
         }
 
@@ -216,6 +219,13 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             Timber.d(it)
             dialog?.findViewById<TextView>(R.id.name_place)?.visibility = View.VISIBLE
             dialog?.findViewById<TextView>(R.id.name_place)?.text = getString(R.string.location, it)
+        }
+
+        val latlng: String? = getLatLong()
+        latlng?.let {
+            Timber.d(it)
+            dialog?.findViewById<TextView>(R.id.geo_place)?.visibility = View.VISIBLE
+            dialog?.findViewById<TextView>(R.id.geo_place)?.text = getString(R.string.geo, it)
         }
 
         dialog?.findViewById<Button>(R.id.off_info_dialog)?.setOnClickListener {
@@ -227,17 +237,23 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
     private fun getImageSize(path: String): String?{
         var sizeString:String? = null
-        val gpsImage = GPSImage(path)
-        try {
-            val length = gpsImage.exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)
-            val width = gpsImage.exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)
-            if (length != null && width != null) {
-                sizeString = "$length × $width"
-            }
-        }
-        catch (e:Exception)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 
+            Timber.d("ACCESS_MEDIA_LOCATION is a dangerous, request it at runtime ")
+            accessMediaLocationResultLauncher.launch(Manifest.permission.ACCESS_MEDIA_LOCATION)
+        } else {
+            val gpsImage = GPSImage(path)
+            try {
+                val length = gpsImage.exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)
+                val width = gpsImage.exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)
+                if (length != null && width != null) {
+                    sizeString = "$length × $width"
+                }
+            }
+            catch (e:Exception)
+            {
+
+            }
         }
         return sizeString
     }
@@ -283,6 +299,24 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             }
         }
         return address
+    }
+
+    private fun getLatLong(): String? {
+        var latLng: String? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+            Timber.d("ACCESS_MEDIA_LOCATION is a dangerous, request it at runtime ")
+            accessMediaLocationResultLauncher.launch(Manifest.permission.ACCESS_MEDIA_LOCATION)
+        } else {
+            val path = photos[currentPosition].requirePath(requireContext())
+            if (path != null){
+                val gpsImage = GPSImage(path)
+                if (gpsImage.latitude != null && gpsImage.longitude != null){
+                    latLng = "(${String.format("%.4f", gpsImage.latitude)};${String.format("%.4f", gpsImage.longitude)})"
+                }
+            }
+        }
+        return latLng
     }
 
     // sorry every one for this but i will fix this mess soon :<

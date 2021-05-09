@@ -98,6 +98,7 @@
     <string name="path">Path: %1$s</string>
     <string name="date_created">Date created: %1$s</string>
     <string name="location">Location: %1$s</string>
+    <string name="geo">Coordinates: %1$s</string>
     <string name="nothing_here" translatable="false">Nothing here</string>
     <string name="add_album_dialog_hint">Album name</string>
     <string name="add_album_dialog_error_blank_field" translatable="false">Blank fields are not allowed</string>

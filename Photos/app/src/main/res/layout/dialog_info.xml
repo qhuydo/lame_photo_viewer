@@ -50,6 +50,15 @@
         android:singleLine="false"
         android:visibility="gone"/>
 
+    <TextView
+        android:id="@+id/geo_place"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:visibility="gone"/>
+
     <Button
         android:layout_gravity="center_horizontal"
         android:id="@+id/off_info_dialog"

@@ -120,4 +120,6 @@
     <string name="date_modified">Ngày chỉnh sửa</string>
     <string name="date_taken">Ngày chụp</string>
     <string name="action_order_by">Sắp xếp theo</string>
+    <string name="geo">Toạ độ: %1$s</string>
+    <string name="change_place">Thay đổi địa điểm</string>
 </resources>
