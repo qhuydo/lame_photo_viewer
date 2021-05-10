@@ -151,4 +151,13 @@
     <string name="date_modified">Date modified</string>
     <string name="date_taken">Date taken</string>
     <string name="action_order_by">Order by</string>
+    <string name="input_password">Enter password to proceed:</string>
+    <string name="new_confirm_not_same">New pass and confirm pass not same</string>
+    <string name="pass_incorrect">The password you have entered is incorrect. Please try again!</string>
+    <string name="change_pass_success">Change pass successful</string>
+    <string name="old_pass">Old Password</string>
+    <string name="new_pass">New Password</string>
+    <string name="confirm_pass">Confirm Password</string>
+    <string name="change_pass">Change password</string>
+    <string name="retry">Retry</string>
 </resources>

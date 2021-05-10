@@ -202,6 +202,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     protected fun registerOnChangedPreferenceListener() {
         preferences.registerOnSharedPreferenceChangeListener(preferencesListener)
+
     }
 
     private fun onLicenseButtonClick() {

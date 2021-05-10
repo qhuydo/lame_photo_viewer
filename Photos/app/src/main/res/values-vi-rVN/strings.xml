@@ -122,4 +122,13 @@
     <string name="action_order_by">Sắp xếp theo</string>
     <string name="geo">Toạ độ: %1$s</string>
     <string name="change_place">Thay đổi địa điểm</string>
+    <string name="input_password">Nhập mật khẩu để tiếp tục:</string>
+    <string name="new_confirm_not_same">Mật khẩu và mật khẩu nhập lại không giống</string>
+    <string name="pass_incorrect">Mật khẩu không đúng</string>
+    <string name="change_pass_success">Thay đổi mật khẩu thành công</string>
+    <string name="old_pass">Mật khẩu cũ</string>
+    <string name="new_pass">Mật khẩu mới</string>
+    <string name="confirm_pass">Nhập lại</string>
+    <string name="change_pass">Thay đổi</string>
+    <string name="retry">Thử lại</string>
 </resources>
