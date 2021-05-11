@@ -16,8 +16,11 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.adapters.AdapterItem
 import com.hcmus.clc18se.photos.utils.*
 import kotlinx.parcelize.Parcelize
+import org.joda.time.DateTimeComparator
+import org.joda.time.DateTimeFieldType
 import timber.log.Timber
 import java.io.FileNotFoundException
+import java.text.SimpleDateFormat
 import java.util.*
 
 @Parcelize
@@ -133,137 +136,118 @@ data class MediaItem(
             return ContentUris.withAppendedId(contentUri, id)
         }
 
-        fun groupByDate(context: Context, items: List<MediaItem>): List<AdapterItem> {
+        /**
+         * Insert `AdapterItem.AdapterItemHeader` object to group the list into sections,
+         * The function is used in [MediaItemListAdapter.ActionCallbacks::onGroupListItem]
+         * when submit the data to `MediaItemListAdapter`.
+         * @param items a list of MediaItems that have their `dateSorted` attribute sorted in a
+         *        particular order.
+         * @see DateUtils.formatDateTime
+         */
+        private fun groupBy(
+            context: Context,
+            items: List<MediaItem>,
+            headerLabelMap: (date: Date) -> String,
+            dateComparator: Comparator<Date>
+        ): List<AdapterItem> {
             val adapterItems = mutableListOf<AdapterItem>()
             if (items.isEmpty()) {
                 return emptyList()
             }
 
+            // Construct the first header item from the list
+            var headerItem = items.first().getDateSorted()?.let {
+                AdapterItem.AdapterItemHeader(it.time, headerLabelMap(it))
+            } ?: return items.map { AdapterItem.AdapterMediaItem(it) }
+
+            var headerDate = items.first().getDateSorted()
+            items.forEachIndexed { index, mediaItem ->
+
+                if (index == 0) {
+                    adapterItems.add(headerItem)
+                }
+
+                val date = mediaItem.getDateSorted()
+                date?.let {
+
+                    if (dateComparator.compare(it, headerDate) != 0) {
+                        headerDate = it
+                        headerItem = AdapterItem.AdapterItemHeader(
+                            date.time,
+                            headerLabelMap(it)
+                        )
+
+                        adapterItems += headerItem
+                    }
+
+                } ?: return adapterItems + items.subList(index, items.lastIndex)
+                    .map { AdapterItem.AdapterMediaItem(it) }
+
+                adapterItems += AdapterItem.AdapterMediaItem(mediaItem)
+            }
+            return adapterItems
+        }
+
+        fun groupByDate(context: Context, items: List<MediaItem>): List<AdapterItem> {
             val flags = DateUtils.FORMAT_SHOW_YEAR or
                     DateUtils.FORMAT_ABBREV_MONTH or
                     DateUtils.FORMAT_SHOW_DATE
-
-            var headerItem = items.first().getDateSorted()?.let {
-                AdapterItem.AdapterItemHeader(
-                    it.time,
-                    DateUtils.formatDateTime(context, it.time, flags)
-                )
-            } ?: return items.map { AdapterItem.AdapterMediaItem(it) }
-
-            var headerTimeStamp = Triple(
-                items.first().getDateSorted()?.date,
-                items.first().getDateSorted()?.month,
-                items.first().getDateSorted()?.year
-            )
-
-            items.forEachIndexed { index, mediaItem ->
-                if (index == 0) {
-                    adapterItems.add(headerItem)
-                }
-                val date = mediaItem.getDateSorted()
-                date?.let {
-
-                    val itemTimeStamp = Triple(it.date, it.month, it.year)
-
-                    if (itemTimeStamp != headerTimeStamp) {
-                        headerTimeStamp = itemTimeStamp
-                        headerItem = AdapterItem.AdapterItemHeader(
-                            date.time,
-                            DateUtils.formatDateTime(context, it.time, flags)
-                        )
-                        adapterItems.add(headerItem)
-                    }
-                } ?: return adapterItems + items.subList(index, items.lastIndex)
-                    .map { AdapterItem.AdapterMediaItem(it) }
-                adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
+            val headerLabelMap = { date: Date ->
+                DateUtils.formatDateTime(context, date.time, flags)
             }
-            return adapterItems
+
+            val comparator = kotlin.Comparator<Date> { date1, date2 ->
+                DateTimeComparator.getInstance(DateTimeFieldType.dayOfMonth()).compare(date1, date2)
+            }
+
+
+            return groupBy(
+                context,
+                items,
+                headerLabelMap,
+                comparator
+            )
         }
 
         fun groupByMonth(context: Context, items: List<MediaItem>): List<AdapterItem> {
-            val adapterItems = mutableListOf<AdapterItem>()
-            if (items.isEmpty()) {
-                return emptyList()
-            }
-
+            // only shows month & year
             val flags = DateUtils.FORMAT_SHOW_YEAR or
                     DateUtils.FORMAT_ABBREV_MONTH or
                     DateUtils.FORMAT_NO_MONTH_DAY
 
-            var headerItem = items.first().getDateSorted()?.let {
-                AdapterItem.AdapterItemHeader(
-                    it.time,
-                    DateUtils.formatDateTime(context, it.time, flags)
-                )
-            } ?: return items.map { AdapterItem.AdapterMediaItem(it) }
-
-            var headerTimeStamp =
-                items.first().getDateSorted()?.date to items.first().getDateSorted()?.month
-
-            items.forEachIndexed { index, mediaItem ->
-                if (index == 0) {
-                    adapterItems.add(headerItem)
-                }
-                val date = mediaItem.getDateSorted()
-                date?.let {
-
-                    val itemTimeStamp = it.date to it.month
-
-                    if (itemTimeStamp != headerTimeStamp) {
-                        headerTimeStamp = itemTimeStamp
-                        headerItem = AdapterItem.AdapterItemHeader(
-                            date.time,
-                            DateUtils.formatDateTime(context, it.time, flags)
-                        )
-                        adapterItems.add(headerItem)
-                    }
-                } ?: return adapterItems + items.subList(index, items.lastIndex)
-                    .map { AdapterItem.AdapterMediaItem(it) }
-                adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
+            val headerLabelMap = { date: Date ->
+                DateUtils.formatDateTime(context, date.time, flags)
             }
-            return adapterItems
+
+            val comparator = kotlin.Comparator<Date> { date1, date2 ->
+                DateTimeComparator.getInstance(DateTimeFieldType.monthOfYear())
+                    .compare(date1, date2)
+            }
+
+            return groupBy(
+                context,
+                items,
+                headerLabelMap,
+                comparator
+            )
         }
 
         fun groupByYear(context: Context, items: List<MediaItem>): List<AdapterItem> {
-            val adapterItems = mutableListOf<AdapterItem>()
-            if (items.isEmpty()) {
-                return emptyList()
+            // only shows year in the header
+            val simpleDateFormat = SimpleDateFormat("yyyy", Locale.getDefault())
+            val headerLabelMap = { date: Date -> simpleDateFormat.format(date) }
+
+            // Compare the date without month & day of month
+            val comparator = kotlin.Comparator<Date> { date1, date2 ->
+                DateTimeComparator.getInstance(DateTimeFieldType.year()).compare(date1, date2)
             }
 
-            val flags = DateUtils.FORMAT_SHOW_YEAR or
-                    DateUtils.FORMAT_NO_MONTH_DAY
-
-            var headerItem = items.first().getDateSorted()?.let {
-                AdapterItem.AdapterItemHeader(
-                    it.time,
-                    DateUtils.formatDateTime(context, it.time, flags)
-                )
-            } ?: return items.map { AdapterItem.AdapterMediaItem(it) }
-
-            var headerTimeStamp = items.first().getDateSorted()?.year
-
-            items.forEachIndexed { index, mediaItem ->
-                if (index == 0) {
-                    adapterItems.add(headerItem)
-                }
-                val date = mediaItem.getDateSorted()
-                date?.let {
-
-                    val itemTimeStamp = it.year
-
-                    if (itemTimeStamp != headerTimeStamp) {
-                        headerTimeStamp = itemTimeStamp
-                        headerItem = AdapterItem.AdapterItemHeader(
-                            date.time,
-                            DateUtils.formatDateTime(context, it.time, flags)
-                        )
-                        adapterItems.add(headerItem)
-                    }
-                } ?: return adapterItems + items.subList(index, items.lastIndex)
-                    .map { AdapterItem.AdapterMediaItem(it) }
-                adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
-            }
-            return adapterItems
+            return groupBy(
+                context,
+                items,
+                headerLabelMap,
+                comparator
+            )
         }
     }
 }

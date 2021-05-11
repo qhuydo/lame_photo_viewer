@@ -84,6 +84,7 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:lifecycle:3.3.0'
     implementation 'com.afollestad.material-dialogs:color:3.3.0'
     implementation 'com.l4digital.fastscroll:fastscroll:2.0.1'
+    implementation 'joda-time:joda-time:2.10.10'
 
     // Crop image
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'

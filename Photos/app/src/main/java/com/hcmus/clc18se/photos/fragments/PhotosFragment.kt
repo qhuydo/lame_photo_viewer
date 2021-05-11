@@ -1,7 +1,6 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
@@ -24,8 +23,6 @@ import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import com.l4digital.fastscroll.FastScroller
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
 
@@ -46,47 +43,15 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
         }
 
         override suspend fun onGroupListItem(items: List<MediaItem>): List<AdapterItem> {
-//            val adapterItems = mutableListOf<AdapterItem>()
-//            if (items.isEmpty()) {
-//                return emptyList()
-//            }
-//
-//            val flags = DateUtils.FORMAT_SHOW_YEAR or
-//                    DateUtils.FORMAT_ABBREV_MONTH or
-//                    DateUtils.FORMAT_NO_MONTH_DAY
-//
-//            var headerItem = items.first().getDateSorted()?.let {
-//                AdapterItem.AdapterItemHeader(
-//                    it.time,
-//                    DateUtils.formatDateTime(context, it.time, flags)
-//                )
-//            } ?: return super.onGroupListItem(items)
-//
-//            var headerTimeStamp =
-//                items.first().getDateSorted()?.month to items.first().getDateSorted()?.year
-//
-//            items.forEachIndexed { index, mediaItem ->
-//                if (index == 0) {
-//                    adapterItems.add(headerItem)
-//                }
-//                val date = mediaItem.getDateSorted()
-//                date?.let {
-//                    val itemTimeStamp = it.month to it.year
-//                    if (itemTimeStamp != headerTimeStamp) {
-//                        headerTimeStamp = itemTimeStamp
-//                        headerItem = AdapterItem.AdapterItemHeader(
-//                            date.time,
-//                            DateUtils.formatDateTime(context, it.time, flags)
-//                        )
-//                        adapterItems.add(headerItem)
-//                    }
-//                } ?: return adapterItems + items.subList(index, items.lastIndex)
-//                    .map { AdapterItem.AdapterMediaItem(it) }
-//                adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
-//            }
-//
-//            return adapterItems
-            return MediaItem.groupByDate(requireContext(), items)
+            val groupByKey = getString(R.string.group_by_key)
+            val groupOption = preferences.getInt(groupByKey, MediaItemListAdapter.DEFAULT_GROUP_BY)
+            val context = requireContext()
+
+            return when (groupOption) {
+                MediaItemListAdapter.GROUP_BY_MONTH -> MediaItem.groupByMonth(context, items)
+                MediaItemListAdapter.GROUP_BY_YEAR -> MediaItem.groupByYear(context, items)
+                else -> MediaItem.groupByDate(context, items)
+            }
         }
     }
 
@@ -184,8 +149,15 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
             recyclerView.adapter = adapter
             (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
-                spanCount =
-                    getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
+                spanCount = getSpanCountForPhotoList(
+                    resources,
+                    currentListItemView,
+                    currentListItemSize
+                )
+            }
+
+            photoListLayout.fastscrollView.fastScroller.setSectionIndexer { position ->
+                adapter.getSectionText(position)
             }
 
             bindMediaListRecyclerView(recyclerView, photoList ?: listOf())
@@ -208,6 +180,7 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
     override fun getToolbarTitleRes(): Int = R.string.photo_title
 
     private fun setUpRecyclerView() {
+
         binding.photoListLayout.apply {
             val recyclerView = fastscrollView.recyclerView
             recyclerView.layoutManager = StaggeredGridLayoutManager(

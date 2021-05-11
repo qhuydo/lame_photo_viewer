@@ -41,7 +41,7 @@
         android:id="@+id/action_order_by"
         android:title="@string/action_order_by">
 
-        <menu android:id="@+id/group_by_menu">
+        <menu android:id="@+id/order_by_menu">
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/action_order_by_date_added"
@@ -52,6 +52,25 @@
                 <item
                     android:id="@+id/action_order_by_date_taken"
                     android:title="@string/date_taken" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/action_group_by"
+        android:title="@string/action_group_by">
+
+        <menu android:id="@+id/group_by_menu">
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/action_group_by_date"
+                    android:title="@string/date" />
+                <item
+                    android:id="@+id/action_group_by_month"
+                    android:title="@string/month" />
+                <item
+                    android:id="@+id/action_group_by_year"
+                    android:title="@string/year" />
             </group>
         </menu>
     </item>

@@ -48,6 +48,11 @@
         <url>https://github.com/bumptech/glide</url>
     </notice>
 
+    <notice>
+        <name>Joda time</name>
+        <url>https://www.joda.org/joda-time/index.html</url>
+        <license>Apache Software License 2.0</license>
+    </notice>
 
     <notice>
         <name>Material Contextual Action Bar</name>

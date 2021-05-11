@@ -78,7 +78,7 @@
     <string name="location">Vị trí: %1$s</string>
     <string name="emojis">Emoji</string>
     <string name="add_from_phone">Thêm từ điện thoại</string>
-    <string name="smooth_effect" translatable="false">Làm mịn</string>
+    <string name="smooth_effect">Làm mịn</string>
     <string name="add_album_dialog_hint">Tên bộ sưu tập ảnh</string>
     <string name="add_album_dialog_error_name_existed">Tên đã tồn tại</string>
     <string name="new_file">Tạo file mới</string>
@@ -131,4 +131,7 @@
     <string name="confirm_pass">Nhập lại</string>
     <string name="change_pass">Thay đổi</string>
     <string name="retry">Thử lại</string>
+    <string name="date">Ngày</string>
+    <string name="month">Tháng</string>
+    <string name="year">Năm</string>
 </resources>

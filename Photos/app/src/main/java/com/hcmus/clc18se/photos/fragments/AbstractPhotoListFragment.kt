@@ -145,8 +145,26 @@ abstract class AbstractPhotoListFragment(
 
         when (orderPreference) {
             SORT_BY_DATE_TAKEN -> menu.findItem(R.id.action_order_by_date_taken)?.isChecked = true
-            SORT_BY_DATE_MODIFIED -> menu.findItem(R.id.action_order_by_date_modified)?.isChecked = true
+            SORT_BY_DATE_MODIFIED -> menu.findItem(R.id.action_order_by_date_modified)?.isChecked =
+                true
             else -> menu.findItem(R.id.action_order_by_date_added)?.isChecked = true
+        }
+
+        val groupByPreference = preferences.getInt(
+            getString(R.string.group_by_key),
+            MediaItemListAdapter.DEFAULT_GROUP_BY
+        )
+
+        when (groupByPreference) {
+            MediaItemListAdapter.GROUP_BY_MONTH -> {
+                menu.findItem(R.id.action_group_by_month)?.isChecked = true
+            }
+            MediaItemListAdapter.GROUP_BY_YEAR -> {
+                menu.findItem(R.id.action_group_by_year)?.isChecked = true
+            }
+            else -> {
+                menu.findItem(R.id.action_group_by_date)?.isChecked = true
+            }
         }
     }
 
@@ -166,9 +184,29 @@ abstract class AbstractPhotoListFragment(
             R.id.action_order_by_date_taken,
             R.id.action_order_by_date_modified -> onOrderByOptionClicked(item)
 
+            R.id.action_group_by_date,
+            R.id.action_group_by_month,
+            R.id.action_group_by_year -> onGroupByOptionClicked(item)
+
             R.id.menu_refresh -> onRefreshPhotoList()
             else -> false
         }
+    }
+
+    private fun onGroupByOptionClicked(item: MenuItem): Boolean {
+        val option = when (item.itemId) {
+            R.id.action_group_by_month -> MediaItemListAdapter.GROUP_BY_MONTH
+            R.id.action_group_by_year -> MediaItemListAdapter.GROUP_BY_YEAR
+            else -> MediaItemListAdapter.GROUP_BY_DATE
+        }
+
+        preferences.edit()
+            .putInt(getString(R.string.group_by_key), option)
+            .apply()
+
+        refreshRecyclerView()
+
+        return true
     }
 
     private fun onRefreshPhotoList(): Boolean {

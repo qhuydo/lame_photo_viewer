@@ -77,7 +77,7 @@
     <string name="location">位置：%1$s</string>
     <string name="emojis">絵文字</string>
     <string name="add_from_phone">デバイスから追加</string>
-    <string name="smooth_effect" translatable="false">スムース</string>
+    <string name="smooth_effect">スムース</string>
     <string name="add_album_dialog_hint">アルバムの名前</string>
     <string name="add_album_dialog_error_name_existed">名前は既に存在しています</string>
     <string name="new_file">新しいファイルを作成</string>
@@ -120,4 +120,14 @@
     <string name="action_order_by">並べ替え</string>
     <string name="change_place">位置を変更</string>
     <string name="failed_filename_exist_again">名前の変更 失敗</string>
+    <string name="input_password">パスワードを入力</string>
+    <string name="change_pass_success">パスワードの変更 成功</string>
+    <string name="old_pass">現在のパスワード</string>
+    <string name="new_pass">新しいパスワード</string>
+    <string name="confirm_pass">パスワードの確認</string>
+    <string name="change_pass">パスワードの変更</string>
+    <string name="retry">再試行</string>
+    <string name="date">日</string>
+    <string name="month">月</string>
+    <string name="year">年</string>
 </resources>
