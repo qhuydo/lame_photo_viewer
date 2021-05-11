@@ -20,4 +20,10 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">?textAppearanceHeadline6</item>
     </style>
+
+    <style name="passwordOutlineBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginVertical">4dp</item>
+    </style>
 </resources>

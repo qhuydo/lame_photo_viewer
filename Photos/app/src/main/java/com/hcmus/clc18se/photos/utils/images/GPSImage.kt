@@ -9,7 +9,7 @@ import androidx.annotation.RequiresApi
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
-import java.lang.Math.floor
+import kotlin.math.floor
 
 class GPSImage {
     var latitude: Double? = null
@@ -130,24 +130,29 @@ class GPSImage {
             val num1Lat = floor(latitude).toInt()
             val num2Lat = floor((latitude - num1Lat) * 60).toInt()
             val num3Lat = (latitude - (num1Lat.toDouble() + num2Lat.toDouble() / 60)) * 360000000
+
             val num1Lon = floor(longitude).toInt()
             val num2Lon = floor((longitude - num1Lon) * 60).toInt()
             val num3Lon = (longitude - (num1Lon.toDouble() + num2Lon.toDouble() / 60)) * 360000000
+
             exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE, "$num1Lat/1,$num2Lat/1,${num3Lat.toLong()}/1000")
             exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, "$num1Lon/1,$num2Lon/1,${num3Lon.toLong()}/1000")
+
             if (latitude > 0) {
                 exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "N")
             } else {
                 exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "S")
             }
+
             if (longitude > 0) {
                 exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "E")
             } else {
                 exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "W")
             }
+
             exif.saveAttributes()
         } catch (e: IOException) {
-            Log.e("Error", e.localizedMessage)
+            Timber.e("Error $e")
         }
     }
 

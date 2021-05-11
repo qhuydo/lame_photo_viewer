@@ -154,7 +154,7 @@
     <string name="action_order_by">Order by</string>
     <string name="input_password">Enter password to proceed:</string>
     <string name="new_confirm_not_same">New password &amp; old password mismatched</string>
-    <string name="pass_incorrect">The password you have entered is incorrect. Please try again!</string>
+    <string name="pass_incorrect">Incorrect password</string>
     <string name="change_pass_success">Password changed</string>
     <string name="old_pass">Old Password</string>
     <string name="new_pass">New Password</string>

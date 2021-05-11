@@ -22,6 +22,7 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
+import com.hcmus.clc18se.photos.BuildConfig
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
@@ -35,7 +36,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import java.io.*
-
 
 class PhotoViewPagerFragment : Fragment() {
     private lateinit var viewModel: PhotosViewModel
@@ -162,8 +162,10 @@ class PhotoViewPagerFragment : Fragment() {
                 true
             }
             R.id.action_change_place -> {
+
                 val intent = PlaceAutocomplete.IntentBuilder()
-                        .accessToken("pk.eyJ1IjoiaGF0aGVoaWVuIiwiYSI6ImNrb2d2eno0NDBodGQyd29hbjM1cTF4ZmgifQ.1Lx5E1AhezMWq4JakdbBOg")
+                        .accessToken(BuildConfig.MAPBOX_TOKEN)
+                        // .accessToken(BuildConfig)
                         .placeOptions(PlaceOptions.builder()
                                 .backgroundColor(Color.parseColor("#EEEEEE"))
                                 .limit(5)
@@ -344,6 +346,7 @@ class PhotoViewPagerFragment : Fragment() {
         }
         this.viewModel = viewModel
     }
+
     override fun onDetach() {
         super.onDetach()
         if (fullScreen) {
@@ -475,7 +478,7 @@ class PhotoViewPagerFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun moveFile(fileDest: DocumentFile?){
+    private fun moveFile(fileDest: DocumentFile?){
         try {
             val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
             val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
@@ -505,7 +508,7 @@ class PhotoViewPagerFragment : Fragment() {
         }
     }
 
-    fun copyFile(fileDest: DocumentFile?){
+    private fun copyFile(fileDest: DocumentFile?){
         try {
             val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
             val inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
