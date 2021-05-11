@@ -8,10 +8,12 @@ import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import android.os.Parcelable
 import android.provider.MediaStore
+import android.text.format.DateUtils
 import androidx.recyclerview.widget.DiffUtil
 import com.caverock.androidsvg.SVG
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.hcmus.clc18se.photos.adapters.AdapterItem
 import com.hcmus.clc18se.photos.utils.*
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
@@ -129,6 +131,139 @@ data class MediaItem(
             // MediaStore.Files.getContentUri("external") -> content://media/external/file/33
             // MediaStore.Images.Media.EXTERNAL_CONTENT_URI -> content://media/external/video/media/33
             return ContentUris.withAppendedId(contentUri, id)
+        }
+
+        fun groupByDate(context: Context, items: List<MediaItem>): List<AdapterItem> {
+            val adapterItems = mutableListOf<AdapterItem>()
+            if (items.isEmpty()) {
+                return emptyList()
+            }
+
+            val flags = DateUtils.FORMAT_SHOW_YEAR or
+                    DateUtils.FORMAT_ABBREV_MONTH or
+                    DateUtils.FORMAT_SHOW_DATE
+
+            var headerItem = items.first().getDateSorted()?.let {
+                AdapterItem.AdapterItemHeader(
+                    it.time,
+                    DateUtils.formatDateTime(context, it.time, flags)
+                )
+            } ?: return items.map { AdapterItem.AdapterMediaItem(it) }
+
+            var headerTimeStamp = Triple(
+                items.first().getDateSorted()?.date,
+                items.first().getDateSorted()?.month,
+                items.first().getDateSorted()?.year
+            )
+
+            items.forEachIndexed { index, mediaItem ->
+                if (index == 0) {
+                    adapterItems.add(headerItem)
+                }
+                val date = mediaItem.getDateSorted()
+                date?.let {
+
+                    val itemTimeStamp = Triple(it.date, it.month, it.year)
+
+                    if (itemTimeStamp != headerTimeStamp) {
+                        headerTimeStamp = itemTimeStamp
+                        headerItem = AdapterItem.AdapterItemHeader(
+                            date.time,
+                            DateUtils.formatDateTime(context, it.time, flags)
+                        )
+                        adapterItems.add(headerItem)
+                    }
+                } ?: return adapterItems + items.subList(index, items.lastIndex)
+                    .map { AdapterItem.AdapterMediaItem(it) }
+                adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
+            }
+            return adapterItems
+        }
+
+        fun groupByMonth(context: Context, items: List<MediaItem>): List<AdapterItem> {
+            val adapterItems = mutableListOf<AdapterItem>()
+            if (items.isEmpty()) {
+                return emptyList()
+            }
+
+            val flags = DateUtils.FORMAT_SHOW_YEAR or
+                    DateUtils.FORMAT_ABBREV_MONTH or
+                    DateUtils.FORMAT_NO_MONTH_DAY
+
+            var headerItem = items.first().getDateSorted()?.let {
+                AdapterItem.AdapterItemHeader(
+                    it.time,
+                    DateUtils.formatDateTime(context, it.time, flags)
+                )
+            } ?: return items.map { AdapterItem.AdapterMediaItem(it) }
+
+            var headerTimeStamp =
+                items.first().getDateSorted()?.date to items.first().getDateSorted()?.month
+
+            items.forEachIndexed { index, mediaItem ->
+                if (index == 0) {
+                    adapterItems.add(headerItem)
+                }
+                val date = mediaItem.getDateSorted()
+                date?.let {
+
+                    val itemTimeStamp = it.date to it.month
+
+                    if (itemTimeStamp != headerTimeStamp) {
+                        headerTimeStamp = itemTimeStamp
+                        headerItem = AdapterItem.AdapterItemHeader(
+                            date.time,
+                            DateUtils.formatDateTime(context, it.time, flags)
+                        )
+                        adapterItems.add(headerItem)
+                    }
+                } ?: return adapterItems + items.subList(index, items.lastIndex)
+                    .map { AdapterItem.AdapterMediaItem(it) }
+                adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
+            }
+            return adapterItems
+        }
+
+        fun groupByYear(context: Context, items: List<MediaItem>): List<AdapterItem> {
+            val adapterItems = mutableListOf<AdapterItem>()
+            if (items.isEmpty()) {
+                return emptyList()
+            }
+
+            val flags = DateUtils.FORMAT_SHOW_YEAR or
+                    DateUtils.FORMAT_NO_MONTH_DAY
+
+            var headerItem = items.first().getDateSorted()?.let {
+                AdapterItem.AdapterItemHeader(
+                    it.time,
+                    DateUtils.formatDateTime(context, it.time, flags)
+                )
+            } ?: return items.map { AdapterItem.AdapterMediaItem(it) }
+
+            var headerTimeStamp = items.first().getDateSorted()?.year
+
+            items.forEachIndexed { index, mediaItem ->
+                if (index == 0) {
+                    adapterItems.add(headerItem)
+                }
+                val date = mediaItem.getDateSorted()
+                date?.let {
+
+                    val itemTimeStamp = it.year
+
+                    if (itemTimeStamp != headerTimeStamp) {
+                        headerTimeStamp = itemTimeStamp
+                        headerItem = AdapterItem.AdapterItemHeader(
+                            date.time,
+                            DateUtils.formatDateTime(context, it.time, flags)
+                        )
+                        adapterItems.add(headerItem)
+                    }
+                } ?: return adapterItems + items.subList(index, items.lastIndex)
+                    .map { AdapterItem.AdapterMediaItem(it) }
+                adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
+            }
+            return adapterItems
         }
     }
 }

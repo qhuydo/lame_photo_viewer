@@ -24,6 +24,8 @@ import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import com.l4digital.fastscroll.FastScroller
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
 
@@ -44,44 +46,47 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
         }
 
         override suspend fun onGroupListItem(items: List<MediaItem>): List<AdapterItem> {
-            // return super.onGroupListItem(items)
-            val adapterItems = mutableListOf<AdapterItem>()
-            if (items.isEmpty()) {
-                return emptyList()
-            }
-
-            val flags = DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH or DateUtils.FORMAT_NO_MONTH_DAY
-
-            var headerItem = items.first().getDateSorted()?.let {
-                AdapterItem.AdapterItemHeader(
-                        it.time,
-                        DateUtils.formatDateTime(context, it.time, flags)
-                )
-            } ?: return super.onGroupListItem(items)
-
-            var headerTimeStamp = items.first().getDateSorted()?.month to items.first().getDateSorted()?.year
-
-            items.forEachIndexed { index, mediaItem ->
-                if (index == 0) {
-                    adapterItems.add(headerItem)
-                }
-                val date = mediaItem.getDateSorted()
-                date?.let {
-                    val itemTimeStamp = it.month to it.year
-                    if (itemTimeStamp != headerTimeStamp) {
-                        headerTimeStamp = itemTimeStamp
-                        headerItem = AdapterItem.AdapterItemHeader(
-                                date.time,
-                                DateUtils.formatDateTime(context, it.time, flags)
-                        )
-                        adapterItems.add(headerItem)
-                    }
-                } ?: return adapterItems + items.subList(index, items.lastIndex)
-                                .map { AdapterItem.AdapterMediaItem(it) }
-                adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
-            }
-
-            return adapterItems
+//            val adapterItems = mutableListOf<AdapterItem>()
+//            if (items.isEmpty()) {
+//                return emptyList()
+//            }
+//
+//            val flags = DateUtils.FORMAT_SHOW_YEAR or
+//                    DateUtils.FORMAT_ABBREV_MONTH or
+//                    DateUtils.FORMAT_NO_MONTH_DAY
+//
+//            var headerItem = items.first().getDateSorted()?.let {
+//                AdapterItem.AdapterItemHeader(
+//                    it.time,
+//                    DateUtils.formatDateTime(context, it.time, flags)
+//                )
+//            } ?: return super.onGroupListItem(items)
+//
+//            var headerTimeStamp =
+//                items.first().getDateSorted()?.month to items.first().getDateSorted()?.year
+//
+//            items.forEachIndexed { index, mediaItem ->
+//                if (index == 0) {
+//                    adapterItems.add(headerItem)
+//                }
+//                val date = mediaItem.getDateSorted()
+//                date?.let {
+//                    val itemTimeStamp = it.month to it.year
+//                    if (itemTimeStamp != headerTimeStamp) {
+//                        headerTimeStamp = itemTimeStamp
+//                        headerItem = AdapterItem.AdapterItemHeader(
+//                            date.time,
+//                            DateUtils.formatDateTime(context, it.time, flags)
+//                        )
+//                        adapterItems.add(headerItem)
+//                    }
+//                } ?: return adapterItems + items.subList(index, items.lastIndex)
+//                    .map { AdapterItem.AdapterMediaItem(it) }
+//                adapterItems.add(AdapterItem.AdapterMediaItem(mediaItem))
+//            }
+//
+//            return adapterItems
+            return MediaItem.groupByDate(requireContext(), items)
         }
     }
 
@@ -99,9 +104,9 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         binding = FragmentPhotosBinding.inflate(inflater, container, false)
         photoListBinding = binding.photoListLayout
@@ -109,9 +114,9 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
         setHasOptionsMenu(true)
 
         adapter = MediaItemListAdapter(
-                actionCallbacks,
-                currentListItemView,
-                currentListItemSize
+            actionCallbacks,
+            currentListItemView,
+            currentListItemSize
         ).apply {
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
@@ -142,11 +147,11 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
         viewModel.navigateToImageView.observe(viewLifecycleOwner) { mediaItem ->
             if (mediaItem != null) {
                 val viewModel: PhotosViewModel by navGraphViewModels(
-                        (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+                    (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
                 ) {
                     PhotosViewModelFactory(
-                            requireActivity().application,
-                            PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                        requireActivity().application,
+                        PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
                     )
                 }
                 viewModel.loadDataFromOtherViewModel(this@PhotosFragment.viewModel)
@@ -154,7 +159,7 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
                 val idx = viewModel.mediaItemList.value?.indexOf(mediaItem) ?: -1
                 viewModel.setCurrentItemView(idx)
                 this@PhotosFragment.findNavController().navigate(
-                        PhotosFragmentDirections.actionPagePhotoToPhotoViewFragment()
+                    PhotosFragmentDirections.actionPagePhotoToPhotoViewFragment()
                 )
                 this@PhotosFragment.viewModel.doneNavigatingToImageView()
             }
@@ -166,12 +171,12 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
     override fun refreshRecyclerView() {
         binding.apply {
             adapter = MediaItemListAdapter(
-                    actionCallbacks,
-                    currentListItemView,
-                    currentListItemSize
+                actionCallbacks,
+                currentListItemView,
+                currentListItemSize
             ).apply {
                 stateRestorationPolicy =
-                        RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+                    RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             }
 
             val recyclerView = photoListLayout.fastscrollView.recyclerView
@@ -180,7 +185,7 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
             recyclerView.adapter = adapter
             (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
                 spanCount =
-                        getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
+                    getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
             }
 
             bindMediaListRecyclerView(recyclerView, photoList ?: listOf())
@@ -191,7 +196,7 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
     override fun getCadSubId(): Int {
         val bottomAppBarPref =
-                preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0")
+            preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0")
         val usingTabLayout = bottomAppBarPref == MainActivity.TAB_LAYOUT_OPTION
         return if (usingTabLayout) R.id.cab_stub_tab else R.id.cab_stub
     }
@@ -206,11 +211,12 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
         binding.photoListLayout.apply {
             val recyclerView = fastscrollView.recyclerView
             recyclerView.layoutManager = StaggeredGridLayoutManager(
-                    getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize),
-                    StaggeredGridLayoutManager.VERTICAL
+                getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize),
+                StaggeredGridLayoutManager.VERTICAL
             )
 
-            fastscrollView.fastScroller.setFastScrollListener(object : FastScroller.FastScrollListener {
+            fastscrollView.fastScroller.setFastScrollListener(object :
+                FastScroller.FastScrollListener {
                 override fun onFastScrollStart(fastScroller: FastScroller?) {
                     swipeRefreshLayout.isEnabled = false
                 }

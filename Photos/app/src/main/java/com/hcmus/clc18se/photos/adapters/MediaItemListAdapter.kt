@@ -52,21 +52,22 @@ class MediaItemListAdapter(
 
     fun filterAndSubmitList(items: List<MediaItem>) {
         adapterScope.launch {
-            val list = actionCallbacks.onGroupListItem(items)
-            val headerList = mutableListOf<AdapterItem.AdapterItemHeader>()
-            list.forEachIndexed { index, adapterItem ->
-                if (adapterItem is AdapterItem.AdapterItemHeader) {
-                    headerIndices.add(index)
-                    headerList.add(adapterItem)
+            withContext(Dispatchers.Default) {
+                val list = actionCallbacks.onGroupListItem(items)
+                val headerList = mutableListOf<AdapterItem.AdapterItemHeader>()
+                list.forEachIndexed { index, adapterItem ->
+                    if (adapterItem is AdapterItem.AdapterItemHeader) {
+                        headerIndices.add(index)
+                        headerList.add(adapterItem)
+                    }
+                }
+                headers = headerList.toTypedArray()
+
+                withContext(Dispatchers.Main) {
+                    submitList(list)
                 }
             }
-            headers = headerList.toTypedArray()
-//            Timber.d(headerList.toString())
-//            Timber.d(headerIndices.toString())
 
-            withContext(Dispatchers.Main) {
-                submitList(list)
-            }
         }
     }
 

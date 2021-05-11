@@ -72,6 +72,7 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentFavouriteAlbumBinding.inflate(inflater, container, false)
+        photoListBinding = binding
         binding.lifecycleOwner = this
 
         currentListItemView = requireContext().currentPhotoListItemView(preferences)

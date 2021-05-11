@@ -40,7 +40,7 @@
                     android:layout_height="match_parent"
                     android:cropToPadding="true"
                     android:scaleType="centerCrop"
-                    app:imageFromMediaItem="@{photo}"
+                    imageFromMediaItem="@{photo}"
                     tools:ignore="ContentDescription"
                     tools:src="@tools:sample/backgrounds/scenic" />
 
@@ -51,7 +51,7 @@
                     android:layout_margin="24dp"
                     android:src="@drawable/ic_outline_play_circle_outline_24"
                     android:visibility="invisible"
-                    app:videoThumbnailVisibility="@{photo}"
+                    videoThumbnailVisibility="@{photo}"
                     tools:ignore="ContentDescription"
                     tools:visibility="visible" />
 

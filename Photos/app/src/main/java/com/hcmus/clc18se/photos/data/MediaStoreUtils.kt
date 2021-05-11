@@ -1,4 +1,4 @@
-package com.hcmus.clc18se.photos.data
+ package com.hcmus.clc18se.photos.data
 
 import android.content.ContentResolver
 import android.net.Uri
