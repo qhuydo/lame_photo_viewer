@@ -51,6 +51,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_slide_show"
+        android:icon="@drawable/ic_baseline_select_all_24"
+        android:title="@string/slideshow"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_multiple_delete"
         android:icon="@drawable/ic_baseline_delete_forever_24"
         android:title="@string/delete_title"

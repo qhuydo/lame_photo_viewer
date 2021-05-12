@@ -33,6 +33,8 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
         PhotosViewModelFactory(requireActivity().application, database)
     }
 
+    private lateinit var navGraphViewModel: PhotosViewModel
+
     override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
         override fun onClick(mediaItem: MediaItem) {
             viewModel.startNavigatingToImageView(mediaItem)
@@ -59,6 +61,16 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val photoViewModel: PhotosViewModel by navGraphViewModels(
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+        ) {
+            PhotosViewModelFactory(
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            )
+        }
+        this.navGraphViewModel = photoViewModel
 
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
             duration = 300L
@@ -127,6 +139,17 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
                     PhotosFragmentDirections.actionPagePhotoToPhotoViewFragment()
                 )
                 this@PhotosFragment.viewModel.doneNavigatingToImageView()
+            }
+        }
+
+        navGraphViewModel.navigateToImageView.observe(viewLifecycleOwner) {
+            if (it != null) {
+                val idx = navGraphViewModel.mediaItemList.value?.indexOf(it) ?: -1
+                navGraphViewModel.setCurrentItemView(idx)
+                this@PhotosFragment.findNavController().navigate(
+                        PhotosFragmentDirections.actionPagePhotoToPhotoViewFragment()
+                )
+                this@PhotosFragment.navGraphViewModel.doneNavigatingToImageView()
             }
         }
 

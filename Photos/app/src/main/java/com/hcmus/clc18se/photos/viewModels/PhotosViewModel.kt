@@ -25,6 +25,7 @@ class PhotosViewModel(
 ) : AndroidViewModel(application) {
 
     private var _mediaItemList = MutableLiveData<List<MediaItem>>()
+    public var liveShow = false
     val mediaItemList: LiveData<List<MediaItem>>
         get() = _mediaItemList
 
@@ -78,6 +79,10 @@ class PhotosViewModel(
             is PhotosViewModel -> _mediaItemList.value = other._mediaItemList.value
             // is CustomAlbumViewModel -> _mediaItemList.value = other.selectedAlbum.value?.mediaItems
         }
+    }
+
+    fun loadMediaItemList(list: List<MediaItem>) {
+        _mediaItemList.value = list
     }
 
     fun loadImages() = viewModelScope.launch {
@@ -258,7 +263,7 @@ class PhotosViewModel(
     }
 
     fun doneNavigatingToImageView() {
-        _navigateToImageView.value = null
+        _navigateToImageView.postValue(null)
     }
 
     fun insertPhotosIntoSelectedAlbum(mediaItems: List<MediaItem>) {

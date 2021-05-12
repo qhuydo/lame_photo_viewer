@@ -96,6 +96,12 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
             initRecyclerView()
         }
 
+        initObserver()
+        // viewModel.loadImages()
+        return binding.root
+    }
+
+    private fun initObserver() {
         viewModel.mediaItemList.observe(viewLifecycleOwner) { images ->
             adapter.filterAndSubmitList(images)
         }
@@ -107,13 +113,22 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
                 navGraphViewModel.setCurrentItemView(idx)
 
                 findNavController().navigate(
-                    PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
+                        PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
                 )
                 viewModel.doneNavigatingToImageView()
             }
         }
-        // viewModel.loadImages()
-        return binding.root
+
+        navGraphViewModel.navigateToImageView.observe(viewLifecycleOwner) {
+            if (it != null) {
+                val idx = navGraphViewModel.mediaItemList.value?.indexOf(it) ?: -1
+                navGraphViewModel.setCurrentItemView(idx)
+                findNavController().navigate(
+                        PhotoListFragmentDirections.actionPhotoListFragmentToPhotoViewFragment()
+                )
+                navGraphViewModel.doneNavigatingToImageView()
+            }
+        }
     }
 
     private fun FragmentPhotoListBinding.initRecyclerView() {

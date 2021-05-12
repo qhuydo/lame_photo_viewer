@@ -16,6 +16,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.navGraphViewModels
 import com.afollestad.materialcab.attached.AttachedCab
 import com.afollestad.materialcab.attached.destroy
 import com.afollestad.materialcab.attached.isActive
@@ -29,6 +30,7 @@ import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.data.*
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.DialogCustomAlbumsBinding
 import com.hcmus.clc18se.photos.databinding.PhotoListBinding
 import com.hcmus.clc18se.photos.databinding.PhotoListFastScrollerBinding
@@ -365,7 +367,29 @@ abstract class AbstractPhotoListFragment(
                 onActionAddToCustomAlbum()
                 true
             }
+            R.id.action_slide_show -> {
+                onActionSlideShow()
+                true
+            }
+
             else -> false
+        }
+    }
+
+    private fun onActionSlideShow(){
+        val photoViewModel: PhotosViewModel by navGraphViewModels(
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+        ) {
+            PhotosViewModelFactory(
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            )
+        }
+        if (adapter.getSelectedItems().isNotEmpty()) {
+            val list = listOf(*adapter.getSelectedItems().toTypedArray())
+            photoViewModel.loadMediaItemList(list)
+            photoViewModel.liveShow = true
+            photoViewModel.startNavigatingToImageView(adapter.getSelectedItems().first())
         }
     }
 
