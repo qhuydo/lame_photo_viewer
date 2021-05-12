@@ -2,10 +2,7 @@ package com.hcmus.clc18se.photos.viewModels
 
 import android.app.Application
 import android.app.RecoverableSecurityException
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.IntentSender
-import android.content.SharedPreferences
+import android.content.*
 import android.database.ContentObserver
 import android.net.Uri
 import android.os.Build
@@ -76,8 +73,9 @@ class PhotosViewModel(
     // wtf is this?
     fun loadDataFromOtherViewModel(other: AndroidViewModel) {
         when (other) {
-            is PhotosViewModel -> _mediaItemList.value = other._mediaItemList.value
+            is SecretPhotosViewModel -> _mediaItemList.value = other.mediaItems.value?.toMutableList()
             is FavouriteAlbumViewModel -> _mediaItemList.value = other.mediaItems.value
+            is PhotosViewModel -> _mediaItemList.value = other._mediaItemList.value
             // is CustomAlbumViewModel -> _mediaItemList.value = other.selectedAlbum.value?.mediaItems
         }
     }
@@ -152,35 +150,6 @@ class PhotosViewModel(
                 _mediaItemList.value = images
                 registerObserverWhenNull()
             }
-        }
-    }
-
-    fun loadSecretImages() = viewModelScope.launch {
-
-        withContext(Dispatchers.IO) {
-            val begin = System.currentTimeMillis()
-
-            val cw = ContextWrapper(getApplication<Application>().applicationContext)
-            val contentResolver = getApplication<Application>().contentResolver
-
-            val directory = cw.getDir("images", Context.MODE_PRIVATE)
-
-            val list = arrayListOf<Uri>()
-            val files = directory.listFiles()
-            files?.let {
-                files.forEach { file ->
-                    file?.let {
-                        val name = file.name
-                        val path = file.path
-                        val uri = Uri.fromFile(file)
-                        val mime = contentResolver.getType(uri)
-
-                        list.add(Uri.fromFile(file))
-                    }
-                }
-            }
-
-            Timber.d("${System.currentTimeMillis() - begin} ms")
         }
     }
 

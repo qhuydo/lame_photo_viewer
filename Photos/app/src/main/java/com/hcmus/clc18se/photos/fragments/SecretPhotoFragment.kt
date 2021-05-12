@@ -9,12 +9,17 @@ import android.os.Bundle
 import android.text.InputType
 import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
@@ -22,17 +27,60 @@ import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
+import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.BuildConfig
 import com.hcmus.clc18se.photos.R
+import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
+import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
+import com.hcmus.clc18se.photos.adapters.visibleWhenEmpty
+import com.hcmus.clc18se.photos.data.MediaItem
+import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.DialogChangePasswordBinding
 import com.hcmus.clc18se.photos.databinding.FragmentSecretPhotoBinding
+import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
+import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
+import com.hcmus.clc18se.photos.viewModels.SecretPhotosViewModel
+import com.hcmus.clc18se.photos.viewModels.SecretViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-class SecretPhotoFragment : BaseFragment() {
+class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     private lateinit var binding: FragmentSecretPhotoBinding
     private val scope = CoroutineScope(Dispatchers.Default)
     private var checkPass = false
+
+    private lateinit var photosViewModel: PhotosViewModel
+
+    private val viewModel: SecretPhotosViewModel by viewModels {
+        SecretViewModelFactory(requireActivity().application)
+    }
+
+    override val actionCallbacks = object : MediaItemListAdapter.ActionCallbacks {
+        override fun onClick(mediaItem: MediaItem) {
+            photosViewModel.startNavigatingToImageView(mediaItem)
+        }
+
+        override fun onSelectionChange() {
+            invalidateCab()
+        }
+    }
+
+    override fun getCurrentViewModel(): PhotosViewModel = photosViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        val navGraphViewModel: PhotosViewModel by navGraphViewModels(
+            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+        ) {
+            PhotosViewModelFactory(
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+            )
+        }
+        this.photosViewModel = navGraphViewModel
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,17 +99,72 @@ class SecretPhotoFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         showPasswordDialog()
-
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_secret_photo, container, false
         )
+        binding.lifecycleOwner = this
+        binding.secretPhotoViewModel = viewModel
+
+        photoListBinding = binding.photoListLayout
+
+        initObservers()
+        initRecyclerViews()
+        setHasOptionsMenu(true)
 
         return binding.root
     }
 
+    private fun initRecyclerViews() {
+
+        adapter = MediaItemListAdapter(
+            actionCallbacks,
+            currentListItemView,
+            currentListItemSize
+        ).apply {
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        }
+
+        binding.photoListLayout.apply {
+
+            photoListRecyclerView.adapter = adapter
+
+            (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
+                spanCount = getSpanCountForPhotoList(
+                    resources,
+                    currentListItemView,
+                    currentListItemSize
+                )
+            }
+        }
+    }
+
+    private fun initObservers() {
+        viewModel.mediaItems.observe(viewLifecycleOwner) {
+            if (it != null) {
+                adapter.filterAndSubmitList(it)
+                binding.placeholder.root.visibleWhenEmpty(it)
+            }
+        }
+
+        photosViewModel.navigateToImageView.observe(viewLifecycleOwner) { mediaItem ->
+            if (mediaItem != null) {
+                photosViewModel.loadDataFromOtherViewModel(viewModel)
+
+                val idx = viewModel.mediaItems.value?.indexOf(mediaItem) ?: -1
+
+                photosViewModel.setCurrentItemView(idx)
+                findNavController().navigate(
+                    SecretPhotoFragmentDirections.actionSecretPhotoFragmentToPhotoViewFragment()
+                )
+
+                photosViewModel.doneNavigatingToImageView()
+            }
+        }
+    }
+
     private fun showData() {
         val cw = ContextWrapper(requireContext().applicationContext)
-        val directory = cw.getDir("images", Context.MODE_PRIVATE)
+        val directory = cw.getDir("images", MODE_PRIVATE)
 
         val list = ArrayList<Uri>()
         for (file in directory.listFiles()) {
@@ -70,52 +173,44 @@ class SecretPhotoFragment : BaseFragment() {
             }
         }
 
-        binding.listView.adapter = ArrayAdapter<Any?>(
-            requireContext(),
-            android.R.layout.simple_list_item_1,
-            list as List<Any?>
-        )
+//        binding.listView.adapter = ArrayAdapter<Any?>(
+//            requireContext(),
+//            android.R.layout.simple_list_item_1,
+//            list as List<Any?>
+//        )
     }
 
-    override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
+    private fun showPasswordDialog() = MaterialDialog(requireContext())
+        .cancelable(false)
+        .noAutoDismiss()
+        .show {
+            title(R.string.input_password)
+            input(inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD, allowEmpty = true)
+            getInputField().transformationMethod = PasswordTransformationMethod.getInstance()
 
-    override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
+            positiveButton(R.string.ok) {
+                // Validate the password
+                val text = getInputField().text.toString()
+                checkPassword(text)
 
-    override fun getToolbarTitleRes(): Int = R.string.secret_photos_title
-
-    private fun showPasswordDialog() {
-        MaterialDialog(requireContext())
-            .cancelable(false)
-            .noAutoDismiss()
-            .show {
-                title(R.string.input_password)
-                input(inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD, allowEmpty = true)
-                getInputField().transformationMethod = PasswordTransformationMethod.getInstance()
-
-                positiveButton(R.string.ok) {
-                    // Validate the password
-                    val text = getInputField().text.toString()
-                    checkPassword(text)
-
-                    if (checkPass) {
-                        showData()
-                        dismiss()
-                        return@positiveButton
-                    }
-                    getInputField().error = getString(R.string.pass_incorrect)
-                }
-
-                neutralButton(R.string.change_pass) {
-                    changePassword()
-                }
-
-                negativeButton {
+                if (checkPass) {
+                    viewModel.unlock()
                     dismiss()
-                    requireActivity().onBackPressed()
+                    return@positiveButton
                 }
-
+                getInputField().error = getString(R.string.pass_incorrect)
             }
-    }
+
+            neutralButton(R.string.change_pass) {
+                changePassword()
+            }
+
+            negativeButton {
+                dismiss()
+                requireActivity().onBackPressed()
+            }
+
+        }
 
     private fun changePassword() = MaterialDialog(requireContext())
         .noAutoDismiss()
@@ -126,54 +221,110 @@ class SecretPhotoFragment : BaseFragment() {
             customView(view = binding.root)
             title(R.string.change_pass)
 
-            val sharePreferences = requireContext().getSharedPreferences("pass", MODE_PRIVATE)
-            val oldPass = sharePreferences.getString("pass", null)
+            val sharePreferences =
+                requireContext().getSharedPreferences(getString(R.string.pass_key), MODE_PRIVATE)
+            val oldPass = sharePreferences.getString(getString(R.string.pass_key), null)
             if (oldPass == null) {
-                binding.oldPass.visibility = View.GONE
+                binding.oldPassLayout.visibility = View.GONE
             }
 
             positiveButton {
-                val oldPassFromInput = binding.oldPass.editableText.toString()
-                val newPassFromInput = binding.newPass.editableText.toString()
-                val confirmFromInput = binding.confirmPass.editableText.toString()
-
-                if (oldPass != null && oldPass != oldPassFromInput) {
-                    binding.oldPass.error = getString(R.string.pass_incorrect)
-                    return@positiveButton
-                }
-
-                if (newPassFromInput != confirmFromInput) {
-                    binding.newPass.error = getString(R.string.new_confirm_not_same)
-                    return@positiveButton
-                }
-
-                if (BuildConfig.DEBUG && newPassFromInput != confirmFromInput) {
-                    error("Assertion failed")
-                }
-
-                sharePreferences.edit()
-                    .putString("pass", confirmFromInput)
-                    .apply()
-
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.change_pass_success),
-                    Toast.LENGTH_SHORT
-                ).show()
-
+                if (validateAndChangePassword(
+                        binding,
+                        oldPass,
+                        sharePreferences
+                    )
+                ) return@positiveButton
                 dismiss()
             }
 
             negativeButton { dismiss() }
         }
 
+    private fun validateAndChangePassword(
+        binding: DialogChangePasswordBinding,
+        oldPass: String?,
+        sharePreferences: SharedPreferences
+    ): Boolean {
+        val oldPassFromInput = binding.oldPass.editableText.toString()
+        val newPassFromInput = binding.newPass.editableText.toString()
+        val confirmFromInput = binding.confirmPass.editableText.toString()
+
+        if (oldPass != null && oldPass != oldPassFromInput) {
+            binding.oldPass.error = getString(R.string.pass_incorrect)
+            return true
+        }
+
+        if (newPassFromInput != confirmFromInput) {
+            binding.newPass.error = getString(R.string.new_confirm_not_same)
+            return true
+        }
+
+        if (BuildConfig.DEBUG && newPassFromInput != confirmFromInput) {
+            error("Assertion failed")
+        }
+
+        sharePreferences.edit()
+            .putString(getString(R.string.pass_key), confirmFromInput)
+            .apply()
+
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.change_pass_success),
+            Toast.LENGTH_SHORT
+        ).show()
+        return false
+    }
+
     private fun checkPassword(userInput: String) {
         val sharePreferences: SharedPreferences =
-            requireContext().getSharedPreferences("pass", MODE_PRIVATE)
+            requireContext().getSharedPreferences(getString(R.string.pass_key), MODE_PRIVATE)
 
-        val oldPass = sharePreferences.getString("pass", "")
+        val oldPass = sharePreferences.getString(getString(R.string.pass_key), "")
         if (oldPass == userInput) {
             checkPass = true
         }
     }
+
+    override fun getCabId(): Int = R.id.cab_stub2
+
+    override fun refreshRecyclerView() {
+        binding.apply {
+
+            val recyclerView = photoListLayout.photoListRecyclerView
+            val photoList = viewModel.mediaItems.value
+
+            recyclerView.adapter = MediaItemListAdapter(
+                actionCallbacks,
+                currentListItemView,
+                currentListItemSize
+            ).apply {
+                stateRestorationPolicy =
+                    RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            }
+
+            (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.spanCount =
+                getSpanCountForPhotoList(resources, currentListItemView, currentListItemSize)
+
+            bindMediaListRecyclerView(recyclerView, photoList)
+            // adapter.notifyDataSetChanged()
+        }
+    }
+
+    override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
+
+    override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
+
+    override fun getToolbarTitleRes(): Int = R.string.secret_photos_title
+
+    override fun onPrepareCabMenu(menu: Menu) {
+        super.onPrepareCabMenu(menu)
+
+        val actionAddToSecret = menu.findItem(R.id.action_add_to_secret_album)
+        val actionRemoveFromSecret = menu.findItem(R.id.action_remove_secret_album)
+
+        actionAddToSecret?.isVisible = false
+        actionRemoveFromSecret?.isVisible = true
+    }
+
 }

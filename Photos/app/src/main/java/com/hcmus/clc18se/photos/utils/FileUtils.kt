@@ -6,8 +6,10 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.webkit.MimeTypeMap
 import timber.log.Timber
 import java.io.*
+
 
 /**
  * Move the file from given input path to a given directory
@@ -70,5 +72,19 @@ fun ContentResolver.getBitMap(uri: Uri): Bitmap {
 
     } catch (e: Exception) {
         throw e
+    }
+}
+
+fun ContentResolver.getMimeType(uri: Uri): String? {
+    return if (ContentResolver.SCHEME_CONTENT == uri.scheme) {
+        getType(uri)
+    } else {
+        val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
+            uri
+                .toString()
+        )
+        MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+            fileExtension.toLowerCase()
+        )
     }
 }

@@ -75,13 +75,19 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
         photoListBinding = binding
         binding.lifecycleOwner = this
 
-        currentListItemView = requireContext().currentPhotoListItemView(preferences)
-        currentListItemSize = requireContext().currentPhotoListItemSize(preferences)
+        initRecyclerViews()
 
+        setHasOptionsMenu(true)
+        initObservers()
+
+        return binding.root
+    }
+
+    private fun initRecyclerViews() {
         adapter = MediaItemListAdapter(
-                actionCallbacks,
-                currentListItemView,
-                currentListItemSize
+            actionCallbacks,
+            currentListItemView,
+            currentListItemSize
         ).apply {
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
@@ -92,17 +98,12 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
 
             (photoListRecyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
                 spanCount = getSpanCountForPhotoList(
-                        resources,
-                        currentListItemView,
-                        currentListItemSize
+                    resources,
+                    currentListItemView,
+                    currentListItemSize
                 )
             }
         }
-
-        setHasOptionsMenu(true)
-        initObservers()
-
-        return binding.root
     }
 
     private fun initObservers() {
@@ -127,13 +128,12 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
                 val idx = viewModel.mediaItems.value?.indexOf(mediaItem) ?: -1
 
                 photosViewModel.setCurrentItemView(idx)
-                this@FavouriteAlbumFragment.findNavController().navigate(
+                findNavController().navigate(
                         FavouriteAlbumFragmentDirections.actionFavouriteAlbumFragmentToPhotoViewFragment()
                 )
 
                 photosViewModel.doneNavigatingToImageView()
             }
-
         }
     }
 

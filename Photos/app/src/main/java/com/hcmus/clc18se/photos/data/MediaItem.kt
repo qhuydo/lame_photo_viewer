@@ -59,7 +59,7 @@ data class MediaItem(
     }
 
     fun requirePath(context: Context): String? {
-        path?.let {
+        if (path == null) {
             try {
                 path = getRealPathFromURI(context, requireUri())
             } catch (ex: Exception) {
@@ -200,7 +200,6 @@ data class MediaItem(
                 DateTimeComparator.getInstance(DateTimeFieldType.dayOfMonth()).compare(date1, date2)
             }
 
-
             return groupBy(
                 context,
                 items,
@@ -248,6 +247,18 @@ data class MediaItem(
                 headerLabelMap,
                 comparator
             )
+        }
+
+        fun getSecretName(mediaItem: MediaItem): String {
+            val nameWithoutExtension = mediaItem.name.substringBeforeLast(".")
+            val extension = mediaItem.name.substringAfterLast(".")
+
+            // missing delimiter value
+            if (extension == mediaItem.name) {
+                return "${nameWithoutExtension}_${mediaItem.id}"
+            }
+
+            return "${nameWithoutExtension}_${mediaItem.id}.$extension"
         }
     }
 }

@@ -88,15 +88,9 @@ abstract class AbstractPhotoListFragment(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        currentListItemView = preferences.getString(
-            getString(R.string.photo_list_view_type_key),
-            MediaItemListAdapter.ITEM_TYPE_LIST.toString()
-        )!!.toInt()
 
-        currentListItemSize = preferences.getString(
-            getString(R.string.photo_list_item_size_key),
-            "0"
-        )!!.toInt()
+        currentListItemView = requireContext().currentPhotoListItemView(preferences)
+        currentListItemSize = requireContext().currentPhotoListItemSize(preferences)
 
         deleteRequestLauncher = registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
