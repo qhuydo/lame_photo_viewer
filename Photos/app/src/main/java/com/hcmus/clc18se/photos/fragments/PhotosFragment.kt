@@ -166,9 +166,8 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
         }
     }
 
-    override fun getCadSubId(): Int {
-        val bottomAppBarPref =
-            preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0")
+    override fun getCabId(): Int {
+        val bottomAppBarPref = preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0")
         val usingTabLayout = bottomAppBarPref == MainActivity.TAB_LAYOUT_OPTION
         return if (usingTabLayout) R.id.cab_stub_tab else R.id.cab_stub
     }

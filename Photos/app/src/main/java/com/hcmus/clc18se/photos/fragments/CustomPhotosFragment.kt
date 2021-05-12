@@ -193,7 +193,7 @@ class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list)
         }
     }
 
-    override fun getCadSubId(): Int {
+    override fun getCabId(): Int {
         return R.id.cab_stub2
     }
 

@@ -166,7 +166,7 @@ class PhotoListFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
         }
     }
 
-    override fun getCadSubId(): Int {
+    override fun getCabId(): Int {
         return R.id.cab_stub2
     }
 

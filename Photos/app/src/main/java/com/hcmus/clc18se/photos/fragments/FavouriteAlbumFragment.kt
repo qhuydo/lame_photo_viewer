@@ -137,7 +137,7 @@ class FavouriteAlbumFragment : AbstractPhotoListFragment(R.menu.photo_list_menu)
         }
     }
 
-    override fun getCadSubId(): Int = R.id.cab_stub2
+    override fun getCabId(): Int = R.id.cab_stub2
 
     override fun refreshRecyclerView() {
         binding.apply {

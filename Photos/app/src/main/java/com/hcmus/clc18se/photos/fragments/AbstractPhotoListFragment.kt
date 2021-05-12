@@ -289,7 +289,7 @@ abstract class AbstractPhotoListFragment(
 
     abstract fun refreshRecyclerView()
 
-    abstract fun getCadSubId(): Int
+    abstract fun getCabId(): Int
 
     open fun isSwipeLayoutEnabled(): Boolean = false
 
@@ -315,7 +315,7 @@ abstract class AbstractPhotoListFragment(
         val colorOnPrimary = getColorAttribute(requireContext(), R.attr.colorOnPrimary)
         Timber.d("Color On primary $colorOnPrimary")
 
-        mainCab = createCab(getCadSubId()) {
+        mainCab = createCab(getCabId()) {
             title(literal = "${adapter.numberOfSelectedItems()}")
 
             menu(R.menu.photo_list_context_menu)
