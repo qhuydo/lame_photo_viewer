@@ -67,7 +67,7 @@ class DetectFace : Service() {
                                 var bitmap: Bitmap = context.contentResolver.getBitMap(item.requireUri())
                                 var scale = 1
                                 val byteBitmap = bitmap.width * bitmap.height * 4
-                                while (byteBitmap / scale / scale > 6000000) {
+                                while (byteBitmap / scale / scale > 2000000) {
                                     scale++
                                 }
 

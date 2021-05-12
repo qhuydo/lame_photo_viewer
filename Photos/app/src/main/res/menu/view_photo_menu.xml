@@ -28,10 +28,6 @@
         android:title="@string/change_place" />
 
     <item
-        android:id="@+id/action_slideshow"
-        android:title="@string/slideshow" />
-
-    <item
         android:id="@+id/action_kick_to_other_app"
         android:title="@string/open_in_another_app" />
 

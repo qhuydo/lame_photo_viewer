@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -43,12 +44,11 @@ import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
+import kotlin.properties.Delegates
 
 // TODO: create a view model for this
 class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
@@ -67,6 +67,8 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
     private var debug: Boolean = false
 
+    private val scope = CoroutineScope(Dispatchers.Default + Job())
+
     private val viewPagerCallback by lazy {
         object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -78,7 +80,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
                 }
 
                 (requireActivity() as AppCompatActivity).supportActionBar?.title =
-                    photos[position].name
+                        photos[position].name
                 setEditButtonVisibility(photos[position].isEditable())
                 initFavouriteButtonState()
             }
@@ -88,11 +90,11 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
-            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
             PhotosViewModelFactory(
-                requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
             )
         }
         this.photos = viewModel.mediaItemList.value ?: listOf()
@@ -107,7 +109,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
         super.onCreate(savedInstanceState)
 
         resultLauncher = registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult()
+                ActivityResultContracts.StartIntentSenderForResult()
         ) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 viewModel.deletePendingImage()
@@ -118,7 +120,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
         // trong thời gian chạy.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             accessMediaLocationResultLauncher = registerForActivityResult(
-                ActivityResultContracts.RequestPermission()
+                    ActivityResultContracts.RequestPermission()
             ) {
                 if (it) {
                     getMediaItemAddressCallback()
@@ -195,7 +197,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
             val dateCreated = photos[currentPosition].getDateSorted()
             findViewById<TextView>(R.id.date_create).text =
-                resources.getString(R.string.date_created, dateCreated)
+                    resources.getString(R.string.date_created, dateCreated)
 
             val size = getFileSize(path!!)
             findViewById<TextView>(R.id.size)?.visibility = View.VISIBLE
@@ -206,7 +208,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
                 imageSize?.let {
                     findViewById<TextView>(R.id.size_image)?.visibility = View.VISIBLE
                     findViewById<TextView>(R.id.size_image)?.text =
-                        getString(R.string.image_size, imageSize)
+                            getString(R.string.image_size, imageSize)
                 }
             }
         }
@@ -242,7 +244,8 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             if (length != null && width != null) {
                 sizeString = "$length × $width"
             }
-        } catch (ignored: Exception) { }
+        } catch (ignored: Exception) {
+        }
 
         return sizeString
     }
@@ -283,9 +286,9 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
                 val gpsImage = GPSImage(path)
                 address = getAddressFromGPSImage(gpsImage, requireContext())
                 Toast.makeText(
-                    context,
-                    gpsImage.exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE),
-                    Toast.LENGTH_LONG
+                        context,
+                        gpsImage.exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE),
+                        Toast.LENGTH_LONG
                 ).show()
             }
         }
@@ -305,8 +308,8 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
                 if (gpsImage.latitude != null && gpsImage.longitude != null) {
                     latLng = "(${String.format("%.4f", gpsImage.latitude)};${
                         String.format(
-                            "%.4f",
-                            gpsImage.longitude
+                                "%.4f",
+                                gpsImage.longitude
                         )
                     })"
                 }
@@ -327,7 +330,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
                     val gpsImage = GPSImage(it)
                     getAddressFromGPSImage(gpsImage, requireContext())?.let { address ->
                         dialog?.findViewById<TextView>(R.id.name_place)?.text =
-                            resources.getString(R.string.location, address)
+                                resources.getString(R.string.location, address)
                     }
                 }
             }
@@ -336,9 +339,9 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         // TODO: clean this code
         (activity as AbstractPhotosActivity).setNavHostFragmentTopMargin(0)
@@ -353,14 +356,23 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
         setUpBottomButtons()
 
-        setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
-        currentPosition = viewModel.idx.value!!
-
-        initFavouriteButtonState()
-
-        initViewPager()
-
         debug = preferences.getBoolean(getString(R.string.image_debugger_key), false)
+
+        if (viewModel.liveShow) {
+            CoroutineScope(Dispatchers.Default).launch {
+                while (true) {
+                    delay(2000)
+                    withContext(Dispatchers.Main) {
+                        if (currentPosition < photos.size - 1) {
+                            ++currentPosition
+                        } else {
+                            return@withContext
+                        }
+                        binding.horizontalViewPager.setCurrentItem(currentPosition, true)
+                    }
+                }
+            }
+        }
 
         // requireActivity().window?.navigationBarColor = Color.BLACK
         return binding.root
@@ -398,8 +410,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? AppCompatActivity)?.supportActionBar?.title =
-            photos[viewModel.idx.value!!].name
+
         initObservers()
     }
 
@@ -426,6 +437,19 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
         viewModel.mediaItemList.observe(viewLifecycleOwner) {
             if (it != null) {
                 photos = it
+
+                this.photos = viewModel.mediaItemList.value ?: listOf()
+
+                setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
+                currentPosition = viewModel.idx.value!!
+
+                initFavouriteButtonState()
+
+                initViewPager()
+
+                (activity as? AppCompatActivity)?.supportActionBar?.title =
+                        photos[viewModel.idx.value!!].name
+
             }
         }
 
@@ -441,6 +465,18 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
                 viewModel.finishPerformingDelete()
             }
         }
+    }
+
+    override fun onDestroy() {
+        if (viewModel.liveShow) {
+            // thread.interrupt()
+            if (scope.isActive) {
+                scope.cancel()
+
+            }
+            viewModel.liveShow = false
+        }
+        super.onDestroy()
     }
 
     private fun changeFavouriteButtonState(isFavourite: Boolean) {
@@ -494,12 +530,12 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     }
 
     private inner class ScreenSlidePagerAdapter(
-        fragmentManager: FragmentManager,
-        lifecycle: Lifecycle
+            fragmentManager: FragmentManager,
+            lifecycle: Lifecycle
     ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
         val fullscreen =
-            preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
+                preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
 
         override fun getItemId(position: Int): Long {
             return photos[position].id
