@@ -36,6 +36,7 @@ import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
+import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.OnDirectionKeyDown
 import com.hcmus.clc18se.photos.utils.images.GPSImage
 import com.hcmus.clc18se.photos.utils.images.GPSImage.Companion.getAddressFromGPSImage
@@ -49,7 +50,7 @@ import java.io.File
 import java.io.FileNotFoundException
 
 // TODO: create a view model for this
-class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
+class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
 
     private lateinit var viewModel: PhotosViewModel
 
@@ -70,7 +71,6 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     private val args by lazy { PhotoViewFragmentArgs.fromBundle(requireArguments()) }
 
     private val isSecret by lazy { args.isSecret }
-    // private lateinit var isSecret = false
 
     private val viewPagerCallback by lazy {
         object : ViewPager2.OnPageChangeCallback() {
@@ -412,7 +412,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     private fun initViewPager() {
         binding.horizontalViewPager.apply {
             adapter = ScreenSlidePagerAdapter(childFragmentManager, lifecycle)
-            setCurrentItem(viewModel.idx.value!!, false)
+            setCurrentItem(currentPosition, false)
             registerOnPageChangeCallback(viewPagerCallback)
         }
     }
@@ -421,6 +421,13 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
         super.onViewCreated(view, savedInstanceState)
 
         initObservers()
+        if (savedInstanceState?.containsKey(BUNDLE_CURRENT_POS) == true) {
+            val pos = savedInstanceState.getInt(BUNDLE_CURRENT_POS)
+            if (pos != -1 ){
+                currentPosition = pos
+                binding.horizontalViewPager.setCurrentItem(pos)
+            }
+        }
     }
 
     private fun actionFavourite() {
@@ -448,16 +455,18 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
                 photos = it
 
                 this.photos = viewModel.mediaItemList.value ?: listOf()
+                if (currentPosition == -1) {
+                    currentPosition = viewModel.idx.value!!
+                }
 
                 if (!isSecret) {
-                    setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
+                    setEditButtonVisibility(photos[currentPosition].isEditable())
                     initFavouriteButtonState()
                 }
 
-                currentPosition = viewModel.idx.value!!
                 initViewPager()
 
-                (activity as? AppCompatActivity)?.supportActionBar?.title = photos[viewModel.idx.value!!].name
+                (activity as? AppCompatActivity)?.supportActionBar?.title = photos[currentPosition].name
             }
         }
 
@@ -475,16 +484,15 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
         }
     }
 
-    override fun onDestroy() {
+    override fun onBackPress(): Boolean {
         if (viewModel.liveShow) {
             // thread.interrupt()
             if (scope.isActive) {
                 scope.cancel()
-
             }
             viewModel.liveShow = false
         }
-        super.onDestroy()
+        return false
     }
 
     private fun changeFavouriteButtonState(isFavourite: Boolean) {
@@ -542,8 +550,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             lifecycle: Lifecycle
     ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
-        val fullscreen =
-                preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
+        val fullscreen = preferences.getBoolean(getString(R.string.full_screen_view_image_key), false)
 
         override fun getItemId(position: Int): Long {
             return photos[position].id
@@ -574,4 +581,12 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
     override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(BUNDLE_CURRENT_POS, currentPosition)
+    }
+
+    companion object {
+        const val BUNDLE_CURRENT_POS = "current_position"
+    }
 }
