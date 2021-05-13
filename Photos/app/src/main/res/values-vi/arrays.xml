@@ -29,4 +29,9 @@
         <item>Ẩn</item>
         <item>Dùng thanh tab thay cho thanh dưới cùng</item>
     </string-array>
+
+    <string-array name="custom_album_option">
+        <item>Đổi tên</item>
+        <item>Xóa</item>
+    </string-array>
 </resources>

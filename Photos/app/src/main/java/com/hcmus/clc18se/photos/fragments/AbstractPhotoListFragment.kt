@@ -14,7 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.navGraphViewModels
@@ -64,7 +63,7 @@ import timber.log.Timber
  * @see [PhotoListFragment]
  */
 abstract class AbstractPhotoListFragment(
-    private val menuRes: Int
+        private val menuRes: Int
 ) : BaseFragment(), OnBackPressed {
 
     // Current list item view type, get from preference
@@ -96,7 +95,7 @@ abstract class AbstractPhotoListFragment(
         currentListItemSize = requireContext().currentPhotoListItemSize(preferences)
 
         deleteRequestLauncher = registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult()
+                ActivityResultContracts.StartIntentSenderForResult()
         ) { activityResult ->
             if (Activity.RESULT_OK == activityResult.resultCode) {
                 Toast.makeText(activity, "Selected images deleted", Toast.LENGTH_SHORT).show()
@@ -131,25 +130,25 @@ abstract class AbstractPhotoListFragment(
         setPhotoListIcon(photoListImageItem, currentListItemView)
 
         val itemSizePreference = preferences.getString(
-            getString(R.string.photo_list_item_size_key), "0"
+                getString(R.string.photo_list_item_size_key), "0"
         ) ?: "0"
 
         setPhotoListItemSizeOption(resources, menu, itemSizePreference)
 
         val orderPreference = preferences.getString(
-            getString(R.string.sort_order_key), DEFAULT_SORT_ORDER
+                getString(R.string.sort_order_key), DEFAULT_SORT_ORDER
         ) ?: DEFAULT_SORT_ORDER
 
         when (orderPreference) {
             SORT_BY_DATE_TAKEN -> menu.findItem(R.id.action_order_by_date_taken)?.isChecked = true
             SORT_BY_DATE_MODIFIED -> menu.findItem(R.id.action_order_by_date_modified)?.isChecked =
-                true
+                    true
             else -> menu.findItem(R.id.action_order_by_date_added)?.isChecked = true
         }
 
         val groupByPreference = preferences.getInt(
-            getString(R.string.group_by_key),
-            MediaItemListAdapter.DEFAULT_GROUP_BY
+                getString(R.string.group_by_key),
+                MediaItemListAdapter.DEFAULT_GROUP_BY
         )
 
         when (groupByPreference) {
@@ -198,8 +197,8 @@ abstract class AbstractPhotoListFragment(
         }
 
         preferences.edit()
-            .putInt(getString(R.string.group_by_key), option)
-            .apply()
+                .putInt(getString(R.string.group_by_key), option)
+                .apply()
 
         refreshRecyclerView()
 
@@ -233,8 +232,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-            .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
-            .apply()
+                .putString(getString(R.string.photo_list_view_type_key), currentListItemView.toString())
+                .apply()
 
         refreshRecyclerView()
     }
@@ -253,8 +252,8 @@ abstract class AbstractPhotoListFragment(
 
         // Save the preference
         preferences.edit()
-            .putString(getString(R.string.photo_list_item_size_key), option)
-            .apply()
+                .putString(getString(R.string.photo_list_item_size_key), option)
+                .apply()
 
         refreshRecyclerView()
 
@@ -271,8 +270,8 @@ abstract class AbstractPhotoListFragment(
         }
 
         preferences.edit()
-            .putString(getString(R.string.sort_order_key), option)
-            .apply()
+                .putString(getString(R.string.sort_order_key), option)
+                .apply()
 
         getCurrentViewModel().loadImages()
 
@@ -338,7 +337,7 @@ abstract class AbstractPhotoListFragment(
             }
             is PhotoListFastScrollerBinding -> {
                 (photoListBinding as PhotoListFastScrollerBinding).swipeRefreshLayout.isEnabled =
-                    isEnabled
+                        isEnabled
             }
         }
     }
@@ -396,7 +395,7 @@ abstract class AbstractPhotoListFragment(
         }
     }
 
-    private fun onActionSlideShow(){
+    private fun onActionSlideShow() {
         val photoViewModel: PhotosViewModel by navGraphViewModels(
                 (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
@@ -431,28 +430,29 @@ abstract class AbstractPhotoListFragment(
             val dialogBinding = DialogCustomAlbumsBinding.inflate(layoutInflater, view, false)
             dialogBinding.customAlbumViewModel = customAlbumViewModel
 
-            dialogBinding.albumListLayout.albumListRecyclerView.adapter = AlbumListAdapter(
-                onClickListener = AlbumListAdapter.OnClickListener {
+            val callback = object : AlbumListAdapter.AlbumListAdapterCallbacks {
+                override fun onClick(album: Album) {
                     dismiss()
-                    startAddingPhotoToCustomAlbum(it, customAlbumViewModel)
+                    startAddingPhotoToCustomAlbum(album, customAlbumViewModel)
                 }
-            )
+            }
+            dialogBinding.albumListLayout.albumListRecyclerView.adapter = AlbumListAdapter(callbacks = callback)
 
             customView(view = dialogBinding.root, scrollable = true)
         }
     }
 
     private fun startAddingPhotoToCustomAlbum(
-        album: Album,
-        customAlbumViewModel: CustomAlbumViewModel
+            album: Album,
+            customAlbumViewModel: CustomAlbumViewModel
     ) {
         customAlbumViewModel.viewModelScope.launch {
             customAlbumViewModel.addPhotosToAlbum(adapter.getSelectedItems(), album.customAlbumId!!)
             mainCab?.destroy()
             Toast.makeText(
-                requireContext(),
-                getString(R.string.add_photo_to_custom_album_succeed, album.getName()),
-                Toast.LENGTH_SHORT
+                    requireContext(),
+                    getString(R.string.add_photo_to_custom_album_succeed, album.getName()),
+                    Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -467,9 +467,9 @@ abstract class AbstractPhotoListFragment(
 
             mainCab?.destroy()
             Toast.makeText(
-                requireContext(),
-                getString(R.string.action_add_to_favourite_succeed),
-                Toast.LENGTH_SHORT
+                    requireContext(),
+                    getString(R.string.action_add_to_favourite_succeed),
+                    Toast.LENGTH_SHORT
             ).show()
 
         }
@@ -492,9 +492,9 @@ abstract class AbstractPhotoListFragment(
 
                     mainCab?.destroy()
                     Toast.makeText(
-                        requireContext(),
-                        getString(R.string.action_remove_from_favourite_succeed),
-                        Toast.LENGTH_SHORT
+                            requireContext(),
+                            getString(R.string.action_remove_from_favourite_succeed),
+                            Toast.LENGTH_SHORT
                     ).show()
 
                 }
@@ -559,7 +559,7 @@ abstract class AbstractPhotoListFragment(
         // set the status bar color to match with ?colorPrimary
         // to match with status bar color
         requireActivity().window.statusBarColor =
-            getColorAttribute(requireContext(), R.attr.colorPrimary)
+                getColorAttribute(requireContext(), R.attr.colorPrimary)
         val onPrimaryColor = getColorAttribute(requireContext(), R.attr.colorOnPrimary)
         if (isColorDark(onPrimaryColor)) {
             setLightStatusBar(requireActivity().window.decorView, requireActivity())
@@ -570,7 +570,7 @@ abstract class AbstractPhotoListFragment(
 
     open fun onCabDestroy(): Boolean {
         requireActivity().window.statusBarColor =
-            getColorAttribute(requireContext(), R.attr.statusBarBackground)
+                getColorAttribute(requireContext(), R.attr.statusBarBackground)
 
         val statusBackground = getColorAttribute(requireContext(), R.attr.statusBarBackground)
 

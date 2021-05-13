@@ -428,6 +428,11 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="custom_album_option">
+        <item>Rename</item>
+        <item>Remove</item>
+    </string-array>
+
     <array name="sample_photos">
         <item>@drawable/ic_launcher_sample</item>
         <item>@drawable/ic_launcher_blue_sample</item>

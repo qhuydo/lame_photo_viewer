@@ -43,4 +43,12 @@ interface PhotosDatabaseDao {
 
     @Query("delete from custom_album_item where album_id=:albumId and id in (:id)")
     suspend fun deleteCustomAlbumItemById(albumId: Long, vararg id: Long)
+
+    @Transaction
+    @Delete
+    suspend fun deleteCustomAlbum(customAlbumInfo: CustomAlbumInfo)
+
+    @Update
+    suspend fun updateCustomAlbumInfo(customAlbumInfo: CustomAlbumInfo): Int
+
 }

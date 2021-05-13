@@ -1,31 +1,21 @@
 package com.hcmus.clc18se.photos.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.transition.MaterialSharedAxis
-import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.PhotosPagerActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
 import com.hcmus.clc18se.photos.data.Album
-import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.FragmentAlbumBinding
 import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.viewModels.AlbumViewModel
-import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
-import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
-import kotlinx.coroutines.launch
 
 class AlbumFragment : AbstractAlbumFragment() {
 
@@ -35,13 +25,13 @@ class AlbumFragment : AbstractAlbumFragment() {
 
     private lateinit var adapter: AlbumListAdapter
 
-    private val albumAdapterListener = AlbumListAdapter.OnClickListener {
-        // I know something went wrong with this, but it was kinda runnable,
-        // so I left this untouched until the obvious bug appears.
-        // TODO: investigate bugs in these line, or somewhere else.
-        val idx = albumViewModel.albumList.value?.indexOf(it) ?: -1
-        albumViewModel.setCurrentItemView(idx)
-        albumViewModel.startNavigatingToPhotoList(it)
+    private val albumAdapterListener = object : AlbumListAdapter.AlbumListAdapterCallbacks {
+        override fun onClick(album: Album) {
+            val idx = albumViewModel.albumList.value?.indexOf(album) ?: -1
+            albumViewModel.setCurrentItemView(idx)
+            albumViewModel.startNavigatingToPhotoList(album)
+        }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -58,6 +48,7 @@ class AlbumFragment : AbstractAlbumFragment() {
         adapter = AlbumListAdapter(
                 currentListItemView,
                 currentListItemSize,
+                false,
                 albumAdapterListener
         )
 
@@ -153,6 +144,7 @@ class AlbumFragment : AbstractAlbumFragment() {
             adapter = AlbumListAdapter(
                     currentListItemView,
                     currentListItemSize,
+                    false,
                     albumAdapterListener
             )
             val recyclerView = albumListLayout.albumListRecyclerView
