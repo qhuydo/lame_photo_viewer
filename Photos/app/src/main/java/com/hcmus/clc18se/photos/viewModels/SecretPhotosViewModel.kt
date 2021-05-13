@@ -18,13 +18,22 @@ import java.io.File
 
 class SecretPhotosViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var _mediaItems = MutableLiveData<List<MediaItem>>()
-    val mediaItems: LiveData<List<MediaItem>>
+    private var _mediaItems = MutableLiveData<List<MediaItem>?>()
+    val mediaItems: LiveData<List<MediaItem>?>
         get() = _mediaItems
 
-    private var _isUnlocked = MutableLiveData<Boolean>(false)
+    private var _isUnlocked = MutableLiveData(false)
     val isUnlocked: LiveData<Boolean>
         get() = _isUnlocked
+
+
+    private var _reloadDataRequest = MutableLiveData(false)
+    val reloadDataRequest: LiveData<Boolean>
+        get() = _reloadDataRequest
+
+    private var _preventLock = MutableLiveData(false)
+    val preventLock: LiveData<Boolean>
+        get() = _preventLock
 
     private fun loadSecretImages() = viewModelScope.launch {
 
@@ -54,8 +63,8 @@ class SecretPhotosViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun mediaItemFromPrivateFile(
-        file: File,
-        contentResolver: ContentResolver
+            file: File,
+            contentResolver: ContentResolver
     ): MediaItem {
         val nameWithoutExtension = file.nameWithoutExtension
 
@@ -72,17 +81,33 @@ class SecretPhotosViewModel(application: Application) : AndroidViewModel(applica
 
     fun unlock() {
         _isUnlocked.postValue(true)
-        if (_mediaItems.value == null) {
-            loadSecretImages()
+        loadSecretImages()
+    }
+
+    fun lock() {
+        if (preventLock.value != true) {
+            _isUnlocked.postValue(false)
+            _mediaItems.postValue(emptyList())
         }
     }
 
+    fun requestReloadingData() {
+        _reloadDataRequest.postValue(true)
+    }
+
+    fun doneRequestingLoadData() {
+        _reloadDataRequest.value = false
+    }
+
+    fun preventLock() {
+        _preventLock.value = true
+    }
 }
 
 
 @Suppress("UNCHECKED_CAST")
 class SecretViewModelFactory(
-    private val application: Application,
+        private val application: Application,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SecretPhotosViewModel::class.java)) {

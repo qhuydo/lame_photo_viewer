@@ -40,10 +40,7 @@ import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.OnDirectionKeyDown
 import com.hcmus.clc18se.photos.utils.images.GPSImage
 import com.hcmus.clc18se.photos.utils.images.GPSImage.Companion.getAddressFromGPSImage
-import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModel
-import com.hcmus.clc18se.photos.viewModels.FavouriteAlbumViewModelFactory
-import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
-import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
+import com.hcmus.clc18se.photos.viewModels.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.io.File
@@ -58,6 +55,10 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
 
     private val favouriteAlbumViewModel: FavouriteAlbumViewModel by activityViewModels {
         FavouriteAlbumViewModelFactory(requireActivity().application, database)
+    }
+
+    private val secretPhotosViewModel: SecretPhotosViewModel by activityViewModels {
+        SecretViewModelFactory(requireActivity().application)
     }
 
     private lateinit var binding: FragmentPhotoViewBinding
@@ -131,7 +132,6 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
                     getMediaItemAddressCallback()
                 }
             }
-
         }
 
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
@@ -146,14 +146,25 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
         if (isSecret) {
             val hiddenButtons = listOf(editButton, heartButton, shareButton, editButton)
             hiddenButtons.forEach { it.visibility = View.GONE }
-
             infoButton.setOnClickListener { actionDisplayInfo() }
+            nukeButton.setOnClickListener { actionRemoveSecret() }
         } else {
             editButton.setOnClickListener { actionEdit() }
             heartButton.setOnClickListener { actionFavourite() }
             nukeButton.setOnClickListener { actionPermanentRemove() }
             infoButton.setOnClickListener { actionDisplayInfo() }
             shareButton.setOnClickListener { actionShare() }
+        }
+    }
+
+    private fun actionRemoveSecret() {
+        MaterialDialog(requireContext()).show {
+            title(R.string.delete_warning_dialog_title)
+            message(R.string.delete_warning_dialog_msg)
+            positiveButton(R.string.yes) {
+                viewModel.deleteSecretPhoto(photos[currentPosition])
+            }
+            negativeButton(R.string.no) {}
         }
     }
 
@@ -419,13 +430,25 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (currentPosition == -1) {
+            currentPosition = viewModel.idx.value!!
+        }
+
+        if (!isSecret) {
+            setEditButtonVisibility(photos[currentPosition].isEditable())
+            initFavouriteButtonState()
+        }
+
+        initViewPager()
+
+        (activity as? AppCompatActivity)?.supportActionBar?.title = photos[currentPosition].name
 
         initObservers()
         if (savedInstanceState?.containsKey(BUNDLE_CURRENT_POS) == true) {
             val pos = savedInstanceState.getInt(BUNDLE_CURRENT_POS)
-            if (pos != -1 ){
+            if (pos != -1) {
                 currentPosition = pos
-                binding.horizontalViewPager.setCurrentItem(pos)
+                binding.horizontalViewPager.currentItem = pos
             }
         }
     }
@@ -453,27 +476,26 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
         viewModel.mediaItemList.observe(viewLifecycleOwner) {
             if (it != null) {
                 photos = it
-
-                this.photos = viewModel.mediaItemList.value ?: listOf()
-                if (currentPosition == -1) {
-                    currentPosition = viewModel.idx.value!!
-                }
-
-                if (!isSecret) {
-                    setEditButtonVisibility(photos[currentPosition].isEditable())
-                    initFavouriteButtonState()
-                }
-
-                initViewPager()
-
-                (activity as? AppCompatActivity)?.supportActionBar?.title = photos[currentPosition].name
             }
         }
 
         viewModel.deleteSucceed.observe(viewLifecycleOwner) { deleteResult ->
             if (deleteResult == true) {
+
                 favouriteAlbumViewModel.requestReloadingData()
+                secretPhotosViewModel.requestReloadingData()
+
+                if (photos.isEmpty()) {
+                    requireActivity().onBackPressed()
+                    return@observe
+                }
+
+                if (currentPosition >= photos.size) {
+                    currentPosition = photos.size - 1
+                }
+
                 binding.horizontalViewPager.adapter?.notifyItemRemoved(currentPosition)
+                (activity as? AppCompatActivity)?.supportActionBar?.title = photos[currentPosition].name
 
             } else if (deleteResult == false) {
                 Toast.makeText(requireContext(), "Failed to remove item", Toast.LENGTH_SHORT).show()
