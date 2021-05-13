@@ -36,6 +36,7 @@ import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import java.io.*
 
 class PhotoViewPagerFragment : Fragment() {
+
     private lateinit var viewModel: PhotosViewModel
     internal var mediaItem: MediaItem? = null
     private var dialog: Dialog? = null
@@ -43,6 +44,7 @@ class PhotoViewPagerFragment : Fragment() {
     private var actionBar: ActionBar? = null
     internal var debug: Boolean = false
     internal var fullScreen: Boolean = false
+    internal var isSecret: Boolean = false
 
     private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
 
@@ -71,9 +73,9 @@ class PhotoViewPagerFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = PhotoViewPagerPageBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
@@ -85,7 +87,7 @@ class PhotoViewPagerFragment : Fragment() {
         actionBar = (activity as AppCompatActivity).supportActionBar
 
         binding.imageView.setOnImageEventListener(object :
-            SubsamplingScaleImageView.OnImageEventListener {
+                SubsamplingScaleImageView.OnImageEventListener {
 
             override fun onImageLoadError(e: Exception?) {
                 binding.progressCircular.visibility = View.GONE
@@ -109,6 +111,7 @@ class PhotoViewPagerFragment : Fragment() {
         if (savedInstanceState?.containsKey(BUNDLE_MEDIA_ITEM) == true) {
             mediaItem = savedInstanceState.getParcelable(BUNDLE_MEDIA_ITEM)
             fullScreen = savedInstanceState.getBoolean(BUNDLE_FULLSCREEN)
+            isSecret = savedInstanceState.getBoolean(BUNDLE_SECRET)
         }
 
         binding.playIcon.setOnClickListener {
@@ -134,7 +137,8 @@ class PhotoViewPagerFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.view_photo_menu, menu)
+        val menuRes = if (isSecret) R.menu.view_secret_photo_menu else R.menu.view_photo_menu
+        inflater.inflate(menuRes, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -166,15 +170,15 @@ class PhotoViewPagerFragment : Fragment() {
             R.id.action_change_place -> {
 
                 val intent = PlaceAutocomplete.IntentBuilder()
-                    .accessToken(BuildConfig.MAPBOX_TOKEN)
-                    // .accessToken(BuildConfig)
-                    .placeOptions(
-                        PlaceOptions.builder()
-                            .backgroundColor(Color.parseColor("#EEEEEE"))
-                            .limit(5)
-                            .build(PlaceOptions.MODE_CARDS)
-                    )
-                    .build(activity)
+                        .accessToken(BuildConfig.MAPBOX_TOKEN)
+                        // .accessToken(BuildConfig)
+                        .placeOptions(
+                                PlaceOptions.builder()
+                                        .backgroundColor(Color.parseColor("#EEEEEE"))
+                                        .limit(5)
+                                        .build(PlaceOptions.MODE_CARDS)
+                        )
+                        .build(activity)
                 startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
                 true
             }
@@ -205,8 +209,8 @@ class PhotoViewPagerFragment : Fragment() {
 
     private fun setAs() {
         val intent = Intent(Intent.ACTION_ATTACH_DATA)
-            .setDataAndType(mediaItem?.requireUri(), mediaItem?.mimeType)
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                .setDataAndType(mediaItem?.requireUri(), mediaItem?.mimeType)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
@@ -257,9 +261,9 @@ class PhotoViewPagerFragment : Fragment() {
                 fileDest1 = File(directory, newName)
                 if (fileDest1.exists()) {
                     Toast.makeText(
-                        requireContext(),
-                        R.string.failed_filename_exist_again,
-                        Toast.LENGTH_SHORT
+                            requireContext(),
+                            R.string.failed_filename_exist_again,
+                            Toast.LENGTH_SHORT
                     ).show()
                 } else {
                     copyToInternal(fileDest1)
@@ -279,16 +283,16 @@ class PhotoViewPagerFragment : Fragment() {
             positiveButton {
                 val newName = "${getInputField().text}${
                     mediaItem!!.name.substring(
-                        mediaItem!!.name.lastIndexOf(".")
+                            mediaItem!!.name.lastIndexOf(".")
                     )
                 }"
                 val fileDest = File("${path!!.substring(0, path.lastIndexOf("/") + 1)}$newName")
 
                 if (fileDest.exists()) {
                     Toast.makeText(
-                        requireContext(),
-                        getString(R.string.file_duplicate_warning_dialog_title),
-                        Toast.LENGTH_SHORT
+                            requireContext(),
+                            getString(R.string.file_duplicate_warning_dialog_title),
+                            Toast.LENGTH_SHORT
                     ).show()
                 } else {
                     try {
@@ -298,17 +302,17 @@ class PhotoViewPagerFragment : Fragment() {
                         contentResolver.update(mediaItem!!.requireUri(), contentValues, null, null)
 
                         Toast.makeText(
-                            requireContext(),
-                            getString(R.string.rename_succeed),
-                            Toast.LENGTH_SHORT
+                                requireContext(),
+                                getString(R.string.rename_succeed),
+                                Toast.LENGTH_SHORT
                         ).show()
                         (requireActivity() as AppCompatActivity).supportActionBar?.title = newName
 
                     } catch (e: Exception) {
                         Toast.makeText(
-                            requireContext(),
-                            getString(R.string.rename_unsucceed),
-                            Toast.LENGTH_SHORT
+                                requireContext(),
+                                getString(R.string.rename_unsucceed),
+                                Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
@@ -325,7 +329,7 @@ class PhotoViewPagerFragment : Fragment() {
             inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
             inputStream?.copyTo(outputStream)
             Toast.makeText(requireContext(), getString(R.string.move_succeed), Toast.LENGTH_SHORT)
-                .show()
+                    .show()
         } catch (e: java.lang.Exception) {
             Toast.makeText(context, getString(R.string.move_unsucceed), Toast.LENGTH_SHORT).show()
         } finally {
@@ -336,13 +340,13 @@ class PhotoViewPagerFragment : Fragment() {
 
     private fun openWith() {
         val intent = Intent(Intent.ACTION_VIEW)
-            .setDataAndType(mediaItem?.requireUri(), mediaItem?.mimeType)
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                .setDataAndType(mediaItem?.requireUri(), mediaItem?.mimeType)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
         } catch (anfe: ActivityNotFoundException) {
             Toast.makeText(requireContext(), getString(R.string.no_app_found), Toast.LENGTH_SHORT)
-                .show()
+                    .show()
             anfe.printStackTrace()
         }
     }
@@ -350,11 +354,11 @@ class PhotoViewPagerFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
-            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
             PhotosViewModelFactory(
-                requireActivity().application,
-                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                    requireActivity().application,
+                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
             )
         }
         this.viewModel = viewModel
@@ -382,8 +386,8 @@ class PhotoViewPagerFragment : Fragment() {
                 AUTOCOMPLETE_REQUEST_CODE -> {
                     val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
                     val latlo = LatLng(
-                        (selectedCarmenFeature.geometry() as Point).latitude(),
-                        ((selectedCarmenFeature.geometry()) as Point).longitude()
+                            (selectedCarmenFeature.geometry() as Point).latitude(),
+                            ((selectedCarmenFeature.geometry()) as Point).longitude()
                     )
                     val lati = latlo.latitude
                     val longti = latlo.longitude
@@ -399,7 +403,7 @@ class PhotoViewPagerFragment : Fragment() {
 
         val treeUri = data.data
         var fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-            ?.findFile(mediaItem!!.name)
+                ?.findFile(mediaItem!!.name)
 
         if (fileDest != null) {
             MaterialDialog(requireContext()).show {
@@ -415,21 +419,21 @@ class PhotoViewPagerFragment : Fragment() {
                         positiveButton {
                             val newName = "${getInputField().text}${
                                 mediaItem!!.name.substring(
-                                    mediaItem!!.name.lastIndexOf(".")
+                                        mediaItem!!.name.lastIndexOf(".")
                                 )
                             }"
                             fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                                ?.findFile(newName)
+                                    ?.findFile(newName)
                             if (fileDest != null) {
                                 Toast.makeText(
-                                    requireContext(),
-                                    R.string.failed_filename_exist_again,
-                                    Toast.LENGTH_SHORT
+                                        requireContext(),
+                                        R.string.failed_filename_exist_again,
+                                        Toast.LENGTH_SHORT
                                 ).show()
                             } else {
                                 dismiss()
                                 fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                                    ?.createFile(mediaItem!!.mimeType!!, newName)
+                                        ?.createFile(mediaItem!!.mimeType!!, newName)
                                 moveFile(fileDest)
                             }
                         }
@@ -443,7 +447,7 @@ class PhotoViewPagerFragment : Fragment() {
             }
         } else {
             fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
+                    ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
             moveFile(fileDest)
         }
 
@@ -453,7 +457,7 @@ class PhotoViewPagerFragment : Fragment() {
 
         val treeUri = data.data
         var fileDest =
-            DocumentFile.fromTreeUri(requireContext(), treeUri!!)?.findFile(mediaItem!!.name)
+                DocumentFile.fromTreeUri(requireContext(), treeUri!!)?.findFile(mediaItem!!.name)
 
         if (fileDest != null) {
             MaterialDialog(requireContext()).show {
@@ -469,21 +473,21 @@ class PhotoViewPagerFragment : Fragment() {
                         positiveButton {
                             val newName = "${getInputField().text}${
                                 mediaItem!!.name.substring(
-                                    mediaItem!!.name.lastIndexOf(".")
+                                        mediaItem!!.name.lastIndexOf(".")
                                 )
                             }"
                             fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                                ?.findFile(newName)
+                                    ?.findFile(newName)
                             if (fileDest != null) {
                                 Toast.makeText(
-                                    requireContext(),
-                                    R.string.failed_filename_exist_again,
-                                    Toast.LENGTH_SHORT
+                                        requireContext(),
+                                        R.string.failed_filename_exist_again,
+                                        Toast.LENGTH_SHORT
                                 ).show()
                             } else {
                                 dismiss()
                                 fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                                    ?.createFile(mediaItem!!.mimeType!!, newName)
+                                        ?.createFile(mediaItem!!.mimeType!!, newName)
                                 copyFile(fileDest)
                             }
                         }
@@ -497,7 +501,7 @@ class PhotoViewPagerFragment : Fragment() {
             }
         } else {
             fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
+                    ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
             copyFile(fileDest)
         }
     }
@@ -506,7 +510,7 @@ class PhotoViewPagerFragment : Fragment() {
         try {
             val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
             val inputStream =
-                requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
+                    requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
             inputStream!!.copyTo(outputStream!!)
             inputStream.close()
             outputStream.close()
@@ -527,9 +531,9 @@ class PhotoViewPagerFragment : Fragment() {
             }
         } catch (e: Exception) {
             Toast.makeText(
-                context,
-                getString(R.string.move_unsucceed),
-                Toast.LENGTH_SHORT
+                    context,
+                    getString(R.string.move_unsucceed),
+                    Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -538,17 +542,17 @@ class PhotoViewPagerFragment : Fragment() {
         try {
             val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
             val inputStream =
-                requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
+                    requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
             inputStream!!.copyTo(outputStream!!)
             inputStream.close()
             outputStream.close()
             Toast.makeText(context, getString(R.string.copy_succeed), Toast.LENGTH_SHORT)
-                .show()
+                    .show()
         } catch (e: Exception) {
             Toast.makeText(
-                context,
-                getString(R.string.copy_file_unsucceed),
-                Toast.LENGTH_SHORT
+                    context,
+                    getString(R.string.copy_file_unsucceed),
+                    Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -556,6 +560,7 @@ class PhotoViewPagerFragment : Fragment() {
     companion object {
         private const val BUNDLE_MEDIA_ITEM = "uri"
         private const val BUNDLE_FULLSCREEN = "fullscreen"
+        private const val BUNDLE_SECRET = "secret"
         private const val COPY_FILE = 2345
         private const val MOVE_FILE = 3456
         private const val AUTOCOMPLETE_REQUEST_CODE = 123

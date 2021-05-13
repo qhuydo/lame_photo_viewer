@@ -134,4 +134,5 @@
     <string name="date">Ngày</string>
     <string name="month">Tháng</string>
     <string name="year">Năm</string>
+    <string name="move_from_secret_album">Chuyển ra khỏi thư mục ẩn</string>
 </resources>

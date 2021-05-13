@@ -52,7 +52,7 @@
 
     <item
         android:id="@+id/action_slide_show"
-        android:icon="@drawable/ic_baseline_select_all_24"
+        android:icon="@drawable/ic_baseline_slideshow_24"
         android:title="@string/slideshow"
         app:showAsAction="ifRoom" />
 

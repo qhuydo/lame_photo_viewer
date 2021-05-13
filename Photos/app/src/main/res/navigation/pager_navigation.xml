@@ -95,7 +95,12 @@
         android:id="@+id/photoViewFragment"
         android:name="com.hcmus.clc18se.photos.fragments.PhotoViewFragment"
         android:label=""
-        tools:layout="@layout/fragment_photo_view" />
+        tools:layout="@layout/fragment_photo_view" >
+        <argument
+            android:name="isSecret"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
 
     <fragment
         android:id="@+id/favouriteAlbumFragment"

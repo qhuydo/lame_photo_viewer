@@ -23,7 +23,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -48,7 +47,6 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
-import kotlin.properties.Delegates
 
 // TODO: create a view model for this
 class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
@@ -69,6 +67,11 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
+    private val args by lazy { PhotoViewFragmentArgs.fromBundle(requireArguments()) }
+
+    private val isSecret by lazy { args.isSecret }
+    // private lateinit var isSecret = false
+
     private val viewPagerCallback by lazy {
         object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -79,10 +82,12 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
                     return
                 }
 
-                (requireActivity() as AppCompatActivity).supportActionBar?.title =
-                        photos[position].name
-                setEditButtonVisibility(photos[position].isEditable())
-                initFavouriteButtonState()
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = photos[position].name
+
+                if (!isSecret) {
+                    setEditButtonVisibility(photos[position].isEditable())
+                    initFavouriteButtonState()
+                }
             }
         }
     }
@@ -138,56 +143,60 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     }
 
     private fun setUpBottomButtons() = binding.bottomLayout.apply {
-        editButton.setOnClickListener {
-            val intent = Intent(context, EditPhotoActivity::class.java)
-            intent.putExtra("uri", photos[currentPosition].requireUri())
-            startActivity(intent)
-        }
+        if (isSecret) {
+            val hiddenButtons = listOf(editButton, heartButton, shareButton, editButton)
+            hiddenButtons.forEach { it.visibility = View.GONE }
 
-        heartButton.setOnClickListener {
-            toggleFavouriteButton()
-        }
-
-        nukeButton.setOnClickListener {
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                MaterialDialog(requireContext()).show {
-                    title(R.string.delete_warning_dialog_title)
-                    message(R.string.delete_warning_dialog_msg)
-                    positiveButton(R.string.yes) {
-                        viewModel.deleteImage(photos[currentPosition])
-                    }
-                    negativeButton(R.string.no) {}
-                }
-            } else {
-                viewModel.deleteImage(photos[currentPosition])
-            }
-        }
-
-        infoButton.setOnClickListener {
-            displayInfoDialog()
-        }
-
-        shareButton.setOnClickListener {
-
-            if (photos[currentPosition].isVideo()) {
-                val sendIntent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
-                    type = "video/*"
-                }
-                startActivity(Intent.createChooser(sendIntent, "Send video via:"))
-            } else {
-                val sendIntent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
-                    type = "image/*"
-                }
-                startActivity(Intent.createChooser(sendIntent, "Send image via:"))
-            }
+            infoButton.setOnClickListener { actionDisplayInfo() }
+        } else {
+            editButton.setOnClickListener { actionEdit() }
+            heartButton.setOnClickListener { actionFavourite() }
+            nukeButton.setOnClickListener { actionPermanentRemove() }
+            infoButton.setOnClickListener { actionDisplayInfo() }
+            shareButton.setOnClickListener { actionShare() }
         }
     }
 
-    private fun displayInfoDialog() {
+    private fun actionEdit() {
+        val intent = Intent(context, EditPhotoActivity::class.java)
+        intent.putExtra("uri", photos[currentPosition].requireUri())
+        startActivity(intent)
+    }
+
+    private fun actionShare() {
+        if (photos[currentPosition].isVideo()) {
+            val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
+                type = "video/*"
+            }
+            startActivity(Intent.createChooser(sendIntent, "Send video via:"))
+        } else {
+            val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, photos[currentPosition].requireUri())
+                type = "image/*"
+            }
+            startActivity(Intent.createChooser(sendIntent, "Send image via:"))
+        }
+    }
+
+    private fun actionPermanentRemove() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            MaterialDialog(requireContext()).show {
+                title(R.string.delete_warning_dialog_title)
+                message(R.string.delete_warning_dialog_msg)
+                positiveButton(R.string.yes) {
+                    viewModel.deleteImage(photos[currentPosition])
+                }
+                negativeButton(R.string.no) {}
+            }
+        } else {
+            viewModel.deleteImage(photos[currentPosition])
+        }
+    }
+
+    private fun actionDisplayInfo() {
         dialog = Dialog(requireContext()).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.dialog_info)
@@ -257,7 +266,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             var size: Double = file.length().toDouble()
             var count = 0
             while (size > 1024) {
-                size = size / 1024
+                size /= 1024
                 count++
             }
             sizeString = String.format("%.1f", size)
@@ -414,7 +423,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
         initObservers()
     }
 
-    private fun toggleFavouriteButton() {
+    private fun actionFavourite() {
         viewModel.changeFavouriteState(currentPosition)
     }
 
@@ -440,16 +449,15 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
 
                 this.photos = viewModel.mediaItemList.value ?: listOf()
 
-                setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
+                if (!isSecret) {
+                    setEditButtonVisibility(photos[viewModel.idx.value!!].isEditable())
+                    initFavouriteButtonState()
+                }
+
                 currentPosition = viewModel.idx.value!!
-
-                initFavouriteButtonState()
-
                 initViewPager()
 
-                (activity as? AppCompatActivity)?.supportActionBar?.title =
-                        photos[viewModel.idx.value!!].name
-
+                (activity as? AppCompatActivity)?.supportActionBar?.title = photos[viewModel.idx.value!!].name
             }
         }
 
@@ -557,6 +565,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
             fragment.mediaItem = mediaItem
             fragment.debug = debug
             fragment.fullScreen = fullscreen
+            fragment.isSecret = isSecret
             return fragment
         }
     }
@@ -564,4 +573,5 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown {
     override fun getToolbarView(): Toolbar = binding.topAppBar2.fragmentToolBar
 
     override fun getAppbar(): AppBarLayout = binding.topAppBar2.fragmentAppBarLayout
+
 }

@@ -47,7 +47,6 @@ import kotlinx.coroutines.Dispatchers
 
 class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     private lateinit var binding: FragmentSecretPhotoBinding
-    private val scope = CoroutineScope(Dispatchers.Default)
     private var checkPass = false
 
     private lateinit var photosViewModel: PhotosViewModel
@@ -98,7 +97,6 @@ class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        showPasswordDialog()
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_secret_photo, container, false
         )
@@ -139,6 +137,11 @@ class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     }
 
     private fun initObservers() {
+        viewModel.isUnlocked.observe(viewLifecycleOwner) {
+            if (!it) {
+                showPasswordDialog()
+            }
+        }
         viewModel.mediaItems.observe(viewLifecycleOwner) {
             if (it != null) {
                 adapter.filterAndSubmitList(it)
@@ -154,7 +157,7 @@ class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
                 photosViewModel.setCurrentItemView(idx)
                 findNavController().navigate(
-                    SecretPhotoFragmentDirections.actionSecretPhotoFragmentToPhotoViewFragment()
+                    SecretPhotoFragmentDirections.actionSecretPhotoFragmentToPhotoViewFragment(true)
                 )
 
                 photosViewModel.doneNavigatingToImageView()
@@ -319,12 +322,12 @@ class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
 
     override fun onPrepareCabMenu(menu: Menu) {
         super.onPrepareCabMenu(menu)
-
-        val actionAddToSecret = menu.findItem(R.id.action_add_to_secret_album)
-        val actionRemoveFromSecret = menu.findItem(R.id.action_remove_secret_album)
-
-        actionAddToSecret?.isVisible = false
-        actionRemoveFromSecret?.isVisible = true
+        listOf(
+                menu.findItem(R.id.action_add_to_secret_album),
+                menu.findItem(R.id.action_remove_secret_album),
+                menu.findItem(R.id.action_add_to_custom_album),
+                menu.findItem(R.id.action_add_to_favourite)
+        ).forEach { item -> item?.isVisible = false }
     }
 
 }

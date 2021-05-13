@@ -165,4 +165,5 @@
     <string name="month">Month</string>
     <string name="year">Year</string>
     <string name="pass_key" translatable="false">pass</string>
+    <string name="move_from_secret_album">Move from secret album</string>
 </resources>
