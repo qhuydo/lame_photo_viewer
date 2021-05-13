@@ -204,9 +204,29 @@ class PhotosViewModel(
         if (mediaItemList.value?.contains(image) == true) {
             val context = getApplication<Application>().applicationContext
             val file = File(image.requirePath(context)!!)
-            file.delete()
+            if (file.exists()) {
+                file.delete()
+            }
             _mediaItemList.value = _mediaItemList.value?.toMutableList()?.apply { remove(image) }
             _deleteSucceed.value = true
+        }
+    }
+
+    suspend fun deleteSecretPhotos(images: List<MediaItem>) {
+        withContext(Dispatchers.IO) {
+            val context = getApplication<Application>().applicationContext
+            images.forEach { image ->
+                val file = File(image.requirePath(context)!!)
+                if (file.exists()) {
+                    file.delete()
+                }
+            }
+
+            withContext(Dispatchers.Main) {
+                _mediaItemList.value =
+                        _mediaItemList.value?.toMutableList()?.apply { removeAll(images) }
+                _deleteSucceed.value = true
+            }
         }
     }
 

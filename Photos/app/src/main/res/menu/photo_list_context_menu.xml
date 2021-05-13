@@ -35,6 +35,7 @@
         android:id="@+id/action_add_to_secret_album"
         android:icon="@drawable/ic_baseline_lock_24"
         android:title="@string/action_add_to_secret_album"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item
@@ -45,21 +46,28 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_select_all"
-        android:icon="@drawable/ic_baseline_select_all_24"
-        android:title="@string/select_all"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_slide_show"
         android:icon="@drawable/ic_baseline_slideshow_24"
         android:title="@string/slideshow"
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_select_all"
+        android:icon="@drawable/ic_baseline_select_all_24"
+        android:title="@string/select_all"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_multiple_delete"
         android:icon="@drawable/ic_baseline_delete_forever_24"
         android:title="@string/delete_title"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_multiple_delete_secret"
+        android:icon="@drawable/ic_baseline_delete_forever_24"
+        android:title="@string/delete_title"
+        android:visible="false"
         app:showAsAction="ifRoom" />
 
 </menu>
