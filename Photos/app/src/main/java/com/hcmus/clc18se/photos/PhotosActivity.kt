@@ -1,6 +1,8 @@
 package com.hcmus.clc18se.photos
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -43,12 +45,28 @@ class PhotosActivity : AbstractPhotosActivity() {
         val sendingIntent = Intent(this, ViewPhotoActivity::class.java)
         sendingIntent.putExtra(Intent.EXTRA_STREAM, intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM))
         startActivity(sendingIntent)
+        finish()
+    }
+
+    private fun handleSendImageVideo(intent: Intent) {
+        val sendingIntent = Intent(this, VideoDialogActivity::class.java)
+        sendingIntent.putExtra("uri", intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)
+        startActivity(sendingIntent)
+        finish()
     }
 
     private fun handleViewImage(intent: Intent) {
         val sendingIntent = Intent(this, ViewPhotoActivity::class.java)
         sendingIntent.putExtra("uri", intent.data)
         startActivity(sendingIntent)
+        finish()
+    }
+
+    private fun handleViewVideo(intent: Intent) {
+        val sendingIntent = Intent(this, VideoDialogActivity::class.java)
+        sendingIntent.putExtra("uri", intent.data)
+        startActivity(sendingIntent)
+        finish()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,11 +78,17 @@ class PhotosActivity : AbstractPhotosActivity() {
                 if (intent.type?.startsWith("image/") == true) {
                     handleSendImage(intent) // Handle single image being sent
                 }
+                if (intent.type?.startsWith("video/") == true) {
+                    handleSendImageVideo(intent) // Handle single image being sent
+                }
             }
             Intent.ACTION_VIEW -> {
-                Timber.d("Send")
+                Timber.d("View")
                 if (intent.type?.startsWith("image/") == true) {
                     handleViewImage(intent) // Handle single image being sent
+                }
+                if (intent.type?.startsWith("video/") == true) {
+                    handleViewVideo(intent) // Handle single image being sent
                 }
             }
         }
@@ -94,8 +118,6 @@ class PhotosActivity : AbstractPhotosActivity() {
                 }
             }, 300)
         }
-
-
     }
 
     override fun addOnDestinationChangedListener() {

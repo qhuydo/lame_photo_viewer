@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos.utils
 
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.view.View

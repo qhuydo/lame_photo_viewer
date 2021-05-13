@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -49,7 +50,6 @@ class ViewPhotoActivity: AppCompatActivity() {
                 binding.photo = mediaItem
             }
         }
-
         setContentView(binding.root)
     }
 }

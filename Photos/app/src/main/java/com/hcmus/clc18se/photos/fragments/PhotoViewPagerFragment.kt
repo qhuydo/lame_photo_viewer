@@ -482,6 +482,7 @@ class PhotoViewPagerFragment : Fragment() {
                     val longti = latlo.longitude
                     val gpsImage = GPSImage(mediaItem!!.requirePath(requireContext()))
                     gpsImage.geoTag(lati, longti)
+                    Toast.makeText(requireContext(),getString(R.string.change_place_success),Toast.LENGTH_SHORT).show()
                 }
             }
         }
