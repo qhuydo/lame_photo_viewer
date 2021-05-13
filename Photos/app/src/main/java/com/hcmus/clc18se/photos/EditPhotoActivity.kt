@@ -261,6 +261,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
         if (!isDraw && !isAddIcon) {
             binding.imageEdit.setImageBitmap(queue[indexQueue].bitmap)
+	        bitmap = queue[indexQueue].bitmap
             binding.imageEdit.colorFilter = queue[indexQueue].colorFilter
             binding.progressCircular.visibility = View.INVISIBLE
         }
