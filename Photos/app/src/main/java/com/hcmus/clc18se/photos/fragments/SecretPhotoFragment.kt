@@ -42,8 +42,6 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.SecretPhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.SecretViewModelFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     private lateinit var binding: FragmentSecretPhotoBinding

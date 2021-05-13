@@ -5,14 +5,18 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.*
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toFile
 import androidx.documentfile.provider.DocumentFile
+import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
 import com.afollestad.materialdialogs.MaterialDialog
@@ -27,6 +31,7 @@ import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
 import com.hcmus.clc18se.photos.utils.VideoDialogActivity
 import com.hcmus.clc18se.photos.utils.images.GPSImage
+import com.hcmus.clc18se.photos.utils.images.SingleMediaScanner
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import com.mapbox.geojson.Point
@@ -34,6 +39,8 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import java.io.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class PhotoViewPagerFragment : Fragment() {
 
@@ -194,6 +201,64 @@ class PhotoViewPagerFragment : Fragment() {
                 startActivityForResult(Intent.createChooser(intent, "Choose directory"), COPY_FILE)
                 true
             }
+            R.id.action_move_out -> {
+                val fileSave = createFileToSave()
+                var contentValues: ContentValues? = null
+                var imageUri: Uri? = null
+                val resolver = requireContext().contentResolver
+                val exifDateFormatter = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ROOT)
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        contentValues = ContentValues().apply {
+                            put(MediaStore.Images.ImageColumns.DISPLAY_NAME, fileSave.name)
+                            if (mediaItem?.mimeType != null) {
+                                put(MediaStore.MediaColumns.MIME_TYPE, mediaItem?.mimeType)
+                            }
+                            if (mediaItem?.isVideo()!!) {
+                                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES)
+                            }
+                            else{
+                                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                            }
+                            put(MediaStore.Images.Media.IS_PENDING, 1)
+                        }
+                        imageUri = resolver.insert(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                contentValues
+                        )
+                        mediaItem?.requireUri()?.toFile()?.copyTo(imageUri?.toFile()!!)
+
+                    } else {
+                        mediaItem?.requireUri()?.toFile()?.copyTo(fileSave)
+                    }
+                } catch (e: IOException) {
+                    Toast.makeText(requireContext(), getString(R.string.image_saved_fail), Toast.LENGTH_LONG).show()
+                    return true
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    contentValues?.clear()
+                    contentValues?.put(MediaStore.Images.Media.IS_PENDING, 0)
+
+                    resolver.update(imageUri!!, contentValues, null, null)
+
+                    // Add exif data
+                    resolver.openFileDescriptor(imageUri, "rw")?.use {
+                        // set Exif attribute so MediaStore.Images.Media.DATE_TAKEN will be set
+                        ExifInterface(it.fileDescriptor)
+                                .apply {
+                                    setAttribute(
+                                            ExifInterface.TAG_DATETIME_ORIGINAL,
+                                            exifDateFormatter.format(Date())
+                                    )
+                                    saveAttributes()
+                                }
+                    }
+                }
+                SingleMediaScanner(requireContext(), fileSave)
+                Toast.makeText(requireContext(), getString(R.string.move_succeed), Toast.LENGTH_LONG).show()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -237,10 +302,34 @@ class PhotoViewPagerFragment : Fragment() {
                 }
                 positiveButton(R.string.override) {
                     copyToInternal(fileDest)
+                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                        MaterialDialog(requireContext()).show {
+                            title(R.string.delete_warning_dialog_title)
+                            message(R.string.delete_warning_dialog_msg)
+                            positiveButton(R.string.yes) {
+                                viewModel.deleteImage(mediaItem!!)
+                            }
+                            negativeButton(R.string.no) {}
+                        }
+                    } else {
+                        viewModel.deleteImage(mediaItem!!)
+                    }
                 }
             }
         } else {
             copyToInternal(fileDest)
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                MaterialDialog(requireContext()).show {
+                    title(R.string.delete_warning_dialog_title)
+                    message(R.string.delete_warning_dialog_msg)
+                    positiveButton(R.string.yes) {
+                        viewModel.deleteImage(mediaItem!!)
+                    }
+                    negativeButton(R.string.no) {}
+                }
+            } else {
+                viewModel.deleteImage(mediaItem!!)
+            }
         }
     }
 
@@ -536,6 +625,16 @@ class PhotoViewPagerFragment : Fragment() {
                     Toast.LENGTH_SHORT
             ).show()
         }
+    }
+
+    private fun createFileToSave(): File {
+        val timeStamp = SimpleDateFormat("yyyy_dd_MM_HH_mm_ss", Locale.ROOT).format(Date())
+        val environment = if (mediaItem!!.isVideo()) Environment.DIRECTORY_MOVIES else Environment.DIRECTORY_PICTURES
+        val folder = Environment.getExternalStoragePublicDirectory(environment)
+        val extension = File(mediaItem!!.requirePath(requireContext())!!).extension
+        val fileName = if (extension.isEmpty()) timeStamp else "$timeStamp.$extension"
+        //TODO: fix the file extension
+        return File(folder.path, fileName)
     }
 
     private fun copyFile(fileDest: DocumentFile?) {
