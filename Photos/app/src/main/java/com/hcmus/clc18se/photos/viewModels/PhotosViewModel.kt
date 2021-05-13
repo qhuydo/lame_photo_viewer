@@ -4,7 +4,6 @@ import android.app.Application
 import android.app.RecoverableSecurityException
 import android.content.*
 import android.database.ContentObserver
-import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -18,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.File
 
 class PhotosViewModel(
         application: Application,
@@ -25,7 +25,7 @@ class PhotosViewModel(
 ) : AndroidViewModel(application) {
 
     private var _mediaItemList = MutableLiveData<List<MediaItem>>()
-    public var liveShow = false
+    var liveShow = false
     val mediaItemList: LiveData<List<MediaItem>>
         get() = _mediaItemList
 
@@ -50,6 +50,8 @@ class PhotosViewModel(
                 getApplication<Application>().applicationContext
         )
     }
+
+    private var bucketId: Long? = null
 
     private var contentObserver: ContentObserver? = null
 
@@ -102,7 +104,6 @@ class PhotosViewModel(
                 registerObserverWhenNull()
                 Timber.d("${System.currentTimeMillis() - begin} ms")
             }
-
         }
     }
 
@@ -130,7 +131,7 @@ class PhotosViewModel(
         if (contentObserver == null) {
             val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
                 override fun onChange(selfChange: Boolean) {
-                    loadImages()
+                    bucketId?.let { loadImages(it) } ?: loadImages()
                 }
             }
             val contentResolver = getApplication<Application>().contentResolver
@@ -150,11 +151,13 @@ class PhotosViewModel(
 
             val contentResolver = getApplication<Application>().contentResolver
             val images = contentResolver.queryMediaItemsFromBucketName(bucketId)
+            this@PhotosViewModel.bucketId = bucketId
 
             withContext(Dispatchers.Main) {
                 _mediaItemList.value = images
-                registerObserverWhenNull()
             }
+
+            registerObserverWhenNull()
         }
     }
 
@@ -197,6 +200,16 @@ class PhotosViewModel(
         }
     }
 
+    fun deleteSecretPhoto(image: MediaItem) {
+        if (mediaItemList.value?.contains(image) == true) {
+            val context = getApplication<Application>().applicationContext
+            val file = File(image.requirePath(context)!!)
+            file.delete()
+            _mediaItemList.value = _mediaItemList.value?.toMutableList()?.apply { remove(image) }
+            _deleteSucceed.value = true
+        }
+    }
+
     private suspend fun performDeletingImage(item: MediaItem) {
         withContext(Dispatchers.IO) {
             try {
@@ -224,7 +237,6 @@ class PhotosViewModel(
                                     ?: throw securityException
 
                     pendingDeleteImage = item
-
                     _permissionNeededForDelete.postValue(recoverableSecurityException.userAction.actionIntent.intentSender)
 
                 } else {

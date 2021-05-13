@@ -100,7 +100,9 @@
         tools:layout="@layout/fragment_secret_photo">
         <action
             android:id="@+id/action_SecretPhotoFragment_to_photoViewFragment"
-            app:destination="@id/photoViewFragment" />
+            app:destination="@id/photoViewFragment"
+            app:popUpTo="@id/secret_photos"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment

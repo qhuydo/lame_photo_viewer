@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.ContextWrapper
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
@@ -15,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -37,19 +39,20 @@ import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.DialogChangePasswordBinding
 import com.hcmus.clc18se.photos.databinding.FragmentSecretPhotoBinding
+import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.getSpanCountForPhotoList
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.SecretPhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.SecretViewModelFactory
 
-class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
+class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu), OnBackPressed {
     private lateinit var binding: FragmentSecretPhotoBinding
     private var checkPass = false
 
     private lateinit var photosViewModel: PhotosViewModel
 
-    private val viewModel: SecretPhotosViewModel by viewModels {
+    private val viewModel: SecretPhotosViewModel by activityViewModels {
         SecretViewModelFactory(requireActivity().application)
     }
 
@@ -137,6 +140,7 @@ class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
     private fun initObservers() {
         viewModel.isUnlocked.observe(viewLifecycleOwner) {
             if (!it) {
+                checkPass = false
                 showPasswordDialog()
             }
         }
@@ -144,6 +148,15 @@ class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
             if (it != null) {
                 adapter.filterAndSubmitList(it)
                 binding.placeholder.root.visibleWhenEmpty(it)
+            }
+        }
+
+        viewModel.reloadDataRequest.observe(viewLifecycleOwner) {
+            if (it) {
+                if (viewModel.isUnlocked.value == true) {
+                    viewModel.unlock()
+                }
+                viewModel.doneRequestingLoadData()
             }
         }
 
@@ -328,4 +341,13 @@ class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu) {
         ).forEach { item -> item?.isVisible = false }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        viewModel.preventLock()
+        super.onConfigurationChanged(newConfig)
+    }
+
+    override fun onDetach() {
+        viewModel.lock()
+        super.onDetach()
+    }
 }
