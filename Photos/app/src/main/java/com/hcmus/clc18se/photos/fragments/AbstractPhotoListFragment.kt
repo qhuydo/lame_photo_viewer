@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.navGraphViewModels
@@ -344,6 +345,10 @@ abstract class AbstractPhotoListFragment(
 
     open fun onCabItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.action_multiple_delete_secret -> {
+                onActionDeleteMultipleSecretItems()
+                true
+            }
             R.id.action_multiple_delete -> {
                 onActionRemoveMediaItems()
                 true
@@ -371,8 +376,23 @@ abstract class AbstractPhotoListFragment(
                 onActionSlideShow()
                 true
             }
-
             else -> false
+        }
+    }
+
+    private fun onActionDeleteMultipleSecretItems() {
+        MaterialDialog(requireContext()).show {
+            title(R.string.delete_warning_dialog_title)
+            message(R.string.delete_warning_dialog_msg)
+
+            positiveButton(R.string.yes) {
+                getCurrentViewModel().viewModelScope.launch {
+                    getCurrentViewModel().deleteSecretPhotos(adapter.getSelectedItems())
+                }
+                mainCab?.destroy()
+            }
+
+            negativeButton(R.string.no) {}
         }
     }
 

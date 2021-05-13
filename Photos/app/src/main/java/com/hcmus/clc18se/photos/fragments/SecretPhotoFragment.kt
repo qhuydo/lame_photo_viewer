@@ -151,8 +151,17 @@ class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu), O
             }
         }
 
-        viewModel.reloadDataRequest.observe(viewLifecycleOwner) {
-            if (it) {
+//        viewModel.reloadDataRequest.observe(viewLifecycleOwner) {
+//            if (it) {
+//                if (viewModel.isUnlocked.value == true) {
+//                    viewModel.unlock()
+//                }
+//                viewModel.doneRequestingLoadData()
+//            }
+//        }
+
+        photosViewModel.deleteSucceed.observe(viewLifecycleOwner) {
+            if (it == true) {
                 if (viewModel.isUnlocked.value == true) {
                     viewModel.unlock()
                 }
@@ -337,8 +346,10 @@ class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu), O
                 menu.findItem(R.id.action_add_to_secret_album),
                 menu.findItem(R.id.action_remove_secret_album),
                 menu.findItem(R.id.action_add_to_custom_album),
-                menu.findItem(R.id.action_add_to_favourite)
+                menu.findItem(R.id.action_add_to_favourite),
+                menu.findItem(R.id.action_multiple_delete),
         ).forEach { item -> item?.isVisible = false }
+        menu.findItem(R.id.action_multiple_delete_secret)?.isVisible = true
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
