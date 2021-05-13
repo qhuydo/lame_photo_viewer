@@ -38,6 +38,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
+import timber.log.Timber
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -202,65 +203,76 @@ class PhotoViewPagerFragment : Fragment() {
                 true
             }
             R.id.action_move_out -> {
-                val fileSave = createFileToSave()
-                var contentValues: ContentValues? = null
-                var imageUri: Uri? = null
-                val resolver = requireContext().contentResolver
-                val exifDateFormatter = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ROOT)
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        contentValues = ContentValues().apply {
-                            put(MediaStore.Images.ImageColumns.DISPLAY_NAME, fileSave.name)
-                            if (mediaItem?.mimeType != null) {
-                                put(MediaStore.MediaColumns.MIME_TYPE, mediaItem?.mimeType)
-                            }
-                            if (mediaItem?.isVideo()!!) {
-                                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES)
-                            }
-                            else{
-                                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                            }
-                            put(MediaStore.Images.Media.IS_PENDING, 1)
-                        }
-                        imageUri = resolver.insert(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                contentValues
-                        )
-                        mediaItem?.requireUri()?.toFile()?.copyTo(imageUri?.toFile()!!)
-
-                    } else {
-                        mediaItem?.requireUri()?.toFile()?.copyTo(fileSave)
-                    }
-                } catch (e: IOException) {
-                    Toast.makeText(requireContext(), getString(R.string.image_saved_fail), Toast.LENGTH_LONG).show()
-                    return true
+                if (actionMoveFromSecret()) {
+                    parentFragment.actionRemoveSecret()
                 }
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    contentValues?.clear()
-                    contentValues?.put(MediaStore.Images.Media.IS_PENDING, 0)
-
-                    resolver.update(imageUri!!, contentValues, null, null)
-
-                    // Add exif data
-                    resolver.openFileDescriptor(imageUri, "rw")?.use {
-                        // set Exif attribute so MediaStore.Images.Media.DATE_TAKEN will be set
-                        ExifInterface(it.fileDescriptor)
-                                .apply {
-                                    setAttribute(
-                                            ExifInterface.TAG_DATETIME_ORIGINAL,
-                                            exifDateFormatter.format(Date())
-                                    )
-                                    saveAttributes()
-                                }
-                    }
-                }
-                SingleMediaScanner(requireContext(), fileSave)
-                Toast.makeText(requireContext(), getString(R.string.move_succeed), Toast.LENGTH_LONG).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun actionMoveFromSecret(): Boolean {
+        val fileSave = createFileToSave()
+        var contentValues: ContentValues? = null
+        var imageUri: Uri? = null
+        val resolver = requireContext().contentResolver
+        val exifDateFormatter = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ROOT)
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                contentValues = ContentValues().apply {
+                    put(MediaStore.Images.ImageColumns.DISPLAY_NAME, fileSave.name)
+                    if (mediaItem?.mimeType != null) {
+                        put(MediaStore.MediaColumns.MIME_TYPE, mediaItem?.mimeType)
+                    }
+                    if (mediaItem?.isVideo()!!) {
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES)
+                    } else {
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                    }
+                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                }
+                imageUri = resolver.insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        contentValues
+                )
+                resolver.openOutputStream(imageUri!!, "w")?.use { outputStream ->
+                    mediaItem?.requireUri()?.toFile()?.inputStream()?.use { fileInputStream ->
+                        fileInputStream.copyTo(outputStream)
+                    }
+                }
+
+            } else {
+                mediaItem?.requireUri()?.toFile()?.copyTo(fileSave)
+            }
+        } catch (e: IOException) {
+            Toast.makeText(requireContext(), getString(R.string.image_saved_fail), Toast.LENGTH_LONG).show()
+            return false
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            contentValues?.clear()
+            contentValues?.put(MediaStore.Images.Media.IS_PENDING, 0)
+
+            resolver.update(imageUri!!, contentValues, null, null)
+
+            // Add exif data
+            resolver.openFileDescriptor(imageUri, "rw")?.use {
+                // set Exif attribute so MediaStore.Images.Media.DATE_TAKEN will be set
+                ExifInterface(it.fileDescriptor)
+                        .apply {
+                            setAttribute(
+                                    ExifInterface.TAG_DATETIME_ORIGINAL,
+                                    exifDateFormatter.format(Date())
+                            )
+                            saveAttributes()
+                        }
+            }
+        }
+        SingleMediaScanner(requireContext(), fileSave)
+        Toast.makeText(requireContext(), getString(R.string.move_succeed), Toast.LENGTH_LONG).show()
+        return true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

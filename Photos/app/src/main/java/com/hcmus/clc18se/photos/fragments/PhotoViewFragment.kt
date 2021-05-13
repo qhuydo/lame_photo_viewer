@@ -157,7 +157,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
         }
     }
 
-    private fun actionRemoveSecret() {
+    internal fun actionRemoveSecret() {
         MaterialDialog(requireContext()).show {
             title(R.string.delete_warning_dialog_title)
             message(R.string.delete_warning_dialog_msg)
