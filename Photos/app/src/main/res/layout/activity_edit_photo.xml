@@ -131,5 +131,15 @@
             android:contentDescription="@string/undo"
             android:onClick="undoImage"
             android:src="@drawable/ic_outline_undo_24" />
+
+        <ImageButton
+            android:id="@+id/redo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/undo"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/redo"
+            android:onClick="redoImage"
+            android:src="@drawable/ic_outline_redo_24" />
     </RelativeLayout>
 </layout>
