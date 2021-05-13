@@ -74,6 +74,7 @@ class EditPhotoActivity : AppCompatActivity() {
     private var isCrop: Boolean = false
     private var isDraw: Boolean = false
     private var isAddIcon: Boolean = false
+    private var indexQueue: Int = 0
     private var queue: LinkedList<UndoPhoto> = LinkedList<UndoPhoto>()
 
     private lateinit var viewCrop: CropImageView
@@ -234,43 +235,59 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     private fun addToQueue(bitmap: Bitmap, colorFilter: ColorFilter?) {
+        while (indexQueue < queue.size - 1)
+            queue.poll()
         while (queue.size > 4)
             queue.poll()
         queue.add(UndoPhoto(bitmap, colorFilter))
+        indexQueue = queue.size - 1
     }
 
-    private fun getFromQueue() {
-        if (queue.size == 0) {
+    private fun undoFromQueue() {
+        if (queue.size == 0 || indexQueue - 1 < 0) {
             return
         }
+        indexQueue--
 
         if (isDraw) {
             alteredBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
-            viewDraw.setNewImage(alteredBitmap, bitmap, queue.last.colorFilter)
-
-            if (queue.size > 1) {
-                queue.removeLast()
-            }
+            viewDraw.setNewImage(alteredBitmap, queue[indexQueue].bitmap, queue[indexQueue].colorFilter)
         }
 
         if (isAddIcon) {
-            viewAddIcon.source.setImageBitmap(queue.last.bitmap)
-            viewAddIcon.source.colorFilter = queue.last.colorFilter
-
-            if (queue.size > 1) {
-                queue.removeLast()
-            }
+            viewAddIcon.source.setImageBitmap(queue[indexQueue].bitmap)
+            viewAddIcon.source.colorFilter = queue[indexQueue].colorFilter
         }
 
         if (!isDraw && !isAddIcon) {
-            binding.imageEdit.setImageBitmap(queue.last.bitmap)
-            binding.imageEdit.colorFilter = queue.last.colorFilter
+            binding.imageEdit.setImageBitmap(queue[indexQueue].bitmap)
+            binding.imageEdit.colorFilter = queue[indexQueue].colorFilter
             binding.progressCircular.visibility = View.INVISIBLE
-            if (queue.size > 1) {
-                queue.removeLast()
-            }
+        }
+    }
+
+    private fun redoFromQueue() {
+        if (queue.size == 0 || indexQueue + 1 > queue.size - 1) {
+            return
+        }
+        indexQueue++
+
+        if (isDraw) {
+            alteredBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
+            viewDraw.setNewImage(alteredBitmap, queue[indexQueue].bitmap, queue[indexQueue].colorFilter)
         }
 
+        if (isAddIcon) {
+            viewAddIcon.source.setImageBitmap(queue[indexQueue].bitmap)
+            viewAddIcon.source.colorFilter = queue[indexQueue].colorFilter
+        }
+
+        if (!isDraw && !isAddIcon) {
+            binding.imageEdit.setImageBitmap(queue[indexQueue].bitmap)
+            binding.imageEdit.colorFilter = queue[indexQueue].colorFilter
+            bitmap = queue[indexQueue].bitmap
+            binding.progressCircular.visibility = View.INVISIBLE
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -278,8 +295,8 @@ class EditPhotoActivity : AppCompatActivity() {
         binding.progressCircular.visibility = View.VISIBLE
 
         scope.launch {
-            addToQueue(bitmap, binding.imageEdit.colorFilter)
             bitmap = toPencilImage(bitmap)
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
             withContext(Dispatchers.Main) {
                 bindImage(binding.imageEdit, bitmap)
                 binding.progressCircular.visibility = View.INVISIBLE
@@ -293,8 +310,8 @@ class EditPhotoActivity : AppCompatActivity() {
         binding.progressCircular.visibility = View.VISIBLE
 
         scope.launch {
-            addToQueue(bitmap, binding.imageEdit.colorFilter)
             bitmap = applySnowEffect(bitmap)
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
             withContext(Dispatchers.Main) {
                 bindImage(binding.imageEdit, bitmap)
                 binding.progressCircular.visibility = View.INVISIBLE
@@ -308,9 +325,8 @@ class EditPhotoActivity : AppCompatActivity() {
 
         binding.progressCircular.visibility = View.VISIBLE
         scope.launch {
-            addToQueue(bitmap, binding.imageEdit.colorFilter)
             bitmap = applyNoiseEffect(bitmap)
-
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
             withContext(Dispatchers.Main) {
                 bindImage(binding.imageEdit, bitmap)
                 binding.progressCircular.visibility = View.INVISIBLE
@@ -323,9 +339,8 @@ class EditPhotoActivity : AppCompatActivity() {
     fun smoothImage(view: View) {
         binding.progressCircular.visibility = View.VISIBLE
         scope.launch {
-            addToQueue(bitmap, binding.imageEdit.colorFilter)
             bitmap = smooth(bitmap, 2.0)
-
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
             withContext(Dispatchers.Main) {
                 bindImage(binding.imageEdit, bitmap)
                 binding.progressCircular.visibility = View.INVISIBLE
@@ -359,15 +374,13 @@ class EditPhotoActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun colorizeImage(view: View) {
-
-        addToQueue(bitmap, binding.imageEdit.colorFilter)
         binding.progressCircular.visibility = View.VISIBLE
         binding.imageEdit.colorFilter =
             PorterDuffColorFilter(
                 Color.argb(200, 0, 255, 0),
                 PorterDuff.Mode.SRC_OVER
             )
-
+        addToQueue(bitmap, binding.imageEdit.colorFilter)
         redSeekBar.progress = 0
         greenSeekBar.progress = 255
         blueSeekBar.progress = 0
@@ -380,8 +393,8 @@ class EditPhotoActivity : AppCompatActivity() {
 
         binding.progressCircular.visibility = View.VISIBLE
         scope.launch {
-            addToQueue(bitmap, binding.imageEdit.colorFilter)
             bitmap = toGrayscale(bitmap)
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
             withContext(Dispatchers.Main) {
                 bindImage(binding.imageEdit, bitmap)
                 binding.progressCircular.visibility = View.INVISIBLE
@@ -578,8 +591,8 @@ class EditPhotoActivity : AppCompatActivity() {
 
         binding.progressCircular.visibility = View.VISIBLE
         scope.launch {
-            addToQueue(bitmap, binding.imageEdit.colorFilter)
             bitmap = blur(bitmap)
+            addToQueue(bitmap, binding.imageEdit.colorFilter)
             withContext(Dispatchers.Main) {
                 bindImage(binding.imageEdit, bitmap)
                 binding.progressCircular.visibility = View.INVISIBLE
@@ -715,6 +728,7 @@ class EditPhotoActivity : AppCompatActivity() {
             isCrop = false
             isAddIcon = false
             isDraw = false
+            viewDraw.checkDown = false
 
             fragmentContainerEditPhoto.visibility = View.VISIBLE
             brightEditor.brightEditorLayout.visibility = View.GONE
@@ -727,7 +741,7 @@ class EditPhotoActivity : AppCompatActivity() {
             addIconEditor.addIconEditorLayout.visibility = View.GONE
             addIconConfigEditor.addIconConfigLayout.visibility = View.GONE
             binding.saveImage.visibility = View.VISIBLE
-
+            binding.rotate.visibility = View.VISIBLE
         }
 
         when (itemId) {
@@ -739,6 +753,7 @@ class EditPhotoActivity : AppCompatActivity() {
                 binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
                 viewCrop.setImageUriAsync(uri)
                 binding.cropEditor.cropEditorLayout.visibility = View.VISIBLE
+                binding.rotate.visibility = View.INVISIBLE
                 isCrop = true
             }
             R.id.change_color -> binding.colorEditor.colorEditorLayout.visibility = View.VISIBLE
@@ -747,7 +762,22 @@ class EditPhotoActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun undoImage(view: View) {
-        getFromQueue()
+        if (isDraw && viewDraw.checkDown == true)
+        {
+            addToQueue(viewDraw.drawable.toBitmap(bitmap.width, bitmap.height, bitmap.config),binding.imageEdit.colorFilter)
+            viewDraw.checkDown = false
+        }
+        undoFromQueue()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun redoImage(view: View) {
+        if (isDraw && viewDraw.checkDown == true)
+        {
+            addToQueue(viewDraw.drawable.toBitmap(bitmap.width, bitmap.height, bitmap.config),binding.imageEdit.colorFilter)
+            viewDraw.checkDown = false
+        }
+        redoFromQueue()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -765,7 +795,7 @@ class EditPhotoActivity : AppCompatActivity() {
             setNewColor(curColorDraw)
             setWeight(curWeightDraw)
         }
-
+        binding.rotate.visibility = View.INVISIBLE
         binding.drawEditor.drawEditorLayout.visibility = View.VISIBLE
         isDraw = true
     }
@@ -779,6 +809,16 @@ class EditPhotoActivity : AppCompatActivity() {
         viewAddIcon.getSource().setColorFilter(setColor(tempRed, tempGreen, tempBlue));
         binding.addIconEditor.addIconEditorLayout.visibility = View.VISIBLE
         binding.saveImage.visibility = View.INVISIBLE
+        binding.rotate.visibility = View.INVISIBLE
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun rotateImage(view: View){
+        val matrix = Matrix()
+        matrix.postRotate(90F)
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
+        addToQueue(bitmap,binding.imageEdit.colorFilter)
+        bindImage(binding.imageEdit, bitmap)
     }
 
     @Suppress("UNUSED_PARAMETER")

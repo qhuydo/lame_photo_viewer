@@ -4,7 +4,9 @@ import android.R.attr.*
 import android.app.Activity
 import android.app.Dialog
 import android.content.*
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -38,10 +40,10 @@ import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
-import timber.log.Timber
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class PhotoViewPagerFragment : Fragment() {
 
@@ -165,14 +167,6 @@ class PhotoViewPagerFragment : Fragment() {
             }
             R.id.action_rename -> {
                 rename()
-                true
-            }
-            R.id.action_rotate -> {
-                binding.imageView.apply {
-                    rotation += 90f
-                    invalidate()
-                    requestLayout()
-                }
                 true
             }
             R.id.action_change_place -> {
@@ -494,7 +488,7 @@ class PhotoViewPagerFragment : Fragment() {
                     val longti = latlo.longitude
                     val gpsImage = GPSImage(mediaItem!!.requirePath(requireContext()))
                     gpsImage.geoTag(lati, longti)
-                    Toast.makeText(requireContext(),getString(R.string.change_place_success),Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.change_place_success), Toast.LENGTH_SHORT).show()
                 }
             }
         }

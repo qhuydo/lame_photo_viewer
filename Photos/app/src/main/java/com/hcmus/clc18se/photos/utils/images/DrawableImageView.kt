@@ -14,8 +14,8 @@ class DrawableImageView : AppCompatImageView, OnTouchListener {
     var upx = 0f
     var upy = 0f
     var canvas: Canvas? = null
-
     var paint: Paint? = null
+    var checkDown:Boolean? = false
 
     constructor(context: Context) : super(context) {
         setOnTouchListener(this)
@@ -62,7 +62,7 @@ class DrawableImageView : AppCompatImageView, OnTouchListener {
     }
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
-
+        checkDown = true
         when (event.action) {
 
             MotionEvent.ACTION_DOWN -> {

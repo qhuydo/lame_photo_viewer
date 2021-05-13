@@ -131,5 +131,26 @@
             android:contentDescription="@string/undo"
             android:onClick="undoImage"
             android:src="@drawable/ic_outline_undo_24" />
+
+        <ImageButton
+            android:id="@+id/redo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/undo"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/redo"
+            android:onClick="redoImage"
+            android:src="@drawable/ic_outline_redo_24" />
+
+        <ImageButton
+            android:id="@+id/rotate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/redo"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:contentDescription="@string/rotate"
+            android:onClick="rotateImage"
+            android:src="@drawable/crop_image_menu_rotate_right" />
     </RelativeLayout>
 </layout>
