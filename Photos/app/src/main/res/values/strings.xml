@@ -96,9 +96,9 @@
     <string name="smooth_effect">Smooth</string>
     <string name="noise_effect" translatable="false">Noise</string>
     <string name="path">Path: %1$s</string>
-    <string name="date_created">Date created: %1$s</string>
-    <string name="location">Location: %1$s</string>
-    <string name="geo">Coordinates: %1$s</string>
+    <string name="date_created">Date created</string>
+    <string name="location">Location</string>
+    <string name="geo">Coordinates</string>
     <string name="nothing_here" translatable="false">Nothing here</string>
     <string name="add_album_dialog_hint">Album name</string>
     <string name="add_album_dialog_error_blank_field" translatable="false">Blank fields are not allowed</string>
@@ -127,8 +127,8 @@
     <string name="unknownName" translatable="false">@android:string/unknownName</string>
     <string name="detect_face_title">Face detect</string>
     <string name="detect_in_progress">Detect in progress</string>
-    <string name="size">Size: %1$s</string>
-    <string name="image_size">Resolution: %1$s</string>
+    <string name="size">Size</string>
+    <string name="image_size">Resolution</string>
     <string name="action_add_to_favourite">Add to favourite album</string>
     <string name="add_to_custom_album">Add to album</string>
     <string name="action_remove_favourite">Remove from favourite album</string>

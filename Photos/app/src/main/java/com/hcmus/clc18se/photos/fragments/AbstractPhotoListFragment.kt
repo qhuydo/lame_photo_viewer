@@ -273,6 +273,7 @@ abstract class AbstractPhotoListFragment(
                 .putString(getString(R.string.sort_order_key), option)
                 .apply()
 
+        adapter.submitList(emptyList())
         getCurrentViewModel().loadImages()
 
         return true
@@ -508,6 +509,7 @@ abstract class AbstractPhotoListFragment(
     private fun onActionRemoveMediaItems() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val uriList = adapter.getSelectedItems().map { it.requireUri() }
+            mainCab?.destroy()
             requestDeletePermission(uriList)
         } else {
             val parentActivity = requireActivity() as? AbstractPhotosActivity

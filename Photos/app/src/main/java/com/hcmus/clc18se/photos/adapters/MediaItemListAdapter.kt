@@ -15,6 +15,7 @@ import com.hcmus.clc18se.photos.databinding.ItemPhotoListBinding
 import com.hcmus.clc18se.photos.databinding.ItemPhotoListGridBinding
 import com.l4digital.fastscroll.FastScroller
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class MediaItemListAdapter(
         private val actionCallbacks: ActionCallbacks,
@@ -56,6 +57,7 @@ class MediaItemListAdapter(
         val list = actionCallbacks.onGroupListItem(items)
         val headerList = mutableListOf<AdapterItem.AdapterItemHeader>()
 
+        headerIndices.clear()
         list.forEachIndexed { index, adapterItem ->
             if (adapterItem is AdapterItem.AdapterItemHeader) {
                 headerIndices.add(index)
@@ -244,9 +246,23 @@ class MediaItemListAdapter(
     }
 
     override fun getSectionText(position: Int): CharSequence {
-        val lastIdx = headerIndices.firstOrNull { index -> position <= index }
-                ?: headerIndices.last()
-        return (getItem(lastIdx) as? AdapterItem.AdapterItemHeader)?.title ?: ""
+        // 0 3 18 21
+        // 1 -> 0
+        // 4 -> 3
+        // 2 -> 0
+        val lastIdx = headerIndices.indexOfFirst { index -> position <= index }
+        // Timber.d("pos = $position, lastIdx = $lastIdx")
+        val idx = if (lastIdx == -1) {
+            headerIndices.last()
+        }
+        else if (lastIdx - 1 > 0) {
+            headerIndices[lastIdx - 1]
+        }
+        else {
+            headerIndices[0]
+        }
+
+        return (getItem(idx) as? AdapterItem.AdapterItemHeader)?.title ?: ""
     }
 }
 

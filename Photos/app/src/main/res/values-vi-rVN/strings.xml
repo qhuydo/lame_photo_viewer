@@ -73,9 +73,9 @@
     <string name="add_on_image">Thêm</string>
     <string name="full_screen_view_image">Xem ảnh ở chế độ toàn màn hình</string>
     <string name="snow_effect">Tuyết</string>
-    <string name="path">Đường dẫn: %1$s</string>
-    <string name="date_created">Ngày tạo: %1$s</string>
-    <string name="location">Vị trí: %1$s</string>
+    <string name="path">Đường dẫn</string>
+    <string name="date_created">Ngày tạo</string>
+    <string name="location">Vị trí</string>
     <string name="emojis">Emoji</string>
     <string name="add_from_phone">Thêm từ điện thoại</string>
     <string name="smooth_effect">Làm mịn</string>
@@ -100,12 +100,12 @@
     <string name="failed_filename_exist_again">Thất bại bởi vì file trùng</string>
     <string name="detect_face_title">Nhận diện khuôn mặt</string>
     <string name="detect_in_progress">Đang nhận diện khuôn mặt</string>
-    <string name="size">Dung lượng: %1$s</string>
+    <string name="size">Dung lượng</string>
     <string name="action_add_to_favourite">Thêm vào danh sách yêu thích</string>
     <string name="add_to_custom_album">Thêm vào album</string>
     <string name="action_add_to_secret_album">Thêm vào thư mục bí mật</string>
     <string name="action_remove_from_secret_album">Bỏ khỏi thư mục bí mật</string>
-    <string name="image_size">Độ phân giải: %1$s</string>
+    <string name="image_size">Độ phân giải</string>
     <string name="action_add_to_favourite_succeed">Đã thêm vào danh sách yêu thích</string>
     <string name="action_remove_from_favourite_succeed">Đã xóa khỏi danh sách yêu thích</string>
     <string name="action_remove_from_custom_album">Xóa khỏi album</string>
@@ -120,7 +120,7 @@
     <string name="date_modified">Ngày chỉnh sửa</string>
     <string name="date_taken">Ngày chụp</string>
     <string name="action_order_by">Sắp xếp theo</string>
-    <string name="geo">Toạ độ: %1$s</string>
+    <string name="geo">Toạ độ</string>
     <string name="change_place">Thay đổi địa điểm</string>
     <string name="input_password">Nhập mật khẩu để tiếp tục:</string>
     <string name="new_confirm_not_same">Mật khẩu và mật khẩu nhập lại không giống</string>

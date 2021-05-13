@@ -22,4 +22,5 @@
     <dimen name="detail_backdrop_height">56dp</dimen>
     <dimen name="bottom_app_bar_overlap_space">56dp</dimen>
     <dimen name="outline_button_max_width">128dp</dimen>
+    <dimen name="dialog_info_row_padding">12dp</dimen>
 </resources>

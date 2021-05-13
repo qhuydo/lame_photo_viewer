@@ -2,7 +2,6 @@ package com.hcmus.clc18se.photos.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.media.ExifInterface
@@ -10,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -28,6 +26,8 @@ import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.bottomsheets.expandBottomSheet
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
@@ -35,6 +35,7 @@ import com.hcmus.clc18se.photos.EditPhotoActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
+import com.hcmus.clc18se.photos.databinding.DialogInfo2Binding
 import com.hcmus.clc18se.photos.databinding.FragmentPhotoViewBinding
 import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.OnDirectionKeyDown
@@ -208,50 +209,45 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
     }
 
     private fun actionDisplayInfo() {
-        dialog = Dialog(requireContext()).apply {
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.dialog_info)
+
+        dialog = MaterialDialog(requireContext()).show {
+            lifecycleOwner(this@PhotoViewFragment)
+
+            val dialogBinding = DialogInfo2Binding.inflate(layoutInflater, view, false)
+            setContentView(dialogBinding.root)
 
             val path = photos[currentPosition].requirePath(requireContext())
-            findViewById<TextView>(R.id.path).text = resources.getString(R.string.path, path)
+            dialogBinding.path.text = path
 
-            val dateCreated = photos[currentPosition].getDateSorted()
-            findViewById<TextView>(R.id.date_create).text =
-                    resources.getString(R.string.date_created, dateCreated)
+            val date = photos[currentPosition].getDateSorted()
+            dialogBinding.date.text = "$date"
 
             val size = getFileSize(path!!)
-            findViewById<TextView>(R.id.size)?.visibility = View.VISIBLE
-            findViewById<TextView>(R.id.size)?.text = getString(R.string.size, size)
+            dialogBinding.size.visibility = View.VISIBLE
+            dialogBinding.size.text = size
 
             if (!photos[currentPosition].isVideo()) {
                 val imageSize = getImageSize(path)
                 imageSize?.let {
-                    findViewById<TextView>(R.id.size_image)?.visibility = View.VISIBLE
-                    findViewById<TextView>(R.id.size_image)?.text =
-                            getString(R.string.image_size, imageSize)
+                    dialogBinding.sizeImage.visibility = View.VISIBLE
+                    dialogBinding.sizeImage.text = imageSize
                 }
             }
-        }
 
-        val address: String? = getMediaItemAddress()
-        address?.let {
-            Timber.d(it)
-            dialog?.findViewById<TextView>(R.id.name_place)?.visibility = View.VISIBLE
-            dialog?.findViewById<TextView>(R.id.name_place)?.text = getString(R.string.location, it)
-        }
+            val address: String? = getMediaItemAddress()
+            address?.let {
+                Timber.d(it)
+                dialogBinding.namePlace.visibility = View.VISIBLE
+                dialogBinding.namePlace.text = address
+            }
 
-        val latlng: String? = getLatLong()
-        latlng?.let {
-            Timber.d(it)
-            dialog?.findViewById<TextView>(R.id.geo_place)?.visibility = View.VISIBLE
-            dialog?.findViewById<TextView>(R.id.geo_place)?.text = getString(R.string.geo, it)
+            val latLong: String? = getLatLong()
+            latLong?.let {
+                Timber.d(it)
+                dialogBinding.geoPlace.visibility = View.VISIBLE
+                dialogBinding.geoPlace.text = address
+            }
         }
-
-        dialog?.findViewById<Button>(R.id.off_info_dialog)?.setOnClickListener {
-            dialog?.dismiss()
-            dialog = null
-        }
-        dialog?.show()
     }
 
     private fun getImageSize(path: String): String? {
@@ -338,7 +334,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
         return latLng
     }
 
-    private var dialog: Dialog? = null
+    private var dialog: MaterialDialog? = null
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun getMediaItemAddressCallback() {
@@ -349,8 +345,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
                 inputStream?.let {
                     val gpsImage = GPSImage(it)
                     getAddressFromGPSImage(gpsImage, requireContext())?.let { address ->
-                        dialog?.findViewById<TextView>(R.id.name_place)?.text =
-                                resources.getString(R.string.location, address)
+                        dialog?.findViewById<TextView>(R.id.name_place)?.text = address
                     }
                 }
             }

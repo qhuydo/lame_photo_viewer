@@ -72,9 +72,9 @@
     <string name="add_on_image">追加…</string>
     <string name="full_screen_view_image">全画面表示モードで写真を表示</string>
     <string name="snow_effect">雪</string>
-    <string name="path">パス：%1$s</string>
-    <string name="date_created">作成日：%1$s</string>
-    <string name="location">位置：%1$s</string>
+    <string name="path">パス</string>
+    <string name="date_created">作成日</string>
+    <string name="location">位置</string>
     <string name="emojis">絵文字</string>
     <string name="add_from_phone">デバイスから追加</string>
     <string name="smooth_effect">スムース</string>
@@ -98,13 +98,13 @@
     <string name="image_saved_fail">保存 失敗</string>
     <string name="detect_face_title">顔検出</string>
     <string name="detect_in_progress">顔検出中</string>
-    <string name="size">サイズ: %1$s</string>
+    <string name="size">サイズ</string>
     <string name="action_add_to_favourite">お気に入りのアルバムに追加</string>
     <string name="add_to_custom_album">自分のアルバムに追加</string>
     <string name="action_remove_favourite">アルバムから削除</string>
     <string name="action_add_to_secret_album">秘密アルバムに追加</string>
     <string name="action_remove_from_secret_album">秘密アルバムから削除</string>
-    <string name="image_size">画像解像度: %1$s</string>
+    <string name="image_size">画像解像度</string>
     <string name="action_add_to_favourite_succeed">お気に入りに追加 成功</string>
     <string name="action_remove_from_favourite_succeed">お気に入りに削除 成功</string>
     <string name="action_remove_from_custom_album">アルバムから削除</string>
@@ -132,4 +132,5 @@
     <string name="year">年</string>
     <string name="pass_incorrect">不正なパスワード</string>
     <string name="move_from_secret_album">秘密アルバムから移動</string>
+    <string name="geo">"座標 "</string>
 </resources>
