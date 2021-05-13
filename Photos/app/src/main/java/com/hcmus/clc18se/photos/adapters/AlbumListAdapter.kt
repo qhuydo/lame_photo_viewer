@@ -5,17 +5,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.Album
-import com.hcmus.clc18se.photos.databinding.*
+import com.hcmus.clc18se.photos.databinding.ItemAlbumListBinding
+import com.hcmus.clc18se.photos.databinding.ItemAlbumListGridBinding
 
 class AlbumListAdapter(
         private val adapterItemType: Int = ITEM_TYPE_GRID,
         private val adapterItemSize: Int = ITEM_SIZE_MEDIUM,
-        private val onClickListener: OnClickListener
+        private val allowLongClick: Boolean = false,
+        private val callbacks: AlbumListAdapterCallbacks,
 ) : ListAdapter<Album, AlbumListAdapter.ViewHolder>(Album.DiffCallBack()) {
 
     companion object {
@@ -28,10 +29,18 @@ class AlbumListAdapter(
         const val ITEM_SIZE_SMALL = 2
     }
 
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val album = getItem(position)
         holder.itemView.setOnClickListener {
-            onClickListener.onClick(album)
+            callbacks.onClick(album)
+        }
+
+        if (allowLongClick) {
+            holder.itemView.setOnLongClickListener {
+                callbacks.onLongClick(album)
+                true
+            }
         }
         holder.bind(album)
     }
@@ -43,7 +52,7 @@ class AlbumListAdapter(
         return adapterItemType
     }
 
-    class ViewHolder(private val binding: ViewDataBinding,
+    class ViewHolder(val binding: ViewDataBinding,
                      private val itemSize: Int = ITEM_SIZE_MEDIUM
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(album: Album) {
@@ -81,8 +90,9 @@ class AlbumListAdapter(
         }
     }
 
-    class OnClickListener(val clickListener: (album: Album) -> Unit) {
-        fun onClick(album: Album) = clickListener(album)
+    interface AlbumListAdapterCallbacks {
+        fun onClick(album: Album)
+        fun onLongClick(album: Album) {}
     }
 }
 

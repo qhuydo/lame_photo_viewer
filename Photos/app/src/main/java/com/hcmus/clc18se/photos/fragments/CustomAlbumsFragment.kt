@@ -12,10 +12,13 @@ import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+import com.afollestad.materialdialogs.list.listItems
 import com.google.android.material.appbar.AppBarLayout
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AlbumListAdapter
 import com.hcmus.clc18se.photos.adapters.bindSampleAlbumListRecyclerView
+import com.hcmus.clc18se.photos.data.Album
+import com.hcmus.clc18se.photos.data.CustomAlbumInfo
 import com.hcmus.clc18se.photos.databinding.FragmentCustomAlbumsBinding
 import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModel
@@ -32,8 +35,25 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
 
     private lateinit var customAlbumAdapter: AlbumListAdapter
 
-    private val onClickListener = AlbumListAdapter.OnClickListener {
-        viewModel.startNavigatingToPhotoList(it)
+    private val onClickListener = object : AlbumListAdapter.AlbumListAdapterCallbacks {
+        override fun onClick(album: Album) {
+            viewModel.startNavigatingToPhotoList(album)
+        }
+
+        override fun onLongClick(album: Album) {
+            val rename = 0
+            val remove = 1
+
+
+            MaterialDialog(requireContext()).show {
+                listItems(R.array.custom_album_option) { dialog, index, text ->
+                    when (index) {
+                        rename -> onActionRename(album)
+                        remove -> onActionRemove(album)
+                    }
+                }
+            }
+        }
     }
 
     override fun onCreateView(
@@ -50,23 +70,53 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
         customAlbumAdapter = AlbumListAdapter(
                 currentListItemView,
                 currentListItemSize,
+                allowLongClick = true,
                 onClickListener
         )
 
-        binding.fabAddAlbum.setOnClickListener { addAlbum() }
+        binding.fabAddAlbum.setOnClickListener { actionAddAlbum() }
 
         initRecyclerViews()
         initObservers()
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
     }
 
-    // TODO: refactor me
-    private fun addAlbum() = MaterialDialog(requireContext()).show {
+    private fun actionAddAlbum() = showChooseNameDialog { addNewAlbum(it) }
+
+    private fun onActionRename(album: Album) {
+        showChooseNameDialog {
+            if (it.getInputField().error.isNullOrEmpty()) {
+                val name = it.getInputField().text.toString().trim()
+
+                if (album.customAlbumId != null) {
+                    val newAlbum = CustomAlbumInfo(album.customAlbumId, name)
+                    viewModel.updateAlbum(newAlbum)
+                }
+            }
+        }
+    }
+
+    private fun onActionRemove(album: Album) {
+        MaterialDialog(requireContext()).show {
+            title(R.string.delete_warning_dialog_title)
+            message(R.string.delete_warning_dialog_msg)
+            positiveButton(R.string.yes) {
+                val albumName = album.getName()
+                if (album.customAlbumId != null && albumName != null) {
+                    viewModel.removeCustomAlbum(CustomAlbumInfo(album.customAlbumId, albumName))
+                }
+            }
+            negativeButton(R.string.no) {}
+        }
+    }
+
+    private fun showChooseNameDialog(actionOfPositiveButton: (MaterialDialog) -> Unit) = MaterialDialog(requireContext()).show {
         lifecycleOwner(this@CustomAlbumsFragment)
         title(R.string.add_album_dialog_hint)
         input(
@@ -97,15 +147,17 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
             dialog.setActionButtonEnabled(WhichButton.POSITIVE, isValid)
         }
         negativeButton { cancel() }
-        positiveButton(res = R.string.ok) {
-            if (it.getInputField().error.isNullOrEmpty()) {
-                val name = it.getInputField().text.toString().trim()
+        positiveButton(res = R.string.ok) { actionOfPositiveButton(it) }
+    }
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    val album = viewModel.insertNewAlbum(name)
-                    withContext(Dispatchers.Main) {
-                        viewModel.startNavigatingToPhotoList(album)
-                    }
+    private fun addNewAlbum(it: MaterialDialog) {
+        if (it.getInputField().error.isNullOrEmpty()) {
+            val name = it.getInputField().text.toString().trim()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val album = viewModel.insertNewAlbum(name)
+                withContext(Dispatchers.Main) {
+                    viewModel.startNavigatingToPhotoList(album)
                 }
             }
         }
@@ -127,6 +179,12 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
 
     private fun initObservers() {
 
+        viewModel.albums.observe(viewLifecycleOwner) {
+            if (it != null) {
+                customAlbumAdapter.submitList(it)
+            }
+        }
+
         viewModel.navigateToPhotoList.observe(viewLifecycleOwner) { album ->
             if (album != null) {
                 photosViewModel.setCustomAlbum(album)
@@ -145,6 +203,7 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
             customAlbumAdapter = AlbumListAdapter(
                     currentListItemView,
                     currentListItemSize,
+                    allowLongClick = true,
                     onClickListener
             )
             val recyclerView = albumListLayout.albumListRecyclerView

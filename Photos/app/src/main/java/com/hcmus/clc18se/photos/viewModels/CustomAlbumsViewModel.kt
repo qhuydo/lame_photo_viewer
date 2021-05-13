@@ -54,7 +54,6 @@ class CustomAlbumViewModel(
         )
     }
 
-
     private var _reloadDataRequest = MutableLiveData(false)
     val reloadDataRequest: LiveData<Boolean>
         get() = _reloadDataRequest
@@ -81,6 +80,14 @@ class CustomAlbumViewModel(
         return albums.value!!.first { album -> album.getName() == name }
     }
 
+    fun updateAlbum(albumInfo: CustomAlbumInfo) = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            val nCol = database.updateCustomAlbumInfo(albumInfo)
+            loadAlbumsFromDatabase()
+        }
+    }
+
+
     suspend fun containsAlbumName(name: String): Boolean {
         return database.containsCustomAlbumName(name)
     }
@@ -96,6 +103,14 @@ class CustomAlbumViewModel(
         database.addMediaItemToCustomAlbum(*customAlbumItems.toTypedArray())
         requestReloadingData()
     }
+
+    fun removeCustomAlbum(albumInfo: CustomAlbumInfo) = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            val nCol = database.deleteCustomAlbum(albumInfo)
+            loadAlbumsFromDatabase()
+        }
+    }
+
 
 }
 
