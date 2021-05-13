@@ -13,6 +13,7 @@
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/layout_photos_face"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?colorSurface">
@@ -21,42 +22,28 @@
             android:id="@+id/top_app_bar"
             layout="@layout/search_bar" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?colorSurface"
-            android:fitsSystemWindows="true"
-            android:visibility="gone"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_face_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="ContentDescription" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_album_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <include
             android:id="@+id/photo_list"
             layout="@layout/photo_list"
             app:photoList="@{photos}" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <!--            visibleWhenEmpty="@{photos}"-->
+        <LinearLayout
+            android:id="@+id/empty_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible">
 
+            <Button
+                android:id="@+id/button_start_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/start_service" />
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

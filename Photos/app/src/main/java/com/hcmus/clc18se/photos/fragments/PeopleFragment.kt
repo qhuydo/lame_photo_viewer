@@ -73,19 +73,27 @@ class PeopleFragment : BaseFragment() {
 
         binding.lifecycleOwner = this
 
-        viewModel.mediaItemList.observe(viewLifecycleOwner) {
-            if (it != null) {
-                if (list == null) {
-                    list = it
-                    val intent = Intent(context, DetectFace::class.java)
-                    if (requireContext().applicationContext.startService(intent) != null) {
-                        Toast.makeText(context, "Service detect face is running", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "Service detect face unable to start", Toast.LENGTH_SHORT).show()
+        if (list != null)
+        {
+            binding.emptyLayout.visibility = View.GONE
+        }
+
+        binding.buttonStartService.setOnClickListener(){
+            binding.emptyLayout.visibility = View.GONE
+            viewModel.mediaItemList.observe(viewLifecycleOwner) {
+                if (it != null) {
+                    if (list == null) {
+                        list = it
+                        val intent = Intent(context, DetectFace::class.java)
+                        if (requireContext().applicationContext.startService(intent) != null) {
+                            Toast.makeText(context, "Service detect face is running", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Service detect face unable to start", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
+                binding.photos = newList
             }
-            binding.photos = newList
         }
 
         return binding.root

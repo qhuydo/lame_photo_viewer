@@ -176,24 +176,6 @@ class SecretPhotoFragment : AbstractPhotoListFragment(R.menu.photo_list_menu), O
         }
     }
 
-    private fun showData() {
-        val cw = ContextWrapper(requireContext().applicationContext)
-        val directory = cw.getDir("images", MODE_PRIVATE)
-
-        val list = ArrayList<Uri>()
-        for (file in directory.listFiles()) {
-            if (file != null) {
-                list.add(Uri.fromFile(file))
-            }
-        }
-
-//        binding.listView.adapter = ArrayAdapter<Any?>(
-//            requireContext(),
-//            android.R.layout.simple_list_item_1,
-//            list as List<Any?>
-//        )
-    }
-
     private fun showPasswordDialog() = MaterialDialog(requireContext())
         .cancelable(false)
         .noAutoDismiss()
