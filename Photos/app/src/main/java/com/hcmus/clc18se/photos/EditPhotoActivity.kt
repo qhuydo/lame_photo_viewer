@@ -741,7 +741,7 @@ class EditPhotoActivity : AppCompatActivity() {
             addIconEditor.addIconEditorLayout.visibility = View.GONE
             addIconConfigEditor.addIconConfigLayout.visibility = View.GONE
             binding.saveImage.visibility = View.VISIBLE
-
+            binding.rotate.visibility = View.VISIBLE
         }
 
         when (itemId) {
@@ -753,6 +753,7 @@ class EditPhotoActivity : AppCompatActivity() {
                 binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
                 viewCrop.setImageUriAsync(uri)
                 binding.cropEditor.cropEditorLayout.visibility = View.VISIBLE
+                binding.rotate.visibility = View.INVISIBLE
                 isCrop = true
             }
             R.id.change_color -> binding.colorEditor.colorEditorLayout.visibility = View.VISIBLE
@@ -794,7 +795,7 @@ class EditPhotoActivity : AppCompatActivity() {
             setNewColor(curColorDraw)
             setWeight(curWeightDraw)
         }
-
+        binding.rotate.visibility = View.INVISIBLE
         binding.drawEditor.drawEditorLayout.visibility = View.VISIBLE
         isDraw = true
     }
@@ -808,6 +809,16 @@ class EditPhotoActivity : AppCompatActivity() {
         viewAddIcon.getSource().setColorFilter(setColor(tempRed, tempGreen, tempBlue));
         binding.addIconEditor.addIconEditorLayout.visibility = View.VISIBLE
         binding.saveImage.visibility = View.INVISIBLE
+        binding.rotate.visibility = View.INVISIBLE
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun rotateImage(view: View){
+        val matrix = Matrix()
+        matrix.postRotate(90F)
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
+        addToQueue(bitmap,binding.imageEdit.colorFilter)
+        bindImage(binding.imageEdit, bitmap)
     }
 
     @Suppress("UNUSED_PARAMETER")

@@ -6,10 +6,6 @@
         android:title="@string/move_to_secret_album" />
 
     <item
-        android:id="@+id/action_rotate"
-        android:title="@string/rotate" />
-
-    <item
         android:id="@+id/action_move"
         android:icon="@drawable/ic_baseline_content_cut_24"
         android:title="@string/move" />
