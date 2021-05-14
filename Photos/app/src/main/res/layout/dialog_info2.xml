@@ -162,7 +162,7 @@
                 android:layout_weight="1"
                 android:padding="@dimen/dialog_info_row_padding"
                 android:typeface="monospace"
-                tools:text="1024 x 2048" />
+                tools:text="Greenland" />
         </LinearLayout>
 
 

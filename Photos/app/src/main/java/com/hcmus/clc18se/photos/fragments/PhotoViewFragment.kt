@@ -26,7 +26,6 @@ import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.expandBottomSheet
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
@@ -210,7 +209,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
 
     private fun actionDisplayInfo() {
 
-        dialog = MaterialDialog(requireContext()).show {
+        MaterialDialog(requireContext()).show {
             lifecycleOwner(this@PhotoViewFragment)
 
             val dialogBinding = DialogInfo2Binding.inflate(layoutInflater, view, false)
@@ -225,6 +224,8 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
             val size = getFileSize(path!!)
             dialogBinding.size.visibility = View.VISIBLE
             dialogBinding.size.text = size
+
+            this@PhotoViewFragment.dialogBinding = dialogBinding
 
             if (!photos[currentPosition].isVideo()) {
                 val imageSize = getImageSize(path)
@@ -334,7 +335,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
         return latLng
     }
 
-    private var dialog: MaterialDialog? = null
+    private var dialogBinding: DialogInfo2Binding? = null
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun getMediaItemAddressCallback() {
@@ -345,7 +346,17 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
                 inputStream?.let {
                     val gpsImage = GPSImage(it)
                     getAddressFromGPSImage(gpsImage, requireContext())?.let { address ->
-                        dialog?.findViewById<TextView>(R.id.name_place)?.text = address
+                        if (gpsImage.latitude != null && gpsImage.longitude != null) {
+                            val latLng = "(${String.format("%.4f", gpsImage.latitude)};${
+                                String.format(
+                                        "%.4f",
+                                        gpsImage.longitude
+                                )
+                            })"
+
+                            dialogBinding?.geoPlace?.text = latLng
+                        }
+                        dialogBinding?.namePlace?.text = address
                     }
                 }
             }

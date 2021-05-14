@@ -95,7 +95,7 @@
     <string name="snow_effect">Snow</string>
     <string name="smooth_effect">Smooth</string>
     <string name="noise_effect" translatable="false">Noise</string>
-    <string name="path">Path: %1$s</string>
+    <string name="path">Path</string>
     <string name="date_created">Date created</string>
     <string name="location">Location</string>
     <string name="geo">Coordinates</string>
