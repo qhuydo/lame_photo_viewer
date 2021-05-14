@@ -173,14 +173,13 @@ class PhotoViewPagerFragment : Fragment() {
 
                 val intent = PlaceAutocomplete.IntentBuilder()
                         .accessToken(BuildConfig.MAPBOX_TOKEN)
-                        // .accessToken(BuildConfig)
                         .placeOptions(
                                 PlaceOptions.builder()
                                         .backgroundColor(Color.parseColor("#EEEEEE"))
                                         .limit(5)
                                         .build(PlaceOptions.MODE_CARDS)
                         )
-                        .build(activity)
+                        .build(requireActivity())
                 startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
                 true
             }

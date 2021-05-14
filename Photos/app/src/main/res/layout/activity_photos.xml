@@ -96,6 +96,7 @@
                 android:id="@+id/fab_add_album"
                 style="@style/fab_small"
                 android:src="@drawable/ic_outline_library_add_24"
+                android:visibility="gone"
                 app:fabSize="mini"
                 app:hideOnScroll="true"
                 app:layout_anchor="@id/fab_add_video"

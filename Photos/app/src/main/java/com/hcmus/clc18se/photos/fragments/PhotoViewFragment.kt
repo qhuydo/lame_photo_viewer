@@ -246,7 +246,7 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
             latLong?.let {
                 Timber.d(it)
                 dialogBinding.geoPlace.visibility = View.VISIBLE
-                dialogBinding.geoPlace.text = address
+                dialogBinding.geoPlace.text = latLong
             }
         }
     }
