@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -302,11 +301,6 @@ class PhotoViewFragment : BaseFragment(), OnDirectionKeyDown, OnBackPressed {
             if (path != null) {
                 val gpsImage = GPSImage(path)
                 address = getAddressFromGPSImage(gpsImage, requireContext())
-                Toast.makeText(
-                        context,
-                        gpsImage.exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE),
-                        Toast.LENGTH_LONG
-                ).show()
             }
         }
         return address
