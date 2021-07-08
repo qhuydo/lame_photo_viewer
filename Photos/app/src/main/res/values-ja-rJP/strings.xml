@@ -133,4 +133,6 @@
     <string name="pass_incorrect">不正なパスワード</string>
     <string name="move_from_secret_album">秘密アルバムから移動</string>
     <string name="geo">"座標 "</string>
+    <string name="start_detect_face_dialog_title">警戒</string>
+    <string name="start_detect_face_dialog_msg">試験運用版の機能ですので、これらのオプションを有効するとき、アプリがクラッシュを引き起こす可能性があります。続行しますか？</string>
 </resources>

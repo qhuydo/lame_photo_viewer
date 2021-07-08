@@ -14,6 +14,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.DialogBehavior
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.PhotosApplication.Companion.list
@@ -73,30 +75,33 @@ class PeopleFragment : BaseFragment() {
 
         binding.lifecycleOwner = this
 
-        if (list != null)
-        {
+        if (list != null) {
             binding.emptyLayout.visibility = View.GONE
         }
 
-        binding.buttonStartService.setOnClickListener(){
-            binding.emptyLayout.visibility = View.GONE
-            viewModel.mediaItemList.observe(viewLifecycleOwner) {
-                if (it != null) {
-                    if (list == null) {
-                        list = it
-                        val intent = Intent(context, DetectFace::class.java)
-                        if (requireContext().applicationContext.startService(intent) != null) {
-                            Toast.makeText(context, "Service detect face is running", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(context, "Service detect face unable to start", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-                binding.photos = newList
-            }
+        binding.buttonStartService.setOnClickListener {
+            showConfirmDialog()
         }
 
         return binding.root
+    }
+
+    private fun startDetectService() {
+        binding.emptyLayout.visibility = View.GONE
+        viewModel.mediaItemList.observe(viewLifecycleOwner) {
+            if (it != null) {
+                if (list == null) {
+                    list = it
+                    val intent = Intent(context, DetectFace::class.java)
+                    if (requireContext().applicationContext.startService(intent) != null) {
+                        Toast.makeText(context, "Service detect face is running", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Service detect face unable to start", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            binding.photos = newList
+        }
     }
 
     override fun getToolbarView(): Toolbar = binding.topAppBar.searchActionBar
@@ -104,6 +109,16 @@ class PeopleFragment : BaseFragment() {
     override fun getAppbar(): AppBarLayout = binding.topAppBar.appBarLayout
 
     override fun getToolbarTitleRes(): Int = R.string.people_title
+
+    private fun showConfirmDialog() {
+        MaterialDialog(requireContext()).show {
+            title(R.string.start_detect_face_dialog_title)
+            message(R.string.start_detect_face_dialog_msg)
+            positiveButton(R.string.yes) { startDetectService() }
+            negativeButton(R.string.no) {  }
+        }
+
+    }
 
     inner class MyMainLocalReceiver : BroadcastReceiver() {
         override fun onReceive(localContext: Context?, callerIntent: Intent) {

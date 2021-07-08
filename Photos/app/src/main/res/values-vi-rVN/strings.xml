@@ -135,4 +135,6 @@
     <string name="month">Tháng</string>
     <string name="year">Năm</string>
     <string name="move_from_secret_album">Chuyển ra khỏi thư mục ẩn</string>
+    <string name="start_detect_face_dialog_title">Cảnh báo</string>
+    <string name="start_detect_face_dialog_msg">Đây là chức năng đang được phát triển, có thể gây lỗi ứng dụng. Bạn có muốn tiếp tục?</string>
 </resources>
