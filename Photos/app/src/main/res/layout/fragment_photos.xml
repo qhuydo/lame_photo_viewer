@@ -22,13 +22,6 @@
             android:visibility="visible" />
 
         <include
-            android:id="@+id/placeholder"
-            layout="@layout/generic_placeholder"
-            visibleWhenEmpty="@{photosViewModel.mediaItemList}"
-            tools:visibility="gone" />
-
-
-        <include
             android:id="@+id/photo_list_layout"
             layout="@layout/photo_list_fast_scroller"
             android:layout_width="match_parent"
@@ -46,6 +39,11 @@
         <!--            app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
         <!--            app:layout_constraintTop_toBottomOf="@id/photo_list_layout" />-->
 
+        <include
+            android:id="@+id/placeholder"
+            layout="@layout/generic_placeholder"
+            visibleWhenEmpty="@{photosViewModel.mediaItemList}"
+            tools:visibility="gone" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

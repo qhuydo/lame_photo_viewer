@@ -46,7 +46,7 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
 
 
             MaterialDialog(requireContext()).show {
-                listItems(R.array.custom_album_option) { dialog, index, text ->
+                listItems(R.array.custom_album_option) { _, index, _ ->
                     when (index) {
                         rename -> onActionRename(album)
                         remove -> onActionRemove(album)

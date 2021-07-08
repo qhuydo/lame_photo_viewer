@@ -141,7 +141,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
-
             getString(R.string.app_color_key) -> {
 
                 Timber.d("Color config change")
@@ -184,7 +183,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
-
             getString(R.string.adaptive_icon_color_key) -> {
                 val adaptiveIconColor =
                     preferences.getBoolean(getString(R.string.adaptive_icon_color_key), false)
@@ -202,7 +200,6 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     protected fun registerOnChangedPreferenceListener() {
         preferences.registerOnSharedPreferenceChangeListener(preferencesListener)
-
     }
 
     private fun onLicenseButtonClick() {

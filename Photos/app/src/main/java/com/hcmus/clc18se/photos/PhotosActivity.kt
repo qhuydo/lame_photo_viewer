@@ -145,7 +145,7 @@ class PhotosActivity : AbstractPhotosActivity() {
             isFabRotate = ViewAnimation.rotateFab(binding.fab, !isFabRotate)
             ViewAnimation.showOut(binding.fabAddPicture)
             ViewAnimation.showOut(binding.fabAddVideo)
-            ViewAnimation.showOut(binding.fabAddAlbum)
+            // ViewAnimation.showOut(binding.fabAddAlbum)
         }
 
     }
@@ -154,7 +154,7 @@ class PhotosActivity : AbstractPhotosActivity() {
         binding.navView.setupWithNavController(navController)
         binding.bottomNav.setupWithNavController(navController)
 
-        val fabs = listOf(binding.fabAddPicture, binding.fabAddVideo, binding.fabAddAlbum)
+        val fabs = listOf(binding.fabAddPicture, binding.fabAddVideo)
 
         fabs.forEach { ViewAnimation.init(it) }
 

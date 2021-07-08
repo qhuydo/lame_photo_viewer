@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black_alpha_30"
     tools:ignore="ContentDescription">
 
     <HorizontalScrollView
@@ -82,8 +83,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
-                android:orientation="vertical"
-                android:onClick="snowImage">
+                android:onClick="snowImage"
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"
@@ -102,8 +103,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
-                android:orientation="vertical"
-                android:onClick="smoothImage">
+                android:onClick="smoothImage"
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"
@@ -142,8 +143,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/photo_edit_filter_margin_photo"
                 android:layout_marginRight="@dimen/photo_edit_filter_margin_photo"
-                android:orientation="vertical"
-                android:onClick="fleaImage">
+                android:onClick="fleaImage"
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="@dimen/photo_edit_filter_size"
