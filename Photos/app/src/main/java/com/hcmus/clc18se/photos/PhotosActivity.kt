@@ -1,6 +1,5 @@
 package com.hcmus.clc18se.photos
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,10 +14,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosBinding
-import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.utils.ui.ViewAnimation
 import timber.log.Timber
 

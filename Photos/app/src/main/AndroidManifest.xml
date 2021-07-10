@@ -105,7 +105,7 @@
         <activity android:name=".ViewPhotoActivity" />
 
         <activity
-            android:name=".utils.VideoDialogActivity"
+            android:name=".VideoDialogActivity"
             android:label="@string/edit_title">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

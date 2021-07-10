@@ -4,9 +4,7 @@ import android.R.attr.*
 import android.app.Activity
 import android.app.Dialog
 import android.content.*
-import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -31,7 +29,7 @@ import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
-import com.hcmus.clc18se.photos.utils.VideoDialogActivity
+import com.hcmus.clc18se.photos.VideoDialogActivity
 import com.hcmus.clc18se.photos.utils.images.GPSImage
 import com.hcmus.clc18se.photos.utils.images.SingleMediaScanner
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
