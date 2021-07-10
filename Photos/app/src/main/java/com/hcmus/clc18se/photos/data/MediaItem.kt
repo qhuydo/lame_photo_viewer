@@ -47,7 +47,7 @@ data class MediaItem(
     }
 
     fun isVideo(): Boolean {
-        return (mimeType in videoMimeTypes)
+        return mimeType?.startsWith("video") ?: false
     }
 
     fun isEditable() = isSupportedStaticImage()

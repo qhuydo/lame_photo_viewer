@@ -7,16 +7,8 @@ import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import java.util.*
 
-
-const val TYPE_SVG = 1
-const val TYPE_IMAGE = 2
-const val TYPE_VIDEO = 4
-const val TYPE_GIF = 16
-
-//val svgExtensions = arrayOf("svg")
 val svgMimeTypes = arrayOf("image/svg+xml")
 
-//val imageExtensions = arrayOf("jpg", "png", "jpe", "jpeg", "bmp")
 val imageMimeTypes = arrayOf(
     "image/*",
     "image/jpeg",
@@ -26,21 +18,17 @@ val imageMimeTypes = arrayOf(
     "image/webp",
 )
 
-//  arrayOf("mp4", "mkv", "webm", "avi")
-val videoExtensions = arrayOf("mp4", "mkv", "webm", "avi")
+val videoMimeTypes = arrayOf("video/*",
+    "video/mp4",
+    "video/x-matroska",
+    "video/webm",
+    "video/avi"
+)
 
-// arrayOf("video/*", "video/mp4", "video/x-matroska", "video/webm", "video/avi")
-val videoMimeTypes = arrayOf("video/*", "video/mp4")
-
-//val gifExtensions = arrayOf("gif")
 val gifMimeTypes = arrayOf("image/gif")
 
-//val exifExtensions = arrayOf("jpg", "jpe", "jpeg", "dng", "cr2")
-
-// arrayOf("image/jpeg", "image/jpg", "image/x-adobe-dng", "image/x-canon-cr2")
 val exifMimeTypes = arrayOf("image/jpeg", "image/jpg")
 
-//val exifWritingExtensions = arrayOf("jpg", "jpe", "jpeg")
 val exifWritingMimeTypes = arrayOf("image/jpeg", "image/jpg")
 
 // private val wallpaperMimeTypes = arrayOf("image/jpeg", "image/png")
@@ -84,7 +72,7 @@ fun checkVideoMimeType(mimeType: String?): Boolean {
 }
 
 fun checkSvgMimeType(mimeType: String?): Boolean {
-    return checkExtension(mimeType, videoMimeTypes)
+    return checkExtension(mimeType, svgMimeTypes)
 }
 
 fun checkGifMimeType(mimeType: String?): Boolean {
@@ -127,7 +115,12 @@ fun getFileName(context: Context, uri: Uri): String? {
 // https://stackoverflow.com/questions/3401579/get-filename-and-path-from-uri-from-mediastore
 fun getRealPathFromURI(context: Context, contentUri: Uri?): String? {
     val projection = arrayOf(MediaStore.Files.FileColumns.DATA)
-    val cursor = context.contentResolver.query(contentUri!!, projection, null, null, null)
+    val cursor = context.contentResolver.query(contentUri!!,
+            projection,
+            null,
+            null,
+            null
+    )
 
     return cursor?.use {
         val columnIndex: Int = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)

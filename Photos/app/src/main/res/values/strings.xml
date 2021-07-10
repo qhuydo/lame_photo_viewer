@@ -1,4 +1,4 @@
-<!DOCTYPE resources [<!ENTITY appname "Lame photo Viewer">]>
+<!DOCTYPE resources [<!ENTITY appname "Lame Photo Viewer">]>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" tools:ignore="MissingTranslation">&appname;</string>
     <string name="about">About</string>

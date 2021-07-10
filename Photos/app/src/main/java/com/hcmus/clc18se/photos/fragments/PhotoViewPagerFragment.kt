@@ -56,6 +56,15 @@ class PhotoViewPagerFragment : Fragment() {
     internal var fullScreen: Boolean = false
     internal var isSecret: Boolean = false
 
+    companion object {
+        private const val BUNDLE_MEDIA_ITEM = "uri"
+        private const val BUNDLE_FULLSCREEN = "fullscreen"
+        private const val BUNDLE_SECRET = "secret"
+        private const val COPY_FILE = 2345
+        private const val MOVE_FILE = 3456
+        private const val AUTOCOMPLETE_REQUEST_CODE = 123
+    }
+
     private val parentFragment by lazy { requireParentFragment() as PhotoViewFragment }
 
     private val onImageClickListener = View.OnClickListener {
@@ -660,14 +669,5 @@ class PhotoViewPagerFragment : Fragment() {
                     Toast.LENGTH_SHORT
             ).show()
         }
-    }
-
-    companion object {
-        private const val BUNDLE_MEDIA_ITEM = "uri"
-        private const val BUNDLE_FULLSCREEN = "fullscreen"
-        private const val BUNDLE_SECRET = "secret"
-        private const val COPY_FILE = 2345
-        private const val MOVE_FILE = 3456
-        private const val AUTOCOMPLETE_REQUEST_CODE = 123
     }
 }
