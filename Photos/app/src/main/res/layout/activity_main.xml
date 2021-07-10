@@ -10,7 +10,7 @@
         android:background="?colorSurface"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        tools:context=".MainActivity">
+        tools:context=".StartActivity">
 
         <ImageView
             android:layout_width="128dp"

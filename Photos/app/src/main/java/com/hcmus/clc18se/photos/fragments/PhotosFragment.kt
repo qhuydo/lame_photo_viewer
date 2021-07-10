@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
-import com.hcmus.clc18se.photos.MainActivity
+import com.hcmus.clc18se.photos.StartActivity
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.adapters.AdapterItem
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
@@ -191,7 +191,7 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
     override fun getCabId(): Int {
         val bottomAppBarPref = preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0")
-        val usingTabLayout = bottomAppBarPref == MainActivity.TAB_LAYOUT_OPTION
+        val usingTabLayout = bottomAppBarPref == StartActivity.TAB_LAYOUT_OPTION
         return if (usingTabLayout) R.id.cab_stub_tab else R.id.cab_stub
     }
 

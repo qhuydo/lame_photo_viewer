@@ -516,7 +516,7 @@ abstract class AbstractPhotoListFragment(
             if (parentActivity?.haveWriteStoragePermission() == true) {
                 showDeleteWarningDialog()
             } else {
-                parentActivity?.jumpToMainActivity()
+                parentActivity?.jumpToStartActivity()
             }
 
         }

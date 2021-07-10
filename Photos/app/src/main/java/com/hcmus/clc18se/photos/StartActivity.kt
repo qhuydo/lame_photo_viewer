@@ -25,7 +25,7 @@ import com.hcmus.clc18se.photos.databinding.ActivityMainBinding
  * That configuration can be found in the app settings.
 
  */
-class MainActivity : AppCompatActivity() {
+class StartActivity: AppCompatActivity() {
 
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 

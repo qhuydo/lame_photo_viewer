@@ -44,7 +44,6 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class PhotoViewPagerFragment : Fragment() {
 
     private lateinit var viewModel: PhotosViewModel
@@ -158,6 +157,14 @@ class PhotoViewPagerFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
         val menuRes = if (isSecret) R.menu.view_secret_photo_menu else R.menu.view_photo_menu
         inflater.inflate(menuRes, menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        // Display change geo location option only when media item contains exif
+        val changePlaceAction = menu.findItem(R.id.action_change_place)
+        changePlaceAction.isVisible = mediaItem?.isSupportExif() ?: false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

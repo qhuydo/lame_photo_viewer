@@ -77,8 +77,8 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
     protected abstract fun setAppbarVisibility(visibility: Boolean)
 
-    internal fun jumpToMainActivity() {
-        val intent = Intent(this@AbstractPhotosActivity, MainActivity::class.java)
+    internal fun jumpToStartActivity() {
+        val intent = Intent(this@AbstractPhotosActivity, StartActivity::class.java)
         startActivity(intent)
         finish()
     }
@@ -138,7 +138,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
         when (key) {
             getString(R.string.app_theme_key) -> {
                 colorResource.configTheme(null)
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, StartActivity::class.java))
                 finish()
             }
             getString(R.string.app_color_key) -> {
@@ -152,7 +152,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
                     colorResource.updateIcon(packageManager)
                 }
 
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, StartActivity::class.java))
                 finish()
             }
             getString(R.string.app_language_key) -> {
@@ -175,12 +175,12 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
                 }
                 finish()
                 overridePendingTransition(0, 0)
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, StartActivity::class.java))
                 overridePendingTransition(0, 0)
 
             }
             getString(R.string.app_bottom_bar_navigation_key) -> {
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, StartActivity::class.java))
                 finish()
             }
             getString(R.string.adaptive_icon_color_key) -> {
