@@ -34,21 +34,15 @@ data class MediaItem(
     private var path: String?,
 ) : Parcelable {
 
-    fun isSVG(): Boolean {
-        return mimeType in svgMimeTypes
-    }
+    fun isSVG() = mimeType in svgMimeTypes
 
-    fun isSupportedStaticImage(): Boolean {
-        return mimeType in imageMimeTypes
-    }
+    fun isSupportedStaticImage() = mimeType in imageMimeTypes
 
-    fun isGif(): Boolean {
-        return (mimeType in gifMimeTypes)
-    }
+    fun isGif() = mimeType in gifMimeTypes
 
-    fun isVideo(): Boolean {
-        return mimeType?.startsWith("video") ?: false
-    }
+    fun isVideo() = mimeType?.startsWith("video") ?: false
+
+    fun isSupportExif() = mimeType in exifMimeTypes
 
     fun isEditable() = isSupportedStaticImage()
 

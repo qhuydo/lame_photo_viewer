@@ -165,11 +165,10 @@ fun SubsamplingScaleImageView.bindMediaItem(mediaItem: MediaItem?, debug: Boolea
 @BindingAdapter("mediaItem")
 fun ImageView.setGifOrVideoMediaItem(mediaItem: MediaItem?) {
     mediaItem?.let {
-        if (it.isGif() || it.isVideo()) {
+        visibility = if (it.isGif() || it.isVideo()) {
             bindImage(this, mediaItem)
-            visibility = View.VISIBLE
-        }
-        else visibility = View.GONE
+            View.VISIBLE
+        } else View.GONE
     }
 }
 
