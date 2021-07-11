@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.MediaController
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
+import kotlin.math.floor
 
 class VideoDialogActivity : AppCompatActivity() {
 
@@ -16,6 +17,7 @@ class VideoDialogActivity : AppCompatActivity() {
 
     private lateinit var uri: Uri
     private lateinit var videoView: VideoView
+    private lateinit var container: View
     private var currentPosition = 0
     private var isPlaying = true
 
@@ -32,6 +34,7 @@ class VideoDialogActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.video_view_dialog)
+        container = findViewById(R.id.container)
 
         val mediaController = MediaController(this).apply {
             setAnchorView(findViewById(R.id.container))
@@ -55,20 +58,20 @@ class VideoDialogActivity : AppCompatActivity() {
     private fun setDimension(videoView: VideoView) {
         // Adjust the size of the video
         // so it fits on the screen
-        val videoProportion = videoView.height.toFloat() / videoView.width
+        val videoProportion = videoView.height.toDouble() / videoView.width
 
-        val screenWidth = resources.displayMetrics.widthPixels
-        val screenHeight = resources.displayMetrics.heightPixels
-        val screenProportion = screenHeight.toFloat() / screenWidth
+        val screenWidth = container.width
+        val screenHeight = container.height
+        val screenProportion = screenHeight.toDouble() / screenWidth
 
         val layoutParams = videoView.layoutParams
 
         if (videoProportion < screenProportion) {
             layoutParams.height = screenHeight
-            layoutParams.width = (screenHeight.toFloat() / videoProportion).toInt()
+            layoutParams.width = (screenHeight.toDouble() / videoProportion).toInt()
         } else {
             layoutParams.width = screenWidth
-            layoutParams.height = (screenWidth.toFloat() * videoProportion).toInt()
+            layoutParams.height = (screenWidth.toDouble() * videoProportion).toInt()
         }
         videoView.layoutParams = layoutParams
     }
