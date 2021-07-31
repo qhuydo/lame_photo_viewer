@@ -22,7 +22,9 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
     internal val binding by lazy { ActivityPhotosPagerBinding.inflate(layoutInflater) }
 
-    override val navHostFragment by lazy { supportFragmentManager.findFragmentById(R.id.navHostFragmentPager) as NavHostFragment }
+    override val navHostFragment by lazy {
+        supportFragmentManager.findFragmentById(R.id.navHostFragmentPager) as NavHostFragment
+    }
 
     private val navController by lazy { navHostFragment.navController }
 
@@ -32,7 +34,7 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
     override val appBarConfiguration by lazy {
         AppBarConfiguration(
-                setOf(R.id.homeViewPagerFragment), drawerLayout
+            setOf(R.id.homeViewPagerFragment), drawerLayout
         )
     }
 
@@ -55,7 +57,7 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
             Handler(Looper.getMainLooper()).postDelayed({
                 when (item.itemId) {
                     else -> NavigationUI.onNavDestinationSelected(
-                            item, navController
+                        item, navController
                     ) || onOptionsItemSelected(item)
                 }
             }, 300)
@@ -65,7 +67,7 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
     override fun addOnDestinationChangedListener() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val newState = destination.id in arrayOf(
-                    R.id.homeViewPagerFragment
+                R.id.homeViewPagerFragment
             )
             setAppbarVisibility(newState)
 
@@ -74,7 +76,7 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
             when (destination.id) {
                 R.id.photoViewFragment -> {
                     val layoutParams =
-                            binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
+                        binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
                     layoutParams.topMargin = 0
                 }
             }
@@ -132,10 +134,10 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return NavigationUI.onNavDestinationSelected(
-                item,
-                navController
+            item,
+            navController
         ) || super.onOptionsItemSelected(
-                item
+            item
         )
     }
 
@@ -150,7 +152,7 @@ class PhotosPagerActivity : AbstractPhotosActivity() {
 
     override fun setNavHostFragmentTopMargin(pixelValue: Int) {
         val layoutParams =
-                binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
+            binding.navHostFragmentPager.layoutParams as CoordinatorLayout.LayoutParams
         layoutParams.topMargin = pixelValue
     }
 

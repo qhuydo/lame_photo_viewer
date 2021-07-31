@@ -13,10 +13,10 @@ import com.hcmus.clc18se.photos.databinding.ItemAlbumListBinding
 import com.hcmus.clc18se.photos.databinding.ItemAlbumListGridBinding
 
 class AlbumListAdapter(
-        private val adapterItemType: Int = ITEM_TYPE_GRID,
-        private val adapterItemSize: Int = ITEM_SIZE_MEDIUM,
-        private val allowLongClick: Boolean = false,
-        private val callbacks: AlbumListAdapterCallbacks,
+    private val adapterItemType: Int = ITEM_TYPE_GRID,
+    private val adapterItemSize: Int = ITEM_SIZE_MEDIUM,
+    private val allowLongClick: Boolean = false,
+    private val callbacks: AlbumListAdapterCallbacks,
 ) : ListAdapter<Album, AlbumListAdapter.ViewHolder>(Album.DiffCallBack()) {
 
     companion object {
@@ -46,14 +46,15 @@ class AlbumListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-            ViewHolder.from(parent, viewType, adapterItemSize)
+        ViewHolder.from(parent, viewType, adapterItemSize)
 
     override fun getItemViewType(position: Int): Int {
         return adapterItemType
     }
 
-    class ViewHolder(val binding: ViewDataBinding,
-                     private val itemSize: Int = ITEM_SIZE_MEDIUM
+    class ViewHolder(
+        val binding: ViewDataBinding,
+        private val itemSize: Int = ITEM_SIZE_MEDIUM
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(album: Album) {
             when (binding) {
@@ -67,9 +68,11 @@ class AlbumListAdapter(
         }
 
         companion object {
-            fun from(parent: ViewGroup,
-                     viewType: Int,
-                     itemSize: Int = ITEM_SIZE_MEDIUM): ViewHolder {
+            fun from(
+                parent: ViewGroup,
+                viewType: Int,
+                itemSize: Int = ITEM_SIZE_MEDIUM
+            ): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = when (viewType) {
                     ITEM_TYPE_LIST -> ItemAlbumListBinding.inflate(layoutInflater)

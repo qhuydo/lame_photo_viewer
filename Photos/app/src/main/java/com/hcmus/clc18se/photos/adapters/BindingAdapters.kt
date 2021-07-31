@@ -56,12 +56,12 @@ fun bindSampleAlbumListRecyclerView(recyclerView: RecyclerView, data: List<Album
 fun bindImage(imgView: ImageView, imgRes: Int?) {
     imgRes?.let {
         val requestOptions = RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
 
         Glide.with(imgView.context)
-                .load(imgRes)
-                .apply(requestOptions)
-                .into(imgView)
+            .load(imgRes)
+            .apply(requestOptions)
+            .into(imgView)
     }
 }
 
@@ -70,13 +70,13 @@ fun bindImage(imgView: ImageView, imgUri: Uri?) {
 
     imgUri?.let {
         val requestOptions = RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
 
         Glide.with(imgView.context)
-                .load(imgUri)
-                .apply(requestOptions)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(imgView)
+            .load(imgUri)
+            .apply(requestOptions)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(imgView)
     }
 }
 
@@ -85,12 +85,12 @@ fun bindImage(imgView: ImageView, bitmap: Bitmap?) {
 
     bitmap?.let {
         val requestOptions = RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
 
         Glide.with(imgView.context)
-                .load(bitmap)
-                .apply(requestOptions)
-                .into(imgView)
+            .load(bitmap)
+            .apply(requestOptions)
+            .into(imgView)
     }
 }
 
@@ -104,13 +104,13 @@ fun bindImage(imgView: ImageView, uri: Uri, mimeType: String?) {
         isSVG(mimeType) -> {
 
             Glide.with(imgView.context)
-                    .`as`(PictureDrawable::class.java)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .listener(SvgSoftwareLayerSetter())
-                    .load(uri)
-                    .error(R.drawable.ic_launcher_grey_sample)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(imgView)
+                .`as`(PictureDrawable::class.java)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .listener(SvgSoftwareLayerSetter())
+                .load(uri)
+                .error(R.drawable.ic_launcher_grey_sample)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(imgView)
 
         }
         isVideo(mimeType) -> {
@@ -120,17 +120,17 @@ fun bindImage(imgView: ImageView, uri: Uri, mimeType: String?) {
             // Timber.d("Path ${mediaItem.requirePath(imgView.context)}")
 
             Glide.with(imgView.context)
-                    .asBitmap()
-                    .load(uri)
-                    .transition(BitmapTransitionOptions.withCrossFade())
-                    .into(imgView)
+                .asBitmap()
+                .load(uri)
+                .transition(BitmapTransitionOptions.withCrossFade())
+                .into(imgView)
         }
         else -> {
             Glide.with(imgView.context)
-                    .load(uri)
-                    //.apply(requestOptions)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(imgView)
+                .load(uri)
+                //.apply(requestOptions)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(imgView)
         }
     }
 }
@@ -193,12 +193,13 @@ fun selectAlbumThumbnail(image: ImageView, album: Album?) {
         } else {
             image.resources.obtainTypedArray(R.array.sample_photos).use { samplePhotos ->
                 val sampleResId = samplePhotos.getResourceId(
-                        (0 until samplePhotos.length()).random(),
-                        R.drawable.ic_launcher_indigo_sample)
+                    (0 until samplePhotos.length()).random(),
+                    R.drawable.ic_launcher_indigo_sample
+                )
 
                 Glide.with(image.context)
-                        .load(sampleResId)
-                        .into(image)
+                    .load(sampleResId)
+                    .into(image)
             }
         }
     }

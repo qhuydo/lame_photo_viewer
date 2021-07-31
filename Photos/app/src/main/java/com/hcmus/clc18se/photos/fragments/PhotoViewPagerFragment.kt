@@ -1,6 +1,5 @@
 package com.hcmus.clc18se.photos.fragments
 
-import android.R.attr.*
 import android.app.Activity
 import android.app.Dialog
 import android.content.*
@@ -26,10 +25,10 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
 import com.hcmus.clc18se.photos.BuildConfig
 import com.hcmus.clc18se.photos.R
+import com.hcmus.clc18se.photos.VideoDialogActivity
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
-import com.hcmus.clc18se.photos.VideoDialogActivity
 import com.hcmus.clc18se.photos.utils.images.GPSImage
 import com.hcmus.clc18se.photos.utils.images.SingleMediaScanner
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
@@ -89,9 +88,9 @@ class PhotoViewPagerFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         binding = PhotoViewPagerPageBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
@@ -103,7 +102,7 @@ class PhotoViewPagerFragment : Fragment() {
         actionBar = (activity as AppCompatActivity).supportActionBar
 
         binding.imageView.setOnImageEventListener(object :
-                SubsamplingScaleImageView.OnImageEventListener {
+            SubsamplingScaleImageView.OnImageEventListener {
 
             override fun onImageLoadError(e: Exception?) {
                 binding.progressCircular.visibility = View.GONE
@@ -186,14 +185,14 @@ class PhotoViewPagerFragment : Fragment() {
             R.id.action_change_place -> {
 
                 val intent = PlaceAutocomplete.IntentBuilder()
-                        .accessToken(BuildConfig.MAPBOX_TOKEN)
-                        .placeOptions(
-                                PlaceOptions.builder()
-                                        .backgroundColor(Color.parseColor("#EEEEEE"))
-                                        .limit(5)
-                                        .build(PlaceOptions.MODE_CARDS)
-                        )
-                        .build(requireActivity())
+                    .accessToken(BuildConfig.MAPBOX_TOKEN)
+                    .placeOptions(
+                        PlaceOptions.builder()
+                            .backgroundColor(Color.parseColor("#EEEEEE"))
+                            .limit(5)
+                            .build(PlaceOptions.MODE_CARDS)
+                    )
+                    .build(requireActivity())
                 startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
                 true
             }
@@ -241,8 +240,8 @@ class PhotoViewPagerFragment : Fragment() {
                     put(MediaStore.Images.Media.IS_PENDING, 1)
                 }
                 imageUri = resolver.insert(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        contentValues
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    contentValues
                 )
                 resolver.openOutputStream(imageUri!!, "w")?.use { outputStream ->
                     mediaItem?.requireUri()?.toFile()?.inputStream()?.use { fileInputStream ->
@@ -254,7 +253,11 @@ class PhotoViewPagerFragment : Fragment() {
                 mediaItem?.requireUri()?.toFile()?.copyTo(fileSave)
             }
         } catch (e: IOException) {
-            Toast.makeText(requireContext(), getString(R.string.image_saved_fail), Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.image_saved_fail),
+                Toast.LENGTH_LONG
+            ).show()
             return false
         }
 
@@ -268,13 +271,13 @@ class PhotoViewPagerFragment : Fragment() {
             resolver.openFileDescriptor(imageUri, "rw")?.use {
                 // set Exif attribute so MediaStore.Images.Media.DATE_TAKEN will be set
                 ExifInterface(it.fileDescriptor)
-                        .apply {
-                            setAttribute(
-                                    ExifInterface.TAG_DATETIME_ORIGINAL,
-                                    exifDateFormatter.format(Date())
-                            )
-                            saveAttributes()
-                        }
+                    .apply {
+                        setAttribute(
+                            ExifInterface.TAG_DATETIME_ORIGINAL,
+                            exifDateFormatter.format(Date())
+                        )
+                        saveAttributes()
+                    }
             }
         }
         SingleMediaScanner(requireContext(), fileSave)
@@ -293,8 +296,8 @@ class PhotoViewPagerFragment : Fragment() {
 
     private fun setAs() {
         val intent = Intent(Intent.ACTION_ATTACH_DATA)
-                .setDataAndType(mediaItem?.requireUri(), mediaItem?.mimeType)
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .setDataAndType(mediaItem?.requireUri(), mediaItem?.mimeType)
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
@@ -369,9 +372,9 @@ class PhotoViewPagerFragment : Fragment() {
                 fileDest1 = File(directory, newName)
                 if (fileDest1.exists()) {
                     Toast.makeText(
-                            requireContext(),
-                            R.string.failed_filename_exist_again,
-                            Toast.LENGTH_SHORT
+                        requireContext(),
+                        R.string.failed_filename_exist_again,
+                        Toast.LENGTH_SHORT
                     ).show()
                 } else {
                     copyToInternal(fileDest1)
@@ -391,16 +394,16 @@ class PhotoViewPagerFragment : Fragment() {
             positiveButton {
                 val newName = "${getInputField().text}${
                     mediaItem!!.name.substring(
-                            mediaItem!!.name.lastIndexOf(".")
+                        mediaItem!!.name.lastIndexOf(".")
                     )
                 }"
                 val fileDest = File("${path!!.substring(0, path.lastIndexOf("/") + 1)}$newName")
 
                 if (fileDest.exists()) {
                     Toast.makeText(
-                            requireContext(),
-                            getString(R.string.file_duplicate_warning_dialog_title),
-                            Toast.LENGTH_SHORT
+                        requireContext(),
+                        getString(R.string.file_duplicate_warning_dialog_title),
+                        Toast.LENGTH_SHORT
                     ).show()
                 } else {
                     try {
@@ -410,17 +413,17 @@ class PhotoViewPagerFragment : Fragment() {
                         contentResolver.update(mediaItem!!.requireUri(), contentValues, null, null)
 
                         Toast.makeText(
-                                requireContext(),
-                                getString(R.string.rename_succeed),
-                                Toast.LENGTH_SHORT
+                            requireContext(),
+                            getString(R.string.rename_succeed),
+                            Toast.LENGTH_SHORT
                         ).show()
                         (requireActivity() as AppCompatActivity).supportActionBar?.title = newName
 
                     } catch (e: Exception) {
                         Toast.makeText(
-                                requireContext(),
-                                getString(R.string.rename_unsucceed),
-                                Toast.LENGTH_SHORT
+                            requireContext(),
+                            getString(R.string.rename_unsucceed),
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
@@ -437,7 +440,7 @@ class PhotoViewPagerFragment : Fragment() {
             inputStream = requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
             inputStream?.copyTo(outputStream)
             Toast.makeText(requireContext(), getString(R.string.move_succeed), Toast.LENGTH_SHORT)
-                    .show()
+                .show()
         } catch (e: java.lang.Exception) {
             Toast.makeText(context, getString(R.string.move_unsucceed), Toast.LENGTH_SHORT).show()
         } finally {
@@ -448,13 +451,13 @@ class PhotoViewPagerFragment : Fragment() {
 
     private fun openWith() {
         val intent = Intent(Intent.ACTION_VIEW)
-                .setDataAndType(mediaItem?.requireUri(), mediaItem?.mimeType)
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .setDataAndType(mediaItem?.requireUri(), mediaItem?.mimeType)
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
         } catch (anfe: ActivityNotFoundException) {
             Toast.makeText(requireContext(), getString(R.string.no_app_found), Toast.LENGTH_SHORT)
-                    .show()
+                .show()
             anfe.printStackTrace()
         }
     }
@@ -462,11 +465,11 @@ class PhotoViewPagerFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val viewModel: PhotosViewModel by navGraphViewModels(
-                (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
+            (requireActivity() as AbstractPhotosActivity).getNavGraphResId()
         ) {
             PhotosViewModelFactory(
-                    requireActivity().application,
-                    PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
+                requireActivity().application,
+                PhotosDatabase.getInstance(requireContext()).photosDatabaseDao
             )
         }
         this.viewModel = viewModel
@@ -494,14 +497,18 @@ class PhotoViewPagerFragment : Fragment() {
                 AUTOCOMPLETE_REQUEST_CODE -> {
                     val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
                     val latlo = LatLng(
-                            (selectedCarmenFeature.geometry() as Point).latitude(),
-                            ((selectedCarmenFeature.geometry()) as Point).longitude()
+                        (selectedCarmenFeature.geometry() as Point).latitude(),
+                        ((selectedCarmenFeature.geometry()) as Point).longitude()
                     )
                     val lati = latlo.latitude
                     val longti = latlo.longitude
                     val gpsImage = GPSImage(mediaItem!!.requirePath(requireContext()))
                     gpsImage.geoTag(lati, longti)
-                    Toast.makeText(requireContext(), getString(R.string.change_place_success), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.change_place_success),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -512,7 +519,7 @@ class PhotoViewPagerFragment : Fragment() {
 
         val treeUri = data.data
         var fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                ?.findFile(mediaItem!!.name)
+            ?.findFile(mediaItem!!.name)
 
         if (fileDest != null) {
             MaterialDialog(requireContext()).show {
@@ -528,21 +535,21 @@ class PhotoViewPagerFragment : Fragment() {
                         positiveButton {
                             val newName = "${getInputField().text}${
                                 mediaItem!!.name.substring(
-                                        mediaItem!!.name.lastIndexOf(".")
+                                    mediaItem!!.name.lastIndexOf(".")
                                 )
                             }"
                             fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                                    ?.findFile(newName)
+                                ?.findFile(newName)
                             if (fileDest != null) {
                                 Toast.makeText(
-                                        requireContext(),
-                                        R.string.failed_filename_exist_again,
-                                        Toast.LENGTH_SHORT
+                                    requireContext(),
+                                    R.string.failed_filename_exist_again,
+                                    Toast.LENGTH_SHORT
                                 ).show()
                             } else {
                                 dismiss()
                                 fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                                        ?.createFile(mediaItem!!.mimeType!!, newName)
+                                    ?.createFile(mediaItem!!.mimeType!!, newName)
                                 moveFile(fileDest)
                             }
                         }
@@ -556,7 +563,7 @@ class PhotoViewPagerFragment : Fragment() {
             }
         } else {
             fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                    ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
+                ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
             moveFile(fileDest)
         }
 
@@ -566,7 +573,7 @@ class PhotoViewPagerFragment : Fragment() {
 
         val treeUri = data.data
         var fileDest =
-                DocumentFile.fromTreeUri(requireContext(), treeUri!!)?.findFile(mediaItem!!.name)
+            DocumentFile.fromTreeUri(requireContext(), treeUri!!)?.findFile(mediaItem!!.name)
 
         if (fileDest != null) {
             MaterialDialog(requireContext()).show {
@@ -582,21 +589,21 @@ class PhotoViewPagerFragment : Fragment() {
                         positiveButton {
                             val newName = "${getInputField().text}${
                                 mediaItem!!.name.substring(
-                                        mediaItem!!.name.lastIndexOf(".")
+                                    mediaItem!!.name.lastIndexOf(".")
                                 )
                             }"
                             fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                                    ?.findFile(newName)
+                                ?.findFile(newName)
                             if (fileDest != null) {
                                 Toast.makeText(
-                                        requireContext(),
-                                        R.string.failed_filename_exist_again,
-                                        Toast.LENGTH_SHORT
+                                    requireContext(),
+                                    R.string.failed_filename_exist_again,
+                                    Toast.LENGTH_SHORT
                                 ).show()
                             } else {
                                 dismiss()
                                 fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                                        ?.createFile(mediaItem!!.mimeType!!, newName)
+                                    ?.createFile(mediaItem!!.mimeType!!, newName)
                                 copyFile(fileDest)
                             }
                         }
@@ -610,7 +617,7 @@ class PhotoViewPagerFragment : Fragment() {
             }
         } else {
             fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
-                    ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
+                ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
             copyFile(fileDest)
         }
     }
@@ -619,7 +626,7 @@ class PhotoViewPagerFragment : Fragment() {
         try {
             val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
             val inputStream =
-                    requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
+                requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
             inputStream!!.copyTo(outputStream!!)
             inputStream.close()
             outputStream.close()
@@ -640,16 +647,17 @@ class PhotoViewPagerFragment : Fragment() {
             }
         } catch (e: Exception) {
             Toast.makeText(
-                    context,
-                    getString(R.string.move_unsucceed),
-                    Toast.LENGTH_SHORT
+                context,
+                getString(R.string.move_unsucceed),
+                Toast.LENGTH_SHORT
             ).show()
         }
     }
 
     private fun createFileToSave(): File {
         val timeStamp = SimpleDateFormat("yyyy_dd_MM_HH_mm_ss", Locale.ROOT).format(Date())
-        val environment = if (mediaItem!!.isVideo()) Environment.DIRECTORY_MOVIES else Environment.DIRECTORY_PICTURES
+        val environment =
+            if (mediaItem!!.isVideo()) Environment.DIRECTORY_MOVIES else Environment.DIRECTORY_PICTURES
         val folder = Environment.getExternalStoragePublicDirectory(environment)
         val extension = File(mediaItem!!.requirePath(requireContext())!!).extension
         val fileName = if (extension.isEmpty()) timeStamp else "$timeStamp.$extension"
@@ -661,17 +669,17 @@ class PhotoViewPagerFragment : Fragment() {
         try {
             val outputStream = requireContext().contentResolver.openOutputStream(fileDest!!.uri)
             val inputStream =
-                    requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
+                requireContext().contentResolver.openInputStream(mediaItem!!.requireUri())
             inputStream!!.copyTo(outputStream!!)
             inputStream.close()
             outputStream.close()
             Toast.makeText(context, getString(R.string.copy_succeed), Toast.LENGTH_SHORT)
-                    .show()
+                .show()
         } catch (e: Exception) {
             Toast.makeText(
-                    context,
-                    getString(R.string.copy_file_unsucceed),
-                    Toast.LENGTH_SHORT
+                context,
+                getString(R.string.copy_file_unsucceed),
+                Toast.LENGTH_SHORT
             ).show()
         }
     }

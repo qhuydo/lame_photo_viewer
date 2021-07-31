@@ -24,7 +24,11 @@ class PhotosActivity : AbstractPhotosActivity() {
 
     internal val binding by lazy { ActivityPhotosBinding.inflate(layoutInflater) }
 
-    override val navHostFragment: NavHostFragment by lazy { supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment }
+    override val navHostFragment: NavHostFragment by lazy {
+        supportFragmentManager.findFragmentById(
+            R.id.navHostFragment
+        ) as NavHostFragment
+    }
 
     private val navController by lazy { navHostFragment.navController }
 
@@ -34,20 +38,26 @@ class PhotosActivity : AbstractPhotosActivity() {
 
     override val appBarConfiguration: AppBarConfiguration by lazy {
         AppBarConfiguration(
-                setOf(R.id.page_photo, R.id.page_album, R.id.page_people), drawerLayout
+            setOf(R.id.page_photo, R.id.page_album, R.id.page_people), drawerLayout
         )
     }
 
     private fun handleSendImage(intent: Intent) {
         val sendingIntent = Intent(this, ViewPhotoActivity::class.java)
-        sendingIntent.putExtra(Intent.EXTRA_STREAM, intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM))
+        sendingIntent.putExtra(
+            Intent.EXTRA_STREAM,
+            intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM)
+        )
         startActivity(sendingIntent)
         finish()
     }
 
     private fun handleSendImageVideo(intent: Intent) {
         val sendingIntent = Intent(this, VideoDialogActivity::class.java)
-        sendingIntent.putExtra("uri", intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)
+        sendingIntent.putExtra(
+            "uri",
+            intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri
+        )
         startActivity(sendingIntent)
         finish()
     }
@@ -110,7 +120,7 @@ class PhotosActivity : AbstractPhotosActivity() {
             Handler(Looper.getMainLooper()).postDelayed({
                 when (item.itemId) {
                     else -> NavigationUI.onNavDestinationSelected(
-                            item, navController
+                        item, navController
                     ) || onOptionsItemSelected(item)
                 }
             }, 300)
@@ -120,9 +130,9 @@ class PhotosActivity : AbstractPhotosActivity() {
     override fun addOnDestinationChangedListener() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val newState = destination.id in arrayOf(
-                    R.id.page_photo,
-                    R.id.page_people,
-                    R.id.page_album,
+                R.id.page_photo,
+                R.id.page_people,
+                R.id.page_album,
             )
 
             bottomAppBarVisibility = newState
@@ -197,13 +207,13 @@ class PhotosActivity : AbstractPhotosActivity() {
 
     private fun setBottomAppBarVisibility() {
         binding.bottomAppBar.visibility =
-                if (!displayBottomBarPreference()) View.INVISIBLE else View.VISIBLE
+            if (!displayBottomBarPreference()) View.INVISIBLE else View.VISIBLE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return NavigationUI.onNavDestinationSelected(
-                item,
-                navController
+            item,
+            navController
         ) || super.onOptionsItemSelected(item)
     }
 

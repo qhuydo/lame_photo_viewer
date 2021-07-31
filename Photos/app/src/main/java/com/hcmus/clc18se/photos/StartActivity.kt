@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,7 +24,7 @@ import com.hcmus.clc18se.photos.databinding.ActivityMainBinding
  * That configuration can be found in the app settings.
 
  */
-class StartActivity: AppCompatActivity() {
+class StartActivity : AppCompatActivity() {
 
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
@@ -51,7 +50,8 @@ class StartActivity: AppCompatActivity() {
     }
 
     private fun jumpToAnotherActivity() {
-        val bottomAppBarPref = preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0")
+        val bottomAppBarPref =
+            preferences.getString(getString(R.string.app_bottom_bar_navigation_key), "0")
         val usingTabLayout = bottomAppBarPref == TAB_LAYOUT_OPTION
         if (usingTabLayout) {
             startActivity(Intent(this, PhotosPagerActivity::class.java))
@@ -63,16 +63,16 @@ class StartActivity: AppCompatActivity() {
 
     private fun haveStoragePermission(): Boolean {
         return ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+            this,
+            Manifest.permission.READ_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun requestPermission() {
         if (!haveStoragePermission()) {
             val permissions = arrayOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
             ActivityCompat.requestPermissions(this, permissions, READ_EXTERNAL_STORAGE_REQUEST)
         } else {
@@ -80,12 +80,17 @@ class StartActivity: AppCompatActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             READ_EXTERNAL_STORAGE_REQUEST -> {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.isNotEmpty()
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     jumpToAnotherActivity()
                 } else {
                     goToSettings()
@@ -99,7 +104,10 @@ class StartActivity: AppCompatActivity() {
      * Go to the application settings to grant permissions.
      */
     private fun goToSettings() {
-        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")).apply {
+        Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.parse("package:$packageName")
+        ).apply {
             addCategory(Intent.CATEGORY_DEFAULT)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }.also { intent ->
