@@ -1,5 +1,6 @@
 package com.hcmus.clc18se.photos.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.Toolbar
@@ -40,6 +41,7 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
             viewModel.startNavigatingToPhotoList(album)
         }
 
+        @SuppressLint("CheckResult")
         override fun onLongClick(album: Album) {
             val rename = 0
             val remove = 1
@@ -116,6 +118,7 @@ class CustomAlbumsFragment : AbstractAlbumFragment() {
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun showChooseNameDialog(actionOfPositiveButton: (MaterialDialog) -> Unit) = MaterialDialog(requireContext()).show {
         lifecycleOwner(this@CustomAlbumsFragment)
         title(R.string.add_album_dialog_hint)

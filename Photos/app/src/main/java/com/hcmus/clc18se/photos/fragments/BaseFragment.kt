@@ -60,7 +60,7 @@ abstract class BaseFragment : Fragment() {
         val parentActivity = requireActivity() as? AbstractPhotosActivity
 
         if (parentActivity == null) {
-            Timber.e("Parent activity of fragment ${this.tag} is not BuggyNoteActivity")
+            Timber.e("Parent activity of fragment ${this.tag} is not AbstractPhotosActivity")
         }
 
         parentActivity?.setSupportActionBar(toolbar)
@@ -75,6 +75,11 @@ abstract class BaseFragment : Fragment() {
             toolbar.setupWithNavController(findNavController(), it.appBarConfiguration)
         }
         titleRes?.let { toolbar.title = getString(titleRes) }
+    }
+
+    override fun onDestroy() {
+        hideTheToolbar()
+        super.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

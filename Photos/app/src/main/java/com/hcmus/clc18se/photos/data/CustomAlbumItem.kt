@@ -2,10 +2,9 @@ package com.hcmus.clc18se.photos.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "custom_album_item", indices = [Index("id", unique = true)])
+@Entity(tableName = "custom_album_item")
 data class CustomAlbumItem(
 
         @PrimaryKey(autoGenerate = true)
