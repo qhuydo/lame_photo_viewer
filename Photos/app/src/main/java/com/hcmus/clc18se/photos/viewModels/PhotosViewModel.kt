@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.RecoverableSecurityException
 import android.content.*
 import android.database.ContentObserver
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -300,8 +301,8 @@ class PhotosViewModel(
 
     fun insertPhotosIntoSelectedAlbum(mediaItems: List<MediaItem>) {
         if (customAlbum.value == null
-                || (customAlbum.value != null
-                        && customAlbum.value!!.customAlbumId == null)
+            || (customAlbum.value != null
+                    && customAlbum.value!!.customAlbumId == null)
         ) {
             return
         }

@@ -18,7 +18,8 @@ val imageMimeTypes = arrayOf(
     "image/webp",
 )
 
-val videoMimeTypes = arrayOf("video/*",
+val videoMimeTypes = arrayOf(
+    "video/*",
     "video/mp4",
     "video/x-matroska",
     "video/webm",
@@ -115,11 +116,12 @@ fun getFileName(context: Context, uri: Uri): String? {
 // https://stackoverflow.com/questions/3401579/get-filename-and-path-from-uri-from-mediastore
 fun getRealPathFromURI(context: Context, contentUri: Uri?): String? {
     val projection = arrayOf(MediaStore.Files.FileColumns.DATA)
-    val cursor = context.contentResolver.query(contentUri!!,
-            projection,
-            null,
-            null,
-            null
+    val cursor = context.contentResolver.query(
+        contentUri!!,
+        projection,
+        null,
+        null,
+        null
     )
 
     return cursor?.use {

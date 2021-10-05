@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import timber.log.Timber
 import java.io.*
+import java.util.*
 
 
 /**
@@ -80,11 +81,10 @@ fun ContentResolver.getMimeType(uri: Uri): String? {
         getType(uri)
     } else {
         val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
-            uri
-                .toString()
+            uri.toString()
         )
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-            fileExtension.toLowerCase()
+            fileExtension.lowercase(Locale.getDefault())
         )
     }
 }

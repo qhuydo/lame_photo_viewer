@@ -528,7 +528,7 @@ abstract class AbstractPhotoListFragment(
             title(R.string.delete_warning_dialog_title)
             message(R.string.delete_warning_dialog_msg)
             positiveButton(R.string.yes) {
-                GlobalScope.launch {
+                lifecycleScope.launch {
                     requireContext().contentResolver.deleteMultipleMediaItems(adapter.getSelectedItems())
                     withContext(Dispatchers.Main) {
                         mainCab?.destroy()

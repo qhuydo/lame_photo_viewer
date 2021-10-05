@@ -148,16 +148,16 @@ fun bindScaleImage(imgView: SubsamplingScaleImageView, imgUri: Uri?, debug: Bool
 @BindingAdapter(value = ["mediaItem", "debug"], requireAll = false)
 fun SubsamplingScaleImageView.bindMediaItem(mediaItem: MediaItem?, debug: Boolean?) {
     mediaItem?.let {
-        when {
+        visibility = when {
             it.isSupportedStaticImage() -> {
                 bindScaleImage(this, it.requireUri(), debug ?: false)
-                visibility = View.VISIBLE
+                View.VISIBLE
             }
             it.isSVG() -> {
                 MediaItem.bindSvgToSubScaleImageView(it, this)
-                visibility = View.VISIBLE
+                View.VISIBLE
             }
-            else -> visibility = View.GONE
+            else -> View.GONE
         }
     }
 }

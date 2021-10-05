@@ -161,7 +161,7 @@ class PhotoViewPagerFragment : Fragment() {
 
         // Display change geo location option only when media item contains exif
         val changePlaceAction = menu.findItem(R.id.action_change_place)
-        changePlaceAction.isVisible = mediaItem?.isSupportExif() ?: false
+        changePlaceAction?.isVisible = mediaItem?.isSupportExif() ?: false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

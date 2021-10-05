@@ -22,7 +22,7 @@ val DEFAULT_MEDIA_ITEM_PROJECTION = arrayOf(
     MediaStore.MediaColumns.BUCKET_DISPLAY_NAME,
     MediaStore.MediaColumns.DATE_ADDED,
     MediaStore.MediaColumns.DATE_MODIFIED,
-    MediaStore.MediaColumns.DATE_TAKEN,
+    MediaStore.Images.ImageColumns.DATE_TAKEN,
     BaseColumns._ID,
 )
 val DEFAULT_MEDIA_ITEM_SELECTION_ARGS: Array<String>? = null
