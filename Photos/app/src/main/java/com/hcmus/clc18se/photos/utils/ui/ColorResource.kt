@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.content.res.TypedArray
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -44,16 +43,16 @@ class ColorResource(
 
     private val colorResources by lazy {
         listOf(
-            R.color.red_500 to ICON_COLOR.RED,
-            R.color.deep_orange_500 to ICON_COLOR.ORANGE,
-            R.color.amber_500 to ICON_COLOR.YELLOW,
-            R.color.green_500 to ICON_COLOR.GREEN,
-            R.color.blue_500 to ICON_COLOR.BLUE,
-            R.color.indigo_500 to ICON_COLOR.INDIGO,
-            R.color.dark_purple_500 to ICON_COLOR.PURPLE,
-            R.color.pink_500 to ICON_COLOR.PINK,
-            R.color.brown_500 to ICON_COLOR.BROWN,
-            R.color.grey_500 to ICON_COLOR.GREY,
+            R.color.red_500 to IconColour.RED,
+            R.color.deep_orange_500 to IconColour.ORANGE,
+            R.color.amber_500 to IconColour.YELLOW,
+            R.color.green_500 to IconColour.GREEN,
+            R.color.blue_500 to IconColour.BLUE,
+            R.color.indigo_500 to IconColour.INDIGO,
+            R.color.dark_purple_500 to IconColour.PURPLE,
+            R.color.pink_500 to IconColour.PINK,
+            R.color.brown_500 to IconColour.BROWN,
+            R.color.grey_500 to IconColour.GREY,
         ).map { resources.getInteger(it.first) to it.second }
     }
 
@@ -121,10 +120,10 @@ class ColorResource(
                 application.getString(R.string.app_color_key),
                 R.color.indigo_500
             )
-            Timber.d("Color ${colorResourceMapper[newColor] ?: ICON_COLOR.INDIGO}")
+            Timber.d("Color ${colorResourceMapper[newColor] ?: IconColour.INDIGO}")
             setIcon(
                 packageManager, colorResourceMapper[newColor]
-                    ?: ICON_COLOR.INDIGO
+                    ?: IconColour.INDIGO
             )
         }
     }

@@ -58,7 +58,7 @@ class CustomAlbumViewModel(
     val reloadDataRequest: LiveData<Boolean>
         get() = _reloadDataRequest
 
-    fun requestReloadingData() {
+    private fun requestReloadingData() {
         _reloadDataRequest.postValue(true)
     }
 
@@ -75,14 +75,14 @@ class CustomAlbumViewModel(
     }
 
     suspend fun insertNewAlbum(name: String): Album {
-        val id = database.addNewCustomAlbum(CustomAlbumInfo(name = name))
+        database.addNewCustomAlbum(CustomAlbumInfo(name = name))
         loadAlbumsFromDatabase()
         return albums.value!!.first { album -> album.getName() == name }
     }
 
     fun updateAlbum(albumInfo: CustomAlbumInfo) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
-            val nCol = database.updateCustomAlbumInfo(albumInfo)
+            database.updateCustomAlbumInfo(albumInfo)
             loadAlbumsFromDatabase()
         }
     }
@@ -106,7 +106,7 @@ class CustomAlbumViewModel(
 
     fun removeCustomAlbum(albumInfo: CustomAlbumInfo) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
-            val nCol = database.deleteCustomAlbum(albumInfo)
+            database.deleteCustomAlbum(albumInfo)
             loadAlbumsFromDatabase()
         }
     }

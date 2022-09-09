@@ -6,13 +6,12 @@ import android.view.View
 import android.widget.MediaController
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
-import kotlin.math.floor
 
 class VideoDialogActivity : AppCompatActivity() {
 
     companion object {
-        val BUNDLE_CURRENT_POSITION = "BUNDLE_CURRENT_POSITION"
-        val BUNDLE_IS_PLAYING = "BUNDLE_IS_PLAYING"
+        const val BUNDLE_CURRENT_POSITION = "BUNDLE_CURRENT_POSITION"
+        const val BUNDLE_IS_PLAYING = "BUNDLE_IS_PLAYING"
     }
 
     private lateinit var uri: Uri

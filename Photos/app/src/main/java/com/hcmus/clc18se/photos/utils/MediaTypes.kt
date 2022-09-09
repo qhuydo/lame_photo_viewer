@@ -85,7 +85,7 @@ private fun checkExtension(path: String?, extensions: Array<String>): Boolean {
         return false
     }
     for (i in extensions) {
-        if (path.toLowerCase(Locale.ROOT).endsWith(i)) {
+        if (path.lowercase(Locale.ROOT).endsWith(i)) {
             return true
         }
     }

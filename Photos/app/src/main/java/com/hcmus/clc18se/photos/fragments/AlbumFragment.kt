@@ -67,7 +67,7 @@ class AlbumFragment : AbstractAlbumFragment() {
     }
 
     private fun initObservers() {
-        albumViewModel.albumList.observe(viewLifecycleOwner, {
+        albumViewModel.albumList.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.progressCircular.visibility = View.INVISIBLE
 //                albumViewModel.albumList.value?.let { list ->
@@ -75,17 +75,19 @@ class AlbumFragment : AbstractAlbumFragment() {
 //                    adapter.submitList(this@AlbumFragment.albumViewModel.albumList.value)
 //                }
             }
-        })
+        }
 
-        albumViewModel.navigateToPhotoList.observe(viewLifecycleOwner, {
+        albumViewModel.navigateToPhotoList.observe(viewLifecycleOwner) {
             if (it != null) {
                 this.findNavController().navigate(
-                        AlbumFragmentDirections.actionPageAlbumToPhotoListFragment(
-                                it.getName() ?: "???",
-                                it.bucketId!!))
+                    AlbumFragmentDirections.actionPageAlbumToPhotoListFragment(
+                        it.getName() ?: "???",
+                        it.bucketId!!
+                    )
+                )
                 albumViewModel.doneNavigatingToPhotoList()
             }
-        })
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

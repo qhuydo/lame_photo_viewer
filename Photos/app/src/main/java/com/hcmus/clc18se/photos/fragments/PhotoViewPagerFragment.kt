@@ -550,7 +550,7 @@ class PhotoViewPagerFragment : Fragment() {
                                 ).show()
                             } else {
                                 dismiss()
-                                fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                                fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri)
                                     ?.createFile(mediaItem!!.mimeType!!, newName)
                                 moveFile(fileDest)
                             }
@@ -564,7 +564,7 @@ class PhotoViewPagerFragment : Fragment() {
                 }
             }
         } else {
-            fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+            fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri)
                 ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
             moveFile(fileDest)
         }
@@ -594,7 +594,7 @@ class PhotoViewPagerFragment : Fragment() {
                                     mediaItem!!.name.lastIndexOf(".")
                                 )
                             }"
-                            fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                            fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri)
                                 ?.findFile(newName)
                             if (fileDest != null) {
                                 Toast.makeText(
@@ -604,7 +604,7 @@ class PhotoViewPagerFragment : Fragment() {
                                 ).show()
                             } else {
                                 dismiss()
-                                fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+                                fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri)
                                     ?.createFile(mediaItem!!.mimeType!!, newName)
                                 copyFile(fileDest)
                             }
@@ -618,7 +618,7 @@ class PhotoViewPagerFragment : Fragment() {
                 }
             }
         } else {
-            fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri!!)
+            fileDest = DocumentFile.fromTreeUri(requireContext(), treeUri)
                 ?.createFile(mediaItem!!.mimeType!!, mediaItem!!.name)
             copyFile(fileDest)
         }

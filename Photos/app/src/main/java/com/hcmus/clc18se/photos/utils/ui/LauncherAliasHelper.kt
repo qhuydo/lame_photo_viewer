@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import com.hcmus.clc18se.photos.BuildConfig
 import timber.log.Timber
 
-enum class ICON_COLOR {
+enum class IconColour {
     RED,
     ORANGE,
     YELLOW,
@@ -20,8 +20,8 @@ enum class ICON_COLOR {
     GREY
 }
 
-fun setIcon(packageManager: PackageManager, targetColor: ICON_COLOR) {
-    for (value in ICON_COLOR.values()) {
+fun setIcon(packageManager: PackageManager, targetColor: IconColour) {
+    for (value in IconColour.values()) {
         val action = if (value == targetColor) {
             PackageManager.COMPONENT_ENABLED_STATE_ENABLED
         } else {

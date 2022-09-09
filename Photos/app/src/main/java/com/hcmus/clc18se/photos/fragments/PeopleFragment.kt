@@ -14,7 +14,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.materialdialogs.DialogBehavior
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
@@ -30,7 +29,7 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 
 class PeopleFragment : BaseFragment() {
-    private var numberMediaItem = 0
+//    private var numberMediaItem = 0
     private lateinit var binding: FragmentPeopleBinding
     private lateinit var mBroadcast:BroadcastReceiver
 

@@ -13,7 +13,6 @@ import timber.log.Timber
 /**
  * Override application to setup Timber log instance
  */
-@Suppress("unused")
 class PhotosApplication : Application() {
     companion object{
         val newList = ArrayList<MediaItem>()

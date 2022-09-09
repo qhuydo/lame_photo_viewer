@@ -35,7 +35,7 @@ class HomeViewPagerFragment : BaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomePagerBinding.inflate(inflater, container, false)
         setUpTabsLayout()
         return binding.root

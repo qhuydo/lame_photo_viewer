@@ -11,10 +11,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.hcmus.clc18se.photos.databinding.ActivityPhotosPagerBinding
-import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.utils.ui.ViewAnimation
 import timber.log.Timber
 

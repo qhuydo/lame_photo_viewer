@@ -29,13 +29,13 @@ const val SEARCH_BAR_HEIGHT = 88
 const val DEFAULT_APP_BAR_HEIGHT = 56
 
 fun <T : ViewGroup.LayoutParams> setAppBarHeight(
-        appBarLayout: AppBarLayout, dp: Int,
-        activity: AppCompatActivity? = null
+    appBarLayout: AppBarLayout, dp: Int,
+    activity: AppCompatActivity? = null
 ) {
     @Suppress("UNCHECKED_CAST") val layoutParams = appBarLayout.layoutParams as T
     if (activity != null) {
         layoutParams.height = TypedValue.complexToDimensionPixelSize(
-                dp, activity.resources.displayMetrics
+            dp, activity.resources.displayMetrics
         )
     } else {
         layoutParams.height = dp

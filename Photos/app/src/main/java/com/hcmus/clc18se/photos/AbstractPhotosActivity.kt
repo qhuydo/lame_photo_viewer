@@ -21,7 +21,7 @@ import androidx.preference.PreferenceManager
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.utils.OnBackPressed
 import com.hcmus.clc18se.photos.utils.OnDirectionKeyDown
-import com.hcmus.clc18se.photos.utils.ui.ICON_COLOR
+import com.hcmus.clc18se.photos.utils.ui.IconColour
 import com.hcmus.clc18se.photos.viewModels.*
 import de.psdev.licensesdialog.LicensesDialogFragment
 import timber.log.Timber
@@ -189,7 +189,7 @@ abstract class AbstractPhotosActivity : AppCompatActivity() {
 
                 if (adaptiveIconColor) {
                     val currentIconColor = colorResource.getCurrentThemeColor()
-                    if (colorResource.colorResourceMapper[currentIconColor] != ICON_COLOR.INDIGO) {
+                    if (colorResource.colorResourceMapper[currentIconColor] != IconColour.INDIGO) {
                         colorResource.enableSetNewIconFlag()
                         colorResource.updateIcon(packageManager)
                     }

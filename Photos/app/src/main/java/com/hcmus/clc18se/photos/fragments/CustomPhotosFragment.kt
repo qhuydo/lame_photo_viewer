@@ -32,9 +32,7 @@ import com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModel
 import com.hcmus.clc18se.photos.viewModels.CustomAlbumViewModelFactory
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class CustomPhotosFragment : AbstractPhotoListFragment(R.menu.custom_photo_list) {

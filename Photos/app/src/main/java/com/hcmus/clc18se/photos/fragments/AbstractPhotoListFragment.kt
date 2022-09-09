@@ -38,7 +38,6 @@ import com.hcmus.clc18se.photos.utils.*
 import com.hcmus.clc18se.photos.utils.ui.isColorDark
 import com.hcmus.clc18se.photos.viewModels.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber

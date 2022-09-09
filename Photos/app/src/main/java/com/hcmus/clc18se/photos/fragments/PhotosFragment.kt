@@ -1,7 +1,9 @@
 package com.hcmus.clc18se.photos.fragments
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -11,8 +13,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
-import com.hcmus.clc18se.photos.StartActivity
 import com.hcmus.clc18se.photos.R
+import com.hcmus.clc18se.photos.StartActivity
 import com.hcmus.clc18se.photos.adapters.AdapterItem
 import com.hcmus.clc18se.photos.adapters.MediaItemListAdapter
 import com.hcmus.clc18se.photos.adapters.bindMediaListRecyclerView
@@ -24,7 +26,6 @@ import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
 import com.l4digital.fastscroll.FastScroller
 import timber.log.Timber
-import java.util.*
 
 class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
