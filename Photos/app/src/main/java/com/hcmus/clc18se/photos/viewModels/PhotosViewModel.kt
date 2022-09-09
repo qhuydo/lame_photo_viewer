@@ -327,7 +327,7 @@ class PhotosViewModelFactory(
         private val application: Application,
         private val database: PhotosDatabaseDao
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PhotosViewModel::class.java)) {
             return PhotosViewModel(application, database) as T
         }

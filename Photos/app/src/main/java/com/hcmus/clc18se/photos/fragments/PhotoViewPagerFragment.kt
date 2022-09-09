@@ -1,16 +1,19 @@
 package com.hcmus.clc18se.photos.fragments
 
+//import com.mapbox.geojson.Point
+//import com.mapbox.mapboxsdk.geometry.LatLng
+//import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
+//import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import android.app.Activity
 import android.app.Dialog
 import android.content.*
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.*
-import android.widget.*
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
@@ -23,21 +26,18 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.hcmus.clc18se.photos.AbstractPhotosActivity
-import com.hcmus.clc18se.photos.BuildConfig
 import com.hcmus.clc18se.photos.R
 import com.hcmus.clc18se.photos.VideoDialogActivity
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.database.PhotosDatabase
 import com.hcmus.clc18se.photos.databinding.PhotoViewPagerPageBinding
-import com.hcmus.clc18se.photos.utils.images.GPSImage
 import com.hcmus.clc18se.photos.utils.images.SingleMediaScanner
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModel
 import com.hcmus.clc18se.photos.viewModels.PhotosViewModelFactory
-import com.mapbox.geojson.Point
-import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -160,8 +160,10 @@ class PhotoViewPagerFragment : Fragment() {
         super.onPrepareOptionsMenu(menu)
 
         // Display change geo location option only when media item contains exif
-        val changePlaceAction = menu.findItem(R.id.action_change_place)
-        changePlaceAction?.isVisible = mediaItem?.isSupportExif() ?: false
+        if (!isSecret) {
+            val changePlaceAction = menu.findItem(R.id.action_change_place)
+            changePlaceAction?.isVisible = mediaItem?.isSupportExif() ?: false
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -184,16 +186,16 @@ class PhotoViewPagerFragment : Fragment() {
             }
             R.id.action_change_place -> {
 
-                val intent = PlaceAutocomplete.IntentBuilder()
-                    .accessToken(BuildConfig.MAPBOX_TOKEN)
-                    .placeOptions(
-                        PlaceOptions.builder()
-                            .backgroundColor(Color.parseColor("#EEEEEE"))
-                            .limit(5)
-                            .build(PlaceOptions.MODE_CARDS)
-                    )
-                    .build(requireActivity())
-                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
+//                val intent = PlaceAutocomplete.IntentBuilder()
+//                    .accessToken(BuildConfig.MAPBOX_TOKEN)
+//                    .placeOptions(
+//                        PlaceOptions.builder()
+//                            .backgroundColor(Color.parseColor("#EEEEEE"))
+//                            .limit(5)
+//                            .build(PlaceOptions.MODE_CARDS)
+//                    )
+//                    .build(requireActivity())
+//                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
                 true
             }
             R.id.action_move -> {
@@ -495,20 +497,20 @@ class PhotoViewPagerFragment : Fragment() {
                     actionMoveFile(data)
                 }
                 AUTOCOMPLETE_REQUEST_CODE -> {
-                    val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
-                    val latlo = LatLng(
-                        (selectedCarmenFeature.geometry() as Point).latitude(),
-                        ((selectedCarmenFeature.geometry()) as Point).longitude()
-                    )
-                    val lati = latlo.latitude
-                    val longti = latlo.longitude
-                    val gpsImage = GPSImage(mediaItem!!.requirePath(requireContext()))
-                    gpsImage.geoTag(lati, longti)
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.change_place_success),
-                        Toast.LENGTH_SHORT
-                    ).show()
+//                    val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
+//                    val latlo = LatLng(
+//                        (selectedCarmenFeature.geometry() as Point).latitude(),
+//                        ((selectedCarmenFeature.geometry()) as Point).longitude()
+//                    )
+//                    val lati = latlo.latitude
+//                    val longti = latlo.longitude
+//                    val gpsImage = GPSImage(mediaItem!!.requirePath(requireContext()))
+//                    gpsImage.geoTag(lati, longti)
+//                    Toast.makeText(
+//                        requireContext(),
+//                        getString(R.string.change_place_success),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
                 }
             }
         }

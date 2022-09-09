@@ -1,11 +1,9 @@
 package com.hcmus.clc18se.photos
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import com.hcmus.clc18se.photos.data.MediaItem
 import com.hcmus.clc18se.photos.databinding.ActivityViewPhotoBinding

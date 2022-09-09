@@ -34,7 +34,8 @@
             android:name=".StartActivity"
             android:configChanges="uiMode"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.Photos.Indigo.NoActionBar">
+            android:theme="@style/Theme.Photos.Indigo.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -43,7 +44,8 @@
         <activity
             android:name=".PhotosActivity"
             android:configChanges="uiMode|locale"
-            android:launchMode="standard">
+            android:launchMode="singleTask"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -84,7 +86,8 @@
             android:label="Lame Photo Viewer ViewPager"
             android:launchMode="singleTask"
             android:requestLegacyExternalStorage="true"
-            android:theme="@style/Theme.Photos.Indigo.NoActionBar">
+            android:theme="@style/Theme.Photos.Indigo.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -96,7 +99,8 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/edit_title"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Photos.Pink.NoActionBar">
+            android:theme="@style/Theme.Photos.Pink.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -106,7 +110,8 @@
 
         <activity
             android:name=".VideoDialogActivity"
-            android:label="@string/edit_title">
+            android:label="@string/edit_title"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -118,7 +123,8 @@
             android:icon="@mipmap/ic_launcher_red"
             android:roundIcon="@mipmap/ic_launcher_red_round"
             android:targetActivity=".StartActivity"
-            android:theme="@style/Theme.Photos.Red.NoActionBar">
+            android:theme="@style/Theme.Photos.Red.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -130,7 +136,8 @@
             android:enabled="false"
             android:icon="@mipmap/ic_launcher_blue"
             android:roundIcon="@mipmap/ic_launcher_blue_round"
-            android:targetActivity=".StartActivity">
+            android:targetActivity=".StartActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -142,7 +149,8 @@
             android:enabled="false"
             android:icon="@mipmap/ic_launcher_orange"
             android:roundIcon="@mipmap/ic_launcher_orange_round"
-            android:targetActivity=".StartActivity">
+            android:targetActivity=".StartActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -154,7 +162,8 @@
             android:enabled="false"
             android:icon="@mipmap/ic_launcher_yellow"
             android:roundIcon="@mipmap/ic_launcher_yellow_round"
-            android:targetActivity=".StartActivity">
+            android:targetActivity=".StartActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -166,7 +175,8 @@
             android:enabled="false"
             android:icon="@mipmap/ic_launcher_green"
             android:roundIcon="@mipmap/ic_launcher_green_round"
-            android:targetActivity=".StartActivity">
+            android:targetActivity=".StartActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -178,7 +188,8 @@
             android:enabled="true"
             android:icon="@mipmap/ic_launcher_indigo"
             android:roundIcon="@mipmap/ic_launcher_indigo_round"
-            android:targetActivity=".StartActivity">
+            android:targetActivity=".StartActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -202,7 +213,8 @@
             android:enabled="false"
             android:icon="@mipmap/ic_launcher_pink"
             android:roundIcon="@mipmap/ic_launcher_pink_round"
-            android:targetActivity=".StartActivity">
+            android:targetActivity=".StartActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -214,7 +226,8 @@
             android:enabled="false"
             android:icon="@mipmap/ic_launcher_brown"
             android:roundIcon="@mipmap/ic_launcher_brown_round"
-            android:targetActivity=".StartActivity">
+            android:targetActivity=".StartActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -226,7 +239,8 @@
             android:enabled="false"
             android:icon="@mipmap/ic_launcher_grey"
             android:roundIcon="@mipmap/ic_launcher_grey_round"
-            android:targetActivity=".StartActivity">
+            android:targetActivity=".StartActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

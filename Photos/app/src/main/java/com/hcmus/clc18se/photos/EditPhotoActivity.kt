@@ -22,16 +22,16 @@ import androidx.core.view.drawToBitmap
 import androidx.exifinterface.media.ExifInterface
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
+import com.canhub.cropper.CropImageView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hcmus.clc18se.photos.adapters.bindImage
 import com.hcmus.clc18se.photos.databinding.ActivityEditPhotoBinding
-import com.hcmus.clc18se.photos.utils.images.ConvolutionMatrix
-import com.hcmus.clc18se.photos.utils.images.DrawableImageView
 import com.hcmus.clc18se.photos.utils.UndoPhoto
 import com.hcmus.clc18se.photos.utils.getBitMap
+import com.hcmus.clc18se.photos.utils.images.ConvolutionMatrix
+import com.hcmus.clc18se.photos.utils.images.DrawableImageView
 import com.hcmus.clc18se.photos.utils.images.SingleMediaScanner
 import com.hcmus.clc18se.photos.utils.ui.allColorPaletteRes
-import com.theartofdev.edmodo.cropper.CropImageView
 import ja.burhanrashid52.photoeditor.OnSaveBitmap
 import ja.burhanrashid52.photoeditor.PhotoEditor
 import ja.burhanrashid52.photoeditor.PhotoEditorView
@@ -251,7 +251,11 @@ class EditPhotoActivity : AppCompatActivity() {
 
         if (isDraw) {
             alteredBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
-            viewDraw.setNewImage(alteredBitmap, queue[indexQueue].bitmap, queue[indexQueue].colorFilter)
+            viewDraw.setNewImage(
+                alteredBitmap,
+                queue[indexQueue].bitmap,
+                queue[indexQueue].colorFilter
+            )
         }
 
         if (isAddIcon) {
@@ -261,7 +265,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
         if (!isDraw && !isAddIcon) {
             binding.imageEdit.setImageBitmap(queue[indexQueue].bitmap)
-	        bitmap = queue[indexQueue].bitmap
+            bitmap = queue[indexQueue].bitmap
             binding.imageEdit.colorFilter = queue[indexQueue].colorFilter
             binding.progressCircular.visibility = View.INVISIBLE
         }
@@ -275,7 +279,11 @@ class EditPhotoActivity : AppCompatActivity() {
 
         if (isDraw) {
             alteredBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
-            viewDraw.setNewImage(alteredBitmap, queue[indexQueue].bitmap, queue[indexQueue].colorFilter)
+            viewDraw.setNewImage(
+                alteredBitmap,
+                queue[indexQueue].bitmap,
+                queue[indexQueue].colorFilter
+            )
         }
 
         if (isAddIcon) {
@@ -658,7 +666,7 @@ class EditPhotoActivity : AppCompatActivity() {
         if (isCrop) {
 
             viewCrop.let {
-                bitmap = it.croppedImage
+                bitmap = it.croppedImage!!
                 var scale = 1
                 val byteBitmap = bitmap.width * bitmap.height * 4
                 while (byteBitmap / scale / scale > 6000000) {
@@ -690,12 +698,14 @@ class EditPhotoActivity : AppCompatActivity() {
                     .setTransparencyEnabled(true)
                     .build()
                 photoEditor.saveAsBitmap(saveSettings, object : OnSaveBitmap {
-                    override fun onBitmapReady(saveBitmap: Bitmap) {
-                        bitmap = saveBitmap
-                        bindImage(binding.imageEdit, bitmap)
+                    override fun onBitmapReady(saveBitmap: Bitmap?) {
+                        if (saveBitmap != null) {
+                            bitmap = saveBitmap
+                            bindImage(binding.imageEdit, bitmap)
+                        }
                     }
 
-                    override fun onFailure(exception: Exception) {
+                    override fun onFailure(e: Exception?) {
 
                     }
                 })
@@ -763,9 +773,11 @@ class EditPhotoActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun undoImage(view: View) {
-        if (isDraw && viewDraw.checkDown == true)
-        {
-            addToQueue(viewDraw.drawable.toBitmap(bitmap.width, bitmap.height, bitmap.config),binding.imageEdit.colorFilter)
+        if (isDraw && viewDraw.checkDown == true) {
+            addToQueue(
+                viewDraw.drawable.toBitmap(bitmap.width, bitmap.height, bitmap.config),
+                binding.imageEdit.colorFilter
+            )
             viewDraw.checkDown = false
         }
         undoFromQueue()
@@ -773,9 +785,11 @@ class EditPhotoActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun redoImage(view: View) {
-        if (isDraw && viewDraw.checkDown == true)
-        {
-            addToQueue(viewDraw.drawable.toBitmap(bitmap.width, bitmap.height, bitmap.config),binding.imageEdit.colorFilter)
+        if (isDraw && viewDraw.checkDown == true) {
+            addToQueue(
+                viewDraw.drawable.toBitmap(bitmap.width, bitmap.height, bitmap.config),
+                binding.imageEdit.colorFilter
+            )
             viewDraw.checkDown = false
         }
         redoFromQueue()
@@ -806,50 +820,24 @@ class EditPhotoActivity : AppCompatActivity() {
         binding.fragmentContainerEditPhoto.visibility = View.INVISIBLE
         binding.addEditor.visibility = View.GONE
         binding.addIconConfigEditor.addIconConfigLayout.visibility = View.VISIBLE
-        viewAddIcon.getSource().setImageBitmap(bitmap);
-        viewAddIcon.getSource().setColorFilter(setColor(tempRed, tempGreen, tempBlue));
+        viewAddIcon.source.setImageBitmap(bitmap)
+        viewAddIcon.source.colorFilter = setColor(tempRed, tempGreen, tempBlue)
         binding.addIconEditor.addIconEditorLayout.visibility = View.VISIBLE
         binding.saveImage.visibility = View.INVISIBLE
         binding.rotate.visibility = View.INVISIBLE
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun rotateImage(view: View){
+    fun rotateImage(view: View) {
         val matrix = Matrix()
         matrix.postRotate(90F)
         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
-        addToQueue(bitmap,binding.imageEdit.colorFilter)
+        addToQueue(bitmap, binding.imageEdit.colorFilter)
         bindImage(binding.imageEdit, bitmap)
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun pickEmoji(view: View) {
-
-        val gridView = GridView(this)
-        val emojis = PhotoEditor.getEmojis(applicationContext)
-
-        val builder = AlertDialog.Builder(this).apply {
-            setView(gridView)
-        }
-
-        gridView.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            emojis
-        )
-
-        gridView.numColumns = 5
-        var dialog: AlertDialog? = null
-
-        gridView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            photoEditor.addEmoji(emojis.get(position))
-            isAddIcon = true
-            dialog!!.dismiss()
-        }
-
-        dialog = builder.create()
-        dialog.show()
-    }
+    fun pickEmoji(view: View) {}
 
     @Suppress("UNUSED_PARAMETER")
     fun onSaveImageButtonClick(view: View) {
@@ -953,7 +941,12 @@ class EditPhotoActivity : AppCompatActivity() {
             Intent.ACTION_PICK,
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         )
-        startActivityForResult(Intent.createChooser(intent, getString(R.string.pick_image_intent_chooser_title)), PICK_IMAGE_INTENT)
+        startActivityForResult(
+            Intent.createChooser(
+                intent,
+                getString(R.string.pick_image_chooser_title)
+            ), PICK_IMAGE_INTENT
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

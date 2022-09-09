@@ -79,7 +79,7 @@ class FavouriteAlbumViewModelFactory(
         private val application: Application,
         private val database: PhotosDatabaseDao
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(FavouriteAlbumViewModel::class.java)) {
             return FavouriteAlbumViewModel(application, database) as T
         }

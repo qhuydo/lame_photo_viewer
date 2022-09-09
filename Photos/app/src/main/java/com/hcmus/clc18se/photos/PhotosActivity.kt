@@ -79,27 +79,6 @@ class PhotosActivity : AbstractPhotosActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        when (intent?.action) {
-            Intent.ACTION_SEND -> {
-                Timber.d("Send")
-                if (intent.type?.startsWith("image/") == true) {
-                    handleSendImage(intent) // Handle single image being sent
-                }
-                if (intent.type?.startsWith("video/") == true) {
-                    handleSendImageVideo(intent) // Handle single image being sent
-                }
-            }
-            Intent.ACTION_VIEW -> {
-                Timber.d("View")
-                if (intent.type?.startsWith("image/") == true) {
-                    handleViewImage(intent) // Handle single image being sent
-                }
-                if (intent.type?.startsWith("video/") == true) {
-                    handleViewVideo(intent) // Handle single image being sent
-                }
-            }
-        }
-
         Timber.d("On Create called")
         Timber.d("----------------")
 
@@ -203,6 +182,39 @@ class PhotosActivity : AbstractPhotosActivity() {
 
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        when (intent?.action) {
+            Intent.ACTION_SEND -> {
+                Timber.d("Send")
+                if (intent.type?.startsWith("image/") == true) {
+                    handleSendImage(intent) // Handle single image being sent
+                }
+                if (intent.type?.startsWith("video/") == true) {
+                    handleSendImageVideo(intent) // Handle single image being sent
+                }
+            }
+            Intent.ACTION_VIEW -> {
+                Timber.d("View")
+                if (intent.type?.startsWith("image/") == true) {
+                    handleViewImage(intent)
+                }
+                if (intent.type?.startsWith("video/") == true) {
+                    handleViewVideo(intent)
+                }
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
     }
 
     private fun setBottomAppBarVisibility() {

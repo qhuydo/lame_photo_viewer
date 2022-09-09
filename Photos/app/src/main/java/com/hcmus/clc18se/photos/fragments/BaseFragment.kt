@@ -68,8 +68,8 @@ abstract class BaseFragment : Fragment() {
         parentActivity?.let {
 
             it.setupActionBarWithNavController(
-                    findNavController(),
-                    parentActivity.appBarConfiguration
+                findNavController(),
+                parentActivity.appBarConfiguration
             )
 
             toolbar.setupWithNavController(findNavController(), it.appBarConfiguration)
@@ -90,7 +90,9 @@ abstract class BaseFragment : Fragment() {
     open fun getToolbarTitleRes(): Int? = null
 
     fun hideTheToolbar() {
-        getAppbar().visibility = View.GONE
+        if (!hideToolbar) {
+            getAppbar().visibility = View.GONE
+        }
     }
 
     fun showTheToolbar() {

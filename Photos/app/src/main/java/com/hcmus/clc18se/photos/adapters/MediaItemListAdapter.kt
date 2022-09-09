@@ -136,7 +136,7 @@ class MediaItemListAdapter(
         setListeners(holderMediaItem, item)
 
         if (holderMediaItem.itemView is Checkable) {
-            holderMediaItem.itemView.isChecked = selectedItems.contains(item)
+            (holderMediaItem.itemView as Checkable).isChecked = selectedItems.contains(item)
         }
     }
 
@@ -203,12 +203,12 @@ class MediaItemListAdapter(
         if (selectedItems.contains(item)) {
             selectedItems.remove(item)
             if (holderMediaItem.itemView is MaterialCardView) {
-                holderMediaItem.itemView.isChecked = false
+                (holderMediaItem.itemView as MaterialCardView).isChecked = false
             }
         } else {
             selectedItems.add(item)
             if (holderMediaItem.itemView is MaterialCardView) {
-                holderMediaItem.itemView.isChecked = true
+                (holderMediaItem.itemView as MaterialCardView).isChecked = true
             }
         }
     }

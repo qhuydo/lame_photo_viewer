@@ -109,7 +109,7 @@ class SecretPhotosViewModel(application: Application) : AndroidViewModel(applica
 class SecretViewModelFactory(
         private val application: Application,
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SecretPhotosViewModel::class.java)) {
             return SecretPhotosViewModel(application) as T
         }

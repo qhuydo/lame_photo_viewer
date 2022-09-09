@@ -212,11 +212,11 @@ class PhotosFragment : AbstractPhotoListFragment(R.menu.photos_menu) {
 
             fastscrollView.fastScroller.setFastScrollListener(object :
                 FastScroller.FastScrollListener {
-                override fun onFastScrollStart(fastScroller: FastScroller?) {
+                override fun onFastScrollStart(fastScroller: FastScroller) {
                     swipeRefreshLayout.isEnabled = false
                 }
 
-                override fun onFastScrollStop(fastScroller: FastScroller?) {
+                override fun onFastScrollStop(fastScroller: FastScroller) {
                     swipeRefreshLayout.isEnabled = true
                     (recyclerView.layoutManager as? StaggeredGridLayoutManager)?.apply {
                         invalidateSpanAssignments()
